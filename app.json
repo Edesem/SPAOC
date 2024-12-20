@@ -4,30 +4,40 @@
     "slug": "St-Paul-Parish-App",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "/home/edes/Asztal/code/St-Pauls-App/St-Paul-Parish-App/assets/images/logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "splash": {
+        "image": "/home/edes/Asztal/code/St-Pauls-App/St-Paul-Parish-App/assets/images/stpauls-wireframe-logo.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      },
+      "supportsTablet": true,
+      "bundleIdentifier": "com.edesem.StPaulParishApp"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+      "splash": {
+        "image": "/home/edes/Asztal/code/St-Pauls-App/St-Paul-Parish-App/assets/images/stpauls-wireframe-logo.png",
+        "resizeMode": "contain",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.edesem.StPaulParishApp"
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "splash": {
+        "image": "/home/edes/Asztal/code/St-Pauls-App/St-Paul-Parish-App/assets/images/stpauls-wireframe-logo.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      }
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "/home/edes/Asztal/code/St-Pauls-App/St-Paul-Parish-App/assets/images/stpauls-wireframe-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -36,6 +46,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6951e8d5-1ff3-4e22-ba40-aa6341adf62f"
+      }
     }
   }
 }

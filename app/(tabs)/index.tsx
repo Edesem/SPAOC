@@ -1,74 +1,162 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React from 'react';
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  SectionList,
+  StatusBar,
+  Text,
+  ActivityIndicator,
+  useColorScheme,
+  Image
+} from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useEvents } from '@/hooks/useEvents';
+import { renderItem } from '@/components/RenderItem';
+import { Colours } from '@/styles/Colours';
+import 'expo-dev-client';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
+  const { groupedEvents, loading } = useEvents();
+
+  const colorScheme = useColorScheme();  // Get the current system theme (light or dark)
+  const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+
+  const sectionsWithUpcoming = [
+    {
+      title: "Top Image",
+      data: [],
+    },
+    {
+      title: "Saint of the Day",
+      data: [],
+    },
+    ...groupedEvents,
+    {
+      title: "Bottom Image",
+      data: [],
+    },
+  ];
+
+  const SectionHeader = ({ section }: { section: any }) => {
+    return section.title === 'Top Image' ? (
+      <View style={styles.imageContainer}>
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('../../assets/images/orthodox/Cross.png')}
+          style={[styles.topImage, { tintColor: theme.primary }]} // Using Theme.primary here
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+    ) : section.title === 'Saint of the Day' ? (
+      <View style={styles.saintOfTheDayContainer}>
+        {/* Display Fast Day information above the saint */}
+        <Text style={[styles.fastDayText, { color: theme.detail }]}>Fast Day</Text>
+        <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>Today's Saint:</Text>
+        <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>Saint John Chrysostom</Text>
+      </View>
+    ) : section.title === 'Bottom Image' ? (
+      <View style={styles.imageContainer}>
+        <Image
+          source={require('../../assets/images/orthodox/Seraph.png')}
+          style={[styles.bottomImage, { tintColor: theme.primary }]} // Using Theme.primary here
+        />
+      </View>
+    ) : (
+      <>
+        {section.weekLabel && (
+          <Text style={[styles.weekLabel, { backgroundColor: theme.background, color: theme.moreImportantText }]}>
+            {section.weekLabel}
+          </Text>
+        )}
+        <Text style={[styles.sectionHeader, { color: theme.sectionDate }]}>{section.title}</Text>
+      </>
+    );
+  };
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+        <View style={styles.verticalBarContainer}>
+          <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
+          <View style={styles.container}>
+            {loading ? (
+              <ActivityIndicator size="large" color="#4f4f5b" />
+            ) : (
+              <SectionList
+                sections={sectionsWithUpcoming}
+                keyExtractor={(item) => item.id}
+                renderItem={renderItem}
+                renderSectionHeader={SectionHeader}
+                ListEmptyComponent={<Text style={[styles.emptyMessage, { color: theme.detail }]}>No events found.</Text>}
+                stickySectionHeadersEnabled={false} // Disable sticky headers
+              />
+            )}
+          </View>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    marginTop: StatusBar.currentHeight || 0,
+    marginBottom: 10,
+  },
+  verticalBarContainer: {
     flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  verticalBar: {
+    width: 7,
+    borderRadius: 10,
+    marginLeft: 10,
+  },
+  emptyMessage: {
+    textAlign: 'center',
+    fontSize: 18,
+    marginTop: 20,
+  },
+  topImage: {
+    width: 50,  // Adjust the width of the image
+    height: 50, // Adjust the height of the image
+    resizeMode: 'contain', // Ensure the image doesn't get stretched
+  },
+  bottomImage: {
+    width: 100,   // Adjust the width of the image
+    height: 250,  // Adjust the height of the image
+    resizeMode: 'contain', // Ensure the image doesn't get stretched
+    paddingBottom: 50,
+  },
+  imageContainer: {
     alignItems: 'center',
-    gap: 8,
+    marginTop: 5,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  saintOfTheDayContainer: {
+    padding: 15,
+    alignItems: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  saintOfTheDayTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  fastDayText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'red',  // You can customize the color for Fast Day text
+  },
+  weekLabel: {
+    marginLeft: 20,
+    marginTop: 15,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  sectionHeader: {
+    marginLeft: 15,
+    marginTop: 10,
+    padding: 5,
+    fontSize: 18,
   },
 });
