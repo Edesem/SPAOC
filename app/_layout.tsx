@@ -4,9 +4,9 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colours } from '@/styles/Colours';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,11 +27,23 @@ export default function RootLayout() {
     return null;
   }
 
+  const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={theme}>
       <Stack>
+        <Stack
+          screenOptions={{
+            headerTitleAlign: 'center', // Center the title
+            headerStyle: { backgroundColor: Colours.light.background },
+            headerTintColor: '#333',
+            headerTitleStyle: { fontWeight: 'bold' },
+          }}
+        />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="eventDetails" />
+        <Stack.Screen name="confession" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
