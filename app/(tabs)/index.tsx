@@ -12,11 +12,11 @@ import {
   AppState
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { getEvents } from '@/hooks/getEvents';
+import { useEvents } from '@/hooks/useEvents';
 import { renderItem } from '@/components/RenderItem';
 import { Colours } from '@/styles/Colours';
 import 'expo-dev-client';
-import { getFastDay } from '@/hooks/getFastDay';
+import { useFastDay } from '@/hooks/useFastDay';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDailySaint } from '@/hooks/useDailySaint';
 
@@ -28,7 +28,7 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
-  const { groupedEvents, loading } = getEvents();
+  const { groupedEvents, loading } = useEvents();
 
   const colorScheme = useColorScheme(); 
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
@@ -36,10 +36,7 @@ export default function HomeScreen() {
   const { todaysSaints, error } = useDailySaint();
 
   let todaysSaintsTitle = "";
-
   todaysSaints.length > 1 ? todaysSaintsTitle = "Today's Feasts" : todaysSaintsTitle = "Today's Feast:";
-
-  console.log(todaysSaints)
 
   const sectionsWithUpcoming = [
     {
@@ -57,7 +54,7 @@ export default function HomeScreen() {
     },
   ];
 
-  const fastDay = getFastDay();
+  const fastDay = useFastDay();
 
   let majorFastText = null;
   let minorFastText = null;
