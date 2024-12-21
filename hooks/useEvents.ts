@@ -3,7 +3,7 @@ import { EventData } from '@/global';
 import { groupEventsByDay } from '@/utils/dateUtils';
 import { useState, useEffect } from 'react';
 
-export const getEvents = () => {
+export const useEvents = () => {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
   const [groupedEvents, setGroupedEvents] = useState<any[]>([]);

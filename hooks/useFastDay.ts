@@ -2,7 +2,7 @@ import { API_KEY, FASTING_BASE_URL } from '@/constants/consts';
 import { EventData } from '@/global';
 import { useState, useEffect } from 'react';
 
-export const getFastDay = () => {
+export const useFastDay = () => {
   const [events, setEvents] = useState<string[]>([]);
   const [fastLoading, setLoading] = useState(true);
 
