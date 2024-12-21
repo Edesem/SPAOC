@@ -11,13 +11,14 @@ import {
   Image
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useEvents } from '@/hooks/useEvents';
+import { getEvents } from '@/hooks/getEvents';
 import { renderItem } from '@/components/RenderItem';
 import { Colours } from '@/styles/Colours';
 import 'expo-dev-client';
+import { getFastDay } from '@/hooks/getFastDay';
 
 export default function HomeScreen() {
-  const { groupedEvents, loading } = useEvents();
+  const { groupedEvents, loading } = getEvents();
 
   const colorScheme = useColorScheme();  // Get the current system theme (light or dark)
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
@@ -38,6 +39,41 @@ export default function HomeScreen() {
     },
   ];
 
+  const fastDay = getFastDay();
+
+  let majorFastText = null;
+  let minorFastText = null;
+
+  if (fastDay.includes("Great Lent")) {
+    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Great Lent</Text>;
+  }
+  else if (fastDay.includes("The Apostles' Fast")) {
+    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>The Apostles' Fast</Text>;
+  }
+  else if (fastDay.includes("Theotokos Fast")) {
+    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Theotokos Fast</Text>;
+  }
+  else if (fastDay.includes("The Nativity Fast")) {
+    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>The Nativity Fast</Text>;
+  }
+  else {
+    majorFastText = null
+  }
+
+  if (fastDay.includes("Strict Fast")) {
+    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Abstain from meat, fish, dairy, eggs, wine, olive oil</Text>;
+  }
+  else if (fastDay.includes("Fast")) {
+    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Abstain from meat, dairy, eggs</Text>;
+  }
+  else if (fastDay.includes("Meat Fast")) {
+    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Abstain from meat</Text>;
+  }
+  else {
+    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>No Fast</Text>;
+  }
+
+
   const SectionHeader = ({ section }: { section: any }) => {
     return section.title === 'Top Image' ? (
       <View style={styles.imageContainer}>
@@ -48,10 +84,10 @@ export default function HomeScreen() {
       </View>
     ) : section.title === 'Saint of the Day' ? (
       <View style={styles.saintOfTheDayContainer}>
-        {/* Display Fast Day information above the saint */}
-        <Text style={[styles.fastDayText, { color: theme.detail }]}>Fast Day</Text>
         <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>Today's Saint:</Text>
         <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>Saint John Chrysostom</Text>
+        {majorFastText}
+        {minorFastText}
       </View>
     ) : section.title === 'Bottom Image' ? (
       <View style={styles.imageContainer}>
@@ -118,14 +154,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   topImage: {
-    width: 50,  // Adjust the width of the image
-    height: 50, // Adjust the height of the image
-    resizeMode: 'contain', // Ensure the image doesn't get stretched
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
   },
   bottomImage: {
-    width: 100,   // Adjust the width of the image
-    height: 250,  // Adjust the height of the image
-    resizeMode: 'contain', // Ensure the image doesn't get stretched
+    width: 100,
+    height: 250,
+    resizeMode: 'contain',
     paddingBottom: 50,
   },
   imageContainer: {
@@ -137,7 +173,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saintOfTheDayTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
@@ -145,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: 'red',  // You can customize the color for Fast Day text
+    textAlign: 'center',
   },
   weekLabel: {
     marginLeft: 20,

@@ -44,13 +44,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="book"
         options={{
+          href: null,
           title: 'Book',
           tabBarIcon: ({ color }) =>
             Platform.OS === 'ios' ? (
               <IconSymbol name="calendar.badge.plus" size={28} color={color} />
             ) : (
               <MaterialIcons name="event" size={28} color={color} />
-            ),
+            )
         }}
       />
       <Tabs.Screen
@@ -65,7 +66,9 @@ export default function TabLayout() {
             ),
         }}
       />
-
     </Tabs>
   );
 }
+
+
+
