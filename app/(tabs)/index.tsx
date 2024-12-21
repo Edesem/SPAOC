@@ -45,32 +45,32 @@ export default function HomeScreen() {
   let minorFastText = null;
 
   if (fastDay.includes("Great Lent")) {
-    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Great Lent</Text>;
+    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>Great Lent</Text>;
   }
   else if (fastDay.includes("The Apostles' Fast")) {
-    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>The Apostles' Fast</Text>;
+    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>The Apostles' Fast</Text>;
   }
   else if (fastDay.includes("Theotokos Fast")) {
-    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Theotokos Fast</Text>;
+    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>Theotokos Fast</Text>;
   }
   else if (fastDay.includes("The Nativity Fast")) {
-    majorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>The Nativity Fast</Text>;
+    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>The Nativity Fast</Text>;
   }
   else {
     majorFastText = null
   }
 
   if (fastDay.includes("Strict Fast")) {
-    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Abstain from meat, fish, dairy, eggs, wine, olive oil</Text>;
+    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat, fish, dairy, eggs, wine, olive oil</Text>;
   }
   else if (fastDay.includes("Fast")) {
-    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Abstain from meat, dairy, eggs</Text>;
+    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat, dairy, eggs</Text>;
   }
   else if (fastDay.includes("Meat Fast")) {
-    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>Abstain from meat</Text>;
+    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat</Text>;
   }
   else {
-    minorFastText = <Text style={[styles.fastDayText, { color: theme.moreImportantText }]}>No Fast</Text>;
+    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>No Fast</Text>;
   }
 
 
@@ -85,7 +85,7 @@ export default function HomeScreen() {
     ) : section.title === 'Saint of the Day' ? (
       <View style={styles.saintOfTheDayContainer}>
         <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>Today's Saint:</Text>
-        <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>Saint John Chrysostom</Text>
+        <Text style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}>Saint John Chrysostom</Text>
         {majorFastText}
         {minorFastText}
       </View>
@@ -173,14 +173,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saintOfTheDayTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  fastDayText: {
+  saintOfTheDay: {
     fontSize: 18,
+    marginBottom: 20,
+  },
+  MajorFastText: {
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
+  },
+  minorFastText: {
+    fontSize: 18,
     textAlign: 'center',
   },
   weekLabel: {
