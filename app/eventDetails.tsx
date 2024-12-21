@@ -1,11 +1,48 @@
 import { EventData } from '@/global';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button } from 'react-native';
 import { Colours } from '@/styles/Colours';
+import { decode } from 'html-entities';
+
+const cleanDescription = (description: string): string => {
+  const decoded = decode(description);
+
+  const cleaned = decoded.replace(/<[^>]+>/g, '');
+
+  return cleaned;
+};
+
+const renderDescription = (description: string | null, theme: any) => {
+  if (!description) return null;
+
+  const cleanedDescription = cleanDescription(description);
+
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  const parts = cleanedDescription.split(urlRegex);
+
+  return (
+    <Text style={[styles.description, { color: theme.detail }]}>
+      {parts.map((part, index) =>
+        urlRegex.test(part) ? (
+          <Text
+            key={index}
+            style={{ color: theme.primary, textDecorationLine: 'underline' }}
+            onPress={() => Linking.openURL(part)}
+          >
+            {part}
+          </Text>
+        ) : (
+          part
+        )
+      )}
+    </Text>
+  );
+};
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
@@ -34,8 +71,15 @@ const EventDetailsScreen = () => {
             <Text style={[styles.title, { color: theme.moreImportantText }]}>{title || "Event Title"}</Text>
             <View style={styles.divider} />
             <Text style={[styles.date, { color: theme.lessImportantText }]}>🕒 {start} {end}</Text>
-            <Text style={[styles.detail, { color: theme.lessImportantText }]}>📍{location || "N/A"}</Text>
-            <Text style={[styles.description, { color: theme.detail }]}>{description || "No description available."}</Text>
+            {location == null
+              ? null
+              : <Text style={[styles.detail, { color: theme.lessImportantText }]}>📍{location}</Text>
+            }
+            {description == null
+              ? null
+              : renderDescription(description, theme)
+            }
+
           </View>
           <View style={styles.imageContainer}>
             <Image

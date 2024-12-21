@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "St-Paul-Parish-App",
+    "name": "SPAOC",
     "slug": "St-Paul-Parish-App",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "assets/images/logo2.png",
+    "icon": "assets/images/logo-full.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -38,7 +38,7 @@
         "expo-splash-screen",
         {
           "image": "assets/images/stpauls-wireframe-logo.png",
-          "imageWidth": 200,
+          "imageWidth": 300,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

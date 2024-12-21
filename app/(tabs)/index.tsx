@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,7 +8,8 @@ import {
   Text,
   ActivityIndicator,
   useColorScheme,
-  Image
+  Image,
+  AppState
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { getEvents } from '@/hooks/getEvents';
@@ -16,12 +17,29 @@ import { renderItem } from '@/components/RenderItem';
 import { Colours } from '@/styles/Colours';
 import 'expo-dev-client';
 import { getFastDay } from '@/hooks/getFastDay';
+import * as SplashScreen from 'expo-splash-screen';
+import { useDailySaint } from '@/hooks/useDailySaint';
+
+SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 export default function HomeScreen() {
   const { groupedEvents, loading } = getEvents();
 
-  const colorScheme = useColorScheme();  // Get the current system theme (light or dark)
+  const colorScheme = useColorScheme(); 
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+
+  const { todaysSaints, error } = useDailySaint();
+
+  let todaysSaintsTitle = "";
+
+  todaysSaints.length > 1 ? todaysSaintsTitle = "Today's Feasts" : todaysSaintsTitle = "Today's Feast:";
+
+  console.log(todaysSaints)
 
   const sectionsWithUpcoming = [
     {
@@ -84,8 +102,8 @@ export default function HomeScreen() {
       </View>
     ) : section.title === 'Saint of the Day' ? (
       <View style={styles.saintOfTheDayContainer}>
-        <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>Today's Saint:</Text>
-        <Text style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}>Saint John Chrysostom</Text>
+        <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>{todaysSaintsTitle}</Text>
+        <Text style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}>{todaysSaints.join(', ')}</Text>
         {majorFastText}
         {minorFastText}
       </View>
@@ -180,6 +198,7 @@ const styles = StyleSheet.create({
   saintOfTheDay: {
     fontSize: 18,
     marginBottom: 20,
+    textAlign: 'center',
   },
   MajorFastText: {
     fontSize: 22,
