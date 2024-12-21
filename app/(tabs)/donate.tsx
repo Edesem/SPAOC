@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: 'grey', // Static value, can be updated for dynamic themes if necessary
     marginTop: 10,
+    marginHorizontal: 26,
     textAlign: 'center',
   },
   paymentSection: {

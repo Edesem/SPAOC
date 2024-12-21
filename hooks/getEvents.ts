@@ -1,9 +1,9 @@
-import { API_KEY, BASE_URL } from '@/constants/consts';
+import { API_KEY, EVENTS_BASE_URL } from '@/constants/consts';
 import { EventData } from '@/global';
 import { groupEventsByDay } from '@/utils/dateUtils';
 import { useState, useEffect } from 'react';
 
-export const useEvents = () => {
+export const getEvents = () => {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
   const [groupedEvents, setGroupedEvents] = useState<any[]>([]);
@@ -11,7 +11,7 @@ export const useEvents = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`);
+        const response = await fetch(`${EVENTS_BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
 

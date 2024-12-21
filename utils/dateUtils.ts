@@ -14,7 +14,7 @@ export const formatDateHeading = (date: Date) => {
     }
   };
 
-export const groupEventsByDay = (events: EventData[]) => { 
+  export const groupEventsByDay = (events: EventData[]) => { 
     const grouped: { [key: string]: EventData[] } = {};
 
     events.forEach((event) => {
@@ -29,10 +29,13 @@ export const groupEventsByDay = (events: EventData[]) => {
     const today = new Date();
     const startOfThisWeek = getStartOfWeek(today);
     const startOfNextWeek = new Date(startOfThisWeek);
-    startOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
+    startOfNextWeek.setDate(startOfNextWeek.getDate() + 6);
+    const startOfLater = new Date(startOfNextWeek); // One week after "Next Week"
+    startOfLater.setDate(startOfLater.getDate() + 6); // Start of "Later" label
   
     let addedThisWeekLabel = false;
     let addedNextWeekLabel = false;
+    let addedLaterLabel = false; // Flag for "Later" label
   
     // Transform the grouped object into an array with formatted titles
     return Object.keys(grouped)
@@ -50,11 +53,17 @@ export const groupEventsByDay = (events: EventData[]) => {
             weekLabel = 'This Week';
             addedThisWeekLabel = true;
           }
-        } else if (date >= startOfNextWeek) {
+        } else if (date >= startOfNextWeek && date < startOfLater) {
           // Assign "Next Week" label only once
           if (!addedNextWeekLabel) {
             weekLabel = 'Next Week';
             addedNextWeekLabel = true;
+          }
+        } else if (date >= startOfLater) {
+          // Assign "Later" label only once
+          if (!addedLaterLabel) {
+            weekLabel = 'Later';
+            addedLaterLabel = true;
           }
         }
   
@@ -66,6 +75,7 @@ export const groupEventsByDay = (events: EventData[]) => {
       })
       .filter((section) => section.data.length > 0); // Remove empty sections
 };
+
 
 export const getStartOfWeek = (date: Date) => { 
     const day = date.getDay() || 7; // Make Sunday (0) the last day of the week
