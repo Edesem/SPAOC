@@ -18,8 +18,17 @@ export const formatDateHeading = (date: Date) => {
     const grouped: { [key: string]: EventData[] } = {};
 
     events.forEach((event) => {
+      // Parse the event start time into a Date object
       const eventDate = new Date(event.start);
-      const dayKey = eventDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+  
+      // Convert the event date to Australian local date string (YYYY-MM-DD format)
+      const dayKey = eventDate.toLocaleDateString('en-AU', {
+        timeZone: 'Australia/Sydney',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).split('/').reverse().join('-'); // Convert DD/MM/YYYY to YYYY-MM-DD
+  
       if (!grouped[dayKey]) {
         grouped[dayKey] = [];
       }
