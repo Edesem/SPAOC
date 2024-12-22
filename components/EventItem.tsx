@@ -27,6 +27,21 @@ export const EventItem = ({ item, onPress }: ItemProps) => {
     const timeColor = colorScheme === 'dark' ? '#BBB' : '#777';
     const chevronColor = colorScheme === 'dark' ? '#BBB' : '#777';
 
+    const eventColorMap = new Map<string, string>([
+        ['youth', Colours.event.youth],
+        ['weekly', Colours.event.weekly],
+        ['church', Colours.event.church],
+        ['family', Colours.event.family],
+        ['ladies', Colours.event.ladies],
+        ['parish', Colours.event.parish],
+        ['seniors', Colours.event.seniors],
+        ['playgroup', Colours.event.playgroup],
+    ]);
+    
+    const getEventColor = (source: string) => eventColorMap.get(source) || '#000'; // Default to black if not found
+
+    const sourceColor = getEventColor(item.source) || Colours.light.secondary;
+
     return (
         <TouchableOpacity
             onPress={() => {
@@ -38,13 +53,17 @@ export const EventItem = ({ item, onPress }: ItemProps) => {
                 onPress();
             }}
             style={[styles.item, { backgroundColor }]}>
-            <View style={styles.itemContent}>
-                <View style={styles.textContainer}>
-                    <Text style={[styles.itemTime, { color: timeColor }]}>{formattedStart} {formattedEnd}</Text>
-                    <Text style={[styles.itemTitle, { color: textColor }]}>{item.title}</Text>
+            <View style={styles.leftBarContainer}>
+                <View style={[styles.leftBar, { backgroundColor: sourceColor }]} />
+                <View style={styles.itemContent}>
+                    <View style={styles.textContainer}>
+                        <Text style={[styles.itemTime, { color: timeColor }]}>{formattedStart} {formattedEnd}</Text>
+                        <Text style={[styles.itemTitle, { color: textColor }]}>{item.title}</Text>
+                    </View>
+                    <Icon name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
                 </View>
-                <Icon name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
             </View>
+
         </TouchableOpacity>
     );
 };
@@ -63,6 +82,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row', // Align content horizontally
         alignItems: 'center', // Center items vertically
         justifyContent: 'space-between', // Space between title and chevron
+    },
+    leftBar: {
+        width: 8, // Thickness of the bar
+        borderTopLeftRadius: 8, // Match the item border radius
+        borderBottomRightRadius: 8,
+        borderTopRightRadius: 1, // Match the item border radius
+        borderBottomLeftRadius: 1,
+        marginRight: 10,
+    },
+    leftBarContainer: {
+        flexDirection: 'row',
+        alignItems: 'stretch',
     },
     itemContent: {
         flexDirection: 'row', // Ensure content inside item aligns horizontally

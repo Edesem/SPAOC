@@ -12,7 +12,7 @@
       "splash": {
         "image": "assets/images/stpauls-wireframe-logo-white.png",
         "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#121212"
       },
       "supportsTablet": true,
       "bundleIdentifier": "com.edesem.StPaulParishApp"
@@ -21,7 +21,7 @@
       "splash": {
         "image": "assets/images/stpauls-wireframe-logo.png",
         "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#121212"
       },
       "package": "com.edesem.StPaulParishApp"
     },
@@ -29,7 +29,7 @@
       "splash": {
         "image": "assets/images/stpauls-wireframe-logo.png",
         "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#121212"
       }
     },
     "plugins": [
@@ -40,7 +40,11 @@
           "image": "assets/images/stpauls-wireframe-logo.png",
           "imageWidth": 300,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "assets/images/stpauls-wireframe-logo-white.png",
+            "backgroundColor": "#121212"
+          }
         }
       ]
     ],

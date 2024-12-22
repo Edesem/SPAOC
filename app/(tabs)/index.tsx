@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -12,13 +12,22 @@ import {
   AppState
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useEvents } from '@/hooks/useEvents';
+import { useYouthEvents } from '@/hooks/useYouthEvents';
 import { renderItem } from '@/components/RenderItem';
 import { Colours } from '@/styles/Colours';
 import 'expo-dev-client';
 import { useFastDay } from '@/hooks/useFastDay';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDailySaint } from '@/hooks/useDailySaint';
+import { useChurchEvents } from '@/hooks/useChurchEvents';
+import { useFamilyEvents } from '@/hooks/useFamilyEvents';
+import { useLadiesEvents } from '@/hooks/useLadiesEvents';
+import { useParishCouncilEvents } from '@/hooks/useParishCouncilEvents';
+import { useSeniorsEvents } from '@/hooks/useSeniorsEvents';
+import { useWeeklyEvents } from '@/hooks/useWeeklyEvents';
+import { EventData } from '@/global';
+import { groupEventsByDay } from '@/utils/dateUtils';
+import { usePlaygroupEvents } from '@/hooks/usePlaygroupEvents';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,9 +37,56 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
-  const { groupedEvents, loading } = useEvents();
+  const { events: youthEvents, loading: youthLoading } = useYouthEvents();
+  const { events: churchEvents, loading: churchLoading } = useChurchEvents();
+  const { events: familyEvents, loading: familyLoading } = useFamilyEvents();
+  const { events: ladiesEvents, loading: ladiesLoading } = useLadiesEvents();
+  const { events: parishEvents, loading: parishLoading } = useParishCouncilEvents();
+  const { events: seniorsEvents, loading: seniorsLoading } = useSeniorsEvents();
+  const { events: weeklyEvents, loading: weeklyLoading } = useWeeklyEvents();
+  const { events: playgroupEvents, loading: playgroupLoading } = usePlaygroupEvents();
 
-  const colorScheme = useColorScheme(); 
+  const allEventsLoading = youthLoading || churchLoading || familyLoading || ladiesLoading || parishLoading || seniorsLoading || weeklyLoading || playgroupLoading;
+
+  let allEvents = useMemo(() => {
+    if (!allEventsLoading) {
+      // Combine all events into a single array
+      const combinedEvents = [
+        ...youthEvents,
+        ...weeklyEvents,
+        ...churchEvents,
+        ...familyEvents,
+        ...ladiesEvents,
+        ...parishEvents,
+        ...seniorsEvents,
+        ...playgroupEvents,
+      ];
+
+      // Sort the valid events by 'start' date
+      return combinedEvents.sort((a, b) => {
+        const dateA = new Date(a.start).getTime(); // Convert to milliseconds
+        const dateB = new Date(b.start).getTime(); // Convert to milliseconds
+
+        return dateA - dateB; // Ascending order
+      });
+    }
+
+    return []; // Return an empty array if events are still loading
+  }, [
+    youthEvents,
+    weeklyEvents,
+    churchEvents,
+    familyEvents,
+    ladiesEvents,
+    parishEvents,
+    seniorsEvents,
+    playgroupEvents,
+    allEventsLoading,
+  ]);
+
+  const groupedEvents = groupEventsByDay(allEvents)
+
+  const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
 
   const { todaysSaints, error } = useDailySaint();
@@ -126,12 +182,14 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-        <View style={styles.verticalBarContainer}>
-          <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
-          <View style={styles.container}>
-            {loading ? (
-              <ActivityIndicator size="large" color="#4f4f5b" />
-            ) : (
+        {youthLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#4f4f5b" />
+          </View>
+        ) :
+          <View style={styles.verticalBarContainer}>
+            <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
+            <View style={styles.container}>
               <SectionList
                 sections={sectionsWithUpcoming}
                 keyExtractor={(item) => item.id}
@@ -140,9 +198,9 @@ export default function HomeScreen() {
                 ListEmptyComponent={<Text style={[styles.emptyMessage, { color: theme.detail }]}>No events found.</Text>}
                 stickySectionHeadersEnabled={false} // Disable sticky headers
               />
-            )}
+            </View>
           </View>
-        </View>
+        }
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -153,6 +211,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
     marginBottom: 10,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    paddingVertical: 30,
   },
   verticalBarContainer: {
     flexDirection: 'row',

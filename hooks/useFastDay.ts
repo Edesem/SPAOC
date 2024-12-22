@@ -28,9 +28,12 @@ export const useFastDay = () => {
 
         // Filter for fasting events on today's date
         const todayFastingEvents = formattedEvents.filter((event: EventData) => {
-          const eventDate = event.start.split('T')[0]; // Extract date part
+          const eventStart = new Date(event.start).toISOString().split('T')[0];
+          const eventEnd = new Date(event.end).toISOString().split('T')[0];
+
           return (
-            eventDate === today &&
+            today < eventEnd &&
+            today >= eventStart &&
             [
               'Strict Fast',
               'Fast',

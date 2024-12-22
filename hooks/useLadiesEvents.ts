@@ -1,17 +1,17 @@
-import { API_KEY, EVENTS_BASE_URL } from '@/constants/consts';
+import { API_KEY, LADIES_EVENTS_BASE_URL, YOUTH_EVENTS_BASE_URL } from '@/constants/consts';
 import { EventData } from '@/global';
 import { groupEventsByDay } from '@/utils/dateUtils';
 import { useState, useEffect } from 'react';
 
-export const useEvents = () => {
+export const useLadiesEvents = () => {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [groupedEvents, setGroupedEvents] = useState<any[]>([]);
+  const [ladiesEvents, setGroupedEvents] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${EVENTS_BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`);
+        const response = await fetch(`${LADIES_EVENTS_BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`);
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
 
@@ -22,6 +22,7 @@ export const useEvents = () => {
           end: item.end?.dateTime || item.end?.date || '',
           description: item.description,
           location: item.location,
+          source: 'ladies',
         }));
 
         const grouped = groupEventsByDay(formattedEvents).filter((section) => section.data.length > 0);
@@ -37,5 +38,5 @@ export const useEvents = () => {
     fetchEvents();
   }, []);
 
-  return { events, groupedEvents, loading };
+  return { events, ladiesEvents, loading };
 };

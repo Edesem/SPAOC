@@ -26,4 +26,14 @@ export const Colours = {
     itemBackground: '#272727',
     donateButton: '#b51a25'
   },
+  event: {
+    youth: '#3F51B5',
+    church: '#F6BF26',
+    family: '#0B8043',
+    ladies: '#9E69AF',
+    parish: '#F4511E',
+    seniors: '#7986CB',
+    weekly: '#039BE5',
+    playgroup: '#ae9cce',
+  },
 };
