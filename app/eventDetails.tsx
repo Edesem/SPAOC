@@ -1,7 +1,7 @@
 import { EventData } from '@/global';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button } from 'react-native';
@@ -55,8 +55,6 @@ const EventDetailsScreen = () => {
     navigation.setOptions({
       title: 'Event Details',
       headerBackTitle: 'Back',
-      headerTransparent: true,
-      headerBlurEffect: 'systemUltraThinMaterial',
       headerBackTitleStyle: {
         color: 'pink', // Set the color of the back button title (if any)
       },
