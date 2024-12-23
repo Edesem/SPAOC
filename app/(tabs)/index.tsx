@@ -112,6 +112,8 @@ export default function HomeScreen() {
 
   const fastDay = useFastDay();
 
+  console.log(fastDay)
+
   let majorFastText = null;
   let minorFastText = null;
 
@@ -209,8 +211,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-    marginBottom: 10,
+    paddingTop: StatusBar.currentHeight || 0,
+    paddingBottom: 10,
   },
   loadingContainer: {
     justifyContent: 'center',
