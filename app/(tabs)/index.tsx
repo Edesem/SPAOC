@@ -12,22 +12,13 @@ import {
   AppState
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useYouthEvents } from '@/hooks/useYouthEvents';
 import { renderItem } from '@/components/RenderItem';
 import { Colours } from '@/styles/Colours';
 import 'expo-dev-client';
 import { useFastDay } from '@/hooks/useFastDay';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDailySaint } from '@/hooks/useDailySaint';
-import { useChurchEvents } from '@/hooks/useChurchEvents';
-import { useFamilyEvents } from '@/hooks/useFamilyEvents';
-import { useLadiesEvents } from '@/hooks/useLadiesEvents';
-import { useParishCouncilEvents } from '@/hooks/useParishCouncilEvents';
-import { useSeniorsEvents } from '@/hooks/useSeniorsEvents';
-import { useWeeklyEvents } from '@/hooks/useWeeklyEvents';
-import { EventData } from '@/global';
-import { groupEventsByDay } from '@/utils/dateUtils';
-import { usePlaygroupEvents } from '@/hooks/usePlaygroupEvents';
+import { useEvents } from '@/hooks/useEvents';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,54 +28,7 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
-  const { events: youthEvents, loading: youthLoading } = useYouthEvents();
-  const { events: churchEvents, loading: churchLoading } = useChurchEvents();
-  const { events: familyEvents, loading: familyLoading } = useFamilyEvents();
-  const { events: ladiesEvents, loading: ladiesLoading } = useLadiesEvents();
-  const { events: parishEvents, loading: parishLoading } = useParishCouncilEvents();
-  const { events: seniorsEvents, loading: seniorsLoading } = useSeniorsEvents();
-  const { events: weeklyEvents, loading: weeklyLoading } = useWeeklyEvents();
-  const { events: playgroupEvents, loading: playgroupLoading } = usePlaygroupEvents();
-
-  const allEventsLoading = youthLoading || churchLoading || familyLoading || ladiesLoading || parishLoading || seniorsLoading || weeklyLoading || playgroupLoading;
-
-  let allEvents = useMemo(() => {
-    if (!allEventsLoading) {
-      // Combine all events into a single array
-      const combinedEvents = [
-        ...youthEvents,
-        ...weeklyEvents,
-        ...churchEvents,
-        ...familyEvents,
-        ...ladiesEvents,
-        ...parishEvents,
-        ...seniorsEvents,
-        ...playgroupEvents,
-      ];
-
-      // Sort the valid events by 'start' date
-      return combinedEvents.sort((a, b) => {
-        const dateA = new Date(a.start).getTime(); // Convert to milliseconds
-        const dateB = new Date(b.start).getTime(); // Convert to milliseconds
-
-        return dateA - dateB; // Ascending order
-      });
-    }
-
-    return []; // Return an empty array if events are still loading
-  }, [
-    youthEvents,
-    weeklyEvents,
-    churchEvents,
-    familyEvents,
-    ladiesEvents,
-    parishEvents,
-    seniorsEvents,
-    playgroupEvents,
-    allEventsLoading,
-  ]);
-
-  const groupedEvents = groupEventsByDay(allEvents)
+  const { groupedEvents, loading } = useEvents();
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
@@ -184,7 +128,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-        {youthLoading ? (
+        {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4f4f5b" />
           </View>
