@@ -1,34 +1,44 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, Alert, SafeAreaView, Linking, useColorScheme } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView, Linking, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import { ThemedText } from '@/components/ThemedText';
-import { getCommonStyles } from '@/styles/CommonStyles';  // Use dynamic styles
+import { getCommonStyles } from '@/styles/CommonStyles'; // Use dynamic styles
 import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from '@/constants/consts';
 import { setStringAsync } from 'expo-clipboard';
 import { Haptic } from '@/hooks/hapticPress';
 import { Colours } from '@/styles/Colours';
 
 export default function DonateScreen() {
-  const colorScheme = useColorScheme();  // Get the current system theme (light or dark)
-  const scheme = colorScheme === 'dark' ? 'dark' : 'light';  // Use theme string for dark/light
+  const colorScheme = useColorScheme(); // Get the current system theme (light or dark)
+  const scheme = colorScheme === 'dark' ? 'dark' : 'light'; // Use theme string for dark/light
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
 
-  const CommonStyles = getCommonStyles(scheme);  // Get the dynamic styles
+  const CommonStyles = getCommonStyles(scheme); // Get the dynamic styles
+
+  const [copied, setCopied] = useState(false); // Track if the details are copied
 
   const handleCopyDetails = async () => {
-    const bankDetails = `${BANK_NAME}\n${ACCOUNT_NO}\n${BSB}`
-    Haptic.press()
+    const bankDetails = `${BANK_NAME}\n${ACCOUNT_NO}\n${BSB}`;
+    Haptic.press();
 
-    await setStringAsync(bankDetails)
+    await setStringAsync(bankDetails);
 
-    Alert.alert("Bank details copied to clipboard!");
+    setCopied(true); // Update the state to show "Copied!"
   };
 
   const handleSquarePayment = () => {
-    Haptic.press()
+    Haptic.press();
 
-    Linking.openURL(SQUARE_URL)
+    Linking.openURL(SQUARE_URL);
   };
+
+  // Reset the "Copied!" state when the screen loses focus
+  useFocusEffect(
+    useCallback(() => {
+      setCopied(false); // Reset copied state when the screen is focused
+    }, [])
+  );
 
   return (
     <SafeAreaProvider>
@@ -61,7 +71,7 @@ export default function DonateScreen() {
             <Text style={CommonStyles.detailText}>BSB: {BSB}</Text>
           </View>
           <TouchableOpacity style={[styles.copyButton, { backgroundColor: theme.primary }]} onPress={handleCopyDetails}>
-            <Text style={styles.copyButtonText}>Copy Details</Text>
+            <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -135,8 +145,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   bottomImage: {
-    width: 100,   // Adjust the width of the image
-    height: 100,  // Adjust the height of the image
+    width: 100, // Adjust the width of the image
+    height: 100, // Adjust the height of the image
     resizeMode: 'contain', // Ensure the image doesn't get stretched
     marginBottom: 50,
   },
@@ -144,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10, // Adjust the space above the image
     marginBottom: 10, // Adjust the space below the image if needed
-    flex: 1,  // Allows image container to take remaining space
+    flex: 1, // Allows image container to take remaining space
     justifyContent: 'center', // Aligns the image in the middle
   },
 });
