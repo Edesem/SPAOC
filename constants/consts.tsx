@@ -11,6 +11,7 @@ export const PARISH_COUNCIL_EVENTS_CALENDAR_ID = 'db3b93533ec6a617c87a9ab3355fa9
 export const SENIORS_EVENTS_CALENDAR_ID = 'cfff8a16f87faa4f805d29cf02988ac51ac509f95527c32b2462c16b1e1d5a39@group.calendar.google.com';
 export const WEEKLY_EVENTS_CALENDAR_ID = '741ba56a83de39122a2e925afc43375398a3a545958020239e5330919b8e619b@group.calendar.google.com';
 export const PLAYGROUP_EVENTS_CALENDAR_ID = '132b3c000939be571646c383230441cc57a01ebe1654c7cdd4734f0b7bdab703@group.calendar.google.com';
+export const FELLOWSHIP_EVENTS_CALENDAR_ID = '8e6705cdcd699fd9ad2b7444471054d2246c77cd918d04233742bb601e8cd71f@group.calendar.google.com';
 export const FASTING_CALENDAR_ID = "6bd3ab94f1acd2b24f227faf63a4beda9f791587d0c0f339878e0ceca8a53481@group.calendar.google.com";
 
 export const YOUTH_EVENTS_BASE_URL = `https://www.googleapis.com/calendar/v3/calendars/${YOUTH_EVENTS_CALENDAR_ID}/events`;
@@ -21,6 +22,7 @@ export const PARISH_COUNCIL_EVENTS_BASE_URL = `https://www.googleapis.com/calend
 export const SENIORS_EVENTS_BASE_URL = `https://www.googleapis.com/calendar/v3/calendars/${SENIORS_EVENTS_CALENDAR_ID}/events`;
 export const WEEKLY_EVENTS_BASE_URL = `https://www.googleapis.com/calendar/v3/calendars/${WEEKLY_EVENTS_CALENDAR_ID}/events`;
 export const PLAYGROUP_EVENTS_BASE_URL = `https://www.googleapis.com/calendar/v3/calendars/${PLAYGROUP_EVENTS_CALENDAR_ID}/events`;
+export const FELLOWSHIP_EVENTS_BASE_URL = `https://www.googleapis.com/calendar/v3/calendars/${FELLOWSHIP_EVENTS_CALENDAR_ID}/events`;
 export const FASTING_BASE_URL = `https://www.googleapis.com/calendar/v3/calendars/${FASTING_CALENDAR_ID}/events`;
 
 export const BANK_NAME = "St Paul's Antiochian Orthodox Church"

@@ -35,5 +35,6 @@ export const Colours = {
     seniors: '#7986CB',
     weekly: '#039BE5',
     playgroup: '#ae9cce',
+    fellowship: '#489160',
   },
 };

@@ -36,7 +36,9 @@ export const EventItem = ({ item, onPress }: ItemProps) => {
         ['parish', Colours.event.parish],
         ['seniors', Colours.event.seniors],
         ['playgroup', Colours.event.playgroup],
+        ['fellowship', Colours.event.fellowship],
     ]);
+    
     
     const getEventColor = (source: string) => eventColorMap.get(source) || '#000'; // Default to black if not found
 
