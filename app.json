@@ -4,7 +4,7 @@
     "slug": "St-Paul-Parish-App",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "assets/images/logo-full.png",
+    "icon": "assets/images/stpauls-wireframe-logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -38,7 +38,7 @@
         "expo-splash-screen",
         {
           "image": "assets/images/stpauls-wireframe-logo.png",
-          "imageWidth": 300,
+          "imageWidth": 100,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {

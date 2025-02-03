@@ -87,8 +87,8 @@ export const formatDateHeading = (date: Date) => {
 
 
 export const getStartOfWeek = (date: Date) => { 
-    const day = date.getDay() || 7; // Make Sunday (0) the last day of the week
+    const day = date.getDay(); // Make Sunday (0) the last day of the week
     date.setHours(0, 0, 0, 0); // Set time to midnight
-    date.setDate(date.getDate() - day + 1); // Set the date to the start of the week (Monday)
+    date.setDate(date.getDate() - day + 2); // Set the date to the start of the week (Monday)
     return date;
 };

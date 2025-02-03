@@ -1,12 +1,12 @@
 import { EventData } from '@/global';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking, Platform, Dimensions } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Button } from 'react-native';
 import { Colours } from '@/styles/Colours';
 import { decode } from 'html-entities';
+
+const { width, height } = Dimensions.get('window');
 
 const cleanDescription = (description: string): string => {
   const decoded = decode(description);
@@ -89,7 +89,7 @@ const EventDetailsScreen = () => {
               : <Text style={[styles.detail, { color: theme.lessImportantText }]}>📍{location}</Text>
             }
             {description == null
-              ? null
+              ? <Text style={[styles.description, { color: theme.detail }]}>No description available</Text>
               : renderDescription(description, theme)
             }
 
@@ -145,14 +145,13 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: '#777',
     marginTop: 15,
     lineHeight: 20,
   },
   bottomImage: {
-    width: 450,   // Adjust the width of the image
-    height: 450,  // Adjust the height of the image
-    resizeMode: 'contain', // Ensure the image doesn't get stretched
+    width: width, // 80% of the screen width
+    height: height * 0.5, // 40% of the screen height
+    resizeMode: 'contain', // Ensure the image doesn't stretch
     tintColor: '#0a4068',
     marginBottom: 50,
   },

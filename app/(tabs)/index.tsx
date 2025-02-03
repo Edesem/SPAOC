@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
   useColorScheme,
   Image,
-  AppState
+  AppState,
+  RefreshControl
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { renderItem } from '@/components/RenderItem';
@@ -28,12 +29,21 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
-  const { groupedEvents, loading } = useEvents();
+  const [refreshing, setRefreshing] = useState(false);
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
 
-  const { todaysSaints, error } = useDailySaint();
+  const { todaysSaints, error, refetchSaints } = useDailySaint();
+  const { events, fastLoading, refetch: refetchFast } = useFastDay();
+  const { events: allEvents, groupedEvents, loading: eventsLoading, refetch: refetchEvents } = useEvents();
+
+  // Refresh handler
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([refetchSaints(), refetchFast(), refetchEvents()]);
+    setRefreshing(false);
+  };
 
   let todaysSaintsTitle = "";
   todaysSaints.length > 1 ? todaysSaintsTitle = "Today's Feasts" : todaysSaintsTitle = "Today's Feast:";
@@ -54,36 +64,34 @@ export default function HomeScreen() {
     },
   ];
 
-  const fastDay = useFastDay();
-
-  console.log(fastDay)
+  console.log(events)
 
   let majorFastText = null;
   let minorFastText = null;
 
-  if (fastDay.includes("Great Lent")) {
+  if (events.includes("Great Lent")) {
     majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>Great Lent</Text>;
   }
-  else if (fastDay.includes("The Apostles' Fast")) {
+  else if (events.includes("The Apostles' Fast")) {
     majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>The Apostles' Fast</Text>;
   }
-  else if (fastDay.includes("Theotokos Fast")) {
+  else if (events.includes("Theotokos Fast")) {
     majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>Theotokos Fast</Text>;
   }
-  else if (fastDay.includes("The Nativity Fast")) {
+  else if (events.includes("The Nativity Fast")) {
     majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>The Nativity Fast</Text>;
   }
   else {
     majorFastText = null
   }
 
-  if (fastDay.includes("Strict Fast")) {
+  if (events.includes("Strict Fast")) {
     minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat, fish, dairy, eggs, wine, olive oil</Text>;
   }
-  else if (fastDay.includes("Fast")) {
+  else if (events.includes("Fast")) {
     minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat, dairy, eggs</Text>;
   }
-  else if (fastDay.includes("Meat Fast")) {
+  else if (events.includes("Meat Fast")) {
     minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat</Text>;
   }
   else {
@@ -102,7 +110,7 @@ export default function HomeScreen() {
     ) : section.title === 'Saint of the Day' ? (
       <View style={styles.saintOfTheDayContainer}>
         <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>{todaysSaintsTitle}</Text>
-        <Text style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}>{todaysSaints.join(', ')}</Text>
+        <Text style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}>{todaysSaints.join('\n')}</Text>
         {majorFastText}
         {minorFastText}
       </View>
@@ -128,7 +136,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-        {loading ? (
+        {fastLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4f4f5b" />
           </View>
@@ -143,6 +151,9 @@ export default function HomeScreen() {
                 renderSectionHeader={SectionHeader}
                 ListEmptyComponent={<Text style={[styles.emptyMessage, { color: theme.detail }]}>No events found.</Text>}
                 stickySectionHeadersEnabled={false} // Disable sticky headers
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primary]} />
+                }
               />
             </View>
           </View>
