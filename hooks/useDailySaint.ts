@@ -1,24 +1,40 @@
 import { useState, useEffect } from 'react';
-import dailySaints from '../assets/dailySaints.json';
+import { API_KEY, SAINTS_CALENDAR_ID } from '@/constants/consts';
 
 export const useDailySaint = () => {
   const [todaysSaints, setTodaySaints] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchSaintsForToday = async () => {
     const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-GB'); // Format to "DD/MM/YYYY"
+    const timeMin = new Date(today.setHours(0, 0, 0, 0)).toISOString();
+    const timeMax = new Date(today.setHours(23, 59, 59, 999)).toISOString();
 
-    // Filter saints data to get the saints for today's date
-    const saintsForToday = dailySaints.filter((saint) => saint.Date === formattedDate);
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${SAINTS_CALENDAR_ID}/events?key=${API_KEY}&timeMin=${timeMin}&timeMax=${timeMax}&orderby=created&singleEvents=true`
+      );
 
-    if (saintsForToday.length > 0) {
-      const saintsList = saintsForToday.map((saint) => saint.Saint);
-      setTodaySaints(saintsList);
-    } else {
-      setError('No saints found for today.');
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+      const data = await response.json();
+      if (data.items.length > 0) {
+        setTodaySaints(data.items.map((event: any) => event.summary || 'Unnamed Saint'));
+        setError(null); // Clear previous errors
+      } else {
+        setTodaySaints([]);
+        setError('No saints found for today.');
+      }
+    } catch (err) {
+      console.error('Error fetching saints:', err);
+      setTodaySaints([]);
+      setError('Failed to fetch saints data.');
     }
+  };
+
+  useEffect(() => {
+    fetchSaintsForToday();
   }, []);
 
-  return { todaysSaints, error };
+  return { todaysSaints, error, refetchSaints: fetchSaintsForToday };
 };

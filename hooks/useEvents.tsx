@@ -19,46 +19,46 @@ export const useEvents = () => {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchAllEvents = async () => {
+    setLoading(true);
+    try {
+      const allEvents: EventData[] = [];
+
+      await Promise.all(
+        EVENT_SOURCES.map(async ({ url, source }) => {
+          const response = await fetch(`${url}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`);
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          const data = await response.json();
+
+          const formattedEvents = data.items
+          .filter((item: any) => item.visibility !== 'private') 
+          .map((item: any) => ({
+            id: item.id,
+            title: item.summary || 'No Title',
+            start: item.start.dateTime || item.start.date,
+            end: item.end?.dateTime || item.end?.date || '',
+            description: item.description,
+            location: item.location,
+            source,
+          }));
+
+          allEvents.push(...formattedEvents);
+        })
+      );
+
+      setEvents(allEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()));
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAllEvents = async () => {
-      try {
-        const allEvents: EventData[] = [];
-
-        await Promise.all(
-          EVENT_SOURCES.map(async ({ url, source }) => {
-            const response = await fetch(`${url}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`);
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            const data = await response.json();
-
-            const formattedEvents = data.items.map((item: any) => ({
-              id: item.id,
-              title: item.summary || 'No Title',
-              start: item.start.dateTime || item.start.date,
-              end: item.end?.dateTime || item.end?.date || '',
-              description: item.description,
-              location: item.location,
-              source,
-            }));
-
-            console.log('Event source:', source);
-
-
-            allEvents.push(...formattedEvents);
-          })
-        );
-
-        setEvents(allEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()));
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAllEvents();
   }, []);
 
   const groupedEvents = useMemo(() => groupEventsByDay(events), [events]);
 
-  return { events, groupedEvents, loading };
+  return { events, groupedEvents, loading, refetch: fetchAllEvents };
 };
