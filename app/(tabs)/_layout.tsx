@@ -55,6 +55,18 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="prayer"
+        options={{
+          title: 'Prayer',
+          tabBarIcon: ({ color }) =>
+            Platform.OS === 'ios' ? (
+              <IconSymbol name="book.fill" size={28} color={color} />
+            ) : (
+              <MaterialIcons name="import_contacts" size={28} color={color} />
+            ),
+        }}
+      />
+      <Tabs.Screen
         name="donate"
         options={{
           title: 'Donate',
