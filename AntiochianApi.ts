@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getCurrentDate } from './utils/dateUtils';
 
 interface LiturgicalData {
   publicUrl: string;
@@ -42,16 +43,8 @@ class Antiochian {
   }
 }
 
-// Function to fetch current date in 'YYYY-MM-DD' format
-export const getCurrentDate = (): string => {
-  const now = new Date();
-  const offset = now.getTimezoneOffset() * 60000; // Convert offset to milliseconds
-  const localISODate = new Date(now - offset).toISOString().split('T')[0]; // Extract YYYY-MM-DD
-  return localISODate;
-};
-
 export const fetchLiturgicalTexts = async () => {
   const session = new Antiochian();
   await session.authenticate();
-  return session.getLiturgicalText(new Date());
+  return session.getLiturgicalText(getCurrentDate());
 };
