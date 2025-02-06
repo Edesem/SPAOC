@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { API_KEY, SAINTS_CALENDAR_ID } from '@/constants/consts';
+import { getCurrentDate } from '@/utils/dateUtils';
 
 export const useDailySaint = () => {
   const [todaysSaints, setTodaySaints] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const fetchSaintsForToday = async () => {
-    const today = new Date();
+    const today = getCurrentDate();
     const timeMin = new Date(today.setHours(0, 0, 0, 0)).toISOString();
     const timeMax = new Date(today.setHours(23, 59, 59, 999)).toISOString();
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
@@ -39,7 +39,7 @@ const prayers = [
 
 const services = [
   { title: 'Great Vespers', subtitle: 'An evening sacrifice', url: GREAT_VESPERS_URL, icon: faCloudMoon },
-  { title: 'Small Compline when a Priest is serving', subtitle: 'Priest-led Small Compline', url: SMALL_COMPLINE_PRIEST_URL, icon: faChurch },
+  { title: 'Small Compline', subtitle: 'When a Priest is serving', url: SMALL_COMPLINE_PRIEST_URL, icon: faChurch },
   { title: 'Paraklesis', subtitle: 'To the Theotokos, the Mother of Light', url: PARAKLESIS_URL, icon: faPersonPraying },
   { title: 'Matins', subtitle: 'Morning Offering', url: MATINS_URL, icon: faCloudSun },
   { title: 'Matins - Bilingual', subtitle: 'English and Arabic Matins', url: MATINS_BILINGUAL_URL, icon: faBookOpen },
@@ -55,6 +55,23 @@ export default function PrayerScreen(): JSX.Element {
   const [data, setData] = useState<LiturgicalData[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const fetchedData = await fetchLiturgicalTexts();
+      if (fetchedData) {
+        setData(fetchedData);
+      } else {
+        setError(new Error('Error fetching liturgical texts'));
+      }
+    } catch (err) {
+      setError(err as Error);
+    }
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     fetchLiturgicalTexts()
@@ -83,7 +100,14 @@ export default function PrayerScreen(): JSX.Element {
     }, {} as OrganizedData);
   };
 
-  const organizedData = data ? organizeData(data) : {};
+  useEffect(() => {
+    if (data) {
+      setOrganizedData(organizeData(data));
+    }
+  }, [data]);
+
+  const [organizedData, setOrganizedData] = useState<OrganizedData>({});
+
 
   return (
     <SafeAreaProvider>
@@ -93,6 +117,9 @@ export default function PrayerScreen(): JSX.Element {
             flexGrow: 1,
             paddingBottom: insets.bottom + 20,
           }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {/* Header */}
           <View style={styles.header}>
@@ -111,11 +138,13 @@ export default function PrayerScreen(): JSX.Element {
 
             {loading ? (
               <View style={styles.centered}>
-                <ActivityIndicator size="large" color={theme.secondary} />
+                <ActivityIndicator size="large" />
                 <Text>Loading prayers...</Text>
               </View>
             ) : error ? (
               <Text style={styles.errorText}>Error loading prayers</Text>
+            ) : Object.keys(organizedData).length === 0 ? (
+              <Text style={styles.noTextsMessage}>There are no liturgical texts today.</Text>
             ) : (
               <View>
                 {Object.keys(organizedData).map((service) => (
@@ -127,7 +156,7 @@ export default function PrayerScreen(): JSX.Element {
                       { opacity: pressed ? 0.6 : 1 },
                     ]}
                   >
-                    <Text style={CommonStyles.detailText}>{service}</Text>
+                    <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>{service}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -184,6 +213,14 @@ export default function PrayerScreen(): JSX.Element {
                 </View>
               </TouchableOpacity>
             ))}
+          </View>
+
+          {/* Image */}
+          <View style={styles.imageContainer}>
+            <Image
+              source={require('../../assets/images/orthodox/star3.png')} // Adjust the path to your image
+              style={[styles.bottomImage, { tintColor: theme.primary }]}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -263,6 +300,26 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
+  },
+  noTextsMessage: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
+    fontStyle: 'italic',
+    marginVertical: 10,
+  },
+  bottomImage: {
+    width: 150, // Adjust the width of the image
+    height: 150, // Adjust the height of the image
+    resizeMode: 'contain', // Ensure the image doesn't get stretched
+    marginBottom: 50,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginTop: 10, // Adjust the space above the image
+    marginBottom: 10, // Adjust the space below the image if needed
+    flex: 1, // Allows image container to take remaining space
+    justifyContent: 'center', // Aligns the image in the middle
   },
 });
 

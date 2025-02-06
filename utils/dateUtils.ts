@@ -92,3 +92,10 @@ export const getStartOfWeek = (date: Date) => {
     date.setDate(date.getDate() - day + 2); // Set the date to the start of the week (Monday)
     return date;
 };
+
+// Function to fetch current date in 'YYYY-MM-DD' format
+export const getCurrentDate = (): Date => {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60000; // Convert offset to milliseconds
+  return new Date(now.getTime() - offset); // Return Date object
+};
