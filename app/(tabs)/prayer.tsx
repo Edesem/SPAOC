@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, SafeAreaView, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
 import { fetchLiturgicalTexts } from '@/AntiochianApi';
+import { GREAT_VESPERS_URL, SMALL_COMPLINE_URL, SMALL_COMPLINE_PRIEST_URL, PARAKLESIS_URL, MATINS_BILINGUAL_URL, MATINS_URL, MORNING_PRAYERS_URL, PREPARATION_FOR_COMMUNION_URL, CENSING_HOME_URL } from '@/constants/consts';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faPersonPraying } from '@fortawesome/free-solid-svg-icons/faPersonPraying'
+import { faCloudMoon } from '@fortawesome/free-solid-svg-icons/faCloudMoon'
+import { faBed } from '@fortawesome/free-solid-svg-icons/faBed'
+import { faChurch } from '@fortawesome/free-solid-svg-icons/faChurch'
+import { faCloudSun } from '@fortawesome/free-solid-svg-icons/faCloudSun'
+import { faCoffee } from '@fortawesome/free-solid-svg-icons/faCoffee'
+import { faWineGlass } from '@fortawesome/free-solid-svg-icons/faWineGlass'
+import { faBurn } from '@fortawesome/free-solid-svg-icons/faBurn'
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons/faBookOpen'
 
 interface LiturgicalData {
   publicUrl: string;
@@ -14,17 +26,32 @@ interface LiturgicalData {
 interface OrganizedData {
   [service: string]: {
     pdf: string | null;
-    rtf: string | null;
   };
 }
 
+const prayers = [
+  { title: 'Morning Prayers', subtitle: 'A short prayer to start the day', url: MORNING_PRAYERS_URL, icon: faCoffee },
+  { title: 'Small Compline', subtitle: 'A prayer before sleep & Communion', url: SMALL_COMPLINE_URL, icon: faBed },
+  { title: 'Holy Communion', subtitle: 'Preparation & Thanksgiving', url: PREPARATION_FOR_COMMUNION_URL, icon: faWineGlass },
+  { title: 'Censing the Home', subtitle: 'A prayer when you cense your home', url: CENSING_HOME_URL, icon: faBurn },
+];
+
+
+const services = [
+  { title: 'Great Vespers', subtitle: 'An evening sacrifice', url: GREAT_VESPERS_URL, icon: faCloudMoon },
+  { title: 'Small Compline when a Priest is serving', subtitle: 'Priest-led Small Compline', url: SMALL_COMPLINE_PRIEST_URL, icon: faChurch },
+  { title: 'Paraklesis', subtitle: 'To the Theotokos, the Mother of Light', url: PARAKLESIS_URL, icon: faPersonPraying },
+  { title: 'Matins', subtitle: 'Morning Offering', url: MATINS_URL, icon: faCloudSun },
+  { title: 'Matins - Bilingual', subtitle: 'English and Arabic Matins', url: MATINS_BILINGUAL_URL, icon: faBookOpen },
+];
+
 export default function PrayerScreen(): JSX.Element {
+  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === 'dark' ? 'dark' : 'light';
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
-  // State for fetching data
   const [data, setData] = useState<LiturgicalData[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -34,11 +61,10 @@ export default function PrayerScreen(): JSX.Element {
       .then(fetchedData => {
         if (fetchedData) {
           setData(fetchedData);
-          setLoading(false);
         } else {
           setError(new Error('Error fetching liturgical texts'));
-          setLoading(false);
         }
+        setLoading(false);
       })
       .catch((err: Error) => {
         setError(err);
@@ -48,14 +74,11 @@ export default function PrayerScreen(): JSX.Element {
 
   const organizeData = (data: LiturgicalData[]): OrganizedData => {
     return data.reduce((acc, { publicUrl, typeOfService }) => {
-      if (!publicUrl) return acc; // Skip if no publicUrl
-
-      // Only process PDF entries, ignore RTF
+      if (!publicUrl) return acc;
       if (typeOfService.includes('PDF')) {
-        if (!acc[typeOfService]) acc[typeOfService] = { pdf: null, rtf: null };
-        acc[typeOfService].pdf = publicUrl; // Assign the URL to the PDF format
+        if (!acc[typeOfService]) acc[typeOfService] = { pdf: null };
+        acc[typeOfService].pdf = publicUrl;
       }
-
       return acc;
     }, {} as OrganizedData);
   };
@@ -65,49 +88,110 @@ export default function PrayerScreen(): JSX.Element {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[CommonStyles.container, { flex: 1 }]}>
-        {/* Header */}
-        <View style={styles.header}>
-          <ThemedText type="title" style={CommonStyles.title}>
-            Prayer
-          </ThemedText>
-          <Text style={styles.subtitle}>"Pray without ceasing."{'\n'} - 1 Thessalonians 5:17</Text>
-        </View>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: insets.bottom + 20,
+          }}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <ThemedText type="title" style={CommonStyles.title}>
+              Prayer
+            </ThemedText>
+            <Text style={styles.subtitle}>
+              "Pray without ceasing."{'\n'} - 1 Thessalonians 5:17
+            </Text>
+          </View>
 
-        {/* Content Section */}
-        <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
-          <Text style={CommonStyles.sectionTitle}>Daily Liturgical Texts</Text>
+          {/* Daily Liturgical Texts Section */}
+          <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
+            <Text style={CommonStyles.sectionTitle}>Daily Liturgical Texts</Text>
+            <View style={styles.divider} />
 
-          {loading ? (
-            <View style={styles.centered}>
-              <ActivityIndicator size="large" color="#0000ff" />
-              <Text>Loading prayers...</Text>
-            </View>
-          ) : error ? (
-            <Text style={styles.errorText}>Error loading prayers</Text>
-          ) : (
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-              {Object.keys(organizedData).map((service) => (
-                <View key={service} style={styles.serviceContainer}>
-                  {organizedData[service].pdf && (
-                    <TouchableOpacity
-                      onPress={() => Linking.openURL(organizedData[service].pdf!)}
-                      style={({ pressed }) => [
-                        styles.linkText,
-                        { opacity: pressed ? 0.6 : 1 },
-                      ]}
-                    >
-                      <Text style={CommonStyles.detailText}>{service}</Text>
-                    </TouchableOpacity>
-                  )}
+            {loading ? (
+              <View style={styles.centered}>
+                <ActivityIndicator size="large" color={theme.secondary} />
+                <Text>Loading prayers...</Text>
+              </View>
+            ) : error ? (
+              <Text style={styles.errorText}>Error loading prayers</Text>
+            ) : (
+              <View>
+                {Object.keys(organizedData).map((service) => (
+                  <TouchableOpacity
+                    key={service}
+                    onPress={() => Linking.openURL(organizedData[service].pdf!)}
+                    style={({ pressed }) => [
+                      styles.linkText,
+                      { opacity: pressed ? 0.6 : 1 },
+                    ]}
+                  >
+                    <Text style={CommonStyles.detailText}>{service}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
+
+          {/* Additional Prayers Section */}
+          <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
+            <Text style={CommonStyles.sectionTitle}>Prayers</Text>
+            <View style={styles.divider} />
+
+            {prayers.map((prayer) => (
+              <TouchableOpacity
+                key={prayer.title}
+                onPress={() => Linking.openURL(prayer.url)}
+                style={({ pressed }) => [
+                  styles.prayerItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <View style={[styles.rowContainer]}>
+                  <FontAwesomeIcon icon={prayer.icon} size={35} color={theme.moreImportantText} style={styles.icon} />
+                  <View style={styles.textContainer}>
+                    <Text style={[styles.prayerTitle, { color: theme.moreImportantText, }]}>{prayer.title}</Text>
+                    <Text style={[styles.prayerSubtitle, { color: theme.lessImportantText, }]}>{prayer.subtitle}</Text>
+                  </View>
                 </View>
-              ))}
-            </ScrollView>
-          )}
-        </View>
+              </TouchableOpacity>
+            ))}
+
+          </View>
+
+          {/* Additional Services Section */}
+          <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
+            <Text style={CommonStyles.sectionTitle}>Services</Text>
+            <View style={styles.divider} />
+
+            {services.map((service) => (
+              <TouchableOpacity
+                key={service.title}
+                onPress={() => Linking.openURL(service.url)}
+                style={({ pressed }) => [
+                  styles.prayerItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <View style={[styles.rowContainer]}>
+                  {/* Render the specific icon for each service */}
+                  <FontAwesomeIcon icon={service.icon} size={35} color={theme.moreImportantText} style={styles.icon} />
+                  <View style={styles.textContainer}>
+                    <Text style={[styles.prayerTitle, { color: theme.moreImportantText, }]}>{service.title}</Text>
+                    <Text style={[styles.prayerSubtitle, { color: theme.lessImportantText, }]}>{service.subtitle}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   header: {
@@ -135,14 +219,15 @@ const styles = StyleSheet.create({
   centered: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%',
+    flexGrow: 1,
+    height: '30%',
   },
   errorText: {
     color: 'red',
     textAlign: 'center',
   },
   serviceContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   linkText: {
     color: 'blue',
@@ -150,4 +235,34 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
+  prayerItem: {
+    marginVertical: 10,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)', // Light background for contrast
+  },
+  prayerTitle: {
+    fontSize: 18,
+  },
+  prayerSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic',
+    paddingBottom: 20,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E0E0E0',
+    marginVertical: 10,
+  },
+  rowContainer: {
+    flexDirection: 'row', // Align items horizontally
+  },
+  icon: {
+    marginRight: 10, // Adjust this value to your preference for spacing
+  },
+  textContainer: {
+    flex: 1,
+  },
 });
+
