@@ -35,7 +35,7 @@ export const getCommonStyles = (theme: string) => {
       fontWeight: '600',
     },
     sectionTitle: {
-      fontSize: 18,
+      fontSize: 24,
       fontWeight: '600',
       color: currentTheme.moreImportantText, // Use dynamic color for section title
       marginBottom: 15,
