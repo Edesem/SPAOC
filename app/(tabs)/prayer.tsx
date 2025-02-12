@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
@@ -150,7 +150,15 @@ export default function PrayerScreen(): JSX.Element {
                 {Object.keys(organizedData).map((service) => (
                   <TouchableOpacity
                     key={service}
-                    onPress={() => Linking.openURL(organizedData[service].pdf!)}
+                    onPress={() => {
+                      Alert.alert(
+                        "Silence Your Phone!",
+                        "Before opening this prayer, please ensure your phone is on silent.",
+                        [
+                          { text: "OK", onPress: () => Linking.openURL(organizedData[service].pdf!) }
+                        ]
+                      );
+                    }}
                     style={({ pressed }) => [
                       styles.linkText,
                       { opacity: pressed ? 0.6 : 1 },
@@ -160,6 +168,7 @@ export default function PrayerScreen(): JSX.Element {
                   </TouchableOpacity>
                 ))}
               </View>
+
             )}
           </View>
 
@@ -197,7 +206,15 @@ export default function PrayerScreen(): JSX.Element {
             {services.map((service) => (
               <TouchableOpacity
                 key={service.title}
-                onPress={() => Linking.openURL(service.url)}
+                onPress={() => {
+                  Alert.alert(
+                    "Silence Your Phone!",
+                    "Before opening this prayer, please ensure your phone is on silent.",
+                    [
+                      { text: "OK", onPress: () => Linking.openURL(service.url) }
+                    ]
+                  );
+                }}
                 style={({ pressed }) => [
                   styles.prayerItem,
                   { opacity: pressed ? 0.6 : 1 },
