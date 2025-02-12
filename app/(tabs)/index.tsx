@@ -10,7 +10,8 @@ import {
   useColorScheme,
   Image,
   AppState,
-  RefreshControl
+  RefreshControl,
+  Button
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { renderItem } from '@/components/RenderItem';
@@ -20,6 +21,7 @@ import { useFastDay } from '@/hooks/useFastDay';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDailySaint } from '@/hooks/useDailySaint';
 import { useEvents } from '@/hooks/useEvents';
+import { requestNotificationPermissions, scheduleNotification, setupNotificationListeners } from '@/notifications';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,6 +31,11 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
+  useEffect(() => {
+    requestNotificationPermissions();
+    setupNotificationListeners();
+  }, []);
+
   const [refreshing, setRefreshing] = useState(false);
 
   const colorScheme = useColorScheme();
@@ -143,7 +150,14 @@ export default function HomeScreen() {
         ) :
           <View style={styles.verticalBarContainer}>
             <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
+            
             <View style={styles.container}>
+            <View>
+              <Button
+                title="Send Test Notification"
+                onPress={() => scheduleNotification('Test Title', 'This is a test notification!', new Date(Date.now() + 5))}
+              />
+            </View>
               <SectionList
                 sections={sectionsWithUpcoming}
                 keyExtractor={(item) => item.id}
