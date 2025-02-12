@@ -7,9 +7,12 @@ export const useDailySaint = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchSaintsForToday = async () => {
-    const today = getCurrentDate();
-    const timeMin = new Date(today.setHours(0, 0, 0, 0)).toISOString();
-    const timeMax = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+    const date = new Date()
+      
+    const timeMin = new Date((date).setHours(0, 0, 0, 0)).toISOString();
+    const timeMax = new Date((date).setHours(23, 59, 59, 999)).toISOString();
+
+    console.log(timeMin,timeMax)
 
     try {
       const response = await fetch(
