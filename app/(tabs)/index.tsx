@@ -155,7 +155,7 @@ export default function HomeScreen() {
             <View>
               <Button
                 title="Send Test Notification"
-                onPress={() => scheduleNotification('Test Title', 'This is a test notification!', new Date(Date.now() + 5))}
+                onPress={() => scheduleNotification('Test Title', 'This is a test notification!', new Date(Date.now() + 5000))}
               />
             </View>
               <SectionList
