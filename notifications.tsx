@@ -23,7 +23,10 @@ export async function scheduleNotification(title: string, body: string, date: Da
             body,
             sound: Platform.OS === 'ios' ? 'default' : undefined,
         },
-        trigger: { date },
+        trigger: {
+            type: 'date',  // Explicitly define type
+            date,          // Pass the date object
+        },
     });
 }
 
