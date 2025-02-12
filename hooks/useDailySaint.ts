@@ -12,8 +12,6 @@ export const useDailySaint = () => {
     const timeMin = new Date((date).setHours(0, 0, 0, 0)).toISOString();
     const timeMax = new Date((date).setHours(23, 59, 59, 999)).toISOString();
 
-    console.log(timeMin,timeMax)
-
     try {
       const response = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars/${SAINTS_CALENDAR_ID}/events?key=${API_KEY}&timeMin=${timeMin}&timeMax=${timeMax}&orderby=created&singleEvents=true`
