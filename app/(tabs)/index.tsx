@@ -11,7 +11,8 @@ import {
   Image,
   AppState,
   RefreshControl,
-  Button
+  Button,
+  TouchableOpacity
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { renderItem } from '@/components/RenderItem';
@@ -22,6 +23,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useDailySaint } from '@/hooks/useDailySaint';
 import { useEvents } from '@/hooks/useEvents';
 import { requestNotificationPermissions, scheduleNotification, setupNotificationListeners } from '@/notifications';
+import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -143,6 +146,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+
         {fastLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4f4f5b" />
@@ -150,14 +154,25 @@ export default function HomeScreen() {
         ) :
           <View style={styles.verticalBarContainer}>
             <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
-            
+
             <View style={styles.container}>
-            <View>
-              <Button
-                title="Send Test Notification"
-                onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
-              />
-            </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+                {/* Send Test Notification Button on the left */}
+                <Button
+                  title="Send Test Notification"
+                  onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
+                />
+
+                {/* Hamburger Menu on the right */}
+                <TouchableOpacity
+                  onPress={() => router.push('/settings')}
+                  style={{ padding: 10 }}
+                >
+                  <MaterialIcons name="menu" size={28} color="black" />
+                </TouchableOpacity>
+              </View>
+
+
               <SectionList
                 sections={sectionsWithUpcoming}
                 keyExtractor={(item) => item.id}
