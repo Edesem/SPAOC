@@ -40,11 +40,6 @@ export default function RootLayout() {
           headerStyle: { backgroundColor: Colours.light.background },
           headerTintColor: '#333',
           headerTitleStyle: { fontWeight: 'bold' },
-          headerRight: () => (
-            <TouchableOpacity onPress={() => router.push('/settings')} style={{ marginRight: 15 }}>
-              <MaterialIcons name="menu" size={28} color="black" />
-            </TouchableOpacity>
-          ),
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
