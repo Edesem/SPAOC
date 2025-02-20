@@ -171,7 +171,7 @@ export default function HomeScreen() {
                   <MaterialIcons name="menu" size={28} color="black" />
                 </TouchableOpacity>
               </View>
-
+        
 
               <SectionList
                 sections={sectionsWithUpcoming}

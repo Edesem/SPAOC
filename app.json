@@ -15,7 +15,10 @@
         "backgroundColor": "#121212"
       },
       "supportsTablet": true,
-      "bundleIdentifier": "com.edesem.StPaulParishApp"
+      "bundleIdentifier": "com.edesem.StPaulParishApp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "splash": {
