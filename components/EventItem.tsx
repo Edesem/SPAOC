@@ -25,7 +25,7 @@ export const EventItem = ({ item, onPress }: ItemProps) => {
     const backgroundColor = colorScheme === 'dark' ? Colours.dark.itemBackground : Colours.light.itemBackground;
     const textColor = colorScheme === 'dark' ? '#FFF' : '#333';
     const timeColor = colorScheme === 'dark' ? '#BBB' : '#777';
-    const chevronColor = colorScheme === 'dark' ? '#BBB' : '#777';
+    const chevronColor = colorScheme === 'dark' ? Colours.dark.chevronColor : Colours.light.chevronColor;
 
     const eventColorMap = new Map<string, string>([
         ['youth', Colours.event.youth],

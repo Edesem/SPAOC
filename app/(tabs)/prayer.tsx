@@ -17,6 +17,10 @@ import { faCoffee } from '@fortawesome/free-solid-svg-icons/faCoffee'
 import { faWineGlass } from '@fortawesome/free-solid-svg-icons/faWineGlass'
 import { faBurn } from '@fortawesome/free-solid-svg-icons/faBurn'
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons/faBookOpen'
+import { fetchReadingsTeaser, fetchReadingsText } from '@/AntiochianReadings';
+import he from 'he';
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { router, useNavigation, useRouter } from 'expo-router';
 
 interface LiturgicalData {
   publicUrl: string;
@@ -53,10 +57,16 @@ export default function PrayerScreen(): JSX.Element {
   const CommonStyles = getCommonStyles(scheme);
 
   const [data, setData] = useState<LiturgicalData[] | null>(null);
+  const [readings, setReadings] = useState<{ reading1Teaser?: string, reading2Teaser?: string }>({});
+  const [readingsText, setReadingsText] = useState<{ reading1FullText?: string, reading2FullText?: string }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const chevronColor = colorScheme === 'dark' ? Colours.dark.chevronColor : Colours.light.chevronColor;
+
   const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -78,6 +88,34 @@ export default function PrayerScreen(): JSX.Element {
       .then(fetchedData => {
         if (fetchedData) {
           setData(fetchedData);
+        } else {
+          setError(new Error('Error fetching liturgical texts'));
+        }
+        setLoading(false);
+      })
+      .catch((err: Error) => {
+        setError(err);
+        setLoading(false);
+      });
+
+    fetchReadingsTeaser()
+      .then(fetchedData => {
+        if (fetchedData) {
+          setReadings(fetchedData);
+        } else {
+          setError(new Error('Error fetching liturgical texts'));
+        }
+        setLoading(false);
+      })
+      .catch((err: Error) => {
+        setError(err);
+        setLoading(false);
+      });
+
+    fetchReadingsText()
+      .then(fetchedData => {
+        if (fetchedData) {
+          setReadingsText(fetchedData);
         } else {
           setError(new Error('Error fetching liturgical texts'));
         }
@@ -130,6 +168,42 @@ export default function PrayerScreen(): JSX.Element {
               "Pray without ceasing."{'\n'} - 1 Thessalonians 5:17
             </Text>
           </View>
+
+          {/* Daily Readings */}
+          {/* Epistle Navigation */}
+          <TouchableOpacity
+            style={[styles.contentSection, { flex: 1, marginEnd: 10, backgroundColor: theme.itemBackground }]}
+            onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'epistle', reading: readingsText.reading1FullText } })}
+          >
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={CommonStyles.sectionTitle}>Epistle</Text>
+              <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+            </View>
+            <View style={styles.divider} />
+            {loading ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <Text>{he.decode(readings.reading1Teaser || '')}</Text>
+            )}
+          </TouchableOpacity>
+
+          {/* Gospel Navigation */}
+          <TouchableOpacity
+            style={[styles.contentSection, { flex: 1, marginStart: 10, backgroundColor: theme.itemBackground }]}
+            onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'gospel', reading: readingsText.reading2FullText } })}
+          >
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={CommonStyles.sectionTitle}>Gospel</Text>
+              <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+            </View>
+            <View style={styles.divider} />
+            {loading ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <Text>{he.decode(readings.reading2Teaser || '')}</Text>
+            )}
+          </TouchableOpacity>
+
 
           {/* Daily Liturgical Texts Section */}
           <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
@@ -310,6 +384,14 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   rowContainer: {
+    borderRadius: 10,
+    padding: 2,
+    margin: 20,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
     flexDirection: 'row', // Align items horizontally
   },
   icon: {
@@ -337,6 +419,9 @@ const styles = StyleSheet.create({
     marginBottom: 10, // Adjust the space below the image if needed
     flex: 1, // Allows image container to take remaining space
     justifyContent: 'center', // Aligns the image in the middle
+  },
+  chevronIcon: {
+    marginTop: 8, // Space between text and chevron
   },
 });
 

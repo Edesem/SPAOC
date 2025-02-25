@@ -8,6 +8,7 @@ import { TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/styles/Colours';
+import ReadingDetailScreen from './ReadingDetailScreen';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -47,6 +48,7 @@ export default function RootLayout() {
         <Stack.Screen name="eventDetails" />
         <Stack.Screen name="confession" />
         <Stack.Screen name="settings" options={{ headerShown: false }}/>
+        <Stack.Screen name="dailyReadings"/>
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
