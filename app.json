@@ -41,7 +41,7 @@
         "expo-splash-screen",
         {
           "image": "assets/images/stpauls-wireframe-logo.png",
-          "imageWidth": 100,
+          "imageWidth": 180,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
