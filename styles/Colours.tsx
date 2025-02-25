@@ -13,7 +13,9 @@ export const Colours = {
     lessImportantText: '#777',
     sectionDate: '#5d5d5d',
     itemBackground: '#FFFFFF',
-    donateButton: '#de333f'
+    donateButton: '#de333f',
+    chevronColor: '#BBB',
+
   },
   dark: {
     primary: '#a88646',      // A darker shade of blue for better contrast
@@ -24,7 +26,8 @@ export const Colours = {
     lessImportantText: '#B0B0B0',  // Lighter grey text for secondary content
     sectionDate: '#999',     // Slightly lighter grey for dates
     itemBackground: '#272727',
-    donateButton: '#b51a25'
+    donateButton: '#b51a25',
+    chevronColor: '#777',
   },
   event: {
     youth: '#3F51B5',
