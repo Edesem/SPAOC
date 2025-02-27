@@ -190,14 +190,20 @@ export default function PrayerScreen(): JSX.Element {
               </View>
               <ActivityIndicator size="large" />
 
-
             </View>
           ) : (
             <>
               {/* Epistle Navigation */}
               <TouchableOpacity
                 style={[styles.contentSection, { flex: 1, marginEnd: 10, backgroundColor: theme.itemBackground }]}
-                onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'epistle', reading: readingsText.reading1FullText } })}
+                onPress={() => router.push({
+                  pathname: '/dailyReadings',
+                  params: {
+                    type: 'epistle',
+                    reading: readingsText.reading1FullText,
+                    title: readings.reading1Title // Added title
+                  }
+                })}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={CommonStyles.sectionTitle}>
@@ -212,7 +218,14 @@ export default function PrayerScreen(): JSX.Element {
               {/* Gospel Navigation */}
               <TouchableOpacity
                 style={[styles.contentSection, { flex: 1, marginStart: 10, backgroundColor: theme.itemBackground }]}
-                onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'gospel', reading: readingsText.reading2FullText } })}
+                onPress={() => router.push({
+                  pathname: '/dailyReadings',
+                  params: {
+                    type: 'gospel',
+                    reading: readingsText.reading2FullText,
+                    title: readings.reading2Title // Added title
+                  }
+                })}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={CommonStyles.sectionTitle}>
@@ -225,6 +238,7 @@ export default function PrayerScreen(): JSX.Element {
               </TouchableOpacity>
             </>
           )}
+
 
 
 
