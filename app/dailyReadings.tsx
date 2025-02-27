@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import he from 'he';
+import toTitleCase from 'titlecase';
 
 // Define the expected route params type
 type ReadingScreenRouteParams = {
@@ -13,19 +14,17 @@ type ReadingScreenRouteParams = {
 export default function ReadingScreen() {
     const route = useRoute<RouteProp<Record<string, ReadingScreenRouteParams>, string>>();
     const { params } = route;
+    console.log(params)
 
-    const { reading, type } = params;
+    const { reading, title } = params;
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-                {type == "epistle" ? 
-                <><Text style={styles.title}>Epistle</Text><Text style={styles.text}>{he.decode(reading)}</Text></>
-                    :
-                <><Text style={styles.title}>Gospel</Text><Text style={styles.text}>{he.decode(reading)}</Text></>
-                }
-            </ScrollView>
-        </SafeAreaView>
+                <Text style={styles.title}>{toTitleCase(title.toLowerCase())}</Text>
+                <Text style={styles.text}>{he.decode(reading)}</Text>
+        </ScrollView>
+        </SafeAreaView >
     );
 }
 
