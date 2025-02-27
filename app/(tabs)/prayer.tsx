@@ -21,6 +21,8 @@ import { fetchReadingsTeaser, fetchReadingsText } from '@/AntiochianReadings';
 import he from 'he';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { router, useNavigation, useRouter } from 'expo-router';
+import titlecase from "titlecase";
+import toTitleCase from 'titlecase';
 
 interface LiturgicalData {
   publicUrl: string;
@@ -57,7 +59,13 @@ export default function PrayerScreen(): JSX.Element {
   const CommonStyles = getCommonStyles(scheme);
 
   const [data, setData] = useState<LiturgicalData[] | null>(null);
-  const [readings, setReadings] = useState<{ reading1Teaser?: string, reading2Teaser?: string }>({});
+  const [readings, setReadings] = useState<{
+    date?: string;
+    reading1Title?: string;
+    reading1Teaser?: string;
+    reading2Title?: string;
+    reading2Teaser?: string;
+  }>({});
   const [readingsText, setReadingsText] = useState<{ reading1FullText?: string, reading2FullText?: string }>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -169,40 +177,56 @@ export default function PrayerScreen(): JSX.Element {
             </Text>
           </View>
 
-          {/* Daily Readings */}
-          {/* Epistle Navigation */}
-          <TouchableOpacity
-            style={[styles.contentSection, { flex: 1, marginEnd: 10, backgroundColor: theme.itemBackground }]}
-            onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'epistle', reading: readingsText.reading1FullText } })}
-          >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={CommonStyles.sectionTitle}>Epistle</Text>
-              <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
-            </View>
-            <View style={styles.divider} />
-            {loading ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <Text>{he.decode(readings.reading1Teaser || '')}</Text>
-            )}
-          </TouchableOpacity>
+          {loading ? (
+            <View style={[styles.contentSection, { flex: 1, marginEnd: 10, backgroundColor: theme.itemBackground, justifyContent: 'center', alignItems: 'center', height: 100 }]}>
 
-          {/* Gospel Navigation */}
-          <TouchableOpacity
-            style={[styles.contentSection, { flex: 1, marginStart: 10, backgroundColor: theme.itemBackground }]}
-            onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'gospel', reading: readingsText.reading2FullText } })}
-          >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={CommonStyles.sectionTitle}>Gospel</Text>
-              <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={CommonStyles.sectionTitle}>
+                  Loading Readings...
+                </Text>
+                <View style={styles.divider} />
+
+              </View>
+              <ActivityIndicator size="large" />
+
+
             </View>
-            <View style={styles.divider} />
-            {loading ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <Text>{he.decode(readings.reading2Teaser || '')}</Text>
-            )}
-          </TouchableOpacity>
+          ) : (
+            <>
+              {/* Epistle Navigation */}
+              <TouchableOpacity
+                style={[styles.contentSection, { flex: 1, marginEnd: 10, backgroundColor: theme.itemBackground }]}
+                onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'epistle', reading: readingsText.reading1FullText } })}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={CommonStyles.sectionTitle}>
+                    {readings.reading1Title ? toTitleCase(readings.reading1Title.toLowerCase()) : "Loading..."}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+                </View>
+                <View style={styles.divider} />
+                <Text>{he.decode(readings.reading1Teaser || '')}</Text>
+              </TouchableOpacity>
+
+              {/* Gospel Navigation */}
+              <TouchableOpacity
+                style={[styles.contentSection, { flex: 1, marginStart: 10, backgroundColor: theme.itemBackground }]}
+                onPress={() => router.push({ pathname: '/dailyReadings', params: { type: 'gospel', reading: readingsText.reading2FullText } })}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={CommonStyles.sectionTitle}>
+                    {readings.reading2Title ? toTitleCase(readings.reading2Title.toLowerCase()) : "Loading..."}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+                </View>
+                <View style={styles.divider} />
+                <Text>{he.decode(readings.reading2Teaser || '')}</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+
 
 
           {/* Daily Liturgical Texts Section */}

@@ -10,13 +10,21 @@ interface LiturgicalDay {
     itemId: number;
     feastDayTitle: string;
     fastDesignation: string;
-    reading1Title?: string;
-    reading2Title?: string;
-    reading1Teaser?: string;
-    reading2Teaser?: string;
-    reading1FullText?: string;
-    reading2FullText?: string;
+    reading1Title: string;
+    reading2Title: string;
+    reading1Teaser: string;
+    reading2Teaser: string;
+    reading1FullText: string;
+    reading2FullText: string;
     [key: string]: any;  // Catch any other unexpected fields
+}
+
+interface ReadingTeasers {
+    date: string;
+    reading1Title: string; 
+    reading1Teaser: string; 
+    reading2Title: string; 
+    reading2Teaser: string;
 }
 
 class Antiochian {
@@ -76,9 +84,12 @@ class Antiochian {
         return day;
     }
 
-    getReadingTeasers(day: LiturgicalDay): { reading1Teaser?: string; reading2Teaser?: string } {
+    getReadingTeasers(day: LiturgicalDay): ReadingTeasers {
         return {
+            date: day.calendarDateLong,
+            reading1Title: day.reading1Title,
             reading1Teaser: day.reading1Teaser,
+            reading2Title: day.reading2Title,
             reading2Teaser: day.reading2Teaser,
         };
     }
