@@ -14,7 +14,6 @@ export default function ReadingScreen() {
     const route = useRoute<RouteProp<Record<string, ReadingScreenRouteParams>, string>>();
     const { params } = route;
 
-    console.log("Received Params:", params.type);
     const { reading, type } = params;
 
     return (
