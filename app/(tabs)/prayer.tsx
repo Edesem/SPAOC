@@ -262,7 +262,9 @@ export default function PrayerScreen(): JSX.Element {
                       { opacity: pressed ? 0.6 : 1 },
                     ]}
                   >
-                    <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>{service}</Text>
+                    <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                      {service.replace(/\s*\(PDF\)$/, "")}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
