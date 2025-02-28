@@ -79,63 +79,53 @@ export default function PrayerScreen(): JSX.Element {
   const router = useRouter();
 
   const onRefresh = async () => {
-    setRefreshing(true);
+    setRefreshing(true); // Set refreshing to true
     try {
+      // Fetch all required data in sequence
       const fetchedData = await fetchLiturgicalTexts();
-      if (fetchedData) {
+      const fetchedReadingsTeaser = await fetchReadingsTeaser();
+      const fetchedReadingsText = await fetchReadingsText();
+
+      if (fetchedData && fetchedReadingsTeaser && fetchedReadingsText) {
+        // Set the state with the fetched data
         setData(fetchedData);
+        setReadings(fetchedReadingsTeaser);
+        setReadingsText(fetchedReadingsText);
       } else {
-        setError(new Error('Error fetching liturgical texts'));
+        // Handle any error if data fetching fails
+        setError(new Error('Error fetching data'));
       }
     } catch (err) {
+      // Catch any error during the fetching process
       setError(err as Error);
     }
-    setRefreshing(false);
+    setRefreshing(false); // Set refreshing to false once done
   };
 
+  // Use useEffect for the initial load
   useEffect(() => {
-    fetchLiturgicalTexts()
-      .then(fetchedData => {
-        if (fetchedData) {
+    const loadData = async () => {
+      try {
+        const fetchedData = await fetchLiturgicalTexts();
+        const fetchedReadingsTeaser = await fetchReadingsTeaser();
+        const fetchedReadingsText = await fetchReadingsText();
+
+        if (fetchedData && fetchedReadingsTeaser && fetchedReadingsText) {
           setData(fetchedData);
+          setReadings(fetchedReadingsTeaser);
+          setReadingsText(fetchedReadingsText);
         } else {
-          setError(new Error('Error fetching liturgical texts'));
+          setError(new Error('Error fetching data'));
         }
-        setLoading(false);
-      })
-      .catch((err: Error) => {
-        setError(err);
-        setLoading(false);
-      });
+      } catch (err) {
+        setError(err as Error);
+      }
+      setLoading(false); // Set loading to false when initial data fetch is done
+    };
 
-    fetchReadingsTeaser()
-      .then(fetchedData => {
-        if (fetchedData) {
-          setReadings(fetchedData);
-        } else {
-          setError(new Error('Error fetching liturgical texts'));
-        }
-        setLoading(false);
-      })
-      .catch((err: Error) => {
-        setError(err);
-        setLoading(false);
-      });
+    loadData();
+  }, []); // Empty dependency array to run only once when component mounts
 
-    fetchReadingsText()
-      .then(fetchedData => {
-        if (fetchedData) {
-          setReadingsText(fetchedData);
-        } else {
-          setError(new Error('Error fetching liturgical texts'));
-        }
-        setLoading(false);
-      })
-      .catch((err: Error) => {
-        setError(err);
-        setLoading(false);
-      });
-  }, []);
 
   const organizeData = (data: LiturgicalData[]): OrganizedData => {
     return data.reduce((acc, { publicUrl, typeOfService }) => {
