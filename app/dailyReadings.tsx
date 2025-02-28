@@ -23,9 +23,15 @@ export default function ReadingScreen() {
     const colorScheme = useColorScheme();
     const colors = colorScheme === 'dark' ? Colours.dark : Colours.light;
 
-    useEffect(() => {
-        navigation.setOptions({ title: 'Daily Readings' });
-    }, [navigation]);
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Daily Readings',
+      headerBackTitle: 'Back',
+      headerBackTitleStyle: {
+        color: 'pink', // Set the color of the back button title (if any)
+      },
+    });
+  }, [navigation, title]);
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['left', 'right', 'bottom']}>
