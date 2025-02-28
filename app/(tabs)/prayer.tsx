@@ -160,7 +160,6 @@ export default function PrayerScreen(): JSX.Element {
       <SafeAreaView style={[CommonStyles.container, { flex: 1 }]}>
         <ScrollView
           contentContainerStyle={{
-            flexGrow: 1,
             paddingBottom: insets.bottom + 20,
           }}
           refreshControl={
@@ -178,24 +177,23 @@ export default function PrayerScreen(): JSX.Element {
           </View>
 
           {loading ? (
-            <View style={[styles.contentSection, { flex: 1, marginEnd: 10, backgroundColor: theme.itemBackground, justifyContent: 'center', alignItems: 'center', height: 100 }]}>
-
-
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={CommonStyles.sectionTitle}>
-                  Loading Readings...
+            <View style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground, height: 250 }]}>
+              <Text style={CommonStyles.sectionTitle}>
+                Loading Readings...
+              </Text>
+              <View style={styles.divider} />
+              <View style={styles.centered}>
+                <ActivityIndicator size="large" />
+                <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                  Loading readings...
                 </Text>
-                <View style={styles.divider} />
-
               </View>
-              <ActivityIndicator size="large" />
-
             </View>
           ) : (
             <>
               {/* Epistle Navigation */}
               <TouchableOpacity
-                style={[styles.contentSection, { flex: 1, marginEnd: 10, backgroundColor: theme.itemBackground }]}
+                style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
                 onPress={() => router.push({
                   pathname: '/dailyReadings',
                   params: {
@@ -219,7 +217,7 @@ export default function PrayerScreen(): JSX.Element {
 
               {/* Gospel Navigation */}
               <TouchableOpacity
-                style={[styles.contentSection, { flex: 1, marginStart: 10, backgroundColor: theme.itemBackground }]}
+                style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
                 onPress={() => router.push({
                   pathname: '/dailyReadings',
                   params: {
@@ -243,10 +241,6 @@ export default function PrayerScreen(): JSX.Element {
             </>
           )}
 
-
-
-
-
           {/* Daily Liturgical Texts Section */}
           <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
             <Text style={CommonStyles.sectionTitle}>Daily Liturgical Texts</Text>
@@ -255,7 +249,9 @@ export default function PrayerScreen(): JSX.Element {
             {loading ? (
               <View style={styles.centered}>
                 <ActivityIndicator size="large" />
-                <Text>Loading prayers...</Text>
+                <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                  Loading prayers...
+                </Text>
               </View>
             ) : error ? (
               <Text style={styles.errorText}>Error loading prayers</Text>
@@ -392,7 +388,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexGrow: 1,
-    height: '30%',
+    height: '30%'
   },
   errorText: {
     color: 'red',
