@@ -2,7 +2,7 @@
   "expo": {
     "name": "SPAOC",
     "slug": "St-Paul-Parish-App",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "assets/images/stpauls-wireframe-logo.png",
     "scheme": "myapp",
