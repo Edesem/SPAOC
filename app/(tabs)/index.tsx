@@ -156,22 +156,26 @@ export default function HomeScreen() {
             <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
 
             <View style={styles.container}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
-                {/* Send Test Notification Button on the left */}
-                <Button
-                  title="Send Test Notification"
-                  onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
-                />
 
-                {/* Hamburger Menu on the right */}
-                <TouchableOpacity
-                  onPress={() => router.push('/settings')}
-                  style={{ padding: 10 }}
-                >
-                  <MaterialIcons name="menu" size={28} color="black" />
-                </TouchableOpacity>
-              </View>
-        
+              {/* Test notification + Hamburger menu button */}
+              
+              {/*
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+                  
+                  <Button
+                    title="Send Test Notification"
+                    onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
+                  />
+
+                  
+                  <TouchableOpacity
+                    onPress={() => router.push('/settings')}
+                    style={{ padding: 10 }}
+                  >
+                    <MaterialIcons name="menu" size={28} color="black" />
+                  </TouchableOpacity>
+                </View>
+              */}
 
               <SectionList
                 sections={sectionsWithUpcoming}
