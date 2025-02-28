@@ -37,9 +37,9 @@ export default function RootLayout() {
     <ThemeProvider value={theme}>
       <Stack
         screenOptions={{
-          headerTitleAlign: 'center', // Center the title
-          headerStyle: { backgroundColor: Colours.light.background },
-          headerTintColor: '#333',
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: colorScheme === 'dark' ? Colours.dark.background : Colours.light.background },
+          headerTintColor: colorScheme === 'dark' ? Colours.dark.moreImportantText : '#333',
           headerTitleStyle: { fontWeight: 'bold' },
         }}
       >
@@ -47,8 +47,8 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="eventDetails" />
         <Stack.Screen name="confession" />
-        <Stack.Screen name="settings" options={{ headerShown: false }}/>
-        <Stack.Screen name="dailyReadings"/>
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="dailyReadings" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

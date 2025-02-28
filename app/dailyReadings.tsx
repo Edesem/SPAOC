@@ -1,9 +1,11 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, useColorScheme } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import he from 'he';
 import toTitleCase from 'titlecase';
+import { Colours } from '@/styles/Colours';
+import { useNavigation } from '@react-navigation/native';
 
 // Define the expected route params type
 type ReadingScreenRouteParams = {
@@ -15,15 +17,24 @@ type ReadingScreenRouteParams = {
 export default function ReadingScreen() {
     const route = useRoute<RouteProp<Record<string, ReadingScreenRouteParams>, string>>();
     const { params } = route;
-    
     const { reading, title } = params;
+    const navigation = useNavigation();
+
+    const colorScheme = useColorScheme();
+    const colors = colorScheme === 'dark' ? Colours.dark : Colours.light;
+
+    useEffect(() => {
+        navigation.setOptions({ title: 'Daily Readings' });
+    }, [navigation]);
 
     return (
-        <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['left', 'right', 'bottom']}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Text style={styles.title}>{toTitleCase(title.toLowerCase())}</Text>
-                <View style={styles.divider} />
-                <Text style={styles.text}>{he.decode(reading)}</Text>
+                <Text style={[styles.title, { color: colors.moreImportantText }]}>
+                    {toTitleCase(title.toLowerCase())}
+                </Text>
+                <View style={[styles.divider, { backgroundColor: colors.detail }]} />
+                <Text style={[styles.text, { color: colors.moreImportantText }]}>{he.decode(reading)}</Text>
             </ScrollView>
         </SafeAreaView>
     );
@@ -32,7 +43,6 @@ export default function ReadingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F9F9F9',
     },
     scrollContainer: {
         paddingHorizontal: 20,
@@ -44,11 +54,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 10,
-        color: '#333',
     },
     divider: {
         height: 2,
-        backgroundColor: '#C0C0C0',
         marginVertical: 10,
         width: '80%',
         alignSelf: 'center',
@@ -56,7 +64,6 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 18,
         lineHeight: 26,
-        color: '#444',
         textAlign: 'justify',
     },
 });
