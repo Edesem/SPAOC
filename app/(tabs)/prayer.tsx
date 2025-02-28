@@ -176,6 +176,16 @@ export default function PrayerScreen(): JSX.Element {
             </Text>
           </View>
 
+          {/* Date Title */}
+          {readings.date && (
+            <View style={{ alignItems: 'center', marginVertical: 20 }}>
+              <Text style={[styles.dateTitle, { color: theme.moreImportantText }]}>
+                {toTitleCase(readings.date.toLowerCase())} {/* Display the date from the API */}
+              </Text>
+            </View>
+          )}
+
+          {/* Readings Section */}
           {loading ? (
             <View style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground, height: 250 }]}>
               <Text style={CommonStyles.sectionTitle}>
@@ -462,6 +472,10 @@ const styles = StyleSheet.create({
   },
   chevronIcon: {
     marginTop: 8, // Space between text and chevron
+  },
+  dateTitle: {
+    fontSize: 27,
+    fontWeight: 'bold',
   },
 });
 
