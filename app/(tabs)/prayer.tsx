@@ -212,7 +212,9 @@ export default function PrayerScreen(): JSX.Element {
                   <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
                 </View>
                 <View style={styles.divider} />
-                <Text>{he.decode(readings.reading1Teaser || '')}</Text>
+                <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                  {he.decode(readings.reading1Teaser || '')}
+                </Text>
               </TouchableOpacity>
 
               {/* Gospel Navigation */}
@@ -234,7 +236,9 @@ export default function PrayerScreen(): JSX.Element {
                   <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
                 </View>
                 <View style={styles.divider} />
-                <Text>{he.decode(readings.reading2Teaser || '')}</Text>
+                <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                  {he.decode(readings.reading2Teaser || '')}
+                </Text>
               </TouchableOpacity>
             </>
           )}
