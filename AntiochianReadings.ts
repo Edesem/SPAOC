@@ -12,10 +12,13 @@ interface LiturgicalDay {
     fastDesignation: string;
     reading1Title: string;
     reading2Title: string;
+    reading3Title: string; // Optional third reading title
     reading1Teaser: string;
     reading2Teaser: string;
+    reading3Teaser: string; // Optional third reading teaser
     reading1FullText: string;
     reading2FullText: string;
+    reading3FullText: string; // Optional third reading full text
     [key: string]: any;  // Catch any other unexpected fields
 }
 
@@ -25,6 +28,8 @@ interface ReadingTeasers {
     reading1Teaser: string; 
     reading2Title: string; 
     reading2Teaser: string;
+    reading3Title: string; 
+    reading3Teaser: string;
 }
 
 class Antiochian {
@@ -71,7 +76,7 @@ class Antiochian {
 
         if (response.status !== 200) return null;
 
-        //console.log(`Raw response data for ${dt?.toDateString() || 'default'}:\n`, JSON.stringify(response.data, null, 2));
+        console.log(`Raw response data for ${dt?.toDateString() || 'default'}:\n`, JSON.stringify(response.data, null, 2));
 
         const day: LiturgicalDay = response.data.liturgicalDay;
 
@@ -91,13 +96,16 @@ class Antiochian {
             reading1Teaser: day.reading1Teaser,
             reading2Title: day.reading2Title,
             reading2Teaser: day.reading2Teaser,
+            reading3Title: day.reading3Title || "",  // Handling the optional third reading
+            reading3Teaser: day.reading3Teaser || "", // Handling the optional third teaser
         };
     }
 
-    getReadingTexts(day: LiturgicalDay): { reading1FullText?: string; reading2FullText?: string } {
+    getReadingTexts(day: LiturgicalDay): { reading1FullText?: string; reading2FullText?: string; reading3FullText?: string } {
         return {
             reading1FullText: day.reading1FullText,
             reading2FullText: day.reading2FullText,
+            reading3FullText: day.reading3FullText,  // Optional third reading text
         };
     }
 }

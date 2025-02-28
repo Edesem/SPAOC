@@ -65,6 +65,8 @@ export default function PrayerScreen(): JSX.Element {
     reading1Teaser?: string;
     reading2Title?: string;
     reading2Teaser?: string;
+    reading3Title?: string;  // Add third reading title
+    reading3Teaser?: string; // Add third reading teaser
   }>({});
   const [readingsText, setReadingsText] = useState<{ reading1FullText?: string, reading2FullText?: string }>({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -248,6 +250,33 @@ export default function PrayerScreen(): JSX.Element {
                   {he.decode(readings.reading2Teaser || '')}
                 </Text>
               </TouchableOpacity>
+
+              {/* Third Reading Navigation */}
+              {readings.reading3Title && (
+                <TouchableOpacity
+                  style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
+                  onPress={() => router.push({
+                    pathname: '/dailyReadings',
+                    params: {
+                      type: 'thirdReading',
+                      reading: readingsText.reading3FullText,  // Add full text for third reading
+                      title: readings.reading3Title  // Add title for third reading
+                    }
+                  })}
+                >
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={CommonStyles.sectionTitle}>
+                      {readings.reading3Title ? toTitleCase(readings.reading3Title.toLowerCase()) : "Loading..."}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+                  </View>
+                  <View style={styles.divider} />
+                  <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                    {he.decode(readings.reading3Teaser || '')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
             </>
           )}
 
