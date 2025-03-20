@@ -35,6 +35,31 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
+  const appState = useRef(AppState.currentState);
+  const lastRefreshTime = useRef<number>(Date.now());
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        const now = Date.now();
+        const minutesSinceLastRefresh = (now - lastRefreshTime.current) / (1000 * 60);
+
+        if (minutesSinceLastRefresh > 300) {  // 👈 5 hour threshold
+          onRefresh();
+          lastRefreshTime.current = now;
+        }
+      }
+
+      appState.current = nextAppState;
+    });
+
+    return () => subscription.remove();
+  }, []);
+
+
   const sectionListRef = useRef<SectionList>(null);
 
   const navigation = useNavigation();
