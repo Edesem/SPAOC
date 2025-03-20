@@ -8,6 +8,7 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colours } from '@/styles/Colours';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -62,7 +63,7 @@ export default function TabLayout() {
             Platform.OS === 'ios' ? (
               <IconSymbol name="book.fill" size={28} color={color} />
             ) : (
-              <MaterialIcons name="import_contacts" size={28} color={color} />
+              <MaterialCommunityIcons name="book-open-variant" size={28} color={color} />
             ),
         }}
       />

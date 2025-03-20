@@ -17,6 +17,9 @@ import { faCoffee } from '@fortawesome/free-solid-svg-icons/faCoffee'
 import { faWineGlass } from '@fortawesome/free-solid-svg-icons/faWineGlass'
 import { faBurn } from '@fortawesome/free-solid-svg-icons/faBurn'
 import { faBookOpen } from '@fortawesome/free-solid-svg-icons/faBookOpen'
+import { faMoon } from '@fortawesome/free-solid-svg-icons/faMoon'
+import { faHandsPraying } from '@fortawesome/free-solid-svg-icons/faHandsPraying'
+import { faStar } from '@fortawesome/free-solid-svg-icons/faStar'
 import { fetchReadingsTeaser, fetchReadingsText } from '@/AntiochianReadings';
 import he from 'he';
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -42,13 +45,18 @@ const prayers = [
   { title: 'Censing the Home', subtitle: 'A prayer when you cense your home', url: CENSING_HOME_URL, icon: faBurn },
 ];
 
-
 const services = [
   { title: 'Great Vespers', subtitle: 'An evening sacrifice', url: GREAT_VESPERS_URL, icon: faCloudMoon },
   { title: 'Small Compline', subtitle: 'When a Priest is serving', url: SMALL_COMPLINE_PRIEST_URL, icon: faChurch },
   { title: 'Paraklesis', subtitle: 'To the Theotokos, the Mother of Light', url: PARAKLESIS_URL, icon: faPersonPraying },
   { title: 'Matins', subtitle: 'Morning Offering', url: MATINS_URL, icon: faCloudSun },
   { title: 'Matins - Bilingual', subtitle: 'English and Arabic Matins', url: MATINS_BILINGUAL_URL, icon: faBookOpen },
+];
+
+const lentenServices = [
+  { title: 'Great Compline', subtitle: 'A solemn Lenten evening prayer', url: GREAT_VESPERS_URL, icon: faMoon },
+  { title: 'Presanctified Liturgy', subtitle: 'A Lenten Eucharistic service', url: SMALL_COMPLINE_PRIEST_URL, icon: faHandsPraying },
+  { title: 'Akathist', subtitle: 'A standing hymn of praise, to the Theotokos', url: PARAKLESIS_URL, icon: faStar },
 ];
 
 export default function PrayerScreen(): JSX.Element {
@@ -272,7 +280,7 @@ export default function PrayerScreen(): JSX.Element {
 
           {/* Daily Liturgical Texts Section */}
           <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
-            <Text style={CommonStyles.sectionTitle}>Daily Liturgical Texts</Text>
+            <Text style={CommonStyles.sectionTitle}>Daily Variables</Text>
             <View style={styles.divider} />
 
             {loading ? (
@@ -347,6 +355,40 @@ export default function PrayerScreen(): JSX.Element {
             <View style={styles.divider} />
 
             {services.map((service) => (
+              <TouchableOpacity
+                key={service.title}
+                onPress={() => {
+                  Alert.alert(
+                    "Silence Your Phone!",
+                    "Before opening this prayer, please ensure your phone is on silent.",
+                    [
+                      { text: "OK", onPress: () => Linking.openURL(service.url) }
+                    ]
+                  );
+                }}
+                style={({ pressed }) => [
+                  styles.prayerItem,
+                  { opacity: pressed ? 0.6 : 1 },
+                ]}
+              >
+                <View style={[styles.rowContainer]}>
+                  {/* Render the specific icon for each service */}
+                  <FontAwesomeIcon icon={service.icon} size={35} color={theme.moreImportantText} style={styles.icon} />
+                  <View style={styles.textContainer}>
+                    <Text style={[styles.prayerTitle, { color: theme.moreImportantText, }]}>{service.title}</Text>
+                    <Text style={[styles.prayerSubtitle, { color: theme.lessImportantText, }]}>{service.subtitle}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Lenten Services Section */}
+          <View style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}>
+            <Text style={CommonStyles.sectionTitle}>Lenten Services</Text>
+            <View style={styles.divider} />
+
+            {lentenServices.map((service) => (
               <TouchableOpacity
                 key={service.title}
                 onPress={() => {
@@ -459,8 +501,6 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
     flexDirection: 'row', // Align items horizontally
   },
   icon: {
