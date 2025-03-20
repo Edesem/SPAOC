@@ -1,4 +1,5 @@
 import { API_KEY, FASTING_BASE_URL } from '@/constants/consts';
+import { getCurrentDate } from '@/utils/dateUtils';
 import { useState, useEffect } from 'react';
 
 export const useFastDay = () => {
@@ -22,16 +23,16 @@ export const useFastDay = () => {
         location: item.location,
       }));
 
-      const today = new Date().toISOString().split('T')[0];
+      const today = getCurrentDate();
 
       // Filter for fasting events on today's date
       const todayFastingEvents = formattedEvents.filter((event: any) => {
-        const eventStart = new Date(event.start).toISOString().split('T')[0];
-        const eventEnd = new Date(event.end).toISOString().split('T')[0];
+        const eventStart = new Date(event.start);
+        const eventEnd = new Date(event.end);
 
         return (
-          today < eventEnd &&
-          today >= eventStart &&
+          today.getTime() < eventEnd.getTime() &&
+          today.getTime() >= eventStart.getTime() &&
           [
             'Strict Fast',
             'Fast',

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView, Linking, useColorScheme } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView, Linking, useColorScheme, ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import { ThemedText } from '@/components/ThemedText';
@@ -43,45 +43,47 @@ export default function DonateScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={CommonStyles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <ThemedText type="title" style={CommonStyles.title}>
-            Donate
-          </ThemedText>
-          {/* Bible Verse Below Donate */}
-          <Text style={styles.bibleVerse}>
-            "For where your treasure is, there your heart will be also." - Matthew 6:21
-          </Text>
-        </View>
-
-        {/* Square Payment Section */}
-        <View style={[styles.paymentSection, { backgroundColor: theme.itemBackground }]}>
-          <Text style={CommonStyles.sectionTitle}>Support Us Online</Text>
-          <TouchableOpacity style={[styles.squareButton, { backgroundColor: theme.donateButton }]} onPress={handleSquarePayment}>
-            <Text style={styles.squareButtonText}>Donate via Square</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Bank Details Section */}
-        <View style={[styles.bankDetailsSection, { backgroundColor: theme.itemBackground }]}>
-          <Text style={CommonStyles.sectionTitle}>Bank Transfer Details</Text>
-          <View style={styles.bankDetails}>
-            <Text style={CommonStyles.detailText}>Bank Name: {BANK_NAME}</Text>
-            <Text style={CommonStyles.detailText}>Account Number: {ACCOUNT_NO}</Text>
-            <Text style={CommonStyles.detailText}>BSB: {BSB}</Text>
+        <ScrollView>
+          {/* Header */}
+          <View style={styles.header}>
+            <ThemedText type="title" style={CommonStyles.title}>
+              Donate
+            </ThemedText>
+            {/* Bible Verse Below Donate */}
+            <Text style={styles.bibleVerse}>
+              "For where your treasure is, there your heart will be also." - Matthew 6:21
+            </Text>
           </View>
-          <TouchableOpacity style={[styles.copyButton, { backgroundColor: theme.primary }]} onPress={handleCopyDetails}>
-            <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy'}</Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* Image */}
-        <View style={styles.imageContainer}>
-          <Image
-            source={require('../../assets/images/orthodox/icxc.png')} // Adjust the path to your image
-            style={[styles.bottomImage, { tintColor: theme.primary }]}
-          />
-        </View>
+          {/* Square Payment Section */}
+          <View style={[styles.paymentSection, { backgroundColor: theme.itemBackground }]}>
+            <Text style={CommonStyles.sectionTitle}>Support Us Online</Text>
+            <TouchableOpacity style={[styles.squareButton, { backgroundColor: theme.donateButton }]} onPress={handleSquarePayment}>
+              <Text style={styles.squareButtonText}>Donate via Square</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Bank Details Section */}
+          <View style={[styles.bankDetailsSection, { backgroundColor: theme.itemBackground }]}>
+            <Text style={CommonStyles.sectionTitle}>Bank Transfer Details</Text>
+            <View style={styles.bankDetails}>
+              <Text style={CommonStyles.detailText}>Bank Name: {BANK_NAME}</Text>
+              <Text style={CommonStyles.detailText}>Account Number: {ACCOUNT_NO}</Text>
+              <Text style={CommonStyles.detailText}>BSB: {BSB}</Text>
+            </View>
+            <TouchableOpacity style={[styles.copyButton, { backgroundColor: theme.primary }]} onPress={handleCopyDetails}>
+              <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy'}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Image */}
+          <View style={styles.imageContainer}>
+            <Image
+              source={require('../../assets/images/orthodox/icxc.png')} // Adjust the path to your image
+              style={[styles.bottomImage, { tintColor: theme.primary }]}
+            />
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
