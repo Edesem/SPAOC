@@ -8,6 +8,7 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colours } from '@/styles/Colours';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -52,6 +53,18 @@ export default function TabLayout() {
             ) : (
               <MaterialIcons name="event" size={28} color={color} />
             )
+        }}
+      />
+      <Tabs.Screen
+        name="prayer"
+        options={{
+          title: 'Prayer',
+          tabBarIcon: ({ color }) =>
+            Platform.OS === 'ios' ? (
+              <IconSymbol name="book.fill" size={28} color={color} />
+            ) : (
+              <MaterialCommunityIcons name="book-open-variant" size={28} color={color} />
+            ),
         }}
       />
       <Tabs.Screen

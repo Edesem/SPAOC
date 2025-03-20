@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,7 +10,9 @@ import {
   useColorScheme,
   Image,
   AppState,
-  RefreshControl
+  RefreshControl,
+  Button,
+  TouchableOpacity
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { renderItem } from '@/components/RenderItem';
@@ -20,6 +22,10 @@ import { useFastDay } from '@/hooks/useFastDay';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDailySaint } from '@/hooks/useDailySaint';
 import { useEvents } from '@/hooks/useEvents';
+import { requestNotificationPermissions, scheduleNotification, setupNotificationListeners } from '@/notifications';
+import { MaterialIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,6 +35,27 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
+  const sectionListRef = useRef<SectionList>(null);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', (e) => {
+      sectionListRef.current?.scrollToLocation({
+        sectionIndex: 0,
+        itemIndex: 0,
+        animated: true,
+      });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
+    requestNotificationPermissions();
+    setupNotificationListeners();
+  }, []);
+
   const [refreshing, setRefreshing] = useState(false);
 
   const colorScheme = useColorScheme();
@@ -136,6 +163,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+
         {fastLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4f4f5b" />
@@ -143,8 +171,31 @@ export default function HomeScreen() {
         ) :
           <View style={styles.verticalBarContainer}>
             <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
+
             <View style={styles.container}>
+
+              {/* Test notification + Hamburger menu button */}
+
+              {/*
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+                  
+                  <Button
+                    title="Send Test Notification"
+                    onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
+                  />
+
+                  
+                  <TouchableOpacity
+                    onPress={() => router.push('/settings')}
+                    style={{ padding: 10 }}
+                  >
+                    <MaterialIcons name="menu" size={28} color="black" />
+                  </TouchableOpacity>
+                </View>
+              */}
+
               <SectionList
+                ref={sectionListRef}
                 sections={sectionsWithUpcoming}
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}

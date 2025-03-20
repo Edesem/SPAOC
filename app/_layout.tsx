@@ -1,18 +1,22 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-
+import { TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/styles/Colours';
+import ReadingDetailScreen from './ReadingDetailScreen';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter(); // Use router for navigation
+
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -31,19 +35,20 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={theme}>
-      <Stack>
-        <Stack
-          screenOptions={{
-            headerTitleAlign: 'center', // Center the title
-            headerStyle: { backgroundColor: Colours.light.background },
-            headerTintColor: '#333',
-            headerTitleStyle: { fontWeight: 'bold' },
-          }}
-        />
+      <Stack
+        screenOptions={{
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: colorScheme === 'dark' ? Colours.dark.background : Colours.light.background },
+          headerTintColor: colorScheme === 'dark' ? Colours.dark.moreImportantText : '#333',
+          headerTitleStyle: { fontWeight: 'bold' },
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="eventDetails" />
         <Stack.Screen name="confession" />
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="dailyReadings" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

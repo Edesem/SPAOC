@@ -1,0 +1,214 @@
+import { View, Text, Switch, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colours } from '@/styles/Colours';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import RNPickerSelect from 'react-native-picker-select';
+//import DateTimePicker from '@react-native-community/datetimepicker';
+
+export default function SettingsScreen() {
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+  const router = useRouter();
+
+  const [themeSelection, setThemeSelection] = useState('auto');
+  const [fontSize, setFontSize] = useState('medium');
+  const [startOfWeek, setStartOfWeek] = useState('sunday');
+  const [timezone, setTimezone] = useState('UTC');
+  const [calendarNotifications, setCalendarNotifications] = useState<{ [key: string]: boolean }>({});
+  const [notificationTime, setNotificationTime] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const toggleCalendarNotification = (calendar: string) => {
+    setCalendarNotifications((prev) => ({
+      ...prev,
+      [calendar]: !prev[calendar],
+    }));
+  };
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+        <ScrollView style={styles.container}>
+          {/* Back Button */}
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <MaterialIcons name="arrow-back" size={28} color={theme.primary} />
+          </TouchableOpacity>
+
+          {/* Settings Header */}
+          <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
+
+          {/* Theme Selection */}
+          <RNPickerSelect
+              onValueChange={(value: string) => {
+                setThemeSelection(value);
+                console.log('Selected theme:', value); 
+              }}
+              value={themeSelection}
+              items={[
+                { label: 'Light', value: 'light' },
+                { label: 'Dark', value: 'dark' },
+                { label: 'Auto', value: 'auto' },
+              ]}
+              style={pickerSelectStyles}
+            />
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Theme</Text>
+            <RNPickerSelect
+              onValueChange={(value: string) => {
+                setThemeSelection(value);
+                console.log('Selected theme:', value); 
+              }}
+              value={themeSelection}
+              items={[
+                { label: 'Light', value: 'light' },
+                { label: 'Dark', value: 'dark' },
+                { label: 'Auto', value: 'auto' },
+              ]}
+              style={pickerSelectStyles}
+            />
+
+          </View>
+
+          {/* Start of Week */}
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Start of the Week</Text>
+            <RNPickerSelect
+              onValueChange={(value: string) => setStartOfWeek(value)}
+              value={startOfWeek}
+              items={[
+                { label: 'Sunday', value: 'sunday' },
+                { label: 'Monday', value: 'monday' },
+              ]}
+              style={pickerSelectStyles}
+            />
+          </View>
+
+          {/* Font Size Selection */}
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Font Size</Text>
+            <RNPickerSelect
+              onValueChange={(value: string) => setFontSize(value)}
+              value={fontSize}
+              items={[
+                { label: 'Small', value: 'small' },
+                { label: 'Medium', value: 'medium' },
+                { label: 'Large', value: 'large' },
+              ]}
+              style={pickerSelectStyles}
+            />
+          </View>
+
+          {/* Timezone Selection */}
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Timezone</Text>
+            <RNPickerSelect
+              onValueChange={(value: string) => setTimezone(value)}
+              value={timezone}
+              items={[
+                { label: 'UTC', value: 'UTC' },
+                { label: 'GMT', value: 'GMT' },
+                { label: 'EST', value: 'EST' },
+                { label: 'PST', value: 'PST' },
+                { label: 'CST', value: 'CST' },
+              ]}
+              style={pickerSelectStyles}
+            />
+          </View>
+
+          {/* Calendar Notification Toggles */}
+          {[
+            'Youth Calendar',
+            'Church Calendar',
+            'Family Calendar',
+            'Ladies Calendar',
+            'Parish Calendar',
+            'Seniors Calendar',
+            'Weekly Calendar',
+            'Playgroup Calendar',
+            'Fellowship Calendar',
+          ].map((calendar) => (
+            <View style={styles.settingItem} key={calendar}>
+              <Text style={[styles.settingText, { color: theme.moreImportantText }]}>{calendar}</Text>
+              <Switch
+                value={calendarNotifications[calendar] || false}
+                onValueChange={() => toggleCalendarNotification(calendar)}
+                trackColor={{ false: '#767577', true: '#34c658' }}
+                thumbColor="#fff"
+              />
+            </View>
+          ))}
+
+          {/* Notification Time Picker */}
+          <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Notify Before Event</Text>
+            <Text style={[styles.settingText, { color: theme.primary }]}>
+              {notificationTime.getHours()}:{notificationTime.getMinutes().toString().padStart(2, '0')}
+            </Text>
+          </TouchableOpacity>
+
+          {showTimePicker && (
+            <DateTimePicker
+              value={notificationTime}
+              mode="time"
+              display="default"
+              onChange={(event: any, selectedTime?: Date) => {
+                setShowTimePicker(false);
+                if (selectedTime) setNotificationTime(selectedTime);
+              }}
+            />
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  backButton: {
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  settingText: {
+    fontSize: 18,
+  },
+});
+
+const pickerSelectStyles = {
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+  },
+};
