@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl, Alert, AppState } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
@@ -60,6 +60,30 @@ const lentenServices = [
 ];
 
 export default function PrayerScreen(): JSX.Element {
+  const appState = useRef(AppState.currentState);
+  const lastRefreshTime = useRef<number>(Date.now());
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        const now = Date.now();
+        const minutesSinceLastRefresh = (now - lastRefreshTime.current) / (1000 * 60);
+
+        if (minutesSinceLastRefresh > 300) {  // 👈 5 hour threshold
+          onRefresh();
+          lastRefreshTime.current = now;
+        }
+      }
+
+      appState.current = nextAppState;
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === 'dark' ? 'dark' : 'light';
