@@ -76,7 +76,7 @@ class Antiochian {
 
         if (response.status !== 200) return null;
 
-        console.log(`Raw response data for ${dt?.toDateString() || 'default'}:\n`, JSON.stringify(response.data, null, 2));
+        //console.log(`Raw response data for ${dt?.toDateString() || 'default'}:\n`, JSON.stringify(response.data, null, 2));
 
         const day: LiturgicalDay = response.data.liturgicalDay;
 
@@ -92,20 +92,24 @@ class Antiochian {
     getReadingTeasers(day: LiturgicalDay): ReadingTeasers {
         return {
             date: day.calendarDateLong,
-            reading1Title: day.reading1Title,
-            reading1Teaser: day.reading1Teaser,
-            reading2Title: day.reading2Title,
-            reading2Teaser: day.reading2Teaser,
-            reading3Title: day.reading3Title || "",  // Handling the optional third reading
-            reading3Teaser: day.reading3Teaser || "", // Handling the optional third teaser
+            reading1Title: day.reading1Title.trimStart(),
+            reading1Teaser: day.reading1Teaser.trimStart(),
+            reading2Title: day.reading2Title.trimStart(),
+            reading2Teaser: day.reading2Teaser.trimStart(),
+            reading3Title: (day.reading3Title || "").trimStart(),
+            reading3Teaser: (day.reading3Teaser || "").trimStart(),
         };
-    }
+    }    
 
-    getReadingTexts(day: LiturgicalDay): { reading1FullText?: string; reading2FullText?: string; reading3FullText?: string } {
+    getReadingTexts(day: LiturgicalDay): {
+        reading1FullText?: string;
+        reading2FullText?: string;
+        reading3FullText?: string;
+    } {
         return {
-            reading1FullText: day.reading1FullText,
-            reading2FullText: day.reading2FullText,
-            reading3FullText: day.reading3FullText,  // Optional third reading text
+            reading1FullText: day.reading1FullText?.trimStart(),
+            reading2FullText: day.reading2FullText?.trimStart(),
+            reading3FullText: day.reading3FullText?.trimStart(),
         };
     }
 }
