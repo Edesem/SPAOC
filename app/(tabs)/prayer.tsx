@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexGrow: 1,
-    height: '30%'
+    height: 150,
   },
   errorText: {
     color: 'red',
