@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
 import { fetchLiturgicalTexts } from '@/AntiochianApi';
-import { GREAT_VESPERS_URL, SMALL_COMPLINE_URL, SMALL_COMPLINE_PRIEST_URL, PARAKLESIS_URL, MATINS_BILINGUAL_URL, MATINS_URL, MORNING_PRAYERS_URL, PREPARATION_FOR_COMMUNION_URL, CENSING_HOME_URL } from '@/constants/consts';
+import { GREAT_VESPERS_URL, SMALL_COMPLINE_URL, SMALL_COMPLINE_PRIEST_URL, PARAKLESIS_URL, MATINS_BILINGUAL_URL, MATINS_URL, MORNING_PRAYERS_URL, PREPARATION_FOR_COMMUNION_URL, CENSING_HOME_URL, GREAT_COMPLINE_URL, PRESANCTIFIED_LITURGY_URL, AKATHIST_URL } from '@/constants/consts';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPersonPraying } from '@fortawesome/free-solid-svg-icons/faPersonPraying'
@@ -54,9 +54,9 @@ const services = [
 ];
 
 const lentenServices = [
-  { title: 'Great Compline', subtitle: 'A solemn Lenten evening prayer', url: GREAT_VESPERS_URL, icon: faMoon },
-  { title: 'Presanctified Liturgy', subtitle: 'A Lenten Eucharistic service', url: SMALL_COMPLINE_PRIEST_URL, icon: faHandsPraying },
-  { title: 'Akathist', subtitle: 'A standing hymn of praise, to the Theotokos', url: PARAKLESIS_URL, icon: faStar },
+  { title: 'Great Compline', subtitle: 'A solemn Lenten evening prayer', url: GREAT_COMPLINE_URL, icon: faMoon },
+  { title: 'Presanctified Liturgy', subtitle: 'A Lenten Eucharistic service', url: PRESANCTIFIED_LITURGY_URL, icon: faHandsPraying },
+  { title: 'Akathist', subtitle: 'A standing hymn of praise, to the Theotokos', url: AKATHIST_URL, icon: faStar },
 ];
 
 export default function PrayerScreen(): JSX.Element {
