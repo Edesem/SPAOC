@@ -118,6 +118,8 @@ export default function HomeScreen() {
 
   console.log(events)
 
+
+  // Fasting Logic
   let majorFastText = null;
   let minorFastText = null;
 
