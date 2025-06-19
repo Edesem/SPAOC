@@ -68,12 +68,11 @@ export default function DonateScreen() {
             <Text style={CommonStyles.sectionTitle}>Bank Transfer Details</Text>
             <View style={styles.bankDetails}>
               <Text style={CommonStyles.detailText}>Bank Name: {BANK_NAME}</Text>
+              
               <Text style={CommonStyles.detailText}>Account Number: {ACCOUNT_NO}</Text>
               <Text style={CommonStyles.detailText}>BSB: {BSB}</Text>
             </View>
-            <TouchableOpacity style={[styles.copyButton, { backgroundColor: theme.primary }]} onPress={handleCopyDetails}>
-              <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy'}</Text>
-            </TouchableOpacity>
+
           </View>
 
           {/* Image */}
