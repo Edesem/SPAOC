@@ -44,6 +44,8 @@
     "fs": "^0.0.1-security",
     "he": "^1.2.0",
     "html-entities": "^2.5.2",
+    "i": "^0.3.7",
+    "npm": "^11.4.2",
     "react": "19.0.0",
     "react-native": "0.79.4",
     "react-native-fs": "^2.20.0",

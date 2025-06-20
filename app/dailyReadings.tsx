@@ -35,12 +35,12 @@ export default function ReadingScreen() {
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['left', 'right', 'bottom']}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContainer}>
                 <Text style={[styles.title, { color: colors.moreImportantText }]}>
                     {toTitleCase(title.toLowerCase())}
                 </Text>
                 <View style={[styles.divider, { backgroundColor: colors.detail }]} />
-                <Text style={[styles.text, { color: colors.moreImportantText }]}>{he.decode(reading)}</Text>
+                <Text selectable={true} style={[styles.text, { color: colors.moreImportantText }]}>{he.decode(reading)}</Text>
             </ScrollView>
         </SafeAreaView>
     );
