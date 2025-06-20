@@ -1,4 +1,4 @@
-import { ItemProps } from "@/global";
+import { ItemProps } from "@/types/global";
 import { useRouter } from "expo-router";
 import { TouchableOpacity, View, StyleSheet, Text, useColorScheme } from "react-native";
 import * as Haptics from 'expo-haptics';

@@ -1,4 +1,4 @@
-import { EventData } from "@/global";
+import { EventData } from "@/types/global";
 
 export const formatDateHeading = (date: Date) => {
     const today = new Date();

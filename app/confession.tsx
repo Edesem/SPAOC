@@ -1,5 +1,5 @@
 // screens/EventDetailsScreen.js
-import { EventData } from '@/global';
+import { EventData } from '@/types/global';
 import { Colours } from '@/styles/Colours';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';

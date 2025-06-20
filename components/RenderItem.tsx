@@ -1,4 +1,4 @@
-import { EventData } from "@/global"
+import { EventData } from "@/types/global"
 import { EventItem } from "./EventItem";
 
 export const renderItem = ({ item }: { item: EventData }) => (

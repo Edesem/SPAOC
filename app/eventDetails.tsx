@@ -1,4 +1,4 @@
-import { EventData } from '@/global';
+import { EventData } from '@/types/global';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking, Platform, Dimensions } from 'react-native';
