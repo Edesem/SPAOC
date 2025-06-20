@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { API_KEY, YOUTH_EVENTS_BASE_URL, WEEKLY_EVENTS_BASE_URL, CHURCH_EVENTS_BASE_URL, FAMILY_EVENTS_BASE_URL, LADIES_EVENTS_BASE_URL, PARISH_COUNCIL_EVENTS_BASE_URL, SENIORS_EVENTS_BASE_URL, PLAYGROUP_EVENTS_BASE_URL, FELLOWSHIP_EVENTS_BASE_URL } from '@/constants/consts';
-import { EventData } from '@/global';
+import { EventData } from '@/types/global';
 import { groupEventsByDay } from '@/utils/dateUtils';
 
 const EVENT_SOURCES = [

@@ -4,7 +4,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
-import { fetchLiturgicalTexts } from '@/AntiochianApi';
+import { fetchLiturgicalTexts } from '@/api/AntiochianApi';
 import { GREAT_VESPERS_URL, SMALL_COMPLINE_URL, SMALL_COMPLINE_PRIEST_URL, PARAKLESIS_URL, MATINS_BILINGUAL_URL, MATINS_URL, MORNING_PRAYERS_URL, PREPARATION_FOR_COMMUNION_URL, CENSING_HOME_URL, GREAT_COMPLINE_URL, PRESANCTIFIED_LITURGY_URL, AKATHIST_URL } from '@/constants/consts';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
@@ -20,12 +20,12 @@ import { faBookOpen } from '@fortawesome/free-solid-svg-icons/faBookOpen'
 import { faMoon } from '@fortawesome/free-solid-svg-icons/faMoon'
 import { faHandsPraying } from '@fortawesome/free-solid-svg-icons/faHandsPraying'
 import { faStar } from '@fortawesome/free-solid-svg-icons/faStar'
-import { fetchReadingsTeaser, fetchReadingsText } from '@/AntiochianReadings';
 import he from 'he';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { router, useNavigation, useRouter } from 'expo-router';
 import titlecase from "titlecase";
 import toTitleCase from 'titlecase';
+import { fetchReadingsTeaser, fetchReadingsText } from '@/api/AntiochianReadings';
 
 interface LiturgicalData {
   publicUrl: string;

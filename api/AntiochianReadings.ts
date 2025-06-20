@@ -1,5 +1,5 @@
+import { getCurrentDate } from '@/utils/dateUtils';
 import axios, { AxiosInstance } from 'axios';
-import { getCurrentDate } from './utils/dateUtils';
 
 const HOST = 'www.antiochian.org';
 const CLIENT_ID = 'antiochian_api';
