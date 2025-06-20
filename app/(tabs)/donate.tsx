@@ -89,7 +89,7 @@ export default function DonateScreen() {
               <View style={styles.copyButton}>
                 <View style={styles.copyButtonContainer}>
                   <Text style={CommonStyles.detailText}>Bank Name</Text>
-                  <Text style={styles.copyValueText}>{BANK_NAME}</Text>
+                  <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{BANK_NAME}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(BANK_NAME, 'Bank Name')} style={{ padding: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
@@ -99,7 +99,7 @@ export default function DonateScreen() {
               <View style={styles.copyButton}>
                 <View style={styles.copyButtonContainer}>
                   <Text style={CommonStyles.detailText}>Account Number</Text>
-                  <Text style={styles.copyValueText}>{ACCOUNT_NO}</Text>
+                  <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{ACCOUNT_NO}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(ACCOUNT_NO, "Account Number")} style={{ padding: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
@@ -109,7 +109,7 @@ export default function DonateScreen() {
               <View style={styles.copyButton}>
                 <View style={styles.copyButtonContainer}>
                   <Text style={CommonStyles.detailText}>BSB</Text>
-                  <Text style={styles.copyValueText}>{BSB}</Text>
+                  <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{BSB}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(BSB, "BSB")} style={{ padding: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
   copyValueText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#000', // black text (or theme.text if you have one)
     paddingHorizontal: 10,
   },
   copyButtonContainer: {
