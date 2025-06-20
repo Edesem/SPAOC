@@ -7,7 +7,9 @@ import { getCommonStyles } from '@/styles/CommonStyles'; // Use dynamic styles
 import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from '@/constants/consts';
 import { setStringAsync } from 'expo-clipboard';
 import { Haptic } from '@/hooks/hapticPress';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colours } from '@/styles/Colours';
+import Toast from 'react-native-toast-message';
 
 export default function DonateScreen() {
   const colorScheme = useColorScheme(); // Get the current system theme (light or dark)
@@ -17,14 +19,29 @@ export default function DonateScreen() {
   const CommonStyles = getCommonStyles(scheme); // Get the dynamic styles
 
   const [copied, setCopied] = useState(false); // Track if the details are copied
+  const [copiedMessage, setCopiedMessage] = useState('');
 
-  const handleCopyDetails = async () => {
-    const bankDetails = `${BANK_NAME}\n${ACCOUNT_NO}\n${BSB}`;
+  const handleCopyDetails = async (textToCopy: string, label: string) => {
     Haptic.press();
+
+    await setStringAsync(textToCopy);
+
+    setCopiedMessage(`${label} copied`);
+
+    Toast.show({
+      type: 'success',
+      text1: copiedMessage,
+      visibilityTime: 1500,   // duration in ms
+    });
+  };
+
+  const handleCopyAllDetails = async () => {
+    Haptic.press();
+    const bankDetails = `${BANK_NAME}\n${ACCOUNT_NO}\n${BSB}`;
 
     await setStringAsync(bankDetails);
 
-    setCopied(true); // Update the state to show "Copied!"
+    setCopied(true);
   };
 
   const handleSquarePayment = () => {
@@ -66,14 +83,44 @@ export default function DonateScreen() {
           {/* Bank Details Section */}
           <View style={[styles.bankDetailsSection, { backgroundColor: theme.itemBackground }]}>
             <Text style={CommonStyles.sectionTitle}>Bank Transfer Details</Text>
+
             <View style={styles.bankDetails}>
-              <Text style={CommonStyles.detailText}>Bank Name: {BANK_NAME}</Text>
-              <Text style={CommonStyles.detailText}>Account Number: {ACCOUNT_NO}</Text>
-              <Text style={CommonStyles.detailText}>BSB: {BSB}</Text>
+
+              <View style={styles.copyButton}>
+                <View style={styles.copyButtonContainer}>
+                  <Text style={CommonStyles.detailText}>Bank Name</Text>
+                  <Text style={styles.copyValueText}>{BANK_NAME}</Text>
+                </View>
+                <TouchableOpacity onPress={() => handleCopyDetails(BANK_NAME, 'Bank Name')} style={{ padding: 10 }}>
+                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.copyButton}>
+                <View style={styles.copyButtonContainer}>
+                  <Text style={CommonStyles.detailText}>Account Number</Text>
+                  <Text style={styles.copyValueText}>{ACCOUNT_NO}</Text>
+                </View>
+                <TouchableOpacity onPress={() => handleCopyDetails(ACCOUNT_NO, "Account Number")} style={{ padding: 10 }}>
+                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.copyButton}>
+                <View style={styles.copyButtonContainer}>
+                  <Text style={CommonStyles.detailText}>BSB</Text>
+                  <Text style={styles.copyValueText}>{BSB}</Text>
+                </View>
+                <TouchableOpacity onPress={() => handleCopyDetails(BSB, "BSB")} style={{ padding: 10 }}>
+                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity style={[styles.copyAllButton, { backgroundColor: theme.primary }]} onPress={() => handleCopyAllDetails()}>
+                <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy All'}</Text>
+              </TouchableOpacity>
+
             </View>
-            <TouchableOpacity style={[styles.copyButton, { backgroundColor: theme.primary }]} onPress={handleCopyDetails}>
-              <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy'}</Text>
-            </TouchableOpacity>
           </View>
 
           {/* Image */}
@@ -84,6 +131,13 @@ export default function DonateScreen() {
             />
           </View>
         </ScrollView>
+
+        {copiedMessage ? (
+          <View style={styles.copiedAlert}>
+            <Text style={styles.copiedAlertText}>{copiedMessage}</Text>
+          </View>
+        ) : null}
+
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -137,9 +191,24 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   copyButton: {
-    paddingVertical: 12,
+    flexDirection: 'row',
+    paddingVertical: 5,
+  },
+  copyAllButton: {
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     borderRadius: 10,
     alignItems: 'center',
+    marginTop: 20,
+  },
+  copyValueText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#000', // black text (or theme.text if you have one)
+    paddingHorizontal: 10,
+  },
+  copyButtonContainer: {
+    flex: 1,
   },
   copyButtonText: {
     color: 'white',
@@ -158,5 +227,25 @@ const styles = StyleSheet.create({
     marginBottom: 10, // Adjust the space below the image if needed
     flex: 1, // Allows image container to take remaining space
     justifyContent: 'center', // Aligns the image in the middle
+  },
+
+  copiedAlert: {
+    position: 'absolute',
+    bottom: 30,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginHorizontal: 40,
+    borderRadius: 20,
+    zIndex: 1000,
+  },
+  copiedAlertText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
