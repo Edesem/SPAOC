@@ -47,7 +47,7 @@ export default function HomeScreen() {
         const now = Date.now();
         const minutesSinceLastRefresh = (now - lastRefreshTime.current) / (1000 * 60);
 
-        if (minutesSinceLastRefresh > 300) {  // 👈 5 hour threshold
+        if (minutesSinceLastRefresh > 300) {  // 5 hour threshold
           onRefresh();
           lastRefreshTime.current = now;
         }
