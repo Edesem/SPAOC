@@ -6,18 +6,35 @@ const CLIENT_ID = 'antiochian_api';
 const CLIENT_SECRET = 'TAxhx@9tH(l^MgQ9FWE8}T@NWUT9U)';
 
 interface LiturgicalDay {
-  originalCalendarDate: string;
-  itemId: number;
-  feastDayTitle: string;
-  fastDesignation: string;
-  reading1Title?: string;
-  reading2Title?: string;
-  reading3Title?: string;
+    originalCalendarDate: string;
+    itemId: number;
+    feastDayTitle: string;
+    fastDesignation: string;
+    reading1Title: string;
+    reading2Title: string;
+    reading3Title: string; // Optional third reading title
+    reading1Teaser: string;
+    reading2Teaser: string;
+    reading3Teaser: string; // Optional third reading teaser
+    reading1FullText: string;
+    reading2FullText: string;
+    reading3FullText: string; // Optional third reading full text
+    [key: string]: any;  // Catch any other unexpected fields
 }
 
 interface LiturgicalText {
   publicUrl: string;
   typeOfService: string;
+}
+
+interface ReadingTeasers {
+    date: string;
+    reading1Title: string;
+    reading1Teaser: string;
+    reading2Title: string;
+    reading2Teaser: string;
+    reading3Title: string;
+    reading3Teaser: string;
 }
 
 class Antiochian {
@@ -100,11 +117,54 @@ class Antiochian {
     const texts = await this.getLiturgicalText(date);
     return { day, texts };
   }
+
+  public getReadingTeasers(day: LiturgicalDay): ReadingTeasers {
+    return {
+      date: day.calendarDateLong,
+      reading1Title: day.reading1Title.trimStart(),
+      reading1Teaser: day.reading1Teaser.trimStart(),
+      reading2Title: day.reading2Title.trimStart(),
+      reading2Teaser: day.reading2Teaser.trimStart(),
+      reading3Title: (day.reading3Title || "").trimStart(),
+      reading3Teaser: (day.reading3Teaser || "").trimStart(),
+    };
+  }
+
+  public getReadingTexts(day: LiturgicalDay): {
+    reading1FullText?: string;
+    reading2FullText?: string;
+    reading3FullText?: string;
+  } {
+    return {
+      reading1FullText: day.reading1FullText?.trimStart(),
+      reading2FullText: day.reading2FullText?.trimStart(),
+      reading3FullText: day.reading3FullText?.trimStart(),
+    };
+  }
+
+  public getFeastTitle(day: LiturgicalDay): {
+    feastDayTitle?: string;
+  } {
+    return {
+      feastDayTitle: day.feastDayTitle?.trimStart(),
+    };
+  }
 }
 
-export const fetchLiturgicalTexts = async (date?: Date) => {
-  const session = new Antiochian();
-  await session.authenticate();
+const antiochianInstance = new Antiochian();
+
+export const fetchAntiochian = async (date?: Date) => {
+  if (!antiochianInstance['idAnchor']) {
+    await antiochianInstance.authenticate();
+  }
   const targetDate = date ?? getCurrentDate();
-  return session.getLiturgicalText(targetDate);
+  return antiochianInstance.getLiturgicalDay(targetDate);
 };
+
+export const getLiturgicalTexts = (day: LiturgicalDay) => antiochianInstance.getLiturgicalText(day);
+export const getReadingTeasers = (day: LiturgicalDay) => antiochianInstance.getReadingTeasers(day);
+export const getReadingTexts = (day: LiturgicalDay) => antiochianInstance.getReadingTexts(day);
+export const getFeastTitle = (day: LiturgicalDay) => antiochianInstance.getFeastTitle(day);
+
+// low-level access instance
+export default antiochianInstance;
