@@ -24,6 +24,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useRouter } from 'expo-router';
 import toTitleCase from 'titlecase';
 import { fetchReadingsTeaser, fetchReadingsText } from '@/api/AntiochianReadings';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface LiturgicalData {
   publicUrl: string;
@@ -107,6 +108,38 @@ export default function PrayerScreen(): JSX.Element {
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const router = useRouter();
+
+  const [showPicker, setShowPicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const onDateChange = async (event: any, date?: Date) => {
+    setShowPicker(false);
+    if (date) {
+      setSelectedDate(date);
+      setLoading(true);
+
+      try {
+        // You’ll need to adapt your API to accept a date string if it doesn't already
+        const fetchedData = await fetchLiturgicalTexts(date);
+        const fetchedReadingsTeaser = await fetchReadingsTeaser(date);
+        const fetchedReadingsText = await fetchReadingsText(date);
+
+        if (fetchedData && fetchedReadingsTeaser && fetchedReadingsText) {
+          // Set the state with the fetched data
+          setData(fetchedData);
+          setReadings(fetchedReadingsTeaser);
+          setReadingsText(fetchedReadingsText);
+        } else {
+          // Handle any error if data fetching fails
+          setError(new Error('Error fetching data'));
+        }
+      } catch (err) {
+        setError(err as Error);
+      }
+
+      setLoading(false);
+    }
+  };
 
   const onRefresh = async () => {
     setRefreshing(true); // Set refreshing to true
@@ -197,6 +230,33 @@ export default function PrayerScreen(): JSX.Element {
               "Pray without ceasing."{'\n'} - 1 Thessalonians 5:17
             </Text>
           </View>
+
+          {/* Date Time Picker */}
+          <View style={{ alignItems: 'center', marginVertical: 10 }}>
+            <TouchableOpacity onPress={() => setShowPicker(true)} style={{
+              backgroundColor: theme.itemBackground,
+              padding: 10,
+              borderRadius: 10,
+              shadowColor: 'black',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              elevation: 3,
+            }}>
+              <Text style={{ color: theme.moreImportantText, fontSize: 16 }}>
+                Select Date
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {showPicker && (
+            <DateTimePicker
+              value={selectedDate}
+              mode="date"
+              display="default"
+              onChange={onDateChange}
+            />
+          )}
+
 
           {/* Date Title */}
           {readings.date && (

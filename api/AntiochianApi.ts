@@ -102,8 +102,9 @@ class Antiochian {
   }
 }
 
-export const fetchLiturgicalTexts = async () => {
+export const fetchLiturgicalTexts = async (date?: Date) => {
   const session = new Antiochian();
   await session.authenticate();
-  return session.getLiturgicalText(getCurrentDate());
+  const targetDate = date ?? getCurrentDate();
+  return session.getLiturgicalText(targetDate);
 };

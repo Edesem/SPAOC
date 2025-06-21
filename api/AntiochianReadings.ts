@@ -114,19 +114,21 @@ class Antiochian {
     }
 }
 
-export const fetchReadingsTeaser = async () => {
+export const fetchReadingsTeaser = async (date?: Date) => {
     const session = new Antiochian();
     await session.authenticate();
-    const day = await session.getLiturgicalDay(getCurrentDate());
+    const targetDate = date ?? getCurrentDate();
+    const day = await session.getLiturgicalDay(targetDate);
     if (day) {
         return session.getReadingTeasers(day);
     }
 }
 
-export const fetchReadingsText = async () => {
+export const fetchReadingsText = async (date?: Date) => {
     const session = new Antiochian();
     await session.authenticate();
-    const day = await session.getLiturgicalDay(getCurrentDate());
+    const targetDate = date ?? getCurrentDate();
+    const day = await session.getLiturgicalDay(targetDate);
     if (day) {
         return session.getReadingTexts(day);
     }
