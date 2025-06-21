@@ -4,7 +4,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
-import { fetchLiturgicalTexts } from '@/api/AntiochianApi';
+import { fetchAntiochian, getFeastTitle, getReadingTeasers, getReadingTexts } from '@/api/AntiochianApi';
 import { GREAT_VESPERS_URL, SMALL_COMPLINE_URL, SMALL_COMPLINE_PRIEST_URL, PARAKLESIS_URL, MATINS_BILINGUAL_URL, MATINS_URL, MORNING_PRAYERS_URL, PREPARATION_FOR_COMMUNION_URL, CENSING_HOME_URL, GREAT_COMPLINE_URL, PRESANCTIFIED_LITURGY_URL, AKATHIST_URL } from '@/constants/consts';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPersonPraying } from '@fortawesome/free-solid-svg-icons/faPersonPraying'
@@ -23,8 +23,9 @@ import he from 'he';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useRouter } from 'expo-router';
 import toTitleCase from 'titlecase';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { fetchReadingsTeaser, fetchReadingsText } from '@/api/AntiochianReadings';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface LiturgicalData {
   publicUrl: string;
@@ -96,10 +97,12 @@ export default function PrayerScreen(): JSX.Element {
     reading1Teaser?: string;
     reading2Title?: string;
     reading2Teaser?: string;
-    reading3Title?: string;  // Add third reading title
-    reading3Teaser?: string; // Add third reading teaser
+    reading3Title?: string;
+    reading3Teaser?: string;
   }>({});
-  const [readingsText, setReadingsText] = useState<{ reading1FullText?: string, reading2FullText?: string }>({});
+  const [readingsText, setReadingsText] = useState<{ reading1FullText?: string, reading2FullText?: string, reading3FullText?: string }>({});
+  const [feastTitle, setFeastTitle] = useState<{ feastTitle?: string }>({});
+
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -109,58 +112,69 @@ export default function PrayerScreen(): JSX.Element {
 
   const router = useRouter();
 
-  const [showPicker, setShowPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  const onDateChange = async (event: any, date?: Date) => {
-    setShowPicker(false);
-    if (date) {
-      setSelectedDate(date);
-      setLoading(true);
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
 
-      try {
-        // You’ll need to adapt your API to accept a date string if it doesn't already
-        const fetchedData = await fetchLiturgicalTexts(date);
-        const fetchedReadingsTeaser = await fetchReadingsTeaser(date);
-        const fetchedReadingsText = await fetchReadingsText(date);
+  const handleConfirm = async (date: Date) => {
+    hideDatePicker();
+    setSelectedDate(date);
+    setLoading(true);
 
-        if (fetchedData && fetchedReadingsTeaser && fetchedReadingsText) {
-          // Set the state with the fetched data
-          setData(fetchedData);
-          setReadings(fetchedReadingsTeaser);
-          setReadingsText(fetchedReadingsText);
-        } else {
-          // Handle any error if data fetching fails
-          setError(new Error('Error fetching data'));
-        }
-      } catch (err) {
-        setError(err as Error);
+    try {
+      const { day, texts } = await fetchAntiochian(date);
+
+      if (day) {
+        setReadings(getReadingTeasers(day));
+        setReadingsText(getReadingTexts(day));
+        setFeastTitle(getFeastTitle(day));
+      } else {
+        setReadings({});
+        setReadingsText({});
+        setFeastTitle({});
       }
 
-      setLoading(false);
+      if (texts) {
+        setData(texts);
+      } else {
+        setData(null)
+      }
+    } catch (err) {
+      setError(err as Error);
+      setReadings({});
+      setReadingsText({});
+      setFeastTitle({});
     }
+
+    setLoading(false);
   };
 
   const onRefresh = async () => {
     setRefreshing(true); // Set refreshing to true
     try {
-      // Fetch all required data in sequence
-      const fetchedData = await fetchLiturgicalTexts();
-      const fetchedReadingsTeaser = await fetchReadingsTeaser();
-      const fetchedReadingsText = await fetchReadingsText();
-
-      if (fetchedData && fetchedReadingsTeaser && fetchedReadingsText) {
-        // Set the state with the fetched data
-        setData(fetchedData);
-        setReadings(fetchedReadingsTeaser);
-        setReadingsText(fetchedReadingsText);
+      const { day, texts } = await fetchAntiochian();
+      if (day) {
+        setReadings(getReadingTeasers(day));
+        setReadingsText(getReadingTexts(day));
+        setFeastTitle(getFeastTitle(day));
       } else {
-        // Handle any error if data fetching fails
-        setError(new Error('Error fetching data'));
+        setReadings({});
+        setReadingsText({});
+        setFeastTitle({});
+      }
+
+      if (texts) {
+        setData(texts);
+      } else {
+        setData(null)
       }
     } catch (err) {
-      // Catch any error during the fetching process
       setError(err as Error);
+      setReadings({});
+      setReadingsText({});
+      setFeastTitle({});
     }
     setRefreshing(false); // Set refreshing to false once done
   };
@@ -169,22 +183,32 @@ export default function PrayerScreen(): JSX.Element {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const fetchedData = await fetchLiturgicalTexts();
-        const fetchedReadingsTeaser = await fetchReadingsTeaser();
-        const fetchedReadingsText = await fetchReadingsText();
-
-        if (fetchedData && fetchedReadingsTeaser && fetchedReadingsText) {
-          setData(fetchedData);
-          setReadings(fetchedReadingsTeaser);
-          setReadingsText(fetchedReadingsText);
+        const { day, texts } = await fetchAntiochian();
+        if (day) {
+          setReadings(getReadingTeasers(day));
+          setReadingsText(getReadingTexts(day));
+          setFeastTitle(getFeastTitle(day));
         } else {
-          setError(new Error('Error fetching data'));
+          setReadings({});
+          setReadingsText({});
+          setFeastTitle({});
         }
+
+        if (texts) {
+          setData(texts);
+        } else {
+          setData(null)
+        }
+
       } catch (err) {
         setError(err as Error);
+        setReadings({});
+        setReadingsText({});
+        setFeastTitle({});
+      } finally {
+        setLoading(false); // Set loading to false when initial data fetch is done
       }
-      setLoading(false); // Set loading to false when initial data fetch is done
-    };
+    }
 
     loadData();
   }, []); // Empty dependency array to run only once when component mounts
@@ -204,6 +228,8 @@ export default function PrayerScreen(): JSX.Element {
   useEffect(() => {
     if (data) {
       setOrganizedData(organizeData(data));
+      console.log('organizedData keys:', Object.keys(organizedData), organizedData);
+
     }
   }, [data]);
 
@@ -231,41 +257,50 @@ export default function PrayerScreen(): JSX.Element {
             </Text>
           </View>
 
-          {/* Date Time Picker */}
-          <View style={{ alignItems: 'center', marginVertical: 10 }}>
-            <TouchableOpacity onPress={() => setShowPicker(true)} style={{
-              backgroundColor: theme.itemBackground,
-              padding: 10,
-              borderRadius: 10,
-              shadowColor: 'black',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.2,
-              elevation: 3,
-            }}>
-              <Text style={{ color: theme.moreImportantText, fontSize: 16 }}>
-                Select Date
-              </Text>
+          <View style={{ alignItems: 'flex-end', paddingRight: 20 }}>
+            <TouchableOpacity
+              onPress={showDatePicker}
+              style={{
+                padding: 5,
+                shadowColor: 'black',
+              }}
+            >
+              <IconSymbol name="calendar" size={36} color={theme.primary} />
             </TouchableOpacity>
+
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+              date={selectedDate}
+            />
           </View>
 
-          {showPicker && (
-            <DateTimePicker
-              value={selectedDate}
-              mode="date"
-              display="default"
-              onChange={onDateChange}
-            />
-          )}
-
-
           {/* Date Title */}
-          {readings.date && (
-            <View style={{ alignItems: 'center', marginVertical: 20 }}>
-              <Text style={[styles.dateTitle, { color: theme.moreImportantText }]}>
-                {toTitleCase(readings.date.toLowerCase())} {/* Display the date from the API */}
+          <View style={{ alignItems: 'center', marginVertical: 0 }}>
+            <Text style={[styles.dateTitle, { color: theme.moreImportantText }]}>
+              {selectedDate.toLocaleDateString(undefined, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </Text>
+
+            {feastTitle.feastTitle && (
+              <Text style={[styles.subtitle, { marginTop: 5, color: theme.lessImportantText }]}>
+                {toTitleCase(feastTitle.feastTitle.toLowerCase())}
               </Text>
-            </View>
-          )}
+            )}
+          </View>
+
+
+
+          {/* Date Time Picker */}
+          <View style={{ alignItems: 'flex-end', marginVertical: 0, marginHorizontal: 20 }}>
+
+          </View>
 
           {/* Readings Section */}
           {loading ? (
@@ -284,55 +319,59 @@ export default function PrayerScreen(): JSX.Element {
           ) : (
             <>
               {/* Epistle Navigation */}
-              <TouchableOpacity
-                style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
-                onPress={() => router.push({
-                  pathname: '/dailyReadings',
-                  params: {
-                    type: 'epistle',
-                    reading: readingsText.reading1FullText,
-                    title: readings.reading1Title // Added title
-                  }
-                })}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={CommonStyles.sectionTitle}>
-                    {readings.reading1Title ? toTitleCase(readings.reading1Title.toLowerCase()) : "Loading..."}
+              {readings.reading1Title && readingsText.reading1FullText && (
+                <TouchableOpacity
+                  style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: '#f9f5ff' }]}
+                  onPress={() => router.push({
+                    pathname: '/dailyReadings',
+                    params: {
+                      type: 'epistle',
+                      reading: readingsText.reading1FullText,
+                      title: readings.reading1Title // Added title
+                    }
+                  })}
+                >
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={CommonStyles.sectionTitle}>
+                      {readings.reading1Title ? toTitleCase(readings.reading1Title.toLowerCase()) : "Loading..."}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+                  </View>
+                  <View style={styles.divider} />
+                  <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                    {he.decode(readings.reading1Teaser || '')}
                   </Text>
-                  <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
-                </View>
-                <View style={styles.divider} />
-                <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
-                  {he.decode(readings.reading1Teaser || '')}
-                </Text>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              )}
 
               {/* Gospel Navigation */}
-              <TouchableOpacity
-                style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
-                onPress={() => router.push({
-                  pathname: '/dailyReadings',
-                  params: {
-                    type: 'gospel',
-                    reading: readingsText.reading2FullText,
-                    title: readings.reading2Title // Added title
-                  }
-                })}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text style={CommonStyles.sectionTitle}>
-                    {readings.reading2Title ? toTitleCase(readings.reading2Title.toLowerCase()) : "Loading..."}
+              {readings.reading2Title && readingsText.reading2FullText && (
+                <TouchableOpacity
+                  style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: '#fffaf0' }]}
+                  onPress={() => router.push({
+                    pathname: '/dailyReadings',
+                    params: {
+                      type: 'gospel',
+                      reading: readingsText.reading2FullText,
+                      title: readings.reading2Title // Added title
+                    }
+                  })}
+                >
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={CommonStyles.sectionTitle}>
+                      {readings.reading2Title ? toTitleCase(readings.reading2Title.toLowerCase()) : "Loading..."}
+                    </Text>
+                    <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
+                  </View>
+                  <View style={styles.divider} />
+                  <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                    {he.decode(readings.reading2Teaser || '')}
                   </Text>
-                  <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
-                </View>
-                <View style={styles.divider} />
-                <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
-                  {he.decode(readings.reading2Teaser || '')}
-                </Text>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              )}
 
               {/* Third Reading Navigation */}
-              {readings.reading3Title && (
+              {readings.reading3Title && readingsText.reading3FullText && (
                 <TouchableOpacity
                   style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
                   onPress={() => router.push({
