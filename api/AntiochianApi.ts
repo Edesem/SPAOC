@@ -89,6 +89,9 @@ class Antiochian {
 
     if (response.status !== 200) return null;
 
+    // Raw data
+    //console.log(`Raw response data for ${dt?.toDateString() || 'default'}:\n`, JSON.stringify(response.data, null, 2));
+
     const day: LiturgicalDay = response.data.liturgicalDay;
 
     if (!this.idAnchor) {
@@ -143,25 +146,29 @@ class Antiochian {
   }
 
   public getFeastTitle(day: LiturgicalDay): {
-    feastDayTitle?: string;
+    feastTitle?: string;
   } {
     return {
-      feastDayTitle: day.feastDayTitle?.trimStart(),
+      feastTitle: day.feastDayTitle?.trimStart(),
     };
   }
 }
 
 const antiochianInstance = new Antiochian();
 
-export const fetchAntiochian = async (date?: Date) => {
+export const fetchAntiochian = async (date: Date = getCurrentDate()) => {
   if (!antiochianInstance['idAnchor']) {
     await antiochianInstance.authenticate();
   }
-  const targetDate = date ?? getCurrentDate();
-  return antiochianInstance.getLiturgicalDay(targetDate);
+
+  const [day, texts] = await Promise.all([
+    antiochianInstance.getLiturgicalDay(date),
+    antiochianInstance.getLiturgicalText(date)
+  ]);
+
+  return { day, texts };
 };
 
-export const getLiturgicalTexts = (day: LiturgicalDay) => antiochianInstance.getLiturgicalText(day);
 export const getReadingTeasers = (day: LiturgicalDay) => antiochianInstance.getReadingTeasers(day);
 export const getReadingTexts = (day: LiturgicalDay) => antiochianInstance.getReadingTexts(day);
 export const getFeastTitle = (day: LiturgicalDay) => antiochianInstance.getFeastTitle(day);
