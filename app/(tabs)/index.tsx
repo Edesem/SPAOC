@@ -204,17 +204,8 @@ export default function HomeScreen() {
 
             <View style={styles.container}>
 
-              {/* Test notification + Hamburger menu button */}
-
-
+              {/* Hamburger menu button */}
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
-
-                <Button
-                  title="Send Test Notification"
-                  onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
-                />
-
-
                 <TouchableOpacity
                   onPress={() => router.push('/settings')}
                   style={{ padding: 10 }}
