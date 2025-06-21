@@ -26,6 +26,7 @@ import { requestNotificationPermissions, scheduleNotification, setupNotification
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -56,6 +57,12 @@ export default function HomeScreen() {
       appState.current = nextAppState;
     });
 
+    requestNotificationPermissions();
+    setupNotificationListeners();
+
+    // Schedule saint notification
+    scheduleSaintNotificationsForNext7Days();
+
     return () => subscription.remove();
   }, []);
 
@@ -76,17 +83,13 @@ export default function HomeScreen() {
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    requestNotificationPermissions();
-    setupNotificationListeners();
-  }, []);
+  const { todaysSaints, error, refetchSaints } = useDailySaint();
 
   const [refreshing, setRefreshing] = useState(false);
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
 
-  const { todaysSaints, error, refetchSaints } = useDailySaint();
   const { events, fastLoading, refetch: refetchFast } = useFastDay();
   const { events: allEvents, groupedEvents, loading: eventsLoading, refetch: refetchEvents } = useEvents();
 
@@ -203,23 +206,23 @@ export default function HomeScreen() {
 
               {/* Test notification + Hamburger menu button */}
 
-              {/*
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
-                  
-                  <Button
-                    title="Send Test Notification"
-                    onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
-                  />
 
-                  
-                  <TouchableOpacity
-                    onPress={() => router.push('/settings')}
-                    style={{ padding: 10 }}
-                  >
-                    <MaterialIcons name="menu" size={28} color="black" />
-                  </TouchableOpacity>
-                </View>
-              */}
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+
+                <Button
+                  title="Send Test Notification"
+                  onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
+                />
+
+
+                <TouchableOpacity
+                  onPress={() => router.push('/settings')}
+                  style={{ padding: 10 }}
+                >
+                  <MaterialIcons name="menu" size={28} color="black" />
+                </TouchableOpacity>
+              </View>
+
 
               <SectionList
                 ref={sectionListRef}
