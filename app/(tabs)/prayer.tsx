@@ -24,7 +24,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useRouter } from 'expo-router';
 import toTitleCase from 'titlecase';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { fetchReadingsTeaser, fetchReadingsText } from '@/api/AntiochianReadings';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 interface LiturgicalData {
@@ -248,16 +247,20 @@ export default function PrayerScreen(): JSX.Element {
           }
         >
           {/* Header */}
+
           <View style={styles.header}>
             <ThemedText type="title" style={CommonStyles.title}>
               Prayer
             </ThemedText>
-            <Text style={styles.subtitle}>
-              "Pray without ceasing."{'\n'} - 1 Thessalonians 5:17
-            </Text>
           </View>
 
-          <View style={{ alignItems: 'flex-end', paddingRight: 20 }}>
+          <View style={[styles.headerRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }]}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.subtitle}>
+                "Pray without ceasing."{'\n'}- 1 Thessalonians 5:17
+              </Text>
+            </View>
+
             <TouchableOpacity
               onPress={showDatePicker}
               style={{
@@ -293,13 +296,6 @@ export default function PrayerScreen(): JSX.Element {
                 {toTitleCase(feastTitle.feastTitle.toLowerCase())}
               </Text>
             )}
-          </View>
-
-
-
-          {/* Date Time Picker */}
-          <View style={{ alignItems: 'flex-end', marginVertical: 0, marginHorizontal: 20 }}>
-
           </View>
 
           {/* Readings Section */}
@@ -556,7 +552,6 @@ export default function PrayerScreen(): JSX.Element {
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    marginBottom: 30,
   },
   subtitle: {
     fontSize: 16,
@@ -656,6 +651,12 @@ const styles = StyleSheet.create({
   dateTitle: {
     fontSize: 27,
     fontWeight: 'bold',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+    paddingLeft: 65,
   },
 });
 
