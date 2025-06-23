@@ -95,20 +95,27 @@ const EventDetailsScreen = () => {
     if (!location) return;
 
     const query = encodeURIComponent(location);
-    const url = Platform.select({
-      ios: `http://maps.apple.com/?q=${query}`,
-      android: `geo:0,0?q=${query}`,
-    });
 
-    Linking.canOpenURL('comgooglemaps://').then((supported) => {
-      if (supported) {
-        Linking.openURL(`comgooglemaps://?q=${query}`);
-      } else {
-        Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`);
-      }
-    });
+    // Try Google Maps first (if available)
+    if (Platform.OS === 'ios' || Platform.OS === 'android') {
+      Linking.canOpenURL('comgooglemaps://').then((supported) => {
+        if (supported) {
+          Linking.openURL(`comgooglemaps://?q=${query}`);
+        } else {
+          // Fallback to system default map
+          const fallbackUrl = Platform.select({
+            ios: `http://maps.apple.com/?q=${query}`,
+            android: `geo:0,0?q=${query}`,
+          });
 
-    Linking.openURL(url).catch(err => console.error("Failed to open map:", err));
+          if (fallbackUrl) {
+            Linking.openURL(fallbackUrl).catch(err =>
+              console.error("Failed to open fallback map URL:", err)
+            );
+          }
+        }
+      });
+    }
   };
 
   return (
