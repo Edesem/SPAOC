@@ -1,10 +1,12 @@
 import { EventData } from '@/types/global';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking, Platform, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking, Platform, Dimensions, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colours } from '@/styles/Colours';
 import { decode } from 'html-entities';
+import * as Clipboard from 'expo-clipboard';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -62,7 +64,7 @@ const EventDetailsScreen = () => {
     playgroup: require('../assets/images/orthodox/annunciation.png'),
     fellowship: require('../assets/images/orthodox/fellowship.png'),
   };
-  
+
   // Get the image based on the source or fallback to default
   const image = imageMap[source] || imageMap.default;
 
@@ -76,6 +78,13 @@ const EventDetailsScreen = () => {
     });
   }, [navigation, title]);
 
+  const copyLocation = () => {
+    if (location) {
+      Clipboard.setStringAsync(location);
+      Alert.alert('Copied!', 'Location copied to clipboard.');
+    }
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -86,7 +95,14 @@ const EventDetailsScreen = () => {
             <Text style={[styles.date, { color: theme.lessImportantText }]}>🕒 {start} {end}</Text>
             {location == null
               ? null
-              : <Text style={[styles.detail, { color: theme.lessImportantText }]}>📍{location}</Text>
+              : <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                <Text style={[styles.detail, { color: theme.lessImportantText, flexShrink: 1 }]}>
+                  📍{location}
+                </Text>
+                <TouchableOpacity onPress={copyLocation} style={{ marginLeft: 10 }}>
+                  <MaterialIcons name="content-copy" size={20} color={theme.lessImportantText} />
+                </TouchableOpacity>
+              </View>
             }
             {description == null
               ? <Text style={[styles.description, { color: theme.detail }]}>No description available</Text>
