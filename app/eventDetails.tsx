@@ -7,6 +7,8 @@ import { Colours } from '@/styles/Colours';
 import { decode } from 'html-entities';
 import * as Clipboard from 'expo-clipboard';
 import { MaterialIcons } from '@expo/vector-icons';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -81,7 +83,12 @@ const EventDetailsScreen = () => {
   const copyLocation = () => {
     if (location) {
       Clipboard.setStringAsync(location);
-      Alert.alert('Copied!', 'Location copied to clipboard.');
+
+      Toast.show({
+        type: 'success',
+        text1: "Address copied!",
+        visibilityTime: 1500,   // duration in ms
+      });
     }
   };
 
@@ -100,7 +107,10 @@ const EventDetailsScreen = () => {
                   📍{location}
                 </Text>
                 <TouchableOpacity onPress={copyLocation} style={{ marginLeft: 10 }}>
-                  <MaterialIcons name="content-copy" size={20} color={theme.lessImportantText} />
+                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={copyLocation} style={{ marginLeft: 10 }}>
+                  <IconSymbol name="map.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
             }
@@ -118,6 +128,8 @@ const EventDetailsScreen = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
+      <Toast />
+
     </SafeAreaProvider>
   );
 };
