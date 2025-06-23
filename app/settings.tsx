@@ -1,11 +1,14 @@
 import { View, Text, Switch, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/styles/Colours';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RNPickerSelect from 'react-native-picker-select';
+import { cancelAllSaintNotifications, scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 //import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function SettingsScreen() {
@@ -28,6 +31,20 @@ export default function SettingsScreen() {
     }));
   };
 
+  const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
+
+  useEffect(() => {
+    AsyncStorage.getItem('dailySaintsEnabled').then((value) => {
+      if (value === null) {
+        // Default to true on first app use
+        setDailySaintsEnabled(true);
+        AsyncStorage.setItem('dailySaintsEnabled', 'true');
+      } else {
+        setDailySaintsEnabled(value === 'true');
+      }
+    });
+  }, []);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
@@ -40,26 +57,48 @@ export default function SettingsScreen() {
           {/* Settings Header */}
           <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
 
+          {/* Daily Saint Notification toggle */}
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
+              Saint of the Day Notification
+            </Text>
+            <Switch
+              value={dailySaintsEnabled}
+              onValueChange={(value) => {
+                setDailySaintsEnabled(value);
+                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
+                if (value) {
+                  scheduleSaintNotificationsForNext7Days();
+                } else {
+                  // Optional: cancel existing notifications here
+                  cancelAllSaintNotifications(); // You’ll define this next
+                }
+              }}
+              trackColor={{ false: '#767577', true: '#34c658' }}
+              thumbColor="#fff"
+            />
+          </View>
+
           {/* Theme Selection */}
           <RNPickerSelect
-              onValueChange={(value: string) => {
-                setThemeSelection(value);
-                console.log('Selected theme:', value); 
-              }}
-              value={themeSelection}
-              items={[
-                { label: 'Light', value: 'light' },
-                { label: 'Dark', value: 'dark' },
-                { label: 'Auto', value: 'auto' },
-              ]}
-              style={pickerSelectStyles}
-            />
+            onValueChange={(value: string) => {
+              setThemeSelection(value);
+              console.log('Selected theme:', value);
+            }}
+            value={themeSelection}
+            items={[
+              { label: 'Light', value: 'light' },
+              { label: 'Dark', value: 'dark' },
+              { label: 'Auto', value: 'auto' },
+            ]}
+            style={pickerSelectStyles}
+          />
           <View style={styles.settingItem}>
             <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Theme</Text>
             <RNPickerSelect
               onValueChange={(value: string) => {
                 setThemeSelection(value);
-                console.log('Selected theme:', value); 
+                console.log('Selected theme:', value);
               }}
               value={themeSelection}
               items={[

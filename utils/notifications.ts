@@ -1,8 +1,15 @@
 import { fetchSaintsForDate, useDailySaint } from "@/hooks/useDailySaint";
 import { scheduleNotification } from "@/notifications";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 
 export async function scheduleSaintNotificationsForNext7Days() {
+  const isEnabled = await AsyncStorage.getItem('dailySaintsEnabled');
+  if (isEnabled !== 'true') {
+    console.log('Daily saint notifications are disabled.');
+    return;
+  }
+  
   for (let i = 0; i < 7; i++) {
     const date = new Date();
     date.setDate(date.getDate() + i);
@@ -15,7 +22,7 @@ export async function scheduleSaintNotificationsForNext7Days() {
     const saintText = saints.join(', ');
 
     const alreadyScheduled = await AsyncStorage.getItem(`notified-${dateKey}`);
-    console.log(`[Day ${i}] ${date.toDateString()} - ${saintText} - Already scheduled: ${alreadyScheduled ? "✅ Yes" : "❌ No"}`); 
+    console.log(`[Day ${i}] ${date.toDateString()} - ${saintText} - Already scheduled: ${alreadyScheduled ? "✅ Yes" : "❌ No"}`);
     if (alreadyScheduled) continue;
 
 
@@ -35,5 +42,14 @@ export async function scheduleSaintNotificationsForNext7Days() {
     );
 
     await AsyncStorage.setItem(`notified-${dateKey}`, "true");
+  }
+}
+
+export async function cancelAllSaintNotifications() {
+  const all = await Notifications.getAllScheduledNotificationsAsync();
+  for (const notif of all) {
+    if (notif.content.title === 'Saint of the Day') {
+      await Notifications.cancelScheduledNotificationAsync(notif.identifier);
+    }
   }
 }
