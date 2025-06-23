@@ -45,6 +45,30 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="favourites"
+          options={{
+            title: 'Favourites',
+            tabBarIcon: ({ color }) =>
+              Platform.OS === 'ios' ? (
+                <IconSymbol name="star.fill" size={28} color={color} />
+              ) : (
+                <MaterialIcons name="star" size={28} color={color} />
+              ),
+          }}
+        />
+        <Tabs.Screen
+          name="about"
+          options={{
+            title: 'About',
+            tabBarIcon: ({ color }) =>
+              Platform.OS === 'ios' ? (
+                <IconSymbol name="person.circle.fill" size={28} color={color} />
+              ) : (
+                <MaterialIcons name="star" size={28} color={color} />
+              ),
+          }}
+        />
+        <Tabs.Screen
           name="book"
           options={{
             href: null,
@@ -66,6 +90,18 @@ export default function TabLayout() {
                 <IconSymbol name="book.fill" size={28} color={color} />
               ) : (
                 <MaterialCommunityIcons name="book-open-variant" size={28} color={color} />
+              ),
+          }}
+        />
+        <Tabs.Screen
+          name="help"
+          options={{
+            title: 'Help',
+            tabBarIcon: ({ color }) =>
+              Platform.OS === 'ios' ? (
+                <IconSymbol name="questionmark.circle.fill" size={28} color={color} />
+              ) : (
+                <MaterialIcons name="help" size={28} color={color} />
               ),
           }}
         />
