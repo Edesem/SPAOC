@@ -1,52 +1,147 @@
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView, Linking, useColorScheme, ScrollView } from 'react-native';
+import React from 'react';
+import {
+    StyleSheet,
+    View,
+    Text,
+    TouchableOpacity,
+    Image,
+    SafeAreaView,
+    Linking,
+    useColorScheme,
+    ScrollView,
+} from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
-import { getCommonStyles } from '@/styles/CommonStyles'; // Use dynamic styles
+import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
+import {  FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 export default function AboutScreen() {
-  const colorScheme = useColorScheme(); // Get the current system theme (light or dark)
-  const scheme = colorScheme === 'dark' ? 'dark' : 'light'; // Use theme string for dark/light
-  const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+    const colorScheme = useColorScheme();
+    const scheme = colorScheme === 'dark' ? 'dark' : 'light';
+    const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+    const CommonStyles = getCommonStyles(scheme);
 
-  const CommonStyles = getCommonStyles(scheme); // Get the dynamic styles
+    const openLink = (url: string) => {
+        Linking.openURL(url).catch(err => console.error('Failed to open URL:', err));
+    };
+
+    return (
+        <SafeAreaProvider>
+            <SafeAreaView style={CommonStyles.container}>
+                <ScrollView contentContainerStyle={styles.content}>
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <ThemedText type="title" style={CommonStyles.title}>
+                            About
+                        </ThemedText>
+                        <Text style={[styles.subtitle, { color: theme.detail }]}>
+                            This app is developed for the parishioners of St Paul’s Antiochian Orthodox Church.
+                            Stay up to date with events, readings, and community life.
+                        </Text>
+                    </View>
+
+                    {/* Links Section */}
+                    <View style={styles.linksSection}>
+                        <LinkButton
+                            icon="public"
+                            label="Visit our Website"
+                            onPress={() => openLink('https://stpaulchurch.com.au')}
+                            color={theme.primary}
+                        />
+                        <LinkButton
+                            icon="store"
+                            label="Church Store"
+                            onPress={() => openLink('https://stpaulchurch.org.au/store')}
+                            color={theme.primary}
+                        />
+                        <LinkButton
+                            icon="facebook"
+                            label="Follow on Facebook"
+                            onPress={() => openLink('https://www.facebook.com/StPaulsAntiochianOrthodoxChurch')}
+                            color={theme.primary}
+                        />
+                        <LinkButton
+                            icon="instagram"
+                            label="Follow on Instagram"
+                            onPress={() => openLink('https://www.instagram.com/stpaulsdandenong/')}
+                            color={theme.primary}
+                        />
+                        <LinkButton
+                            icon="youtube-play"
+                            label="Subscribe on YouTube"
+                            onPress={() => openLink('https://www.youtube.com/@stpaulsantiochianorthodoxc6010/videos')}
+                            color={theme.primary}
+                        />
+                        <LinkButton
+                            icon="whatsapp"
+                            label="Join our WhatsApp group"
+                            onPress={() => openLink('https://chat.whatsapp.com/Lee9DcwOsBvKJhrCveH445')}
+                            color={theme.primary}
+                        />
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </SafeAreaProvider>
+    );
+}
+
+function LinkButton({
+  icon,
+  label,
+  onPress,
+  color,
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+  color: string;
+}) {
+  let IconComponent = MaterialIcons;
+
+  // Choose the right icon set based on icon name
+  if (['instagram', 'youtube-play', 'whatsapp'].includes(icon)) {
+    IconComponent = FontAwesome;
+  }
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={CommonStyles.container}>
-        <ScrollView>
-
-          {/* Header */}
-          <View style={styles.header}>
-            <ThemedText type="title" style={CommonStyles.title}>
-              About
-            </ThemedText>
-            {/* Bible Verse Below Donate */}
-            <Text style={styles.subtitle}>
-              App for St Paul's Antiochian Orthodox Church
-            </Text>
-          </View>
-
-        </ScrollView>
-
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <TouchableOpacity style={styles.linkButton} onPress={onPress}>
+      <IconComponent name={icon as any} size={24} color={color} />
+      <Text style={[styles.linkLabel, { color }]}>{label}</Text>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontStyle: 'italic',
-    color: 'grey', // Static value, can be updated for dynamic themes if necessary
-    marginTop: 10,
-    marginHorizontal: 26,
-    textAlign: 'center',
-  },
- 
+    content: {
+        padding: 20,
+        gap: 30,
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    subtitle: {
+        fontSize: 16,
+        fontStyle: 'italic',
+        marginTop: 10,
+        textAlign: 'center',
+        lineHeight: 22,
+    },
+    linksSection: {
+        gap: 16,
+    },
+    linkButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        backgroundColor: 'transparent',
+    },
+    linkLabel: {
+        fontSize: 16,
+        fontWeight: '500',
+    },
 });
