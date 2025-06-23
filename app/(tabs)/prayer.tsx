@@ -268,7 +268,7 @@ export default function PrayerScreen(): JSX.Element {
                 shadowColor: 'black',
               }}
             >
-              <IconSymbol name="calendar" size={36} color={theme.primary} />
+              <IconSymbol name="calendar" size={36} color={theme.lessImportantText} />
             </TouchableOpacity>
 
             <DateTimePickerModal
@@ -317,7 +317,7 @@ export default function PrayerScreen(): JSX.Element {
               {/* Epistle Navigation */}
               {readings.reading1Title && readingsText.reading1FullText && (
                 <TouchableOpacity
-                  style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: '#f9f5ff' }]}
+                  style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
                   onPress={() => router.push({
                     pathname: '/dailyReadings',
                     params: {
@@ -333,8 +333,12 @@ export default function PrayerScreen(): JSX.Element {
                     </Text>
                     <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
                   </View>
-                  <View style={styles.divider} />
-                  <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
+                  {!readings.reading3Title ? (
+                    <View style={[styles.divider, { backgroundColor: '#2E86AB', }, { height: 3 }]} />
+                  ) : (
+                    <View style={styles.divider} />
+                  )}
+                  < Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
                     {he.decode(readings.reading1Teaser || '')}
                   </Text>
                 </TouchableOpacity>
@@ -343,7 +347,7 @@ export default function PrayerScreen(): JSX.Element {
               {/* Gospel Navigation */}
               {readings.reading2Title && readingsText.reading2FullText && (
                 <TouchableOpacity
-                  style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: '#fffaf0' }]}
+                  style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
                   onPress={() => router.push({
                     pathname: '/dailyReadings',
                     params: {
@@ -359,7 +363,11 @@ export default function PrayerScreen(): JSX.Element {
                     </Text>
                     <Ionicons name="chevron-forward" size={20} color={chevronColor} style={styles.chevronIcon} />
                   </View>
-                  <View style={styles.divider} />
+                  {!readings.reading3Title ? (
+                    <View style={[styles.divider, { backgroundColor: '#D4AF37', }, { height: 3 }]} />
+                  ) : (
+                    <View style={styles.divider} />
+                  )}
                   <Text style={[{ color: theme.moreImportantText }, { paddingBottom: 20 }, { fontSize: 17 }]}>
                     {he.decode(readings.reading2Teaser || '')}
                   </Text>
@@ -543,7 +551,7 @@ export default function PrayerScreen(): JSX.Element {
           </View>
         </ScrollView>
       </SafeAreaView>
-    </SafeAreaProvider>
+    </SafeAreaProvider >
   );
 }
 
