@@ -6,7 +6,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colours } from '@/styles/Colours';
 import { decode } from 'html-entities';
 import * as Clipboard from 'expo-clipboard';
-import { MaterialIcons } from '@expo/vector-icons';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Toast from 'react-native-toast-message';
 
@@ -92,6 +91,26 @@ const EventDetailsScreen = () => {
     }
   };
 
+  const openInMaps = () => {
+    if (!location) return;
+
+    const query = encodeURIComponent(location);
+    const url = Platform.select({
+      ios: `http://maps.apple.com/?q=${query}`,
+      android: `geo:0,0?q=${query}`,
+    });
+
+    Linking.canOpenURL('comgooglemaps://').then((supported) => {
+      if (supported) {
+        Linking.openURL(`comgooglemaps://?q=${query}`);
+      } else {
+        Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`);
+      }
+    });
+
+    Linking.openURL(url).catch(err => console.error("Failed to open map:", err));
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -109,7 +128,7 @@ const EventDetailsScreen = () => {
                 <TouchableOpacity onPress={copyLocation} style={{ marginLeft: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={copyLocation} style={{ marginLeft: 10 }}>
+                <TouchableOpacity onPress={openInMaps} style={{ marginLeft: 10 }}>
                   <IconSymbol name="map.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
