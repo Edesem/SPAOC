@@ -221,7 +221,7 @@ export default function HomeScreen() {
                   onPress={() => router.push('/settings')}
                   style={{ padding: 10 }}
                 >
-                  <MaterialIcons name="menu" size={28} color="black" />
+                  <MaterialIcons name="menu" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
 
