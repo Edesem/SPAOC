@@ -92,7 +92,7 @@ export default function DonateScreen() {
                   <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{BANK_NAME}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(BANK_NAME, 'Bank Name')} style={{ padding: 10 }}>
-                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
+                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
 
@@ -102,7 +102,7 @@ export default function DonateScreen() {
                   <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{ACCOUNT_NO}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(ACCOUNT_NO, "Account Number")} style={{ padding: 10 }}>
-                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
+                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
 
@@ -112,7 +112,7 @@ export default function DonateScreen() {
                   <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{BSB}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(BSB, "BSB")} style={{ padding: 10 }}>
-                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.primary} />
+                  <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
 
