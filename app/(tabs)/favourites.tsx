@@ -60,6 +60,11 @@ export default function FavouritesScreen() {
                 key={item.id ?? `${item.title}-${index}`}
                 item={item}
                 onPress={() => { }}
+                onUnfavourite={() => {
+                  setFavourites((prev) =>
+                    prev.filter((f) => (f.id ?? f.title) !== (item.id ?? item.title))
+                  );
+                }}
               />
             ))
           )}
