@@ -27,6 +27,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -74,7 +75,13 @@ export default function HomeScreen() {
 
   const sectionListRef = useRef<SectionList>(null);
 
-  const navigation = useNavigation();
+  // Your param list type (adjust to your app)
+  type RootTabParamList = {
+    Home: undefined;
+    // other tabs...
+  };
+
+  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList, 'Home'>>();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('tabPress', (e) => {
