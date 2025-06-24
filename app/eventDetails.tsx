@@ -8,6 +8,7 @@ import { decode } from 'html-entities';
 import * as Clipboard from 'expo-clipboard';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import Toast from 'react-native-toast-message';
+import * as Haptics from "expo-haptics";
 
 const { width, height } = Dimensions.get('window');
 
@@ -132,10 +133,16 @@ const EventDetailsScreen = () => {
                 <Text style={[styles.detail, { color: theme.lessImportantText, flexShrink: 1 }]}>
                   📍{location}
                 </Text>
-                <TouchableOpacity onPress={copyLocation} style={{ marginLeft: 10 }}>
+                <TouchableOpacity onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    copyLocation()
+                }} style={{ marginLeft: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={openInMaps} style={{ marginLeft: 10 }}>
+                <TouchableOpacity onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    openInMaps()
+                }} style={{ marginLeft: 10 }}>
                   <IconSymbol name="map.fill" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
