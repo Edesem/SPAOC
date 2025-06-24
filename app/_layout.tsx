@@ -48,6 +48,7 @@ export default function RootLayout() {
         <Stack.Screen name="confession" />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="dailyReadings" />
+        <Stack.Screen name="PdfViewer" options={{ title: 'PDF' }} />
       </Stack>
       <StatusBar style="auto" />
       <Toast config={toastConfig(colorScheme === 'dark' ? 'dark' : 'light')} topOffset={80} />
