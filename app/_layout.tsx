@@ -10,6 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/styles/Colours';
 import ReadingDetailScreen from './ReadingDetailScreen';
 import Toast from 'react-native-toast-message';
+import { toastConfig } from '@/components/ui/toastConfig';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -52,7 +53,7 @@ export default function RootLayout() {
         <Stack.Screen name="dailyReadings" />
       </Stack>
       <StatusBar style="auto" />
-      <Toast topOffset={80} />
+      <Toast config={toastConfig(colorScheme === 'dark' ? 'dark' : 'light')} topOffset={80} />
     </ThemeProvider>
   );
 }
