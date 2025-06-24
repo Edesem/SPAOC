@@ -16,6 +16,7 @@ import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
 import { FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import * as Haptics from "expo-haptics";
 
 export default function AboutScreen() {
     const colorScheme = useColorScheme();
@@ -24,7 +25,8 @@ export default function AboutScreen() {
     const CommonStyles = getCommonStyles(scheme);
 
     const openLink = (url: string) => {
-        Linking.openURL(url).catch(err => console.error('Failed to open URL:', err));
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+            Linking.openURL(url).catch(err => console.error('Failed to open URL:', err));
     };
 
     return (

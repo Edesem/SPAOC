@@ -25,6 +25,7 @@ import { useRouter } from 'expo-router';
 import toTitleCase from 'titlecase';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import * as Haptics from "expo-haptics";
 
 interface LiturgicalData {
   publicUrl: string;
@@ -262,7 +263,10 @@ export default function PrayerScreen(): JSX.Element {
             </View>
 
             <TouchableOpacity
-              onPress={showDatePicker}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  showDatePicker()
+              }}
               style={{
                 padding: 5,
                 shadowColor: 'black',
@@ -318,14 +322,18 @@ export default function PrayerScreen(): JSX.Element {
               {readings.reading1Title && readingsText.reading1FullText && (
                 <TouchableOpacity
                   style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
-                  onPress={() => router.push({
-                    pathname: '/dailyReadings',
-                    params: {
-                      type: 'epistle',
-                      reading: readingsText.reading1FullText,
-                      title: readings.reading1Title // Added title
-                    }
-                  })}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                      router.push({
+                        pathname: '/dailyReadings',
+                        params: {
+                          type: 'epistle',
+                          reading: readingsText.reading1FullText,
+                          title: readings.reading1Title // Added title
+                        }
+                      })
+                  }
+                  }
                 >
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={CommonStyles.sectionTitle}>
@@ -348,14 +356,18 @@ export default function PrayerScreen(): JSX.Element {
               {readings.reading2Title && readingsText.reading2FullText && (
                 <TouchableOpacity
                   style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
-                  onPress={() => router.push({
-                    pathname: '/dailyReadings',
-                    params: {
-                      type: 'gospel',
-                      reading: readingsText.reading2FullText,
-                      title: readings.reading2Title // Added title
-                    }
-                  })}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                      router.push({
+                        pathname: '/dailyReadings',
+                        params: {
+                          type: 'gospel',
+                          reading: readingsText.reading2FullText,
+                          title: readings.reading2Title // Added title
+                        }
+                      })
+                  }
+                  }
                 >
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={CommonStyles.sectionTitle}>
@@ -378,14 +390,18 @@ export default function PrayerScreen(): JSX.Element {
               {readings.reading3Title && readingsText.reading3FullText && (
                 <TouchableOpacity
                   style={[styles.contentSection, { flex: 1, margin: 20, backgroundColor: theme.itemBackground }]}
-                  onPress={() => router.push({
-                    pathname: '/dailyReadings',
-                    params: {
-                      type: 'thirdReading',
-                      reading: readingsText.reading3FullText,  // Add full text for third reading
-                      title: readings.reading3Title  // Add title for third reading
-                    }
-                  })}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                      router.push({
+                        pathname: '/dailyReadings',
+                        params: {
+                          type: 'thirdReading',
+                          reading: readingsText.reading3FullText,  // Add full text for third reading
+                          title: readings.reading3Title  // Add title for third reading
+                        }
+                      })
+                  }
+                  }
                 >
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={CommonStyles.sectionTitle}>
@@ -425,13 +441,14 @@ export default function PrayerScreen(): JSX.Element {
                   <TouchableOpacity
                     key={service}
                     onPress={() => {
-                      Alert.alert(
-                        "Silence Your Phone!",
-                        "Before opening this prayer, please ensure your phone is on silent.",
-                        [
-                          { text: "OK", onPress: () => Linking.openURL(organizedData[service].pdf!) }
-                        ]
-                      );
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                        Alert.alert(
+                          "Silence Your Phone!",
+                          "Before opening this prayer, please ensure your phone is on silent.",
+                          [
+                            { text: "OK", onPress: () => Linking.openURL(organizedData[service].pdf!) }
+                          ]
+                        );
                     }}
                     style={({ pressed }) => [
                       styles.linkText,
@@ -456,7 +473,10 @@ export default function PrayerScreen(): JSX.Element {
             {prayers.map((prayer) => (
               <TouchableOpacity
                 key={prayer.title}
-                onPress={() => Linking.openURL(prayer.url)}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    Linking.openURL(prayer.url)
+                }}
                 style={({ pressed }) => [
                   styles.prayerItem,
                   { opacity: pressed ? 0.6 : 1 },
@@ -483,13 +503,14 @@ export default function PrayerScreen(): JSX.Element {
               <TouchableOpacity
                 key={service.title}
                 onPress={() => {
-                  Alert.alert(
-                    "Silence Your Phone!",
-                    "Before opening this prayer, please ensure your phone is on silent.",
-                    [
-                      { text: "OK", onPress: () => Linking.openURL(service.url) }
-                    ]
-                  );
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    Alert.alert(
+                      "Silence Your Phone!",
+                      "Before opening this prayer, please ensure your phone is on silent.",
+                      [
+                        { text: "OK", onPress: () => Linking.openURL(service.url) }
+                      ]
+                    );
                 }}
                 style={({ pressed }) => [
                   styles.prayerItem,
@@ -517,13 +538,14 @@ export default function PrayerScreen(): JSX.Element {
               <TouchableOpacity
                 key={service.title}
                 onPress={() => {
-                  Alert.alert(
-                    "Silence Your Phone!",
-                    "Before opening this prayer, please ensure your phone is on silent.",
-                    [
-                      { text: "OK", onPress: () => Linking.openURL(service.url) }
-                    ]
-                  );
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    Alert.alert(
+                      "Silence Your Phone!",
+                      "Before opening this prayer, please ensure your phone is on silent.",
+                      [
+                        { text: "OK", onPress: () => Linking.openURL(service.url) }
+                      ]
+                    );
                 }}
                 style={({ pressed }) => [
                   styles.prayerItem,

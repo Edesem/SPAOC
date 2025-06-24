@@ -28,6 +28,7 @@ import { router } from 'expo-router';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import * as Haptics from "expo-haptics";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -83,6 +84,7 @@ export default function HomeScreen() {
 
   const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList, 'Home'>>();
 
+  // Scroll to top when pressing Home tab
   useEffect(() => {
     const unsubscribe = navigation.addListener('tabPress', (e) => {
       sectionListRef.current?.scrollToLocation({
@@ -216,24 +218,37 @@ export default function HomeScreen() {
 
             <View style={styles.container}>
 
-              {/* Test notification + Hamburger menu button */}
-
-
+              {/* Hamburger menu button + Scroll to Top */}
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
-
-                {/*
-                <Button
-                  title="Send Test Notification"
-                  onPress={() => scheduleNotification('SPAOC', 'Liturgy has started!', new Date(Date.now() + 5000))}
-                />
-                */}
-
-
                 <TouchableOpacity
-                  onPress={() => router.push('/settings')}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                      router.push('/settings')
+                  }
+                  }
                   style={{ padding: 10 }}
                 >
                   <MaterialIcons name="menu" size={28} color={theme.lessImportantText} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                      sectionListRef.current?.scrollToLocation({
+                        sectionIndex: 0,
+                        itemIndex: 0,
+                        animated: true,
+                      });
+                  }}
+                  style={{
+                    padding: 10,
+                    borderRadius: 6,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  accessibilityLabel="Scroll to top"
+                >
+                  <MaterialIcons name="arrow-upward" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
 

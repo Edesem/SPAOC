@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import he from 'he';
 import toTitleCase from 'titlecase';
 import { Colours } from '@/styles/Colours';
 import { useNavigation } from '@react-navigation/native';
 import * as Clipboard from 'expo-clipboard';
+import * as Haptics from "expo-haptics";
 
 // Define the expected route params type
 type ReadingScreenRouteParams = {
@@ -39,8 +40,15 @@ export default function ReadingScreen() {
     const handleCopyAll = async () => {
         await Clipboard.setStringAsync(he.decode(reading));
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000); // Reset copied message after 2 seconds
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     };
+
+    // Reset the "Copied!" state when the screen loses focus
+    useFocusEffect(
+        useCallback(() => {
+            setCopied(false); // Reset copied state when the screen is focused
+        }, [])
+    );
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['left', 'right', 'bottom']}>

@@ -18,6 +18,7 @@ import Constants from 'expo-constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
 import DonateSection from '@/components/DonateSection';
+import * as Haptics from "expo-haptics";
 
 export default function HelpScreen() {
     const colorScheme = useColorScheme();
@@ -61,9 +62,11 @@ export default function HelpScreen() {
 
         const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
 
-        Linking.openURL(mailtoUrl).catch(err =>
-            console.error("Failed to open email:", err)
-        );
+
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+            Linking.openURL(mailtoUrl).catch(err =>
+                console.error("Failed to open email:", err)
+            );
     };
 
     return (
