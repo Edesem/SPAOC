@@ -93,7 +93,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <Toast topOffset={80} />
     </>
   );
 }
