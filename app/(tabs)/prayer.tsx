@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl, Alert, AppState } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl, Alert, AppState, PressableStateCallbackType } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
@@ -21,11 +21,12 @@ import { faHandsPraying } from '@fortawesome/free-solid-svg-icons/faHandsPraying
 import { faStar } from '@fortawesome/free-solid-svg-icons/faStar'
 import he from 'he';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
 import toTitleCase from 'titlecase';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import * as Haptics from "expo-haptics";
+import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack/types';
 
 interface LiturgicalData {
   publicUrl: string;
@@ -114,6 +115,14 @@ export default function PrayerScreen(): JSX.Element {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  type RootStackParamList = {
+    Home: undefined;
+    PdfViewer: { url: string };
+    // add other screens here if needed
+  };
 
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
@@ -446,11 +455,16 @@ export default function PrayerScreen(): JSX.Element {
                           "Silence Your Phone!",
                           "Before opening this prayer, please ensure your phone is on silent.",
                           [
-                            { text: "OK", onPress: () => Linking.openURL(organizedData[service].pdf!) }
+                            {
+                              text: "OK",
+                              onPress: () => {
+                                navigation.navigate('PdfViewer', { url: organizedData[service].pdf! });
+                              },
+                            }
                           ]
                         );
                     }}
-                    style={({ pressed }) => [
+                    style={({ pressed }: PressableStateCallbackType) => [
                       styles.linkText,
                       { opacity: pressed ? 0.6 : 1 },
                     ]}
