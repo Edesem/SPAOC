@@ -23,15 +23,15 @@ export default function DonateScreen() {
 
   const handleCopyDetails = async (textToCopy: string, label: string) => {
     Haptic.press();
-
     await setStringAsync(textToCopy);
 
-    setCopiedMessage(`${label} copied`);
+    const message = `${label} copied`;
+    setCopiedMessage(message); // still keep for UI if you want
 
     Toast.show({
       type: 'success',
-      text1: copiedMessage,
-      visibilityTime: 1500,   // duration in ms
+      text1: message,  
+      visibilityTime: 1500,
     });
   };
 
@@ -89,7 +89,7 @@ export default function DonateScreen() {
               <View style={styles.copyButton}>
                 <View style={styles.copyButtonContainer}>
                   <Text style={CommonStyles.detailText}>Bank Name</Text>
-                  <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{BANK_NAME}</Text>
+                  <Text style={[styles.copyValueText, { color: theme.moreImportantText }]}>{BANK_NAME}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(BANK_NAME, 'Bank Name')} style={{ padding: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
@@ -99,7 +99,7 @@ export default function DonateScreen() {
               <View style={styles.copyButton}>
                 <View style={styles.copyButtonContainer}>
                   <Text style={CommonStyles.detailText}>Account Number</Text>
-                  <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{ACCOUNT_NO}</Text>
+                  <Text style={[styles.copyValueText, { color: theme.moreImportantText }]}>{ACCOUNT_NO}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(ACCOUNT_NO, "Account Number")} style={{ padding: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />
@@ -109,7 +109,7 @@ export default function DonateScreen() {
               <View style={styles.copyButton}>
                 <View style={styles.copyButtonContainer}>
                   <Text style={CommonStyles.detailText}>BSB</Text>
-                  <Text style={[styles.copyValueText, {color: theme.moreImportantText}]}>{BSB}</Text>
+                  <Text style={[styles.copyValueText, { color: theme.moreImportantText }]}>{BSB}</Text>
                 </View>
                 <TouchableOpacity onPress={() => handleCopyDetails(BSB, "BSB")} style={{ padding: 10 }}>
                   <IconSymbol name="square.fill.on.square.fill" size={28} color={theme.lessImportantText} />

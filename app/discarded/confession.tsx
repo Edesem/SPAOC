@@ -50,7 +50,7 @@ const EventDetailsScreen = () => {
       </View>
       <View style={styles.imageContainer}>
         <Image
-          source={require('../assets/images/orthodox/transfiguration.png')}  // Adjust the path to your local image
+          //source={require('../assets/images/orthodox/transfiguration.png')}  // Adjust the path to your local image
           style={styles.bottomImage}
         />
       </View>

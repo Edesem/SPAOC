@@ -17,6 +17,7 @@ import { Colours } from '@/styles/Colours';
 import Constants from 'expo-constants';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Localization from 'expo-localization';
+import DonateSection from '@/components/DonateSection';
 
 export default function HelpScreen() {
     const colorScheme = useColorScheme();
@@ -113,6 +114,9 @@ export default function HelpScreen() {
                             App Version: {appVersion}
                         </Text>
                     </View>
+
+                    <DonateSection theme={theme} CommonStyles={CommonStyles} />
+
                 </ScrollView>
             </SafeAreaView>
         </SafeAreaProvider>
@@ -174,5 +178,6 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
         textAlign: 'center',
         marginTop: 20,
+        marginBottom: 60,
     },
 });
