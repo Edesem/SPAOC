@@ -48,7 +48,11 @@ export const EventItem = ({ item, onPress }: ItemProps) => {
       const key = item.id ?? item.title;
 
       const newStatus = !isFavorite;
-      favorites[key] = newStatus;
+      if (newStatus) {
+        favorites[key] = item; // Store full object as value
+      } else {
+        delete favorites[key]; // Remove if unfavourited
+      }
 
       await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
       setIsFavorite(newStatus);
@@ -68,9 +72,9 @@ export const EventItem = ({ item, onPress }: ItemProps) => {
   const formattedEnd = isAllDayEvent
     ? ""
     : `to ${eventEnd.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
 
   const backgroundColor =
     colorScheme === "dark" ? Colours.dark.itemBackground : Colours.light.itemBackground;
