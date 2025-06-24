@@ -25,7 +25,7 @@ import { useEvents } from '@/hooks/useEvents';
 import { requestNotificationPermissions, scheduleNotification, setupNotificationListeners } from '@/notifications';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
 
 SplashScreen.preventAutoHideAsync();
@@ -66,6 +66,11 @@ export default function HomeScreen() {
     return () => subscription.remove();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      refetchEvents(); // this will reload event data and favourite status
+    }, [])
+  );
 
   const sectionListRef = useRef<SectionList>(null);
 
