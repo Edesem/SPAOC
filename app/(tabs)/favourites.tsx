@@ -6,7 +6,7 @@ import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EventItem } from '@/components/EventItem'; // <-- Import your component
-import { ItemProps } from '@/types/global'; // <-- adjust import if needed
+import { EventData, ItemProps } from '@/types/global'; // <-- adjust import if needed
 import { useFocusEffect } from '@react-navigation/native';
 
 const FAVORITES_KEY = 'favorites';
@@ -23,7 +23,7 @@ export default function FavouritesScreen() {
       const stored = await AsyncStorage.getItem(FAVORITES_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        const favs = Object.values(parsed);
+        const favs = Object.values(parsed) as EventData[];
         setFavourites(favs);
       }
     } catch (e) {
