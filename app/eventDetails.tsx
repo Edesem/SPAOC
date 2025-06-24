@@ -161,7 +161,6 @@ const EventDetailsScreen = () => {
           </View>
         </ScrollView>
       </SafeAreaView>
-      <Toast />
 
     </SafeAreaProvider>
   );
