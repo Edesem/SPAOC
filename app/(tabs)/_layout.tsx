@@ -105,18 +105,6 @@ export default function TabLayout() {
               ),
           }}
         />
-        <Tabs.Screen
-          name="donate"
-          options={{
-            title: 'Donate',
-            tabBarIcon: ({ color }) =>
-              Platform.OS === 'ios' ? (
-                <IconSymbol name="heart.fill" size={28} color={color} />
-              ) : (
-                <MaterialIcons name="favorite" size={28} color={color} />
-              ),
-          }}
-        />
       </Tabs>
       <Toast topOffset={80} />
     </>
