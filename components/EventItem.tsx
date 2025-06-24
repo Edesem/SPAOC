@@ -15,7 +15,7 @@ import { Colours } from "@/styles/Colours";
 
 const FAVORITES_KEY = "favorites";
 
-export const EventItem = ({ item, onPress }: ItemProps) => {
+export const EventItem = ({ item, onPress, onUnfavourite }: ItemProps & { onUnfavourite?: () => void }) => {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
@@ -48,16 +48,21 @@ export const EventItem = ({ item, onPress }: ItemProps) => {
       const key = item.id ?? item.title;
 
       const newStatus = !isFavorite;
+
       if (newStatus) {
-        favorites[key] = item; // Store full object as value
+        favorites[key] = item;
       } else {
-        delete favorites[key]; // Remove if unfavourited
+        delete favorites[key];
       }
 
       await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
       setIsFavorite(newStatus);
+
+      if (!newStatus && onUnfavourite) {
+        onUnfavourite(); // ← callback to remove from list
+      }
     } catch (e) {
-      console.error("Failed to save favorite", e);
+      console.error('Failed to save favorite', e);
     }
   };
 
