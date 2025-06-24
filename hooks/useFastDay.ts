@@ -40,6 +40,7 @@ export const useFastDay = () => {
             'Great Lent',
             'The Theotokos Fast',
             'Nativity Fast',
+            'The Apostles\' Fast'
           ].includes(event.title)
         );
       });
