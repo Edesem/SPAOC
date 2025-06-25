@@ -31,6 +31,7 @@ import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import * as Haptics from "expo-haptics";
 import MonthPicker from 'react-native-month-year-picker';
+import { IconSymbol } from '@/components/ui/IconSymbol';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -209,6 +210,53 @@ export default function HomeScreen() {
           style={[styles.bottomImage, { tintColor: theme.primary }]} // Using Theme.primary here
         />
       </View>
+    ) : section.weekLabel === 'This Week' ? (
+      <>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 10 }}>
+
+          <View>
+            <Text style={[styles.weekLabel, { backgroundColor: theme.background, color: theme.moreImportantText }]}>
+              {section.weekLabel}
+            </Text>
+
+            <Text style={[styles.sectionHeader, { color: theme.sectionDate }]}>{section.title}</Text>
+          </View>
+
+          <Modal
+            transparent
+            visible={showMonthPicker}
+            animationType="fade"
+            onRequestClose={() => setShowMonthPicker(false)} // Android back button support
+          >
+            <View style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.4)', // dim background
+            }}>
+              <MonthPicker
+                onChange={onValueChange}
+                value={selectedDate}
+                minimumDate={new Date(2023, 0)}
+                maximumDate={new Date(2026, 11)}
+                locale="en" />
+            </View>
+          </Modal>
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              setShowMonthPicker(true);
+            }}
+            style={{
+              margin: 10,
+              padding: 10,
+              alignItems: 'center',
+            }}
+          >
+            <IconSymbol name="calendar" size={36} color={theme.lessImportantText} />
+          </TouchableOpacity>
+        </View>
+      </>
     ) : (
       <>
         {section.weekLabel && (
@@ -267,45 +315,6 @@ export default function HomeScreen() {
                   <MaterialIcons name="arrow-upward" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
-
-              <Modal
-                transparent
-                visible={showMonthPicker}
-                animationType="fade"
-                onRequestClose={() => setShowMonthPicker(false)} // Android back button support
-              >
-                <View style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: 'rgba(0, 0, 0, 0.4)', // dim background
-                }}>
-                    <MonthPicker
-                      onChange={onValueChange}
-                      value={selectedDate}
-                      minimumDate={new Date(2023, 0)}
-                      maximumDate={new Date(2026, 11)}
-                      locale="en"
-                    />
-                </View>
-              </Modal>
-
-              <TouchableOpacity
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  setShowMonthPicker(true);
-                }}
-                style={{
-                  margin: 10,
-                  padding: 10,
-                  backgroundColor: theme.secondary,
-                  borderRadius: 10,
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ color: theme.moreImportantText }}>Select Month</Text>
-              </TouchableOpacity>
-
 
               <SectionList
                 ref={sectionListRef}
