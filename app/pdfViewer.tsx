@@ -1,15 +1,27 @@
 // PdfViewer.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { NativeModules } from 'react-native';
 console.log(NativeModules);
 
 import Pdf from 'react-native-pdf';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function PdfViewer() {
   const route = useRoute();
-  const { url } = route.params as { url: string };
+  const { url, title } = route.params as { url: string };
+  const navigation = useNavigation();
+
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: `${title}`,
+      headerBackTitle: 'Back',
+      headerBackTitleStyle: {
+        color: 'pink', // Set the color of the back button title (if any)
+      },
+    });
+  }, [navigation, title]);
 
   return (
     <View style={styles.container}>

@@ -120,7 +120,7 @@ export default function PrayerScreen(): JSX.Element {
 
   type RootStackParamList = {
     Home: undefined;
-    PdfViewer: { url: string };
+    pdfViewer: { url: string };
     // add other screens here if needed
   };
 
@@ -458,7 +458,14 @@ export default function PrayerScreen(): JSX.Element {
                             {
                               text: "OK",
                               onPress: () => {
-                                navigation.navigate('pdfViewer', { url: organizedData[service].pdf! });
+
+                                router.push({
+                                  pathname: '/pdfViewer',
+                                  params: {
+                                    url: organizedData[service].pdf!,  // Add full text for third reading
+                                    title: service.replace(/\s*\(PDF\)$/, "")  // Add title for third reading
+                                  }
+                                })
                               },
                             }
                           ]
