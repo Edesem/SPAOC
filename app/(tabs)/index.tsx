@@ -12,7 +12,8 @@ import {
   AppState,
   RefreshControl,
   Button,
-  TouchableOpacity
+  TouchableOpacity,
+  Modal
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { renderItem } from '@/components/RenderItem';
@@ -29,11 +30,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import * as Haptics from "expo-haptics";
-
-import { NativeModules } from 'react-native';
-import Pdf from 'react-native-pdf';
-console.log('NativeModules:', NativeModules );
-
+import MonthPicker from 'react-native-month-year-picker';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -108,6 +105,21 @@ export default function HomeScreen() {
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+
+  const onValueChange = useCallback(
+    (event, newDate) => {
+      if (event === 'dateSetAction') {
+        const pickedDate = newDate || selectedDate;
+        setSelectedDate(pickedDate);
+      }
+      setShowMonthPicker(false);
+    },
+    [selectedDate]
+  );
+
 
   const { events, fastLoading, refetch: refetchFast } = useFastDay();
   const { events: allEvents, groupedEvents, loading: eventsLoading, refetch: refetchEvents } = useEvents();
@@ -255,6 +267,44 @@ export default function HomeScreen() {
                   <MaterialIcons name="arrow-upward" size={28} color={theme.lessImportantText} />
                 </TouchableOpacity>
               </View>
+
+              <Modal
+                transparent
+                visible={showMonthPicker}
+                animationType="fade"
+                onRequestClose={() => setShowMonthPicker(false)} // Android back button support
+              >
+                <View style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(0, 0, 0, 0.4)', // dim background
+                }}>
+                    <MonthPicker
+                      onChange={onValueChange}
+                      value={selectedDate}
+                      minimumDate={new Date(2023, 0)}
+                      maximumDate={new Date(2026, 11)}
+                      locale="en"
+                    />
+                </View>
+              </Modal>
+
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  setShowMonthPicker(true);
+                }}
+                style={{
+                  margin: 10,
+                  padding: 10,
+                  backgroundColor: theme.secondary,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ color: theme.moreImportantText }}>Select Month</Text>
+              </TouchableOpacity>
 
 
               <SectionList
