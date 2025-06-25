@@ -63,10 +63,9 @@ export default function HelpScreen() {
         const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
 
 
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-            Linking.openURL(mailtoUrl).catch(err =>
-                console.error("Failed to open email:", err)
-            );
+        Linking.openURL(mailtoUrl).catch(err =>
+            console.error("Failed to open email:", err)
+        );
     };
 
     return (
@@ -88,26 +87,40 @@ export default function HelpScreen() {
                         <LinkItem
                             icon="info"
                             label="How to use the app"
-                            onPress={() => openLink('https://yourchurchwebsite.com/help')}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                                    openLink('https://yourchurchwebsite.com/help')
+                            }
+                            }
                             color={theme.primary}
                         />
                         <LinkItem
                             icon="bug-report"
                             label="Report a bug"
-                            onPress={() => openMail("Bug")}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                                    openMail("Bug")
+                            }
+                            }
                             color={theme.primary}
                         />
                         <LinkItem
                             icon="lightbulb"
                             label="Suggest a feature"
-                            onPress={() => openMail("Suggestion")}
-                            color={theme.primary}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                                    openMail("Suggestion")
+                            }
+                            } color={theme.primary}
                         />
                         <LinkItem
                             icon="email"
                             label="Contact Support"
-                            onPress={() => openMail("Support")}
-                            color={theme.primary}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                                    openMail("Support")
+                            }
+                            } color={theme.primary}
                         />
                     </View>
 
