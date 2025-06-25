@@ -1,6 +1,9 @@
 // PdfViewer.tsx
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
+import { NativeModules } from 'react-native';
+console.log(NativeModules);
+
 import Pdf from 'react-native-pdf';
 import { useRoute } from '@react-navigation/native';
 
