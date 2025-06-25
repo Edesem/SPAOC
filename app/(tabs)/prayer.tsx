@@ -458,7 +458,6 @@ export default function PrayerScreen(): JSX.Element {
                             {
                               text: "OK",
                               onPress: () => {
-
                                 router.push({
                                   pathname: '/pdfViewer',
                                   params: {
@@ -496,7 +495,13 @@ export default function PrayerScreen(): JSX.Element {
                 key={prayer.title}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                    Linking.openURL(prayer.url)
+                    router.push({
+                      pathname: '/pdfViewer',
+                      params: {
+                        url: prayer.url,  // Add full text for third reading
+                        title: prayer.title  // Add title for third reading
+                      }
+                    })
                 }}
                 style={({ pressed }) => [
                   styles.prayerItem,
@@ -529,7 +534,17 @@ export default function PrayerScreen(): JSX.Element {
                       "Silence Your Phone!",
                       "Before opening this prayer, please ensure your phone is on silent.",
                       [
-                        { text: "OK", onPress: () => Linking.openURL(service.url) }
+                        {
+                          text: "OK", onPress: () => {
+                            router.push({
+                              pathname: '/pdfViewer',
+                              params: {
+                                url: service.url,  // Add full text for third reading
+                                title: service.title  // Add title for third reading
+                              }
+                            })
+                          }
+                        }
                       ]
                     );
                 }}
@@ -564,7 +579,17 @@ export default function PrayerScreen(): JSX.Element {
                       "Silence Your Phone!",
                       "Before opening this prayer, please ensure your phone is on silent.",
                       [
-                        { text: "OK", onPress: () => Linking.openURL(service.url) }
+                        {
+                          text: "OK", onPress: () => {
+                            router.push({
+                              pathname: '/pdfViewer',
+                              params: {
+                                url: service.url,  // Add full text for third reading
+                                title: service.title  // Add title for third reading
+                              }
+                            })
+                          }
+                        }
                       ]
                     );
                 }}
