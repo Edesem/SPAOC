@@ -107,23 +107,61 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
 
+  const { events, fastLoading, refetch: refetchFast } = useFastDay();
+  const { events: allEvents, groupedEvents, loading: eventsLoading, refetch: refetchEvents } = useEvents();
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
+
+  useEffect(() => {
+    if (groupedEvents.length > 0) {
+      setFilteredSections(groupedEvents); // show all sections by default
+    }
+  }, [groupedEvents]);
 
   const onValueChange = useCallback(
     (event, newDate) => {
       if (event === 'dateSetAction') {
         const pickedDate = newDate || selectedDate;
         setSelectedDate(pickedDate);
+
+        const selectedMonth = pickedDate.getMonth();
+        const selectedYear = pickedDate.getFullYear();
+
+        const filtered = groupedEvents.filter(section =>
+          section.data.some(item => {
+            const itemDate = new Date(item.start); // make sure item.date is in ISO format or Date object
+            return (
+              itemDate.getFullYear() === selectedYear &&
+              itemDate.getMonth() === selectedMonth
+            );
+          })
+        );
+
+        // Optional: Remove sections with no matching items
+        const cleaned = filtered.map(section => ({
+          ...section,
+          data: section.data.filter(item => {
+            const itemDate = new Date(item.start);
+            return (
+              itemDate.getFullYear() === selectedYear &&
+              itemDate.getMonth() === selectedMonth
+            );
+          })
+        }));
+
+        setFilteredSections(cleaned);
       }
       setShowMonthPicker(false);
     },
-    [selectedDate]
+    [selectedDate, groupedEvents]
   );
 
-
-  const { events, fastLoading, refetch: refetchFast } = useFastDay();
-  const { events: allEvents, groupedEvents, loading: eventsLoading, refetch: refetchEvents } = useEvents();
+  const sectionsWithIndex = filteredSections.map((section, index) => ({
+    ...section,
+    sectionIndex: index
+  }));
 
   // Refresh handler
   const onRefresh = async () => {
@@ -144,7 +182,7 @@ export default function HomeScreen() {
       title: "Saint of the Day",
       data: [],
     },
-    ...groupedEvents,
+    ...sectionsWithIndex,
     {
       title: "Bottom Image",
       data: [],
@@ -210,7 +248,7 @@ export default function HomeScreen() {
           style={[styles.bottomImage, { tintColor: theme.primary }]} // Using Theme.primary here
         />
       </View>
-    ) : section.weekLabel === 'This Week' ? (
+    ) : section.sectionIndex === 0 ? (
       <>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 10 }}>
 
