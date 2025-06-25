@@ -31,7 +31,8 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import * as Haptics from "expo-haptics";
 
 import { NativeModules } from 'react-native';
-console.log('NativeModules:', NativeModules);
+import Pdf from 'react-native-pdf';
+console.log('NativeModules:', NativeModules );
 
 
 SplashScreen.preventAutoHideAsync();
@@ -211,7 +212,6 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
-
         {fastLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4f4f5b" />
