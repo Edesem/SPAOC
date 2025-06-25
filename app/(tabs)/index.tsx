@@ -237,8 +237,7 @@ export default function HomeScreen() {
               <MonthPicker
                 onChange={onValueChange}
                 value={selectedDate}
-                minimumDate={new Date(2023, 0)}
-                maximumDate={new Date(2026, 11)}
+                minimumDate={new Date()}
                 locale="en" />
             </View>
           </Modal>
