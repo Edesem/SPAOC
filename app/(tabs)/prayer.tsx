@@ -458,7 +458,7 @@ export default function PrayerScreen(): JSX.Element {
                             {
                               text: "OK",
                               onPress: () => {
-                                navigation.navigate('PdfViewer', { url: organizedData[service].pdf! });
+                                navigation.navigate('pdfViewer', { url: organizedData[service].pdf! });
                               },
                             }
                           ]
