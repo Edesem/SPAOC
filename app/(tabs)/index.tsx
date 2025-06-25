@@ -30,6 +30,10 @@ import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import * as Haptics from "expo-haptics";
 
+import { NativeModules } from 'react-native';
+console.log('NativeModules:', NativeModules);
+
+
 SplashScreen.preventAutoHideAsync();
 
 SplashScreen.setOptions({
