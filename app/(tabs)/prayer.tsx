@@ -611,7 +611,7 @@ export default function PrayerScreen(): JSX.Element {
           {/* Image */}
           <View style={styles.imageContainer}>
             <Image
-              source={require('../../assets/images/orthodox/star3.png')} // Adjust the path to your image
+              source={require('../../assets/images/orthodox/GolgothaCross.png')} // Adjust the path to your image
               style={[styles.bottomImage, { tintColor: theme.primary }]}
             />
           </View>
