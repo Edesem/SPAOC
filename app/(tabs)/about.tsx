@@ -10,7 +10,7 @@ import {
     useColorScheme,
     ScrollView,
 } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
@@ -19,6 +19,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import * as Haptics from "expo-haptics";
 
 export default function AboutScreen() {
+    const insets = useSafeAreaInsets();
     const colorScheme = useColorScheme();
     const scheme = colorScheme === 'dark' ? 'dark' : 'light';
     const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
@@ -31,8 +32,12 @@ export default function AboutScreen() {
 
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={CommonStyles.container}>
-                <ScrollView contentContainerStyle={styles.content}>
+            <SafeAreaView style={[CommonStyles.container, { flex: 1 }]}>
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + 20,
+                        paddingHorizontal: 20, 
+                    }}>
                     {/* Header */}
                     <View style={styles.header}>
                         <ThemedText type="title" style={CommonStyles.title}>
@@ -97,7 +102,7 @@ export default function AboutScreen() {
                     </View>
                 </ScrollView>
             </SafeAreaView>
-        </SafeAreaProvider>
+        </SafeAreaProvider >
     );
 }
 

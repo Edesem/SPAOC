@@ -116,8 +116,6 @@ export default function PrayerScreen(): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
   type RootStackParamList = {
     Home: undefined;
     pdfViewer: { url: string };
