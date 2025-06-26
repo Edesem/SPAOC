@@ -9,6 +9,7 @@ import {
     Linking,
     useColorScheme,
     Platform,
+    Image,
 } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
@@ -76,7 +77,7 @@ export default function HelpScreen() {
                     contentContainerStyle={{
                         paddingBottom: insets.bottom + 20,
                         paddingHorizontal: 20,
-                    }}>   
+                    }}>
                     {/* Header */}
                     <View style={styles.header}>
                         <ThemedText type="title" style={CommonStyles.title}>
@@ -134,6 +135,14 @@ export default function HelpScreen() {
                         <Text style={[styles.versionText, { color: theme.detail }]}>
                             App Version: {appVersion}
                         </Text>
+                    </View>
+
+                    {/* Image */}
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={require('../../assets/images/orthodox/ht.png')}
+                            style={[styles.bottomImage, { tintColor: theme.primary }]}
+                        />
                     </View>
 
                     <DonateSection theme={theme} CommonStyles={CommonStyles} />
@@ -200,5 +209,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 20,
         marginBottom: 60,
+    },
+    bottomImage: {
+        width: 100,
+        height: 100,
+        resizeMode: 'contain',
+        marginBottom: 50,
+    },
+    imageContainer: {
+        alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 10,
+        justifyContent: 'center',
     },
 });
