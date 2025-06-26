@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+  const pickerTheme = colorScheme === 'dark' ? true : false;
   const router = useRouter();
 
   const [themeSelection, setThemeSelection] = useState('auto');
@@ -72,6 +73,7 @@ export default function SettingsScreen() {
                 { label: 'Auto', value: 'auto' },
               ]}
               style={{ inputIOSContainer: { pointerEvents: "none" } }}
+              darkTheme={pickerTheme}
             />
 
           </View>
@@ -87,6 +89,8 @@ export default function SettingsScreen() {
                 { label: 'Monday', value: 'monday' },
               ]}
               style={{ inputIOSContainer: { pointerEvents: "none" } }}
+              darkTheme={pickerTheme}
+
             />
           </View>
 
@@ -102,6 +106,8 @@ export default function SettingsScreen() {
                 { label: 'Large', value: 'large' },
               ]}
               style={{ inputIOSContainer: { pointerEvents: "none" } }}
+              darkTheme={pickerTheme}
+
             />
           </View>
 
@@ -119,6 +125,8 @@ export default function SettingsScreen() {
                 { label: 'CST', value: 'CST' },
               ]}
               style={{ inputIOSContainer: { pointerEvents: "none" } }}
+              darkTheme={pickerTheme}
+
             />
           </View>
 
