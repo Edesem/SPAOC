@@ -10,7 +10,7 @@ import {
     useColorScheme,
     Platform,
 } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
 import { Colours } from '@/styles/Colours';
@@ -21,6 +21,7 @@ import DonateSection from '@/components/DonateSection';
 import * as Haptics from "expo-haptics";
 
 export default function HelpScreen() {
+    const insets = useSafeAreaInsets();
     const colorScheme = useColorScheme();
     const scheme = colorScheme === 'dark' ? 'dark' : 'light';
     const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
@@ -71,7 +72,11 @@ export default function HelpScreen() {
     return (
         <SafeAreaProvider>
             <SafeAreaView style={CommonStyles.container}>
-                <ScrollView contentContainerStyle={styles.content}>
+                <ScrollView
+                    contentContainerStyle={{
+                        paddingBottom: insets.bottom + 20,
+                        paddingHorizontal: 20,
+                    }}>   
                     {/* Header */}
                     <View style={styles.header}>
                         <ThemedText type="title" style={CommonStyles.title}>
@@ -89,7 +94,7 @@ export default function HelpScreen() {
                             label="How to use the app"
                             onPress={() => {
                                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                                    openLink('https://yourchurchwebsite.com/help')
+                                    openLink('https://example.com')
                             }
                             }
                             color={theme.primary}
