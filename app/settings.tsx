@@ -79,6 +79,28 @@ export default function SettingsScreen() {
             />
           </View>
 
+          {/* Daily Saint Notification toggle */}
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
+              Saint of the Day Notification
+            </Text>
+            <Switch
+              value={dailySaintsEnabled}
+              onValueChange={(value) => {
+                setDailySaintsEnabled(value);
+                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
+                if (value) {
+                  scheduleSaintNotificationsForNext7Days();
+                } else {
+                  // Optional: cancel existing notifications here
+                  cancelAllSaintNotifications(); // You’ll define this next
+                }
+              }}
+              trackColor={{ false: '#767577', true: '#34c658' }}
+              thumbColor="#fff"
+            />
+          </View>
+
           {/* Theme Selection */}
           <RNPickerSelect
             onValueChange={(value: string) => {
