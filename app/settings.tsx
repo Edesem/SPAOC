@@ -57,64 +57,7 @@ export default function SettingsScreen() {
           {/* Settings Header */}
           <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
 
-          {/* Daily Saint Notification toggle */}
-          <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
-              Saint of the Day Notification
-            </Text>
-            <Switch
-              value={dailySaintsEnabled}
-              onValueChange={(value) => {
-                setDailySaintsEnabled(value);
-                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
-                if (value) {
-                  scheduleSaintNotificationsForNext7Days();
-                } else {
-                  // Optional: cancel existing notifications here
-                  cancelAllSaintNotifications(); // You’ll define this next
-                }
-              }}
-              trackColor={{ false: '#767577', true: '#34c658' }}
-              thumbColor="#fff"
-            />
-          </View>
-
-          {/* Daily Saint Notification toggle */}
-          <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
-              Saint of the Day Notification
-            </Text>
-            <Switch
-              value={dailySaintsEnabled}
-              onValueChange={(value) => {
-                setDailySaintsEnabled(value);
-                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
-                if (value) {
-                  scheduleSaintNotificationsForNext7Days();
-                } else {
-                  // Optional: cancel existing notifications here
-                  cancelAllSaintNotifications(); // You’ll define this next
-                }
-              }}
-              trackColor={{ false: '#767577', true: '#34c658' }}
-              thumbColor="#fff"
-            />
-          </View>
-
           {/* Theme Selection */}
-          <RNPickerSelect
-            onValueChange={(value: string) => {
-              setThemeSelection(value);
-              console.log('Selected theme:', value);
-            }}
-            value={themeSelection}
-            items={[
-              { label: 'Light', value: 'light' },
-              { label: 'Dark', value: 'dark' },
-              { label: 'Auto', value: 'auto' },
-            ]}
-            style={pickerSelectStyles}
-          />
           <View style={styles.settingItem}>
             <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Theme</Text>
             <RNPickerSelect
@@ -128,7 +71,7 @@ export default function SettingsScreen() {
                 { label: 'Dark', value: 'dark' },
                 { label: 'Auto', value: 'auto' },
               ]}
-              style={pickerSelectStyles}
+              style={{ inputIOSContainer: { pointerEvents: "none" } }}
             />
 
           </View>
@@ -143,7 +86,7 @@ export default function SettingsScreen() {
                 { label: 'Sunday', value: 'sunday' },
                 { label: 'Monday', value: 'monday' },
               ]}
-              style={pickerSelectStyles}
+              style={{ inputIOSContainer: { pointerEvents: "none" } }}
             />
           </View>
 
@@ -158,7 +101,7 @@ export default function SettingsScreen() {
                 { label: 'Medium', value: 'medium' },
                 { label: 'Large', value: 'large' },
               ]}
-              style={pickerSelectStyles}
+              style={{ inputIOSContainer: { pointerEvents: "none" } }}
             />
           </View>
 
@@ -175,7 +118,51 @@ export default function SettingsScreen() {
                 { label: 'PST', value: 'PST' },
                 { label: 'CST', value: 'CST' },
               ]}
-              style={pickerSelectStyles}
+              style={{ inputIOSContainer: { pointerEvents: "none" } }}
+            />
+          </View>
+
+          {/* Daily Saint Notification toggle */}
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
+              Saint of the Day Notification
+            </Text>
+            <Switch
+              value={dailySaintsEnabled}
+              onValueChange={(value) => {
+                setDailySaintsEnabled(value);
+                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
+                if (value) {
+                  scheduleSaintNotificationsForNext7Days();
+                } else {
+                  // Optional: cancel existing notifications here
+                  cancelAllSaintNotifications(); // You’ll define this next
+                }
+              }}
+              trackColor={{ false: '#767577', true: '#34c658' }}
+              thumbColor="#fff"
+            />
+          </View>
+
+          {/* Favourites Notification toggle */}
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
+              Favourite Events Notification
+            </Text>
+            <Switch
+              value={dailySaintsEnabled}
+              onValueChange={(value) => {
+                setDailySaintsEnabled(value);
+                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
+                if (value) {
+                  scheduleSaintNotificationsForNext7Days();
+                } else {
+                  // Optional: cancel existing notifications here
+                  cancelAllSaintNotifications(); // You’ll define this next
+                }
+              }}
+              trackColor={{ false: '#767577', true: '#34c658' }}
+              thumbColor="#fff"
             />
           </View>
 
