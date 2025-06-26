@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, ScrollView, useColorScheme } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, ScrollView, useColorScheme, Image } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';
@@ -65,9 +65,18 @@ export default function FavouritesScreen() {
                     prev.filter((f) => (f.id ?? f.title) !== (item.id ?? item.title))
                   );
                 }}
+                showFullDate={true}
               />
             ))
           )}
+
+          {/* Image */}
+          <View style={styles.imageContainer}>
+            <Image
+              source={require('../../assets/images/orthodox/Seraph.png')} // Adjust the path to your image
+              style={[styles.bottomImage, { tintColor: theme.primary }]}
+            />
+          </View>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -86,5 +95,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 26,
     textAlign: 'center',
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginTop: 40, // Adjust the space above the image
+    marginBottom: 10, // Adjust the space below the image if needed
+    flex: 1, // Allows image container to take remaining space
+    justifyContent: 'center', // Aligns the image in the middle
+  },
+  bottomImage: {
+    width: 150, // Adjust the width of the image
+    height: 150, // Adjust the height of the image
+    resizeMode: 'contain', // Ensure the image doesn't get stretched
+    marginBottom: 50,
   },
 });

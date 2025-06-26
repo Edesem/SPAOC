@@ -36,7 +36,7 @@ export default function AboutScreen() {
                 <ScrollView
                     contentContainerStyle={{
                         paddingBottom: insets.bottom + 20,
-                        paddingHorizontal: 20, 
+                        paddingHorizontal: 20,
                     }}>
                     {/* Header */}
                     <View style={styles.header}>
@@ -98,6 +98,14 @@ export default function AboutScreen() {
                             label="Listen to our choir on Apple Music"
                             onPress={() => openLink('https://music.apple.com/us/artist/st-ephraim-the-syrian-antiochian-orthodox-choir/1785814045')}
                             color={theme.primary}
+                        />
+                    </View>
+
+                    {/* Image */}
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={require('../../assets/images/orthodox/star2.png')} // Adjust the path to your image
+                            style={[styles.bottomImage, { tintColor: theme.primary }]}
                         />
                     </View>
                 </ScrollView>
@@ -163,5 +171,18 @@ const styles = StyleSheet.create({
     linkLabel: {
         fontSize: 16,
         fontWeight: '500',
+    },
+    imageContainer: {
+        alignItems: 'center',
+        marginTop: 40, // Adjust the space above the image
+        marginBottom: 10, // Adjust the space below the image if needed
+        flex: 1, // Allows image container to take remaining space
+        justifyContent: 'center', // Aligns the image in the middle
+    },
+    bottomImage: {
+        width: 150, // Adjust the width of the image
+        height: 150, // Adjust the height of the image
+        resizeMode: 'contain', // Ensure the image doesn't get stretched
+        marginBottom: 50,
     },
 });

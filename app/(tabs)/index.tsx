@@ -230,7 +230,7 @@ export default function HomeScreen() {
     return section.title === 'Top Image' ? (
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../assets/images/orthodox/Cross.png')}
+          source={require('../../assets/images/orthodox/CrossInSquareThick.png')}
           style={[styles.topImage, { tintColor: theme.primary }]} // Using Theme.primary here
         />
       </View>
@@ -244,7 +244,7 @@ export default function HomeScreen() {
     ) : section.title === 'Bottom Image' ? (
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../assets/images/orthodox/Seraph.png')}
+          source={require('../../assets/images/orthodox/TwoBarCross.png')}
           style={[styles.bottomImage, { tintColor: theme.primary }]} // Using Theme.primary here
         />
       </View>
@@ -403,14 +403,14 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   bottomImage: {
-    width: 100,
-    height: 250,
+    width: 250,
+    height: 300,
     resizeMode: 'contain',
-    paddingBottom: 50,
+    paddingBottom: 100,
   },
   imageContainer: {
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 30,
   },
   saintOfTheDayContainer: {
     padding: 15,

@@ -97,7 +97,7 @@ export default function DonateSection({ theme, CommonStyles }: any) {
             {/* Image */}
             <View style={styles.imageContainer}>
                 <Image
-                    source={require('../assets/images/orthodox/icxc.png')}
+                    source={require('../assets/images/orthodox/OrnamentFromArmenianGospel.png')}
                     style={[styles.bottomImage, { tintColor: theme.primary }]}
                 />
             </View>

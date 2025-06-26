@@ -15,7 +15,12 @@ import { Colours } from "@/styles/Colours";
 
 const FAVORITES_KEY = "favorites";
 
-export const EventItem = ({ item, onPress, onUnfavourite }: ItemProps & { onUnfavourite?: () => void }) => {
+export const EventItem = ({
+  item,
+  onPress,
+  onUnfavourite,
+  showFullDate = false, // <-- new prop, default is false
+}: ItemProps & { onUnfavourite?: () => void; showFullDate?: boolean }) => {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
@@ -69,6 +74,13 @@ export const EventItem = ({ item, onPress, onUnfavourite }: ItemProps & { onUnfa
   const isAllDayEvent = item.start && !item.start.includes("T");
   const eventStart = new Date(item.start);
   const eventEnd = new Date(item.end);
+  const formattedDate = eventStart.toLocaleDateString([], {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
 
   const formattedStart = isAllDayEvent
     ? "All day"
@@ -120,6 +132,11 @@ export const EventItem = ({ item, onPress, onUnfavourite }: ItemProps & { onUnfa
         <View style={[styles.leftBar, { backgroundColor: sourceColor }]} />
         <View style={styles.itemContent}>
           <View style={styles.textContainer}>
+            {showFullDate &&
+              <Text style={[styles.itemDate, { color: timeColor }]}>
+                {formattedDate}
+              </Text>
+            }
             <Text style={[styles.itemTime, { color: timeColor }]}>
               {formattedStart} {formattedEnd}
             </Text>
@@ -188,10 +205,15 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
-  itemTime: {
-    fontSize: 14,
-    marginBottom: 2,
-  },
+itemDate: {
+  fontSize: 15,
+  fontWeight: '500',
+  marginBottom: 2,
+},
+itemTime: {
+  fontSize: 14,
+  marginBottom: 2,
+},
   itemTitle: {
     fontSize: 18,
   },
