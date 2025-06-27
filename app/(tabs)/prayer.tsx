@@ -122,6 +122,35 @@ export default function PrayerScreen(): JSX.Element {
     // add other screens here if needed
   };
 
+  const organizeData = (data: LiturgicalData[]): OrganizedData => {
+    return data.reduce((acc, { publicUrl, typeOfService }) => {
+      if (!publicUrl) return acc;
+      if (typeOfService.includes('PDF')) {
+        if (!acc[typeOfService]) acc[typeOfService] = { pdf: null };
+        acc[typeOfService].pdf = publicUrl;
+      }
+      return acc;
+    }, {} as OrganizedData);
+  };
+
+  const processFetchedData = ({ day, texts }: { day: any, texts: LiturgicalData[] | null }) => {
+    if (day) {
+      setReadings(getReadingTeasers(day));
+      setReadingsText(getReadingTexts(day));
+      setFeastTitle(getFeastTitle(day));
+    } else {
+      setReadings({});
+      setReadingsText({});
+      setFeastTitle({});
+    }
+
+    if (texts) {
+      setData(texts);
+    } else {
+      setData(null);
+    }
+  };
+
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
@@ -132,22 +161,7 @@ export default function PrayerScreen(): JSX.Element {
 
     try {
       const { day, texts } = await fetchAntiochian(date);
-
-      if (day) {
-        setReadings(getReadingTeasers(day));
-        setReadingsText(getReadingTexts(day));
-        setFeastTitle(getFeastTitle(day));
-      } else {
-        setReadings({});
-        setReadingsText({});
-        setFeastTitle({});
-      }
-
-      if (texts) {
-        setData(texts);
-      } else {
-        setData(null)
-      }
+      processFetchedData({ day, texts });
     } catch (err) {
       setError(err as Error);
       setReadings({});
@@ -162,21 +176,7 @@ export default function PrayerScreen(): JSX.Element {
     setRefreshing(true); // Set refreshing to true
     try {
       const { day, texts } = await fetchAntiochian();
-      if (day) {
-        setReadings(getReadingTeasers(day));
-        setReadingsText(getReadingTexts(day));
-        setFeastTitle(getFeastTitle(day));
-      } else {
-        setReadings({});
-        setReadingsText({});
-        setFeastTitle({});
-      }
-
-      if (texts) {
-        setData(texts);
-      } else {
-        setData(null)
-      }
+      processFetchedData({ day, texts });
     } catch (err) {
       setError(err as Error);
       setReadings({});
@@ -191,22 +191,7 @@ export default function PrayerScreen(): JSX.Element {
     const loadData = async () => {
       try {
         const { day, texts } = await fetchAntiochian();
-        if (day) {
-          setReadings(getReadingTeasers(day));
-          setReadingsText(getReadingTexts(day));
-          setFeastTitle(getFeastTitle(day));
-        } else {
-          setReadings({});
-          setReadingsText({});
-          setFeastTitle({});
-        }
-
-        if (texts) {
-          setData(texts);
-        } else {
-          setData(null)
-        }
-
+        processFetchedData({ day, texts });
       } catch (err) {
         setError(err as Error);
         setReadings({});
@@ -220,23 +205,11 @@ export default function PrayerScreen(): JSX.Element {
     loadData();
   }, []); // Empty dependency array to run only once when component mounts
 
-
-  const organizeData = (data: LiturgicalData[]): OrganizedData => {
-    return data.reduce((acc, { publicUrl, typeOfService }) => {
-      if (!publicUrl) return acc;
-      if (typeOfService.includes('PDF')) {
-        if (!acc[typeOfService]) acc[typeOfService] = { pdf: null };
-        acc[typeOfService].pdf = publicUrl;
-      }
-      return acc;
-    }, {} as OrganizedData);
-  };
-
   useEffect(() => {
     if (data) {
-      setOrganizedData(organizeData(data));
-      console.log('organizedData keys:', Object.keys(organizedData), organizedData);
-
+      const newOrganizedData = organizeData(data);
+      setOrganizedData(newOrganizedData);
+      console.log('organizedData keys:', Object.keys(newOrganizedData), newOrganizedData);
     }
   }, [data]);
 
