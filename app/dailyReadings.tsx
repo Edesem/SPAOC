@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, useColorScheme, TouchableOpacity, TextInput } from 'react-native';
 import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import he from 'he';
@@ -38,7 +38,7 @@ export default function ReadingScreen() {
     const [copied, setCopied] = useState(false);
 
     const handleCopyAll = async () => {
-        await Clipboard.setStringAsync(he.decode(reading));
+        await Clipboard.setStringAsync(he.decode(reading) + '\n\n' + '- ' + toTitleCase(title.toLowerCase()));
         setCopied(true);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     };
@@ -57,13 +57,35 @@ export default function ReadingScreen() {
                     {toTitleCase(title.toLowerCase())}
                 </Text>
                 <View style={[styles.divider, { backgroundColor: colors.detail }]} />
-                <TouchableOpacity onPress={handleCopyAll} style={[styles.copyButton, { backgroundColor: colors.primary || '#007AFF' }]}>
-                    <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy'}</Text>
-                </TouchableOpacity>
-                <Text selectable={true} style={[styles.text, { color: colors.moreImportantText }]}>{he.decode(reading)}</Text>
+
+                {/* Put this outside the ScrollView if you can */}
+                {/* Or at least above the Text */}
+                <TextInput
+                    value={he.decode(reading)}
+                    editable={false}
+                    multiline
+                    scrollEnabled={false}
+                    style={[
+                        styles.text,
+                        {
+                            color: colors.moreImportantText,
+                            padding: 0,
+                            margin: 0,
+                            borderWidth: 0, // removes border styling
+                        },
+                    ]}
+                />
             </ScrollView>
+
+            <TouchableOpacity
+                onPress={handleCopyAll}
+                style={[styles.copyButton, { backgroundColor: colors.primary || '#007AFF' }]}
+            >
+                <Text style={styles.copyButtonText}>{copied ? 'Copied!' : 'Copy'}</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
+
 }
 
 const styles = StyleSheet.create({
