@@ -149,6 +149,7 @@ export default function PrayerScreen(): JSX.Element {
     } else {
       setData(null);
     }
+
   };
 
   const showDatePicker = () => setDatePickerVisibility(true);
@@ -158,12 +159,43 @@ export default function PrayerScreen(): JSX.Element {
     hideDatePicker();
     setSelectedDate(date);
     setLoading(true);
+    setError(null);
+    setData(null);           // Clear stale data
+    setOrganizedData({});    // Clear stale organized data
 
     try {
       const { day, texts } = await fetchAntiochian(date);
-      processFetchedData({ day, texts });
+
+      // Update raw data and organize it immediately
+      if (texts) {
+        setData(texts);
+        const newOrganizedData = organizeData(texts);
+        setOrganizedData(newOrganizedData);
+
+        if (Object.keys(newOrganizedData).length === 0) {
+          setError(new Error("No liturgics found"));
+        } else {
+          setError(null); // Clear any previous error
+        }
+      } else {
+        setData(null);
+        setOrganizedData({});
+        setError(new Error("No liturgics found"));
+      }
+
+      if (day) {
+        setReadings(getReadingTeasers(day));
+        setReadingsText(getReadingTexts(day));
+        setFeastTitle(getFeastTitle(day));
+      } else {
+        setReadings({});
+        setReadingsText({});
+        setFeastTitle({});
+      }
     } catch (err) {
       setError(err as Error);
+      setData(null);
+      setOrganizedData({});
       setReadings({});
       setReadingsText({});
       setFeastTitle({});
@@ -171,6 +203,7 @@ export default function PrayerScreen(): JSX.Element {
 
     setLoading(false);
   };
+
 
   const onRefresh = async () => {
     setRefreshing(true); // Set refreshing to true
@@ -208,8 +241,16 @@ export default function PrayerScreen(): JSX.Element {
   useEffect(() => {
     if (data) {
       const newOrganizedData = organizeData(data);
+
+      // If organizeData returns non-empty object, clear error
+      if (Object.keys(newOrganizedData).length > 0) {
+        setError(null); // ✅ Clear previous error
+      }
+
       setOrganizedData(newOrganizedData);
       console.log('organizedData keys:', Object.keys(newOrganizedData), newOrganizedData);
+    } else {
+      setOrganizedData({});
     }
   }, [data]);
 
