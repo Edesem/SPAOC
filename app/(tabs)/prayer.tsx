@@ -210,6 +210,7 @@ export default function PrayerScreen(): JSX.Element {
     try {
       const { day, texts } = await fetchAntiochian();
       processFetchedData({ day, texts });
+      setSelectedDate(new Date())
     } catch (err) {
       setError(err as Error);
       setReadings({});
