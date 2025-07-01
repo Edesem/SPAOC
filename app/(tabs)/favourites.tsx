@@ -23,8 +23,23 @@ export default function FavouritesScreen() {
       const stored = await AsyncStorage.getItem(FAVORITES_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        const favs = Object.values(parsed) as EventData[];
-        setFavourites(favs);
+        const now = new Date();
+
+        const allFavs = Object.values(parsed) as EventData[];
+
+        // Filter out expired items
+        const upcomingFavs = allFavs.filter((item) => {
+          const itemDate = new Date(item.end); // ensure item.date is a parsable date string or timestamp
+          return itemDate > now;
+        });
+
+        // Optionally update storage to remove expired ones permanently
+        const updatedFavs = Object.fromEntries(
+          upcomingFavs.map((item) => [item.id ?? item.title, item])
+        );
+        await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavs));
+
+        setFavourites(upcomingFavs);
       }
     } catch (e) {
       console.error('Failed to load favorites', e);
