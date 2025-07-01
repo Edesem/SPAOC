@@ -46,7 +46,7 @@ export default function FavouritesScreen() {
               Favourites
             </ThemedText>
             <Text style={styles.subtitle}>
-              Saved events will appear here for quick viewing.
+              Saved upcoming events will appear here for quick viewing.
             </Text>
           </View>
 
