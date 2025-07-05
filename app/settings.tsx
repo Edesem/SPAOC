@@ -6,10 +6,10 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/styles/Colours';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RNPickerSelect from 'react-native-picker-select';
-import { cancelAllSaintNotifications, scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
+import { cancelAllFavouriteNotifications, cancelAllSaintNotifications, scheduleFavouriteNotifications, scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import DateTimePicker from '@react-native-community/datetimepicker';
+import { DAILY_SAINTS_NOTIFICATIONS_ENABLED, FAVOURITES_NOTIFICATIONS_ENABLED } from '@/constants/consts';
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
@@ -33,15 +33,26 @@ export default function SettingsScreen() {
   };
 
   const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
+  const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem('dailySaintsEnabled').then((value) => {
+    AsyncStorage.getItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED).then((value) => {
       if (value === null) {
         // Default to true on first app use
         setDailySaintsEnabled(true);
-        AsyncStorage.setItem('dailySaintsEnabled', 'true');
+        AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, "true");
       } else {
         setDailySaintsEnabled(value === 'true');
+      }
+    });
+
+    AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_ENABLED).then((value) => {
+      if (value === null) {
+        // Default to true on first app use
+        setFavouriteNotificationsEnabled(true);
+        AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, "true");
+      } else {
+        setFavouriteNotificationsEnabled(value === 'true');
       }
     });
   }, []);
@@ -139,7 +150,7 @@ export default function SettingsScreen() {
               value={dailySaintsEnabled}
               onValueChange={(value) => {
                 setDailySaintsEnabled(value);
-                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
+                AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, value.toString());
                 if (value) {
                   scheduleSaintNotificationsForNext7Days();
                 } else {
@@ -158,15 +169,15 @@ export default function SettingsScreen() {
               Favourite Events Notification
             </Text>
             <Switch
-              value={dailySaintsEnabled}
+              value={favouriteNotificationsEnabled}
               onValueChange={(value) => {
-                setDailySaintsEnabled(value);
-                AsyncStorage.setItem('dailySaintsEnabled', value.toString());
+                setFavouriteNotificationsEnabled(value);
+                AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, value.toString());
                 if (value) {
-                  scheduleSaintNotificationsForNext7Days();
+                  scheduleFavouriteNotifications();
                 } else {
                   // Optional: cancel existing notifications here
-                  cancelAllSaintNotifications(); // You’ll define this next
+                  cancelAllFavouriteNotifications(); // You’ll define this next
                 }
               }}
               trackColor={{ false: '#767577', true: '#34c658' }}

@@ -1,15 +1,22 @@
+import {
+  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
+  FAVOURITES_KEY,
+  FAVOURITES_NOTIFICATIONS_ENABLED,
+} from "@/constants/consts";
 import { fetchSaintsForDate, useDailySaint } from "@/hooks/useDailySaint";
 import { scheduleNotification } from "@/notifications";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
 
 export async function scheduleSaintNotificationsForNext7Days() {
-  const isEnabled = await AsyncStorage.getItem('dailySaintsEnabled');
-  if (isEnabled !== 'true') {
-    console.log('Daily saint notifications are disabled.');
+  const isEnabled = await AsyncStorage.getItem(
+    DAILY_SAINTS_NOTIFICATIONS_ENABLED
+  );
+  if (isEnabled !== "true") {
+    console.log("Daily saint notifications are disabled.");
     return;
   }
-  
+
   for (let i = 0; i < 7; i++) {
     const date = new Date();
     date.setDate(date.getDate() + i);
@@ -19,13 +26,15 @@ export async function scheduleSaintNotificationsForNext7Days() {
 
     if (saints.length === 0) continue;
 
-    const saintText = saints.join(', ');
+    const saintText = saints.join(", ");
 
     const alreadyScheduled = await AsyncStorage.getItem(`notified-${dateKey}`);
-    console.log(`[Day ${i}] ${date.toDateString()} - ${saintText} - Already scheduled: ${alreadyScheduled ? "✅ Yes" : "❌ No"}`);
+    console.log(
+      `[Day ${i}] ${date.toDateString()} - ${saintText} - Already scheduled: ${
+        alreadyScheduled ? "✅ Yes" : "❌ No"
+      }`
+    );
     if (alreadyScheduled) continue;
-
-
 
     const notificationTime = new Date(date);
     notificationTime.setHours(8, 0, 0, 0); // 7AM each day
@@ -46,9 +55,75 @@ export async function scheduleSaintNotificationsForNext7Days() {
 }
 
 export async function cancelAllSaintNotifications() {
+  const all = await Notifications.getAllScheduledNotificationsAsync();  for (const notif of all) {
+    if (notif.content.title === "Saint of the Day") {
+      await Notifications.cancelScheduledNotificationAsync(notif.identifier);
+    }
+  }
+}
+
+export async function scheduleFavouriteNotifications() {
+  const isEnabled = await AsyncStorage.getItem(
+    FAVOURITES_NOTIFICATIONS_ENABLED
+  );
+
+  if (isEnabled !== "true") {
+    console.log("Favourite event notifications are disabled.");
+    return;
+  }
+
+  const storedFavourites = await AsyncStorage.getItem(FAVOURITES_KEY);
+
+  if (!storedFavourites) {
+    console.log("No favourites found.");
+    return;
+  }
+
+  let favourites: Record<string, any> = {};
+  try {
+    favourites = JSON.parse(storedFavourites);
+  } catch (e) {
+    console.error("Failed to parse favourites:", e);
+    return;
+  }
+
+  const entries = Object.entries(favourites);
+
+  for (let i = 0; i < entries.length; i++) {
+    const [_, fav] = entries[i];
+    const title = fav.title;
+    const dateStr = fav.start;
+    const date = new Date(dateStr);
+
+    //console.log(entries[i])
+
+    if (isNaN(date.getTime())) {
+      console.warn(`Invalid date in favourites: ${dateStr}`);
+      continue;
+    }
+
+    const notificationTime = new Date(date);
+    notificationTime.setHours(8, 0, 0, 0); // 8AM local time
+    console.log( notificationTime, new Date())
+    if (notificationTime < new Date()) {
+      console.log(`Skipping... [${title}] - ${date}`);
+      continue;
+    }
+
+    console.log(`Scheduling... [${title}] - ${date}`);
+    await scheduleNotification(
+      "Favourite Event",
+      title,
+      notificationTime
+    );
+    await AsyncStorage.setItem(`notified-${date}`, "true");
+  }
+}
+
+export async function cancelAllFavouriteNotifications() {
   const all = await Notifications.getAllScheduledNotificationsAsync();
   for (const notif of all) {
-    if (notif.content.title === 'Saint of the Day') {
+    if (notif.content.title === "Favourite Event") {
       await Notifications.cancelScheduledNotificationAsync(notif.identifier);
     }
   }

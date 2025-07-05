@@ -12,8 +12,7 @@ import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colours } from "@/styles/Colours";
-
-const FAVORITES_KEY = "favorites";
+import { FAVOURITES_KEY } from "@/constants/consts";
 
 export const EventItem = ({
   item,
@@ -24,50 +23,50 @@ export const EventItem = ({
   const router = useRouter();
   const colorScheme = useColorScheme();
 
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false);
 
-  // Load favorite status on mount
+  // Load favourite status on mount
   useEffect(() => {
-    const loadFavorite = async () => {
+    const loadFavourite = async () => {
       try {
-        const storedFavorites = await AsyncStorage.getItem(FAVORITES_KEY);
-        if (storedFavorites) {
-          const favorites = JSON.parse(storedFavorites);
+        const storedFavourites = await AsyncStorage.getItem(FAVOURITES_KEY);
+        if (storedFavourites) {
+          const favourites = JSON.parse(storedFavourites);
           // Use unique key - here assume item.id or fallback to title
           const key = item.id ?? item.title;
-          setIsFavorite(!!favorites[key]);
+          setIsFavourite(!!favourites[key]);
         }
       } catch (e) {
-        console.error("Failed to load favorites", e);
+        console.error("Failed to load favourites", e);
       }
     };
-    loadFavorite();
+    loadFavourite();
   }, [item]);
 
-  // Toggle favorite and save state
-  const toggleFavorite = async () => {
+  // Toggle favourite and save state
+  const toggleFavourite = async () => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const storedFavorites = await AsyncStorage.getItem(FAVORITES_KEY);
-      const favorites = storedFavorites ? JSON.parse(storedFavorites) : {};
+      const storedFavourites = await AsyncStorage.getItem(FAVOURITES_KEY);
+      const favourites = storedFavourites ? JSON.parse(storedFavourites) : {};
       const key = item.id ?? item.title;
 
-      const newStatus = !isFavorite;
+      const newStatus = !isFavourite;
 
       if (newStatus) {
-        favorites[key] = item;
+        favourites[key] = item;
       } else {
-        delete favorites[key];
+        delete favourites[key];
       }
 
-      await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
-      setIsFavorite(newStatus);
+      await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify(favourites));
+      setIsFavourite(newStatus);
 
       if (!newStatus && onUnfavourite) {
         onUnfavourite(); // ← callback to remove from list
       }
     } catch (e) {
-      console.error('Failed to save favorite', e);
+      console.error('Failed to save favourite', e);
     }
   };
 
@@ -144,14 +143,14 @@ export const EventItem = ({
           </View>
           <View style={styles.rightIcons}>
             <TouchableOpacity
-              onPress={toggleFavorite}
-              style={styles.favoriteButton}
+              onPress={toggleFavourite}
+              style={styles.favouriteButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Icon
-                name={isFavorite ? "star" : "star-outline"}
+                name={isFavourite ? "star" : "star-outline"}
                 size={24}
-                color={isFavorite ? "#FFD700" : chevronColor}
+                color={isFavourite ? "#FFD700" : chevronColor}
               />
             </TouchableOpacity>
 
@@ -224,7 +223,7 @@ itemTime: {
     flexDirection: "row",
     alignItems: "center",
   },
-  favoriteButton: {
+  favouriteButton: {
     marginRight: 12,
     padding: 4,
   },
