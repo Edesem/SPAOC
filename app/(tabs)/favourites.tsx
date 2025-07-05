@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EventItem } from '@/components/EventItem'; // <-- Import your component
 import { EventData, ItemProps } from '@/types/global'; // <-- adjust import if needed
 import { useFocusEffect } from '@react-navigation/native';
-import { FAVORITES_KEY } from '@/constants/consts';
+import { FAVOURITES_KEY } from '@/constants/consts';
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps['item'][]>([]);
@@ -19,7 +19,7 @@ export default function FavouritesScreen() {
 
   const loadFavourites = async () => {
     try {
-      const stored = await AsyncStorage.getItem(FAVORITES_KEY);
+      const stored = await AsyncStorage.getItem(FAVOURITES_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         const now = new Date();
@@ -36,12 +36,12 @@ export default function FavouritesScreen() {
         const updatedFavs = Object.fromEntries(
           upcomingFavs.map((item) => [item.id ?? item.title, item])
         );
-        await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(updatedFavs));
+        await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify(updatedFavs));
 
         setFavourites(upcomingFavs);
       }
     } catch (e) {
-      console.error('Failed to load favorites', e);
+      console.error('Failed to load favourites', e);
     }
   };
 
