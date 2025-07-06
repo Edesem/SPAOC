@@ -55,7 +55,8 @@ export async function scheduleSaintNotificationsForNext7Days() {
 }
 
 export async function cancelAllSaintNotifications() {
-  const all = await Notifications.getAllScheduledNotificationsAsync();  for (const notif of all) {
+  const all = await Notifications.getAllScheduledNotificationsAsync();
+  for (const notif of all) {
     if (notif.content.title === "Saint of the Day") {
       await Notifications.cancelScheduledNotificationAsync(notif.identifier);
     }
@@ -95,6 +96,12 @@ export async function scheduleFavouriteNotifications() {
     const dateStr = fav.start;
     const date = new Date(dateStr);
 
+    const timeOnly = date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, // Use false for 24-hour format
+    });
+
     //console.log(entries[i])
 
     if (isNaN(date.getTime())) {
@@ -104,17 +111,19 @@ export async function scheduleFavouriteNotifications() {
 
     const notificationTime = new Date(date);
     notificationTime.setHours(8, 0, 0, 0); // 8AM local time
-    console.log( notificationTime, new Date())
+    console.log(notificationTime, new Date());
     if (notificationTime < new Date()) {
       console.log(`Skipping... [${title}] - ${date}`);
       continue;
     }
 
-    console.log(`Scheduling... [${title}] - ${date}`);
+    const fiveSecondsLater = new Date(Date.now() + 5000);
+
+    console.log(`Scheduling... [${title}] @ ${notificationTime}`);
     await scheduleNotification(
-      "Favourite Event",
-      title,
-      notificationTime
+      `${title} in 1 week!`,
+      `Start time is ${timeOnly}`,
+      fiveSecondsLater
     );
     await AsyncStorage.setItem(`notified-${date}`, "true");
   }
