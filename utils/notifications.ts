@@ -102,28 +102,27 @@ export async function scheduleFavouriteNotifications() {
       hour12: true, // Use false for 24-hour format
     });
 
-    //console.log(entries[i])
-
     if (isNaN(date.getTime())) {
       console.warn(`Invalid date in favourites: ${dateStr}`);
       continue;
     }
 
-    const notificationTime = new Date(date);
-    notificationTime.setHours(8, 0, 0, 0); // 8AM local time
-    console.log(notificationTime, new Date());
-    if (notificationTime < new Date()) {
-      console.log(`Skipping... [${title}] - ${date}`);
+    const weekBefore = new Date(date);
+    weekBefore.setDate(date.getDate() - 7);
+    weekBefore.setHours(9, 0, 0, 0);
+
+    if (weekBefore < new Date()) {
+      console.log(`Skipping [${title}] — weekBefore is in the past: ${weekBefore}`);
       continue;
     }
 
     const fiveSecondsLater = new Date(Date.now() + 5000);
 
-    console.log(`Scheduling... [${title}] @ ${notificationTime}`);
+    console.log(`Scheduling... [${title}] @ ${weekBefore}`);
     await scheduleNotification(
       `${title} in 1 week!`,
       `Start time is ${timeOnly}`,
-      fiveSecondsLater
+      weekBefore
     );
     await AsyncStorage.setItem(`notified-${date}`, "true");
   }
@@ -137,3 +136,4 @@ export async function cancelAllFavouriteNotifications() {
     }
   }
 }
+
