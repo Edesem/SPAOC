@@ -122,7 +122,7 @@ export default function SettingsScreen() {
             />
           </View>
 
-          {/* Timezone Selection */}
+      {/*
           <View style={styles.settingItem}>
             <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Timezone</Text>
             <RNPickerSelect
@@ -140,6 +140,7 @@ export default function SettingsScreen() {
 
             />
           </View>
+        */}
 
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
