@@ -108,7 +108,7 @@ export async function scheduleFavouriteNotifications() {
     }
 
     const weekBefore = new Date(date);
-    weekBefore.setDate(date.getDate() - 7);
+    weekBefore.setDate(date.getDate() - 5);
     weekBefore.setHours(9, 0, 0, 0);
 
     if (weekBefore < new Date()) {
@@ -120,7 +120,7 @@ export async function scheduleFavouriteNotifications() {
 
     console.log(`Scheduling... [${title}] @ ${weekBefore}`);
     await scheduleNotification(
-      `${title} in 1 week!`,
+      `${title} in 5 days!`,
       `Start time is ${timeOnly}`,
       weekBefore
     );
