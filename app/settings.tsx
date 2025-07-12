@@ -1,29 +1,47 @@
-import { View, Text, Switch, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colours } from '@/styles/Colours';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import RNPickerSelect from 'react-native-picker-select';
-import { cancelAllFavouriteNotifications, cancelAllSaintNotifications, scheduleFavouriteNotifications, scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DAILY_SAINTS_NOTIFICATIONS_ENABLED, FAVOURITES_NOTIFICATIONS_ENABLED } from '@/constants/consts';
-import eventBus from '@/utils/eventBus';
+import {
+  View,
+  Text,
+  Switch,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colours } from "@/styles/Colours";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import RNPickerSelect from "react-native-picker-select";
+import {
+  cancelAllFavouriteNotifications,
+  cancelAllSaintNotifications,
+  scheduleFavouriteNotifications,
+  scheduleSaintNotificationsForNext7Days,
+} from "@/utils/notifications";
+import DateTimePicker from "react-native-modal-datetime-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
+  FAVOURITES_NOTIFICATIONS_ENABLED,
+} from "@/constants/consts";
+import eventBus from "@/utils/eventBus";
 
 export default function SettingsScreen() {
-const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
 
-  const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
-  const pickerTheme = colorScheme === 'dark' ? true : false;
+  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+  const pickerTheme = colorScheme === "dark" ? true : false;
   const router = useRouter();
 
-  const [themeSelection, setThemeSelection] = useState('auto');
-  const [fontSize, setFontSize] = useState('medium');
-  const [startOfWeek, setStartOfWeek] = useState('sunday');
-  const [timezone, setTimezone] = useState('UTC');
-  const [calendarNotifications, setCalendarNotifications] = useState<{ [key: string]: boolean }>({});
+  const [themeSelection, setThemeSelection] = useState("auto");
+  const [fontSize, setFontSize] = useState("medium");
+  const [startOfWeek, setStartOfWeek] = useState("sunday");
+  const [timezone, setTimezone] = useState("UTC");
+  const [calendarNotifications, setCalendarNotifications] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [notificationTime, setNotificationTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -35,28 +53,37 @@ const colorScheme = useColorScheme();
   };
 
   const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
-  const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] = useState(true);
+  const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
+    useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED).then((value) => {
-      if (value === null) {
-        // Default to true on first app use
-        setDailySaintsEnabled(true);
-        AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, "true");
-      } else {
-        setDailySaintsEnabled(value === 'true');
-      }
-    });
+    const loadSettings = async () => {
+      // Load theme
+      const savedTheme = await AsyncStorage.getItem("APP_THEME");
+      setThemeSelection(savedTheme || "auto");
 
-    AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_ENABLED).then((value) => {
-      if (value === null) {
-        // Default to true on first app use
-        setFavouriteNotificationsEnabled(true);
-        AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, "true");
+      // Load daily saints notification setting
+      const dailySaints = await AsyncStorage.getItem(
+        DAILY_SAINTS_NOTIFICATIONS_ENABLED
+      );
+      if (dailySaints === null) {
+        setDailySaintsEnabled(true);
+        await AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, "true");
       } else {
-        setFavouriteNotificationsEnabled(value === 'true');
+        setDailySaintsEnabled(dailySaints === "true");
       }
-    });
+
+      // Load favourites notification setting
+      const favs = await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_ENABLED);
+      if (favs === null) {
+        setFavouriteNotificationsEnabled(true);
+        await AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, "true");
+      } else {
+        setFavouriteNotificationsEnabled(favs === "true");
+      }
+    };
+
+    loadSettings();
   }, []);
 
   return (
@@ -64,7 +91,10 @@ const colorScheme = useColorScheme();
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
         <ScrollView style={styles.container}>
           {/* Back Button */}
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
             <MaterialIcons name="arrow-back" size={28} color={theme.primary} />
           </TouchableOpacity>
 
@@ -73,60 +103,81 @@ const colorScheme = useColorScheme();
 
           {/* Theme Selection */}
           <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Theme</Text>
+            <Text
+              style={[styles.settingText, { color: theme.moreImportantText }]}
+            >
+              Theme
+            </Text>
             <RNPickerSelect
               onValueChange={(value: string) => {
                 setThemeSelection(value);
-                console.log('Selected theme:', value);
-                AsyncStorage.setItem('APP_THEME', value);
-                eventBus.emit('themeChanged', value);
+                console.log("Selected theme:", value);
+                AsyncStorage.setItem("APP_THEME", value);
+                eventBus.emit("themeChanged", value);
               }}
               value={themeSelection}
               items={[
-                { label: 'Light', value: 'light' },
-                { label: 'Dark', value: 'dark' },
-                { label: 'Auto', value: 'auto' },
+                { label: "Light", value: "light" },
+                { label: "Dark", value: "dark" },
+                { label: "Auto", value: "auto" },
               ]}
-              style={{ inputIOSContainer: { pointerEvents: "none" } }}
+              style={{
+                inputIOSContainer: { pointerEvents: "none" },
+                inputIOS: { color: theme.moreImportantText },
+                inputAndroid: { color: theme.moreImportantText },
+              }}
               darkTheme={pickerTheme}
             />
-
           </View>
 
           {/* Start of Week */}
           <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Start of the Week</Text>
+            <Text
+              style={[styles.settingText, { color: theme.moreImportantText }]}
+            >
+              Start of the Week
+            </Text>
             <RNPickerSelect
               onValueChange={(value: string) => setStartOfWeek(value)}
               value={startOfWeek}
               items={[
-                { label: 'Sunday', value: 'sunday' },
-                { label: 'Monday', value: 'monday' },
+                { label: "Sunday", value: "sunday" },
+                { label: "Monday", value: "monday" },
               ]}
-              style={{ inputIOSContainer: { pointerEvents: "none" } }}
+              style={{
+                inputIOSContainer: { pointerEvents: "none" },
+                inputIOS: { color: theme.moreImportantText },
+                inputAndroid: { color: theme.moreImportantText },
+              }}
               darkTheme={pickerTheme}
-
             />
           </View>
 
           {/* Font Size Selection */}
           <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Font Size</Text>
+            <Text
+              style={[styles.settingText, { color: theme.moreImportantText }]}
+            >
+              Font Size
+            </Text>
             <RNPickerSelect
               onValueChange={(value: string) => setFontSize(value)}
               value={fontSize}
               items={[
-                { label: 'Small', value: 'small' },
-                { label: 'Medium', value: 'medium' },
-                { label: 'Large', value: 'large' },
+                { label: "Small", value: "small" },
+                { label: "Medium", value: "medium" },
+                { label: "Large", value: "large" },
               ]}
-              style={{ inputIOSContainer: { pointerEvents: "none" } }}
+              style={{
+                inputIOSContainer: { pointerEvents: "none" },
+                inputIOS: { color: theme.moreImportantText },
+                inputAndroid: { color: theme.moreImportantText },
+              }}
               darkTheme={pickerTheme}
-
             />
           </View>
 
-      {/*
+          {/*
           <View style={styles.settingItem}>
             <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Timezone</Text>
             <RNPickerSelect
@@ -148,14 +199,19 @@ const colorScheme = useColorScheme();
 
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
+            <Text
+              style={[styles.settingText, { color: theme.moreImportantText }]}
+            >
               Saint of the Day Notification
             </Text>
             <Switch
               value={dailySaintsEnabled}
               onValueChange={(value) => {
                 setDailySaintsEnabled(value);
-                AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, value.toString());
+                AsyncStorage.setItem(
+                  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
+                  value.toString()
+                );
                 if (value) {
                   scheduleSaintNotificationsForNext7Days();
                 } else {
@@ -163,21 +219,26 @@ const colorScheme = useColorScheme();
                   cancelAllSaintNotifications(); // You’ll define this next
                 }
               }}
-              trackColor={{ false: '#767577', true: '#34c658' }}
+              trackColor={{ false: "#767577", true: "#34c658" }}
               thumbColor="#fff"
             />
           </View>
 
           {/* Favourites Notification toggle */}
           <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>
+            <Text
+              style={[styles.settingText, { color: theme.moreImportantText }]}
+            >
               Favourite Events Notification
             </Text>
             <Switch
               value={favouriteNotificationsEnabled}
               onValueChange={(value) => {
                 setFavouriteNotificationsEnabled(value);
-                AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, value.toString());
+                AsyncStorage.setItem(
+                  FAVOURITES_NOTIFICATIONS_ENABLED,
+                  value.toString()
+                );
                 if (value) {
                   scheduleFavouriteNotifications();
                 } else {
@@ -185,39 +246,51 @@ const colorScheme = useColorScheme();
                   cancelAllFavouriteNotifications(); // You’ll define this next
                 }
               }}
-              trackColor={{ false: '#767577', true: '#34c658' }}
+              trackColor={{ false: "#767577", true: "#34c658" }}
               thumbColor="#fff"
             />
           </View>
 
           {/* Calendar Notification Toggles */}
           {[
-            'Youth Calendar',
-            'Church Calendar',
-            'Family Calendar',
-            'Ladies Calendar',
-            'Parish Calendar',
-            'Seniors Calendar',
-            'Weekly Calendar',
-            'Playgroup Calendar',
-            'Fellowship Calendar',
+            "Youth Calendar",
+            "Church Calendar",
+            "Family Calendar",
+            "Ladies Calendar",
+            "Parish Calendar",
+            "Seniors Calendar",
+            "Weekly Calendar",
+            "Playgroup Calendar",
+            "Fellowship Calendar",
           ].map((calendar) => (
             <View style={styles.settingItem} key={calendar}>
-              <Text style={[styles.settingText, { color: theme.moreImportantText }]}>{calendar}</Text>
+              <Text
+                style={[styles.settingText, { color: theme.moreImportantText }]}
+              >
+                {calendar}
+              </Text>
               <Switch
                 value={calendarNotifications[calendar] || false}
                 onValueChange={() => toggleCalendarNotification(calendar)}
-                trackColor={{ false: '#767577', true: '#34c658' }}
+                trackColor={{ false: "#767577", true: "#34c658" }}
                 thumbColor="#fff"
               />
             </View>
           ))}
 
           {/* Notification Time Picker */}
-          <TouchableOpacity onPress={() => setShowTimePicker(true)} style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Notify Before Event</Text>
+          <TouchableOpacity
+            onPress={() => setShowTimePicker(true)}
+            style={styles.settingItem}
+          >
+            <Text
+              style={[styles.settingText, { color: theme.moreImportantText }]}
+            >
+              Notify Before Event
+            </Text>
             <Text style={[styles.settingText, { color: theme.primary }]}>
-              {notificationTime.getHours()}:{notificationTime.getMinutes().toString().padStart(2, '0')}
+              {notificationTime.getHours()}:
+              {notificationTime.getMinutes().toString().padStart(2, "0")}
             </Text>
           </TouchableOpacity>
 
@@ -248,13 +321,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   settingItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 10,
   },
   settingText: {
@@ -268,9 +341,9 @@ const pickerSelectStyles = {
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderRadius: 4,
-    color: 'black',
+    color: "black",
     paddingRight: 30,
   },
   inputAndroid: {
@@ -278,9 +351,9 @@ const pickerSelectStyles = {
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderRadius: 4,
-    color: 'black',
+    color: "black",
     paddingRight: 30,
   },
 };
