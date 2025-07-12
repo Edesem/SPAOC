@@ -121,6 +121,7 @@ export default function SettingsScreen() {
                 { label: "Dark", value: "dark" },
                 { label: "Auto", value: "auto" },
               ]}
+              placeholder={{}}
               style={{
                 inputIOSContainer: { pointerEvents: "none" },
                 inputIOS: { color: theme.moreImportantText },
@@ -144,6 +145,7 @@ export default function SettingsScreen() {
                 { label: "Sunday", value: "sunday" },
                 { label: "Monday", value: "monday" },
               ]}
+              placeholder={{}}
               style={{
                 inputIOSContainer: { pointerEvents: "none" },
                 inputIOS: { color: theme.moreImportantText },
@@ -168,6 +170,7 @@ export default function SettingsScreen() {
                 { label: "Medium", value: "medium" },
                 { label: "Large", value: "large" },
               ]}
+              placeholder={{}}
               style={{
                 inputIOSContainer: { pointerEvents: "none" },
                 inputIOS: { color: theme.moreImportantText },
