@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, Image, useColorScheme, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl, Alert, AppState, PressableStateCallbackType } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, Image, ActivityIndicator, ScrollView, Linking, TouchableOpacity, RefreshControl, Alert, AppState, PressableStateCallbackType } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';

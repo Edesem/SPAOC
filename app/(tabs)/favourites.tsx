@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, ScrollView, useColorScheme, Image } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, ScrollView, Image } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';

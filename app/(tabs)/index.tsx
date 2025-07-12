@@ -7,7 +7,6 @@ import {
   StatusBar,
   Text,
   ActivityIndicator,
-  useColorScheme,
   Image,
   AppState,
   RefreshControl,
@@ -15,6 +14,7 @@ import {
   TouchableOpacity,
   Modal
 } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme'; // or set up tsconfig to alias
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { renderItem } from '@/components/RenderItem';
 import { Colours } from '@/styles/Colours';

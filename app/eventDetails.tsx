@@ -1,7 +1,8 @@
 import { EventData } from '@/types/global';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, useColorScheme, Linking, Platform, Dimensions, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, SafeAreaView, Linking, Platform, Dimensions, Alert, TouchableOpacity } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Colours } from '@/styles/Colours';
 import { decode } from 'html-entities';
