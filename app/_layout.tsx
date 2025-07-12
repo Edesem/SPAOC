@@ -30,6 +30,7 @@ export default function RootLayout() {
     return null;
   }
 
+  console.log("Theme selected:", colorScheme)
   const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
 
   return (
@@ -50,7 +51,7 @@ export default function RootLayout() {
         <Stack.Screen name="dailyReadings" />
         <Stack.Screen name="pdfViewer" options={{ title: 'PDF' }} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <Toast config={toastConfig(colorScheme === 'dark' ? 'dark' : 'light')} topOffset={80} />
     </ThemeProvider>
   );

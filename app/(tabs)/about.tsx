@@ -7,9 +7,9 @@ import {
     Image,
     SafeAreaView,
     Linking,
-    useColorScheme,
     ScrollView,
 } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles';

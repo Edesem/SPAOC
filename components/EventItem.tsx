@@ -6,8 +6,8 @@ import {
   View,
   StyleSheet,
   Text,
-  useColorScheme,
 } from "react-native";
+import { useColorScheme } from '@/hooks/useColorScheme';
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";

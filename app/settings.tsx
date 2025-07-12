@@ -10,9 +10,11 @@ import { cancelAllFavouriteNotifications, cancelAllSaintNotifications, scheduleF
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DAILY_SAINTS_NOTIFICATIONS_ENABLED, FAVOURITES_NOTIFICATIONS_ENABLED } from '@/constants/consts';
+import eventBus from '@/utils/eventBus';
 
 export default function SettingsScreen() {
-  const colorScheme = useColorScheme();
+const colorScheme = useColorScheme();
+
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
   const pickerTheme = colorScheme === 'dark' ? true : false;
   const router = useRouter();
@@ -76,6 +78,8 @@ export default function SettingsScreen() {
               onValueChange={(value: string) => {
                 setThemeSelection(value);
                 console.log('Selected theme:', value);
+                AsyncStorage.setItem('APP_THEME', value);
+                eventBus.emit('themeChanged', value);
               }}
               value={themeSelection}
               items={[
