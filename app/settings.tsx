@@ -27,6 +27,27 @@ import {
   FAVOURITES_NOTIFICATIONS_ENABLED,
 } from "@/constants/consts";
 import eventBus from "@/utils/eventBus";
+import { create } from "zustand";
+
+interface SettingsState {
+  startOfWeek: "sunday" | "monday";
+  setStartOfWeek: (value: "sunday" | "monday") => void;
+  loadStartOfWeek: () => Promise<void>;
+}
+
+export const useSettingsStore = create<SettingsState>((set) => ({
+  startOfWeek: "monday", // default
+  setStartOfWeek: (value) => {
+    set({ startOfWeek: value });
+    AsyncStorage.setItem("START_OF_WEEK", value); // save on change
+  },
+  loadStartOfWeek: async () => {
+    const saved = await AsyncStorage.getItem("START_OF_WEEK");
+    if (saved === "sunday" || saved === "monday") {
+      set({ startOfWeek: saved });
+    }
+  },
+}));
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
@@ -37,7 +58,8 @@ export default function SettingsScreen() {
 
   const [themeSelection, setThemeSelection] = useState("auto");
   const [fontSize, setFontSize] = useState("medium");
-  const [startOfWeek, setStartOfWeek] = useState("sunday");
+  const startOfWeek = useSettingsStore((state) => state.startOfWeek);
+  const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
   const [timezone, setTimezone] = useState("UTC");
   const [calendarNotifications, setCalendarNotifications] = useState<{
     [key: string]: boolean;
@@ -55,6 +77,8 @@ export default function SettingsScreen() {
   const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
     useState(true);
+
+  const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -81,6 +105,9 @@ export default function SettingsScreen() {
       } else {
         setFavouriteNotificationsEnabled(favs === "true");
       }
+
+      // Load start of the week
+      loadStartOfWeek();
     };
 
     loadSettings();
@@ -139,7 +166,9 @@ export default function SettingsScreen() {
               Start of the Week
             </Text>
             <RNPickerSelect
-              onValueChange={(value: string) => setStartOfWeek(value)}
+              onValueChange={(value: string) =>
+                setStartOfWeek(value as "sunday" | "monday")
+              }
               value={startOfWeek}
               items={[
                 { label: "Sunday", value: "sunday" },

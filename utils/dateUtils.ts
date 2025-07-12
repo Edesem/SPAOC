@@ -1,3 +1,4 @@
+import { useSettingsStore } from "@/app/settings";
 import { EventData } from "@/types/global";
 
 export const formatDateHeading = (date: Date) => {
@@ -87,9 +88,11 @@ export const formatDateHeading = (date: Date) => {
 
 
 export const getStartOfWeek = (date: Date) => { 
+    const startOfWeek = useSettingsStore.getState().startOfWeek; // "sunday" | "monday"
+    const firstDay = startOfWeek == "monday" ? 2 : 1; // 2 = Monday, 1 = Sunday
     const day = date.getDay(); // Make Sunday (0) the last day of the week
     date.setHours(0, 0, 0, 0); // Set time to midnight
-    date.setDate(date.getDate() - day + 2); // Set the date to the start of the week (Monday)
+    date.setDate(date.getDate() - day + firstDay); // Set the date to the start of the week (Monday)
     return date;
 };
 
