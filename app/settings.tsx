@@ -159,7 +159,7 @@ export default function SettingsScreen() {
           {/* Theme Selection */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
+              style={[font.body, { color: theme.moreImportantText }]}
             >
               Theme
             </Text>
@@ -189,7 +189,7 @@ export default function SettingsScreen() {
           {/* Start of Week */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
+              style={[font.body, { color: theme.moreImportantText }]}
             >
               Start of the Week
             </Text>
@@ -215,7 +215,7 @@ export default function SettingsScreen() {
           {/* Font Size Selection */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
+              style={[font.body, { color: theme.moreImportantText }]}
             >
               Font Size
             </Text>
@@ -239,7 +239,7 @@ export default function SettingsScreen() {
 
           {/*
           <View style={styles.settingItem}>
-            <Text style={[styles.settingText, { color: theme.moreImportantText }]}>Timezone</Text>
+            <Text style={[{ color: theme.moreImportantText }]}>Timezone</Text>
             <RNPickerSelect
               onValueChange={(value: string) => setTimezone(value)}
               value={timezone}
@@ -260,7 +260,7 @@ export default function SettingsScreen() {
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
+              style={[font.body, { color: theme.moreImportantText }]}
             >
               Saint of the Day Notification
             </Text>
@@ -287,7 +287,7 @@ export default function SettingsScreen() {
           {/* Favourites Notification toggle */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
+              style={[font.body, { color: theme.moreImportantText }]}
             >
               Favourite Events Notification
             </Text>
@@ -325,7 +325,7 @@ export default function SettingsScreen() {
           ].map((calendar) => (
             <View style={styles.settingItem} key={calendar}>
               <Text
-                style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
+                style={[font.body, { color: theme.moreImportantText }]}
               >
                 {calendar}
               </Text>
@@ -344,11 +344,11 @@ export default function SettingsScreen() {
             style={styles.settingItem}
           >
             <Text
-              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
+              style={[font.body, { color: theme.moreImportantText }]}
             >
               Notify Before Event
             </Text>
-            <Text style={[styles.settingText, { color: theme.primary }]}>
+            <Text style={[{ color: theme.primary }]}>
               {notificationTime.getHours()}:
               {notificationTime.getMinutes().toString().padStart(2, "0")}
             </Text>
@@ -388,14 +388,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
   },
-  settingText: {
-    fontSize: 18,
-  },
 });
 
 const pickerSelectStyles = {
   inputIOS: {
-    fontSize: 16,
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderWidth: 1,
@@ -405,7 +401,6 @@ const pickerSelectStyles = {
     paddingRight: 30,
   },
   inputAndroid: {
-    fontSize: 16,
     paddingVertical: 8,
     paddingHorizontal: 10,
     borderWidth: 1,
