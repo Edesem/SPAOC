@@ -28,18 +28,42 @@ import {
 } from "@/constants/consts";
 import eventBus from "@/utils/eventBus";
 import { create } from "zustand";
+import { useFontStyles } from "@/hooks/useFontStyles";
+
+type FontSize = "small" | "medium" | "large";
+type StartOfWeek = "sunday" | "monday";
 
 interface SettingsState {
-  startOfWeek: "sunday" | "monday";
-  setStartOfWeek: (value: "sunday" | "monday") => void;
+  fontSize: FontSize;
+  setFontSize: (size: FontSize) => void;
+  loadFontSize: () => Promise<void>;
+
+  startOfWeek: StartOfWeek;
+  setStartOfWeek: (value: StartOfWeek) => void;
   loadStartOfWeek: () => Promise<void>;
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
-  startOfWeek: "monday", // default
+  // Defaults
+  fontSize: "medium",
+  startOfWeek: "monday",
+
+  // Font size
+  setFontSize: (size) => {
+    AsyncStorage.setItem("FONT_SIZE", size);
+    set({ fontSize: size });
+  },
+  loadFontSize: async () => {
+    const saved = await AsyncStorage.getItem("FONT_SIZE");
+    if (saved === "small" || saved === "medium" || saved === "large") {
+      set({ fontSize: saved });
+    }
+  },
+
+  // Start of week
   setStartOfWeek: (value) => {
+    AsyncStorage.setItem("START_OF_WEEK", value);
     set({ startOfWeek: value });
-    AsyncStorage.setItem("START_OF_WEEK", value); // save on change
   },
   loadStartOfWeek: async () => {
     const saved = await AsyncStorage.getItem("START_OF_WEEK");
@@ -57,7 +81,8 @@ export default function SettingsScreen() {
   const router = useRouter();
 
   const [themeSelection, setThemeSelection] = useState("auto");
-  const [fontSize, setFontSize] = useState("medium");
+  const fontSize = useSettingsStore((state) => state.fontSize);
+  const setFontSize = useSettingsStore((state) => state.setFontSize);
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
   const [timezone, setTimezone] = useState("UTC");
@@ -77,8 +102,6 @@ export default function SettingsScreen() {
   const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
     useState(true);
-
-  const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -106,12 +129,15 @@ export default function SettingsScreen() {
         setFavouriteNotificationsEnabled(favs === "true");
       }
 
-      // Load start of the week
-      loadStartOfWeek();
+      // Load font size and start of the week
+      useSettingsStore.getState().loadFontSize();
+      useSettingsStore.getState().loadStartOfWeek();
     };
 
     loadSettings();
   }, []);
+
+  const font = useFontStyles();
 
   return (
     <SafeAreaProvider>
@@ -126,7 +152,9 @@ export default function SettingsScreen() {
           </TouchableOpacity>
 
           {/* Settings Header */}
-          <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
+          <Text style={[styles.title, font.heading, { color: theme.primary }]}>
+            Settings
+          </Text>
 
           {/* Theme Selection */}
           <View style={styles.settingItem}>
@@ -352,8 +380,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
     marginBottom: 20,
   },
   settingItem: {

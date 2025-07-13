@@ -1,21 +1,28 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, ScrollView, Image } from 'react-native';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemedText } from '@/components/ThemedText';
-import { getCommonStyles } from '@/styles/CommonStyles';
-import { Colours } from '@/styles/Colours';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { EventItem } from '@/components/EventItem'; // <-- Import your component
-import { EventData, ItemProps } from '@/types/global'; // <-- adjust import if needed
-import { useFocusEffect } from '@react-navigation/native';
-import { FAVOURITES_KEY } from '@/constants/consts';
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  Image,
+} from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { ThemedText } from "@/components/ThemedText";
+import { getCommonStyles } from "@/styles/CommonStyles";
+import { Colours } from "@/styles/Colours";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EventItem } from "@/components/EventItem"; // <-- Import your component
+import { EventData, ItemProps } from "@/types/global"; // <-- adjust import if needed
+import { useFocusEffect } from "@react-navigation/native";
+import { FAVOURITES_KEY } from "@/constants/consts";
 
 export default function FavouritesScreen() {
-  const [favourites, setFavourites] = useState<ItemProps['item'][]>([]);
+  const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
   const colorScheme = useColorScheme();
-  const scheme = colorScheme === 'dark' ? 'dark' : 'light';
-  const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+  const scheme = colorScheme === "dark" ? "dark" : "light";
+  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
   const loadFavourites = async () => {
@@ -42,7 +49,7 @@ export default function FavouritesScreen() {
         setFavourites(upcomingFavs);
       }
     } catch (e) {
-      console.error('Failed to load favourites', e);
+      console.error("Failed to load favourites", e);
     }
   };
 
@@ -66,7 +73,7 @@ export default function FavouritesScreen() {
           </View>
 
           {favourites.length === 0 ? (
-            <Text style={{ textAlign: 'center', color: 'gray', marginTop: 20 }}>
+            <Text style={{ textAlign: "center", color: "gray", marginTop: 20 }}>
               No favourites yet.
             </Text>
           ) : (
@@ -74,10 +81,12 @@ export default function FavouritesScreen() {
               <EventItem
                 key={item.id ?? `${item.title}-${index}`}
                 item={item}
-                onPress={() => { }}
+                onPress={() => {}}
                 onUnfavourite={() => {
                   setFavourites((prev) =>
-                    prev.filter((f) => (f.id ?? f.title) !== (item.id ?? item.title))
+                    prev.filter(
+                      (f) => (f.id ?? f.title) !== (item.id ?? item.title)
+                    )
                   );
                 }}
                 showFullDate={true}
@@ -88,7 +97,7 @@ export default function FavouritesScreen() {
           {/* Image */}
           <View style={styles.imageContainer}>
             <Image
-              source={require('../../assets/images/orthodox/Seraph.png')} // Adjust the path to your image
+              source={require("../../assets/images/orthodox/Seraph.png")} // Adjust the path to your image
               style={[styles.bottomImage, { tintColor: theme.primary }]}
             />
           </View>
@@ -100,28 +109,27 @@ export default function FavouritesScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 30,
   },
   subtitle: {
     fontSize: 16,
-    fontStyle: 'italic',
-    color: 'grey',
+    fontStyle: "italic",
     marginTop: 10,
     marginHorizontal: 26,
-    textAlign: 'center',
+    textAlign: "center",
   },
   imageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 40, // Adjust the space above the image
     marginBottom: 10, // Adjust the space below the image if needed
     flex: 1, // Allows image container to take remaining space
-    justifyContent: 'center', // Aligns the image in the middle
+    justifyContent: "center", // Aligns the image in the middle
   },
   bottomImage: {
     width: 150, // Adjust the width of the image
     height: 150, // Adjust the height of the image
-    resizeMode: 'contain', // Ensure the image doesn't get stretched
+    resizeMode: "contain", // Ensure the image doesn't get stretched
     marginBottom: 50,
   },
 });
