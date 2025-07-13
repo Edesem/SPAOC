@@ -280,7 +280,7 @@ export default function PrayerScreen(): JSX.Element {
 
           <View style={[styles.headerRow, { alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 }]}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.subtitle}>
+              <Text style={[styles.subtitle, { color: theme.detail }]}>
                 "Pray without ceasing."{'\n'}- 1 Thessalonians 5:17
               </Text>
             </View>
@@ -646,7 +646,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontStyle: 'italic',
-    color: 'grey',
     marginTop: 10,
     marginHorizontal: 26,
     textAlign: 'center',

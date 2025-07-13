@@ -60,7 +60,7 @@ export default function FavouritesScreen() {
             <ThemedText type="title" style={CommonStyles.title}>
               Favourites
             </ThemedText>
-            <Text style={styles.subtitle}>
+            <Text style={[styles.subtitle, { color: theme.detail }]}>
               Saved upcoming events will appear here for quick viewing.
             </Text>
           </View>
