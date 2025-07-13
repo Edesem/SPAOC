@@ -159,7 +159,7 @@ export default function SettingsScreen() {
           {/* Theme Selection */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, { color: theme.moreImportantText }]}
+              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
             >
               Theme
             </Text>
@@ -179,8 +179,8 @@ export default function SettingsScreen() {
               placeholder={{}}
               style={{
                 inputIOSContainer: { pointerEvents: "none" },
-                inputIOS: { color: theme.moreImportantText },
-                inputAndroid: { color: theme.moreImportantText },
+                inputIOS: { color: theme.moreImportantText, ...font.body },
+                inputAndroid: { color: theme.moreImportantText, ...font.body },
               }}
               darkTheme={pickerTheme}
             />
@@ -189,7 +189,7 @@ export default function SettingsScreen() {
           {/* Start of Week */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, { color: theme.moreImportantText }]}
+              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
             >
               Start of the Week
             </Text>
@@ -205,8 +205,8 @@ export default function SettingsScreen() {
               placeholder={{}}
               style={{
                 inputIOSContainer: { pointerEvents: "none" },
-                inputIOS: { color: theme.moreImportantText },
-                inputAndroid: { color: theme.moreImportantText },
+                inputIOS: { color: theme.moreImportantText, ...font.body },
+                inputAndroid: { color: theme.moreImportantText, ...font.body },
               }}
               darkTheme={pickerTheme}
             />
@@ -215,7 +215,7 @@ export default function SettingsScreen() {
           {/* Font Size Selection */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, { color: theme.moreImportantText }]}
+              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
             >
               Font Size
             </Text>
@@ -230,8 +230,8 @@ export default function SettingsScreen() {
               placeholder={{}}
               style={{
                 inputIOSContainer: { pointerEvents: "none" },
-                inputIOS: { color: theme.moreImportantText },
-                inputAndroid: { color: theme.moreImportantText },
+                inputIOS: { color: theme.moreImportantText, ...font.body },
+                inputAndroid: { color: theme.moreImportantText, ...font.body },
               }}
               darkTheme={pickerTheme}
             />
@@ -260,7 +260,7 @@ export default function SettingsScreen() {
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, { color: theme.moreImportantText }]}
+              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
             >
               Saint of the Day Notification
             </Text>
@@ -287,7 +287,7 @@ export default function SettingsScreen() {
           {/* Favourites Notification toggle */}
           <View style={styles.settingItem}>
             <Text
-              style={[styles.settingText, { color: theme.moreImportantText }]}
+              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
             >
               Favourite Events Notification
             </Text>
@@ -325,7 +325,7 @@ export default function SettingsScreen() {
           ].map((calendar) => (
             <View style={styles.settingItem} key={calendar}>
               <Text
-                style={[styles.settingText, { color: theme.moreImportantText }]}
+                style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
               >
                 {calendar}
               </Text>
@@ -344,7 +344,7 @@ export default function SettingsScreen() {
             style={styles.settingItem}
           >
             <Text
-              style={[styles.settingText, { color: theme.moreImportantText }]}
+              style={[styles.settingText, font.body, { color: theme.moreImportantText }]}
             >
               Notify Before Event
             </Text>

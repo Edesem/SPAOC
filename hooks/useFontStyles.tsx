@@ -13,7 +13,7 @@ export const useFontStyles = () => {
   })();
 
   return {
-    heading: { fontSize: base + 8, fontWeight: 'bold'},
+    heading: { fontSize: base + 8, fontWeight: 'bold' as const},
     subheading: { fontSize: base + 2 },
     body: { fontSize: base },
     small: { fontSize: base - 2 },
