@@ -421,7 +421,7 @@ export default function PrayerScreen(): JSX.Element {
             >
               <IconSymbol
                 name="calendar"
-                size={font.heading.fontSize}
+                size={font.icon.fontSize}
                 color={theme.lessImportantText}
               />
             </TouchableOpacity>
@@ -526,7 +526,7 @@ export default function PrayerScreen(): JSX.Element {
                     </Text>
                     <Ionicons
                       name="chevron-forward"
-                      size={font.subheading.fontSize}
+                      size={font.icon.fontSize}
                       color={chevronColor}
                       style={styles.chevronIcon}
                     />
@@ -590,7 +590,7 @@ export default function PrayerScreen(): JSX.Element {
                     </Text>
                     <Ionicons
                       name="chevron-forward"
-                      size={font.subheading.fontSize}
+                      size={font.icon.fontSize}
                       color={chevronColor}
                       style={styles.chevronIcon}
                     />
@@ -654,7 +654,7 @@ export default function PrayerScreen(): JSX.Element {
                     </Text>
                     <Ionicons
                       name="chevron-forward"
-                      size={font.subheading.fontSize}
+                      size={font.icon.fontSize}
                       color={chevronColor}
                       style={styles.chevronIcon}
                     />

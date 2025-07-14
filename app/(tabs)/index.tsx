@@ -231,7 +231,7 @@ export default function HomeScreen() {
         The Apostles' Fast
       </Text>
     );
-  } else if (events.includes("Theotokos Fast")) {
+  } else if (events.includes("The Theotokos Fast")) {
     majorFastText = (
       <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
         Theotokos Fast
@@ -369,7 +369,7 @@ export default function HomeScreen() {
           >
             <IconSymbol
               name="calendar"
-              size={font.heading.fontSize}
+              size={font.icon.fontSize}
               color={theme.lessImportantText}
             />
           </TouchableOpacity>
@@ -431,7 +431,7 @@ export default function HomeScreen() {
                 >
                   <MaterialIcons
                     name="menu"
-                    size={font.heading.fontSize}
+                    size={font.icon.fontSize}
                     color={theme.lessImportantText}
                   />
                 </TouchableOpacity>
@@ -455,7 +455,7 @@ export default function HomeScreen() {
                 >
                   <MaterialIcons
                     name="arrow-upward"
-                    size={font.heading.fontSize}
+                    size={font.icon.fontSize}
                     color={theme.lessImportantText}
                   />
                 </TouchableOpacity>

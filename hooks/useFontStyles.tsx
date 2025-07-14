@@ -17,5 +17,6 @@ export const useFontStyles = () => {
     subheading: { fontSize: base + 2 },
     body: { fontSize: base },
     small: { fontSize: base - 2 },
+    icon: { fontSize: base + 20}
   };
 };
