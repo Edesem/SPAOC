@@ -17,6 +17,7 @@ import { EventItem } from "@/components/EventItem"; // <-- Import your component
 import { EventData, ItemProps } from "@/types/global"; // <-- adjust import if needed
 import { useFocusEffect } from "@react-navigation/native";
 import { FAVOURITES_KEY } from "@/constants/consts";
+import { useFontStyles } from "@/hooks/useFontStyles";
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
@@ -24,6 +25,9 @@ export default function FavouritesScreen() {
   const scheme = colorScheme === "dark" ? "dark" : "light";
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
+
+  const font = useFontStyles();
+  const styles = getStyles(font);
 
   const loadFavourites = async () => {
     try {
@@ -107,29 +111,30 @@ export default function FavouritesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  header: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontStyle: "italic",
-    marginTop: 10,
-    marginHorizontal: 26,
-    textAlign: "center",
-  },
-  imageContainer: {
-    alignItems: "center",
-    marginTop: 40, // Adjust the space above the image
-    marginBottom: 10, // Adjust the space below the image if needed
-    flex: 1, // Allows image container to take remaining space
-    justifyContent: "center", // Aligns the image in the middle
-  },
-  bottomImage: {
-    width: 150, // Adjust the width of the image
-    height: 150, // Adjust the height of the image
-    resizeMode: "contain", // Ensure the image doesn't get stretched
-    marginBottom: 50,
-  },
-});
+const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+  StyleSheet.create({
+    header: {
+      alignItems: "center",
+      marginBottom: 30,
+    },
+    subtitle: {
+      ...font.body,
+      fontStyle: "italic",
+      marginTop: 10,
+      marginHorizontal: 26,
+      textAlign: "center",
+    },
+    imageContainer: {
+      alignItems: "center",
+      marginTop: 40, // Adjust the space above the image
+      marginBottom: 10, // Adjust the space below the image if needed
+      flex: 1, // Allows image container to take remaining space
+      justifyContent: "center", // Aligns the image in the middle
+    },
+    bottomImage: {
+      width: 150, // Adjust the width of the image
+      height: 150, // Adjust the height of the image
+      resizeMode: "contain", // Ensure the image doesn't get stretched
+      marginBottom: 50,
+    },
+  });
