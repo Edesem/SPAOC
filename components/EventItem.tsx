@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { ItemProps } from "@/types/global";
 import { useRouter } from "expo-router";
-import {
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Text,
-} from "react-native";
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colours } from "@/styles/Colours";
 import { FAVOURITES_KEY } from "@/constants/consts";
+import { useFontStyles } from "@/hooks/useFontStyles";
 
 export const EventItem = ({
   item,
@@ -22,6 +18,9 @@ export const EventItem = ({
 }: ItemProps & { onUnfavourite?: () => void; showFullDate?: boolean }) => {
   const router = useRouter();
   const colorScheme = useColorScheme();
+
+  const font = useFontStyles();
+  const styles = getStyles(font);
 
   const [isFavourite, setIsFavourite] = useState(false);
 
@@ -66,7 +65,7 @@ export const EventItem = ({
         onUnfavourite(); // ← callback to remove from list
       }
     } catch (e) {
-      console.error('Failed to save favourite', e);
+      console.error("Failed to save favourite", e);
     }
   };
 
@@ -80,7 +79,6 @@ export const EventItem = ({
     year: "numeric",
   });
 
-
   const formattedStart = isAllDayEvent
     ? "All day"
     : eventStart.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -88,16 +86,20 @@ export const EventItem = ({
   const formattedEnd = isAllDayEvent
     ? ""
     : `to ${eventEnd.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
 
   const backgroundColor =
-    colorScheme === "dark" ? Colours.dark.itemBackground : Colours.light.itemBackground;
+    colorScheme === "dark"
+      ? Colours.dark.itemBackground
+      : Colours.light.itemBackground;
   const textColor = colorScheme === "dark" ? "#FFF" : "#333";
   const timeColor = colorScheme === "dark" ? "#BBB" : "#777";
   const chevronColor =
-    colorScheme === "dark" ? Colours.dark.chevronColor : Colours.light.chevronColor;
+    colorScheme === "dark"
+      ? Colours.dark.chevronColor
+      : Colours.light.chevronColor;
 
   const eventColorMap = new Map<string, string>([
     ["youth", Colours.event.youth],
@@ -131,15 +133,17 @@ export const EventItem = ({
         <View style={[styles.leftBar, { backgroundColor: sourceColor }]} />
         <View style={styles.itemContent}>
           <View style={styles.textContainer}>
-            {showFullDate &&
+            {showFullDate && (
               <Text style={[styles.itemDate, { color: timeColor }]}>
                 {formattedDate}
               </Text>
-            }
+            )}
             <Text style={[styles.itemTime, { color: timeColor }]}>
               {formattedStart} {formattedEnd}
             </Text>
-            <Text style={[styles.itemTitle, { color: textColor }]}>{item.title}</Text>
+            <Text style={[styles.itemTitle, { color: textColor }]}>
+              {item.title}
+            </Text>
           </View>
           <View style={styles.rightIcons}>
             <TouchableOpacity
@@ -149,14 +153,14 @@ export const EventItem = ({
             >
               <Icon
                 name={isFavourite ? "star" : "star-outline"}
-                size={24}
+                size={font.heading.fontSize}
                 color={isFavourite ? "#FFD700" : chevronColor}
               />
             </TouchableOpacity>
 
             <Icon
               name="chevron-forward"
-              size={20}
+              size={font.subheading.fontSize}
               color={chevronColor}
               style={styles.chevronIcon}
             />
@@ -167,64 +171,65 @@ export const EventItem = ({
   );
 };
 
-const styles = StyleSheet.create({
-  item: {
-    padding: 20,
-    marginVertical: 2,
-    marginHorizontal: 16,
-    borderRadius: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  leftBar: {
-    width: 8,
-    borderTopLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    borderTopRightRadius: 1,
-    borderBottomLeftRadius: 1,
-    marginRight: 10,
-  },
-  leftBarContainer: {
-    flexDirection: "row",
-    alignItems: "stretch",
-    flex: 1,
-  },
-  itemContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flex: 1,
-  },
-  textContainer: {
-    flex: 1,
-  },
-itemDate: {
-  fontSize: 15,
-  fontWeight: '500',
-  marginBottom: 2,
-},
-itemTime: {
-  fontSize: 14,
-  marginBottom: 2,
-},
-  itemTitle: {
-    fontSize: 18,
-  },
-  chevronIcon: {
-    marginLeft: 8,
-  },
-  rightIcons: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  favouriteButton: {
-    marginRight: 12,
-    padding: 4,
-  },
-});
+const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+  StyleSheet.create({
+    item: {
+      padding: 20,
+      marginVertical: 2,
+      marginHorizontal: 16,
+      borderRadius: 8,
+      elevation: 2,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    leftBar: {
+      width: 8,
+      borderTopLeftRadius: 8,
+      borderBottomRightRadius: 8,
+      borderTopRightRadius: 1,
+      borderBottomLeftRadius: 1,
+      marginRight: 10,
+    },
+    leftBarContainer: {
+      flexDirection: "row",
+      alignItems: "stretch",
+      flex: 1,
+    },
+    itemContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flex: 1,
+    },
+    textContainer: {
+      flex: 1,
+    },
+    itemDate: {
+      ...font.body,
+      fontWeight: "500",
+      marginBottom: 2,
+    },
+    itemTime: {
+      ...font.small,
+      marginBottom: 2,
+    },
+    itemTitle: {
+      ...font.subheading,
+    },
+    chevronIcon: {
+      marginLeft: 8,
+    },
+    rightIcons: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    favouriteButton: {
+      marginRight: 12,
+      padding: 4,
+    },
+  });
