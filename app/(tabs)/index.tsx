@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   StyleSheet,
   View,
@@ -12,26 +18,31 @@ import {
   RefreshControl,
   Button,
   TouchableOpacity,
-  Modal
-} from 'react-native';
-import { useColorScheme } from '@/hooks/useColorScheme'; // or set up tsconfig to alias
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { renderItem } from '@/components/RenderItem';
-import { Colours } from '@/styles/Colours';
-import 'expo-dev-client';
-import { useFastDay } from '@/hooks/useFastDay';
-import * as SplashScreen from 'expo-splash-screen';
-import { useDailySaint } from '@/hooks/useDailySaint';
-import { useEvents } from '@/hooks/useEvents';
-import { requestNotificationPermissions, scheduleNotification, setupNotificationListeners } from '@/notifications';
-import { MaterialIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { scheduleSaintNotificationsForNext7Days } from '@/utils/notifications';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+  Modal,
+} from "react-native";
+import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { renderItem } from "@/components/RenderItem";
+import { Colours } from "@/styles/Colours";
+import "expo-dev-client";
+import { useFastDay } from "@/hooks/useFastDay";
+import * as SplashScreen from "expo-splash-screen";
+import { useDailySaint } from "@/hooks/useDailySaint";
+import { useEvents } from "@/hooks/useEvents";
+import {
+  requestNotificationPermissions,
+  scheduleNotification,
+  setupNotificationListeners,
+} from "@/notifications";
+import { MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import * as Haptics from "expo-haptics";
-import MonthPicker from 'react-native-month-year-picker';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import MonthPicker from "react-native-month-year-picker";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useFontStyles } from "@/hooks/useFontStyles";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,16 +55,21 @@ export default function HomeScreen() {
   const appState = useRef(AppState.currentState);
   const lastRefreshTime = useRef<number>(Date.now());
 
+  const font = useFontStyles();
+  const styles = getStyles(font);
+
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
         appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
+        nextAppState === "active"
       ) {
         const now = Date.now();
-        const minutesSinceLastRefresh = (now - lastRefreshTime.current) / (1000 * 60);
+        const minutesSinceLastRefresh =
+          (now - lastRefreshTime.current) / (1000 * 60);
 
-        if (minutesSinceLastRefresh > 300) {  // 5 hour threshold
+        if (minutesSinceLastRefresh > 300) {
+          // 5 hour threshold
           onRefresh();
           lastRefreshTime.current = now;
         }
@@ -85,11 +101,12 @@ export default function HomeScreen() {
     // other tabs...
   };
 
-  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList, 'Home'>>();
+  const navigation =
+    useNavigation<BottomTabNavigationProp<RootTabParamList, "Home">>();
 
   // Scroll to top when pressing Home tab
   useEffect(() => {
-    const unsubscribe = navigation.addListener('tabPress', (e) => {
+    const unsubscribe = navigation.addListener("tabPress", (e) => {
       sectionListRef.current?.scrollToLocation({
         sectionIndex: 0,
         itemIndex: 0,
@@ -105,10 +122,15 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const colorScheme = useColorScheme();
-  const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
+  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
 
   const { events, fastLoading, refetch: refetchFast } = useFastDay();
-  const { events: allEvents, groupedEvents, loading: eventsLoading, refetch: refetchEvents } = useEvents();
+  const {
+    events: allEvents,
+    groupedEvents,
+    loading: eventsLoading,
+    refetch: refetchEvents,
+  } = useEvents();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
@@ -122,15 +144,15 @@ export default function HomeScreen() {
 
   const onValueChange = useCallback(
     (event, newDate) => {
-      if (event === 'dateSetAction') {
+      if (event === "dateSetAction") {
         const pickedDate = newDate || selectedDate;
         setSelectedDate(pickedDate);
 
         const selectedMonth = pickedDate.getMonth();
         const selectedYear = pickedDate.getFullYear();
 
-        const filtered = groupedEvents.filter(section =>
-          section.data.some(item => {
+        const filtered = groupedEvents.filter((section) =>
+          section.data.some((item) => {
             const itemDate = new Date(item.start); // make sure item.date is in ISO format or Date object
             return (
               itemDate.getFullYear() === selectedYear &&
@@ -140,15 +162,15 @@ export default function HomeScreen() {
         );
 
         // Optional: Remove sections with no matching items
-        const cleaned = filtered.map(section => ({
+        const cleaned = filtered.map((section) => ({
           ...section,
-          data: section.data.filter(item => {
+          data: section.data.filter((item) => {
             const itemDate = new Date(item.start);
             return (
               itemDate.getFullYear() === selectedYear &&
               itemDate.getMonth() === selectedMonth
             );
-          })
+          }),
         }));
 
         setFilteredSections(cleaned);
@@ -160,7 +182,7 @@ export default function HomeScreen() {
 
   const sectionsWithIndex = filteredSections.map((section, index) => ({
     ...section,
-    sectionIndex: index
+    sectionIndex: index,
   }));
 
   // Refresh handler
@@ -171,7 +193,9 @@ export default function HomeScreen() {
   };
 
   let todaysSaintsTitle = "";
-  todaysSaints.length > 1 ? todaysSaintsTitle = "Today's Feasts" : todaysSaintsTitle = "Today's Feast:";
+  todaysSaints.length > 1
+    ? (todaysSaintsTitle = "Today's Feasts")
+    : (todaysSaintsTitle = "Today's Feast:");
 
   const sectionsWithUpcoming = [
     {
@@ -189,75 +213,125 @@ export default function HomeScreen() {
     },
   ];
 
-  console.log(events)
-
+  console.log(events);
 
   // Fasting Logic
   let majorFastText = null;
   let minorFastText = null;
 
   if (events.includes("Great Lent")) {
-    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>Great Lent</Text>;
-  }
-  else if (events.includes("The Apostles' Fast")) {
-    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>The Apostles' Fast</Text>;
-  }
-  else if (events.includes("Theotokos Fast")) {
-    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>Theotokos Fast</Text>;
-  }
-  else if (events.includes("The Nativity Fast")) {
-    majorFastText = <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>The Nativity Fast</Text>;
-  }
-  else {
-    majorFastText = null
+    majorFastText = (
+      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
+        Great Lent
+      </Text>
+    );
+  } else if (events.includes("The Apostles' Fast")) {
+    majorFastText = (
+      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
+        The Apostles' Fast
+      </Text>
+    );
+  } else if (events.includes("Theotokos Fast")) {
+    majorFastText = (
+      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
+        Theotokos Fast
+      </Text>
+    );
+  } else if (events.includes("The Nativity Fast")) {
+    majorFastText = (
+      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
+        The Nativity Fast
+      </Text>
+    );
+  } else {
+    majorFastText = null;
   }
 
   if (events.includes("Strict Fast")) {
-    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat, fish, dairy, eggs, wine, olive oil</Text>;
+    minorFastText = (
+      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
+        Abstain from meat, fish, dairy, eggs, wine, olive oil
+      </Text>
+    );
+  } else if (events.includes("Fast")) {
+    minorFastText = (
+      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
+        Abstain from meat, dairy, eggs
+      </Text>
+    );
+  } else if (events.includes("Meat Fast")) {
+    minorFastText = (
+      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
+        Abstain from meat
+      </Text>
+    );
+  } else {
+    minorFastText = (
+      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
+        No Fast
+      </Text>
+    );
   }
-  else if (events.includes("Fast")) {
-    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat, dairy, eggs</Text>;
-  }
-  else if (events.includes("Meat Fast")) {
-    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>Abstain from meat</Text>;
-  }
-  else {
-    minorFastText = <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>No Fast</Text>;
-  }
-
 
   const SectionHeader = ({ section }: { section: any }) => {
-    return section.title === 'Top Image' ? (
+    return section.title === "Top Image" ? (
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../assets/images/orthodox/CrossInSquareThick.png')}
+          source={require("../../assets/images/orthodox/CrossInSquareThick.png")}
           style={[styles.topImage, { tintColor: theme.primary }]} // Using Theme.primary here
         />
       </View>
-    ) : section.title === 'Saint of the Day' ? (
+    ) : section.title === "Saint of the Day" ? (
       <View style={styles.saintOfTheDayContainer}>
-        <Text style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}>{todaysSaintsTitle}</Text>
-        <Text style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}>{todaysSaints.join('\n')}</Text>
+        <Text
+          style={[
+            styles.saintOfTheDayTitle,
+            { color: theme.moreImportantText },
+          ]}
+        >
+          {todaysSaintsTitle}
+        </Text>
+        <Text
+          style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}
+        >
+          {todaysSaints.join("\n")}
+        </Text>
         {majorFastText}
         {minorFastText}
       </View>
-    ) : section.title === 'Bottom Image' ? (
+    ) : section.title === "Bottom Image" ? (
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../assets/images/orthodox/TwoBarCross.png')}
+          source={require("../../assets/images/orthodox/TwoBarCross.png")}
           style={[styles.bottomImage, { tintColor: theme.primary }]} // Using Theme.primary here
         />
       </View>
     ) : section.sectionIndex === 0 ? (
       <>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 10 }}>
-
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginHorizontal: 10,
+          }}
+        >
           <View>
-            <Text style={[styles.weekLabel, { backgroundColor: theme.background, color: theme.moreImportantText }]}>
+            <Text
+              style={[
+                styles.weekLabel,
+                {
+                  backgroundColor: theme.background,
+                  color: theme.moreImportantText,
+                },
+              ]}
+            >
               {section.weekLabel}
             </Text>
 
-            <Text style={[styles.sectionHeader, { color: theme.sectionDate }]}>{section.title}</Text>
+            <Text style={[styles.sectionHeader, { color: theme.sectionDate }]}>
+              {section.title}
+            </Text>
           </View>
 
           <Modal
@@ -266,17 +340,20 @@ export default function HomeScreen() {
             animationType="fade"
             onRequestClose={() => setShowMonthPicker(false)} // Android back button support
           >
-            <View style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgba(0, 0, 0, 0.4)', // dim background
-            }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.4)", // dim background
+              }}
+            >
               <MonthPicker
                 onChange={onValueChange}
                 value={selectedDate}
                 minimumDate={new Date()}
-                locale="en" />
+                locale="en"
+              />
             </View>
           </Modal>
           <TouchableOpacity
@@ -287,49 +364,76 @@ export default function HomeScreen() {
             style={{
               margin: 10,
               padding: 10,
-              alignItems: 'center',
+              alignItems: "center",
             }}
           >
-            <IconSymbol name="calendar" size={36} color={theme.lessImportantText} />
+            <IconSymbol
+              name="calendar"
+              size={font.heading.fontSize}
+              color={theme.lessImportantText}
+            />
           </TouchableOpacity>
         </View>
       </>
     ) : (
       <>
         {section.weekLabel && (
-          <Text style={[styles.weekLabel, { backgroundColor: theme.background, color: theme.moreImportantText }]}>
+          <Text
+            style={[
+              styles.weekLabel,
+              {
+                backgroundColor: theme.background,
+                color: theme.moreImportantText,
+              },
+            ]}
+          >
             {section.weekLabel}
           </Text>
         )}
-        <Text style={[styles.sectionHeader, { color: theme.sectionDate }]}>{section.title}</Text>
+        <Text style={[styles.sectionHeader, { color: theme.sectionDate }]}>
+          {section.title}
+        </Text>
       </>
     );
   };
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background }]}
+      >
         {fastLoading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#4f4f5b" />
           </View>
-        ) :
+        ) : (
           <View style={styles.verticalBarContainer}>
-            <View style={[styles.verticalBar, { backgroundColor: theme.secondary }]} />
+            <View
+              style={[styles.verticalBar, { backgroundColor: theme.secondary }]}
+            />
 
             <View style={styles.container}>
-
               {/* Hamburger menu button + Scroll to Top */}
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 10 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  paddingHorizontal: 10,
+                }}
+              >
                 <TouchableOpacity
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      router.push('/settings')
-                  }
-                  }
+                      router.push("/settings");
+                  }}
                   style={{ padding: 10 }}
                 >
-                  <MaterialIcons name="menu" size={28} color={theme.lessImportantText} />
+                  <MaterialIcons
+                    name="menu"
+                    size={font.heading.fontSize}
+                    color={theme.lessImportantText}
+                  />
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -344,12 +448,16 @@ export default function HomeScreen() {
                   style={{
                     padding: 10,
                     borderRadius: 6,
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                   accessibilityLabel="Scroll to top"
                 >
-                  <MaterialIcons name="arrow-upward" size={28} color={theme.lessImportantText} />
+                  <MaterialIcons
+                    name="arrow-upward"
+                    size={font.heading.fontSize}
+                    color={theme.lessImportantText}
+                  />
                 </TouchableOpacity>
               </View>
 
@@ -359,93 +467,102 @@ export default function HomeScreen() {
                 keyExtractor={(item) => item.id}
                 renderItem={renderItem}
                 renderSectionHeader={SectionHeader}
-                ListEmptyComponent={<Text style={[styles.emptyMessage, { color: theme.detail }]}>No events found.</Text>}
+                ListEmptyComponent={
+                  <Text style={[styles.emptyMessage, { color: theme.detail }]}>
+                    No events found.
+                  </Text>
+                }
                 stickySectionHeadersEnabled={false} // Disable sticky headers
                 refreshControl={
-                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primary]} />
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={[theme.primary]}
+                  />
                 }
               />
             </View>
           </View>
-        }
+        )}
       </SafeAreaView>
     </SafeAreaProvider>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: StatusBar.currentHeight || 0,
-    paddingBottom: 10,
-  },
-  loadingContainer: {
-    justifyContent: 'center',
-    paddingVertical: 30,
-  },
-  verticalBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-  },
-  verticalBar: {
-    width: 7,
-    borderRadius: 10,
-    marginLeft: 10,
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    fontSize: 18,
-    marginTop: 20,
-  },
-  topImage: {
-    width: 50,
-    height: 50,
-    resizeMode: 'contain',
-  },
-  bottomImage: {
-    width: 250,
-    height: 300,
-    resizeMode: 'contain',
-    paddingBottom: 100,
-  },
-  imageContainer: {
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  saintOfTheDayContainer: {
-    padding: 15,
-    alignItems: 'center',
-  },
-  saintOfTheDayTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  saintOfTheDay: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  MajorFastText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  minorFastText: {
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  weekLabel: {
-    marginLeft: 20,
-    marginTop: 15,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  sectionHeader: {
-    marginLeft: 15,
-    marginTop: 10,
-    padding: 5,
-    fontSize: 18,
-  },
-});
+const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingTop: StatusBar.currentHeight || 0,
+      paddingBottom: 10,
+    },
+    loadingContainer: {
+      justifyContent: "center",
+      paddingVertical: 30,
+    },
+    verticalBarContainer: {
+      flexDirection: "row",
+      alignItems: "stretch",
+    },
+    verticalBar: {
+      width: 7,
+      borderRadius: 10,
+      marginLeft: 10,
+    },
+    emptyMessage: {
+      textAlign: "center",
+      ...font.subheading,
+      marginTop: 20,
+    },
+    topImage: {
+      width: 50,
+      height: 50,
+      resizeMode: "contain",
+    },
+    bottomImage: {
+      width: 250,
+      height: 300,
+      resizeMode: "contain",
+      paddingBottom: 100,
+    },
+    imageContainer: {
+      alignItems: "center",
+      marginTop: 30,
+    },
+    saintOfTheDayContainer: {
+      padding: 15,
+      alignItems: "center",
+    },
+    saintOfTheDayTitle: {
+      ...font.heading,
+      fontWeight: "bold",
+      marginBottom: 10,
+    },
+    saintOfTheDay: {
+      ...font.subheading,
+      marginBottom: 20,
+      textAlign: "center",
+    },
+    MajorFastText: {
+      ...font.heading,
+      fontWeight: "bold",
+      marginBottom: 10,
+      textAlign: "center",
+    },
+    minorFastText: {
+      ...font.subheading,
+      textAlign: "center",
+    },
+    weekLabel: {
+      marginLeft: 20,
+      marginTop: 15,
+      ...font.heading,
+      fontWeight: "bold",
+    },
+    sectionHeader: {
+      marginLeft: 15,
+      marginTop: 10,
+      padding: 5,
+      ...font.subheading,
+    },
+  });
