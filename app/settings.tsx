@@ -262,7 +262,7 @@ export default function SettingsScreen() {
             <Text
               style={[font.body, { color: theme.moreImportantText }]}
             >
-              Saint of the Day Notification
+              Saint of the Day
             </Text>
             <Switch
               value={dailySaintsEnabled}
@@ -289,7 +289,7 @@ export default function SettingsScreen() {
             <Text
               style={[font.body, { color: theme.moreImportantText }]}
             >
-              Favourite Events Notification
+              Favourite Events
             </Text>
             <Switch
               value={favouriteNotificationsEnabled}
