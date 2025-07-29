@@ -257,6 +257,12 @@ export default function SettingsScreen() {
           </View>
         */}
 
+        <View style={styles.settingItem}>
+          <Text style={[font.subheading, { color: theme.moreImportantText }, { fontWeight: 'bold', textDecorationLine: 'underline' }]}>
+            Notification Settings
+          </Text>
+        </View>
+
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
             <Text
