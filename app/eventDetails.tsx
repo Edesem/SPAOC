@@ -113,30 +113,35 @@ const EventDetailsScreen = () => {
     }
   };
 
-  const openInMaps = () => {
+  const openInMaps = async () => {
     if (!location) return;
+    console.log(Platform.OS);
 
     const query = encodeURIComponent(location);
+    const encodedQuery = encodeURIComponent(query);
 
-    // Try Google Maps first (if available)
-    if (Platform.OS === "ios" || Platform.OS === "android") {
-      Linking.canOpenURL("comgooglemaps://").then((supported) => {
-        if (supported) {
-          Linking.openURL(`comgooglemaps://?q=${query}`);
-        } else {
-          // Fallback to system default map
-          const fallbackUrl = Platform.select({
-            ios: `http://maps.apple.com/?q=${query}`,
-            android: `geo:0,0?q=${query}`,
-          });
+    // First try Waze
+    if (await Linking.canOpenURL("waze://")) {
+      return Linking.openURL(`waze://?q=${encodedQuery}&navigate=yes`);
+    }
 
-          if (fallbackUrl) {
-            Linking.openURL(fallbackUrl).catch((err) =>
-              console.error("Failed to open fallback map URL:", err)
-            );
-          }
-        }
-      });
+    // Next try Google Maps
+    if (await Linking.canOpenURL("comgooglemaps://")) {
+      return Linking.openURL(`comgooglemaps://?q=${encodedQuery}`);
+    }
+
+    // Fallback to system default
+    const fallbackUrl = Platform.select({
+      ios: `http://maps.apple.com/?q=${encodedQuery}`,
+      android: `geo:0,0?q=${encodedQuery}`,
+    });
+
+    if (fallbackUrl) {
+      try {
+        return await Linking.openURL(fallbackUrl);
+      } catch (err) {
+        console.error("Failed to open fallback map URL:", err);
+      }
     }
   };
 
