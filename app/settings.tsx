@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -29,6 +29,7 @@ import {
 import eventBus from "@/utils/eventBus";
 import { create } from "zustand";
 import { useFontStyles } from "@/hooks/useFontStyles";
+import SettingPicker from "@/components/SettingPicker";
 
 type FontSize = "small" | "medium" | "large";
 type StartOfWeek = "sunday" | "monday";
@@ -138,6 +139,7 @@ export default function SettingsScreen() {
   }, []);
 
   const font = useFontStyles();
+  const pickerRef = useRef<RNPickerSelect>(null);
 
   return (
     <SafeAreaProvider>
@@ -157,85 +159,55 @@ export default function SettingsScreen() {
           </Text>
 
           {/* Theme Selection */}
-          <View style={styles.settingItem}>
-            <Text
-              style={[font.body, { color: theme.moreImportantText }]}
-            >
-              Theme
-            </Text>
-            <RNPickerSelect
-              onValueChange={(value: string) => {
-                setThemeSelection(value);
-                console.log("Selected theme:", value);
-                AsyncStorage.setItem("APP_THEME", value);
-                eventBus.emit("themeChanged", value);
-              }}
-              value={themeSelection}
-              items={[
-                { label: "Light", value: "light" },
-                { label: "Dark", value: "dark" },
-                { label: "Auto", value: "auto" },
-              ]}
-              placeholder={{}}
-              style={{
-                inputIOSContainer: { pointerEvents: "none" },
-                inputIOS: { color: theme.moreImportantText, ...font.body },
-                inputAndroid: { color: theme.moreImportantText, ...font.body },
-              }}
-              darkTheme={pickerTheme}
-            />
-          </View>
+          <SettingPicker
+            label="Theme"
+            value={themeSelection}
+            onValueChange={(val) => {
+              setThemeSelection(val);
+              AsyncStorage.setItem("APP_THEME", val);
+              eventBus.emit("themeChanged", val);
+            }}
+            items={[
+              { label: "Light", value: "light" },
+              { label: "Dark", value: "dark" },
+              { label: "Auto", value: "auto" },
+            ]}
+            theme={theme}
+            font={font}
+            pickerTheme={pickerTheme}
+            styles={styles}
+          />
 
           {/* Start of Week */}
-          <View style={styles.settingItem}>
-            <Text
-              style={[font.body, { color: theme.moreImportantText }]}
-            >
-              Start of the Week
-            </Text>
-            <RNPickerSelect
-              onValueChange={(value: string) =>
-                setStartOfWeek(value as "sunday" | "monday")
-              }
-              value={startOfWeek}
-              items={[
-                { label: "Sunday", value: "sunday" },
-                { label: "Monday", value: "monday" },
-              ]}
-              placeholder={{}}
-              style={{
-                inputIOSContainer: { pointerEvents: "none" },
-                inputIOS: { color: theme.moreImportantText, ...font.body },
-                inputAndroid: { color: theme.moreImportantText, ...font.body },
-              }}
-              darkTheme={pickerTheme}
-            />
-          </View>
+          <SettingPicker
+            label="Start of the Week"
+            value={startOfWeek}
+            onValueChange={(val) => setStartOfWeek(val as "sunday" | "monday")}
+            items={[
+              { label: "Sunday", value: "sunday" },
+              { label: "Monday", value: "monday" },
+            ]}
+            theme={theme}
+            font={font}
+            pickerTheme={pickerTheme}
+            styles={styles}
+          />
 
           {/* Font Size Selection */}
-          <View style={styles.settingItem}>
-            <Text
-              style={[font.body, { color: theme.moreImportantText }]}
-            >
-              Font Size
-            </Text>
-            <RNPickerSelect
-              onValueChange={(value: string) => setFontSize(value)}
-              value={fontSize}
-              items={[
-                { label: "Small", value: "small" },
-                { label: "Medium", value: "medium" },
-                { label: "Large", value: "large" },
-              ]}
-              placeholder={{}}
-              style={{
-                inputIOSContainer: { pointerEvents: "none" },
-                inputIOS: { color: theme.moreImportantText, ...font.body },
-                inputAndroid: { color: theme.moreImportantText, ...font.body },
-              }}
-              darkTheme={pickerTheme}
-            />
-          </View>
+          <SettingPicker
+            label="Font Size"
+            value={fontSize}
+            onValueChange={setFontSize}
+            items={[
+              { label: "Small", value: "small" },
+              { label: "Medium", value: "medium" },
+              { label: "Large", value: "large" },
+            ]}
+            theme={theme}
+            font={font}
+            pickerTheme={pickerTheme}
+            styles={styles}
+          />
 
           {/*
           <View style={styles.settingItem}>
@@ -257,17 +229,21 @@ export default function SettingsScreen() {
           </View>
         */}
 
-        <View style={styles.settingItem}>
-          <Text style={[font.subheading, { color: theme.moreImportantText }, { fontWeight: 'bold', textDecorationLine: 'underline' }]}>
-            Notification Settings
-          </Text>
-        </View>
+          <View style={styles.settingItem}>
+            <Text
+              style={[
+                font.subheading,
+                { color: theme.moreImportantText },
+                { fontWeight: "bold", textDecorationLine: "underline" },
+              ]}
+            >
+              Notification Settings
+            </Text>
+          </View>
 
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
-            <Text
-              style={[font.body, { color: theme.moreImportantText }]}
-            >
+            <Text style={[font.body, { color: theme.moreImportantText }]}>
               Saint of the Day
             </Text>
             <Switch
@@ -292,9 +268,7 @@ export default function SettingsScreen() {
 
           {/* Favourites Notification toggle */}
           <View style={styles.settingItem}>
-            <Text
-              style={[font.body, { color: theme.moreImportantText }]}
-            >
+            <Text style={[font.body, { color: theme.moreImportantText }]}>
               Favourite Events
             </Text>
             <Switch
@@ -330,9 +304,7 @@ export default function SettingsScreen() {
             "Fellowship Calendar",
           ].map((calendar) => (
             <View style={styles.settingItem} key={calendar}>
-              <Text
-                style={[font.body, { color: theme.moreImportantText }]}
-              >
+              <Text style={[font.body, { color: theme.moreImportantText }]}>
                 {calendar}
               </Text>
               <Switch
@@ -349,9 +321,7 @@ export default function SettingsScreen() {
             onPress={() => setShowTimePicker(true)}
             style={styles.settingItem}
           >
-            <Text
-              style={[font.body, { color: theme.moreImportantText }]}
-            >
+            <Text style={[font.body, { color: theme.moreImportantText }]}>
               Notify Before Event
             </Text>
             <Text style={[{ color: theme.primary }]}>
