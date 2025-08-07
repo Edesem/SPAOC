@@ -54,3 +54,4 @@ export const FAVOURITES_KEY = 'favourites';
 export const FAVOURITES_NOTIFICATIONS_ENABLED = 'favouriteNotificationsEnabled'
 export const DAILY_SAINTS_KEY = 'dailySaints'
 export const DAILY_SAINTS_NOTIFICATIONS_ENABLED = 'dailySaintsNotificationsEnabled'
+export const CALENDAR_NOTIFICATION_SETTINGS = "calendarNotificationSettings";
