@@ -23,6 +23,7 @@ import {
 import DateTimePicker from "react-native-modal-datetime-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  CALENDAR_NOTIFICATION_SETTINGS,
   DAILY_SAINTS_NOTIFICATIONS_ENABLED,
   FAVOURITES_NOTIFICATIONS_ENABLED,
 } from "@/constants/consts";
@@ -104,6 +105,11 @@ export default function SettingsScreen() {
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
     useState(true);
 
+  // Calendar states
+  const [calendarSettings, setCalendarSettings] = useState<{
+    [key: string]: { enabled: boolean; daysBefore: number };
+  }>({});
+
   useEffect(() => {
     const loadSettings = async () => {
       // Load theme
@@ -133,10 +139,56 @@ export default function SettingsScreen() {
       // Load font size and start of the week
       useSettingsStore.getState().loadFontSize();
       useSettingsStore.getState().loadStartOfWeek();
+
+      // Calendar settings storage
+      const calendarSettingsStore = await AsyncStorage.getItem(
+        CALENDAR_NOTIFICATION_SETTINGS
+      );
+      if (calendarSettingsStore) {
+        setCalendarSettings(JSON.parse(calendarSettingsStore));
+      } else {
+        const defaultSettings = {};
+        [
+          "Youth Calendar",
+          "Church Calendar",
+          "Family Calendar",
+          "Ladies Calendar",
+          "Parish Calendar",
+          "Seniors Calendar",
+          "Weekly Calendar",
+          "Playgroup Calendar",
+          "Fellowship Calendar",
+        ].forEach((name) => {
+          defaultSettings[name] = { enabled: false, daysBefore: 1 };
+        });
+        await AsyncStorage.setItem(
+          CALENDAR_NOTIFICATION_SETTINGS,
+          JSON.stringify(defaultSettings)
+        );
+        setCalendarSettings(defaultSettings);
+      }
     };
 
     loadSettings();
   }, []);
+
+  const updateCalendarSetting = (
+    calendar: string,
+    updates: Partial<{ enabled: boolean; daysBefore: number }>
+  ) => {
+    const updated = {
+      ...calendarSettings,
+      [calendar]: {
+        ...calendarSettings[calendar],
+        ...updates,
+      },
+    };
+    setCalendarSettings(updated);
+    AsyncStorage.setItem(
+      CALENDAR_NOTIFICATION_SETTINGS,
+      JSON.stringify(updated)
+    );
+  };
 
   const font = useFontStyles();
   const pickerRef = useRef<RNPickerSelect>(null);
@@ -292,24 +344,52 @@ export default function SettingsScreen() {
           </View>
 
           {/* Calendar Notification Toggles */}
-          {[
-            "Youth Calendar",
-            "Church Calendar",
-            "Family Calendar",
-            "Ladies Calendar",
-            "Parish Calendar",
-            "Seniors Calendar",
-            "Weekly Calendar",
-            "Playgroup Calendar",
-            "Fellowship Calendar",
-          ].map((calendar) => (
+          {Object.keys(calendarSettings).map((calendar) => (
             <View style={styles.settingItem} key={calendar}>
-              <Text style={[font.body, { color: theme.moreImportantText }]}>
-                {calendar}
-              </Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[font.body, { color: theme.moreImportantText }]}>
+                  {calendar}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginTop: 4,
+                  }}
+                >
+                  <Text
+                    style={[
+                      font.body,
+                      { color: theme.moreImportantText, marginRight: 10 },
+                    ]}
+                  >
+                    Notify {calendarSettings[calendar]?.daysBefore ?? 1} day(s)
+                    before
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const current =
+                        calendarSettings[calendar]?.daysBefore ?? 1;
+                      const newVal = (current + 1) % 8; // Wraps back to 0 after 7
+                      updateCalendarSetting(calendar, { daysBefore: newVal });
+                    }}
+                    style={{
+                      backgroundColor: theme.primary,
+                      paddingVertical: 4,
+                      paddingHorizontal: 10,
+                      borderRadius: 6,
+                    }}
+                  >
+                    <Text style={{ color: "#fff" }}>+1</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
               <Switch
-                value={calendarNotifications[calendar] || false}
-                onValueChange={() => toggleCalendarNotification(calendar)}
+                value={calendarSettings[calendar]?.enabled ?? false}
+                onValueChange={(value) =>
+                  updateCalendarSetting(calendar, { enabled: value })
+                }
                 trackColor={{ false: "#767577", true: "#34c658" }}
                 thumbColor="#fff"
               />
