@@ -149,15 +149,15 @@ export default function SettingsScreen() {
       } else {
         const defaultSettings = {};
         [
-          "Youth Calendar",
-          "Church Calendar",
-          "Family Calendar",
-          "Ladies Calendar",
-          "Parish Calendar",
-          "Seniors Calendar",
-          "Weekly Calendar",
-          "Playgroup Calendar",
-          "Fellowship Calendar",
+          "youth",
+          "church",
+          "family",
+          "ladies",
+          "parish",
+          "seniors",
+          "weekly",
+          "playgroup",
+          "fellowship",
         ].forEach((name) => {
           defaultSettings[name] = { enabled: false, daysBefore: 1 };
         });
