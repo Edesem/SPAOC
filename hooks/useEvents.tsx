@@ -64,10 +64,15 @@ export const useEvents = () => {
               const notifyTime = new Date(eventStart);
               notifyTime.setDate(notifyTime.getDate() - settings.daysBefore);
 
+              const now = new Date();
+              const diffMs = eventStart - now;
+              const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+
               if (notifyTime > new Date()) {
                 await scheduleNotification(
                   item.summary || "Upcoming event",
-                  `(${calendar})`,
+                  `Event upcoming in ${diffDays} day${diffDays !== 1 ? "s" : ""}!`,
                   notifyTime
                 );
               }
