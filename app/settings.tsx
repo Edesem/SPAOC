@@ -359,7 +359,7 @@ export default function SettingsScreen() {
                 padding: 14,
                 marginVertical: 8,
                 borderRadius: 12,
-                backgroundColor: theme.cardBackground ?? "#fff",
+                backgroundColor: theme.itemBackground ?? "#fff",
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.1,
@@ -394,47 +394,54 @@ export default function SettingsScreen() {
                 </Text>
 
                 {calendarSettings[calendar]?.enabled && (
-                  <RNPickerSelect
-                    value={calendarSettings[calendar]?.daysBefore ?? 1}
-                    onValueChange={(newVal) =>
-                      updateCalendarSetting(calendar, { daysBefore: newVal })
-                    }
-                    items={dayOptions}
-                    placeholder={{}}
-                    style={{
-                      inputIOSContainer: {
-                        backgroundColor: theme.primary,
-                        borderRadius: 8,
-                        marginTop: 10,
-                        height: 40,
-                        justifyContent: "center",
-                      },
-                      inputIOS: {
-                        color: "#fff",
-                        textAlign: "center",
-                        fontWeight: "500",
-                        ...font.body,
-                      },
-                      inputAndroidContainer: {
-                        backgroundColor: theme.primary,
-                        borderRadius: 8,
-                        marginTop: 10,
-                        paddingVertical: 6,
-                        paddingHorizontal: 12,
-                      },
-                      inputAndroid: {
-                        color: "#fff",
-                        textAlign: "center",
-                        fontWeight: "500",
-                        ...font.body,
-                      },
-                      iconContainer: {
-                        right: 12,
-                        top: Platform.OS === "android" ? 8 : 14,
-                      },
-                    }}
-                  />
-                )}
+                  <View style={{ marginTop: 10, alignSelf: "flex-start" }}>
+                    <RNPickerSelect
+                      value={calendarSettings[calendar]?.daysBefore ?? 1}
+                      onValueChange={(newVal) =>
+                        updateCalendarSetting(calendar, { daysBefore: newVal })
+                      }
+                      items={dayOptions}
+                      placeholder={{}}
+                      useNativeAndroidPickerStyle={false} // important for alignment!
+                      style={{
+                        inputIOSContainer: {
+                          backgroundColor: theme.primary,
+                          borderRadius: 8,
+                          height: 40,
+                          width: 110,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        },
+                        inputIOS: {
+                          color: theme.itemBackground,
+                          textAlign: "center",
+                          fontWeight: "500",
+                          ...font.body,
+                          pointerEvents: "none", 
+                        },
+                        inputAndroidContainer: {
+                          backgroundColor: theme.primary,
+                          borderRadius: 8,
+                          height: 40,
+                          width: 110,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        },
+                        inputAndroid: {
+                          color: theme.itemBackground,
+                          textAlign: "center",
+                          fontWeight: "500",
+                          ...font.body,
+                          pointerEvents: "none",
+                        },
+                        iconContainer: {
+                          right: 10,
+                          top: Platform.OS === "android" ? 8 : 12,
+                        },
+                      }}
+                    />
+                  </View>
+                )})
               </View>
 
               {/* Right Side: Switch */}
@@ -443,10 +450,7 @@ export default function SettingsScreen() {
                 onValueChange={(value) =>
                   updateCalendarSetting(calendar, { enabled: value })
                 }
-                trackColor={{
-                  false: "#d1d1d6",
-                  true: theme.primary ?? "#34c658",
-                }}
+                trackColor={{ false: "#767577", true: "#34c658" }}
                 thumbColor="#fff"
               />
             </View>
