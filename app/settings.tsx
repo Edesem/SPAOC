@@ -6,6 +6,7 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  Platform,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
@@ -31,6 +32,7 @@ import eventBus from "@/utils/eventBus";
 import { create } from "zustand";
 import { useFontStyles } from "@/hooks/useFontStyles";
 import SettingPicker from "@/components/SettingPicker";
+import Slider from "@react-native-community/slider";
 
 type FontSize = "small" | "medium" | "large";
 type StartOfWeek = "sunday" | "monday";
@@ -191,7 +193,11 @@ export default function SettingsScreen() {
   };
 
   const font = useFontStyles();
-  const pickerRef = useRef<RNPickerSelect>(null);
+
+  const dayOptions = [...Array(60).keys()].map((n) => ({
+    label: `${n} day${n !== 1 ? "s" : ""}`,
+    value: n,
+  }));
 
   return (
     <SafeAreaProvider>
@@ -343,54 +349,104 @@ export default function SettingsScreen() {
             />
           </View>
 
-          {/* Calendar Notification Toggles */}
           {Object.keys(calendarSettings).map((calendar) => (
-            <View style={styles.settingItem} key={calendar}>
-              <View style={{ flex: 1 }}>
-                <Text style={[font.body, { color: theme.moreImportantText }]}>
+            <View
+              key={calendar}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: 14,
+                marginVertical: 8,
+                borderRadius: 12,
+                backgroundColor: theme.cardBackground ?? "#fff",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}
+            >
+              {/* Left Side: Title + Subtitle + Picker */}
+              <View style={{ flex: 1, marginRight: 12 }}>
+                <Text
+                  style={[
+                    font.body,
+                    {
+                      fontSize: 16,
+                      fontWeight: "600",
+                      color: theme.moreImportantText,
+                    },
+                  ]}
+                >
                   {calendar}
                 </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginTop: 4,
-                  }}
+
+                <Text
+                  style={[
+                    font.body,
+                    { color: theme.lessImportantText ?? "#666", marginTop: 4 },
+                  ]}
                 >
-                  <Text
-                    style={[
-                      font.body,
-                      { color: theme.moreImportantText, marginRight: 10 },
-                    ]}
-                  >
-                    Notify {calendarSettings[calendar]?.daysBefore ?? 1} day(s)
-                    before
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      const current =
-                        calendarSettings[calendar]?.daysBefore ?? 1;
-                      const newVal = (current + 1) % 8; // Wraps back to 0 after 7
-                      updateCalendarSetting(calendar, { daysBefore: newVal });
-                    }}
+                  Notify {calendarSettings[calendar]?.daysBefore ?? 1} day
+                  {calendarSettings[calendar]?.daysBefore !== 1 ? "s" : ""}{" "}
+                  before
+                </Text>
+
+                {calendarSettings[calendar]?.enabled && (
+                  <RNPickerSelect
+                    value={calendarSettings[calendar]?.daysBefore ?? 1}
+                    onValueChange={(newVal) =>
+                      updateCalendarSetting(calendar, { daysBefore: newVal })
+                    }
+                    items={dayOptions}
+                    placeholder={{}}
                     style={{
-                      backgroundColor: theme.primary,
-                      paddingVertical: 4,
-                      paddingHorizontal: 10,
-                      borderRadius: 6,
+                      inputIOSContainer: {
+                        backgroundColor: theme.primary,
+                        borderRadius: 8,
+                        marginTop: 10,
+                        height: 40,
+                        justifyContent: "center",
+                      },
+                      inputIOS: {
+                        color: "#fff",
+                        textAlign: "center",
+                        fontWeight: "500",
+                        ...font.body,
+                      },
+                      inputAndroidContainer: {
+                        backgroundColor: theme.primary,
+                        borderRadius: 8,
+                        marginTop: 10,
+                        paddingVertical: 6,
+                        paddingHorizontal: 12,
+                      },
+                      inputAndroid: {
+                        color: "#fff",
+                        textAlign: "center",
+                        fontWeight: "500",
+                        ...font.body,
+                      },
+                      iconContainer: {
+                        right: 12,
+                        top: Platform.OS === "android" ? 8 : 14,
+                      },
                     }}
-                  >
-                    <Text style={{ color: "#fff" }}>+1</Text>
-                  </TouchableOpacity>
-                </View>
+                  />
+                )}
               </View>
 
+              {/* Right Side: Switch */}
               <Switch
                 value={calendarSettings[calendar]?.enabled ?? false}
                 onValueChange={(value) =>
                   updateCalendarSetting(calendar, { enabled: value })
                 }
-                trackColor={{ false: "#767577", true: "#34c658" }}
+                trackColor={{
+                  false: "#d1d1d6",
+                  true: theme.primary ?? "#34c658",
+                }}
                 thumbColor="#fff"
               />
             </View>
