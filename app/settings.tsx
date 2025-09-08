@@ -376,6 +376,7 @@ export default function SettingsScreen() {
                       fontSize: 16,
                       fontWeight: "600",
                       color: theme.moreImportantText,
+                      textTransform: "capitalize",
                     },
                   ]}
                 >
