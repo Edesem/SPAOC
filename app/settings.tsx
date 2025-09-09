@@ -371,40 +371,39 @@ export default function SettingsScreen() {
                 key={calendar}
                 style={{
                   flexDirection: "row",
-                  alignItems: "center",
                   marginVertical: 8,
                   borderRadius: 12,
+                  overflow: "hidden", // ensures rounded edges
                   backgroundColor: theme.itemBackground ?? "#fff",
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.1,
                   shadowRadius: 4,
                   elevation: 2,
-                  overflow: "hidden", // ensures bar is not clipped
                 }}
               >
                 {/* Left color bar */}
                 <View
                   style={{
                     width: 8,
-                    backgroundColor: color,
+                    backgroundColor: getEventColor(calendar),
                     borderTopLeftRadius: 12,
                     borderBottomLeftRadius: 12,
                   }}
                 />
 
-                {/* Main content */}
+                {/* Content + Switch side by side */}
                 <View
                   style={{
                     flex: 1,
                     flexDirection: "row",
-                    alignItems: "center",
+                    alignItems: "center", // ✅ centers the switch vertically
                     justifyContent: "space-between",
-                    padding: 14,
+                    padding: 4,
                   }}
                 >
-                  {/* Left Side: Title + Subtitle + Picker */}
-                  <View style={{ flex: 1, marginRight: 12 }}>
+                  {/* Content */}
+                  <View style={{ flex: 1, padding: 14 }}>
                     <Text
                       style={[
                         font.body,
@@ -433,70 +432,70 @@ export default function SettingsScreen() {
                         : ""}{" "}
                       before
                     </Text>
+                    {calendarSettings[calendar]?.enabled && (
+                      <View style={{ marginTop: 10, alignSelf: "flex-start" }}>
+                        <RNPickerSelect
+                          value={calendarSettings[calendar]?.daysBefore ?? 1}
+                          onValueChange={(newVal) =>
+                            updateCalendarSetting(calendar, {
+                              daysBefore: newVal,
+                            })
+                          }
+                          items={dayOptions}
+                          placeholder={{}}
+                          useNativeAndroidPickerStyle={false} // important for alignment!
+                          style={{
+                            inputIOSContainer: {
+                              backgroundColor: theme.primary,
+                              borderRadius: 8,
+                              height: 40,
+                              width: 110,
+                              justifyContent: "center",
+                              alignItems: "center",
+                            },
+                            inputIOS: {
+                              color: theme.itemBackground,
+                              textAlign: "center",
+                              fontWeight: "500",
+                              ...font.body,
+                              pointerEvents: "none",
+                            },
+                            inputAndroidContainer: {
+                              backgroundColor: theme.primary,
+                              borderRadius: 8,
+                              height: 40,
+                              width: 110,
+                              justifyContent: "center",
+                              alignItems: "center",
+                            },
+                            inputAndroid: {
+                              color: theme.itemBackground,
+                              textAlign: "center",
+                              fontWeight: "500",
+                              ...font.body,
+                              pointerEvents: "none",
+                            },
+                            iconContainer: {
+                              right: 10,
+                              top: Platform.OS === "android" ? 8 : 12,
+                            },
+                          }}
+                        />
+                      </View>
+                    )}
+                    )
                   </View>
-                  {calendarSettings[calendar]?.enabled && (
-                    <View style={{ marginTop: 10, alignSelf: "flex-start" }}>
-                      <RNPickerSelect
-                        value={calendarSettings[calendar]?.daysBefore ?? 1}
-                        onValueChange={(newVal) =>
-                          updateCalendarSetting(calendar, {
-                            daysBefore: newVal,
-                          })
-                        }
-                        items={dayOptions}
-                        placeholder={{}}
-                        useNativeAndroidPickerStyle={false} // important for alignment!
-                        style={{
-                          inputIOSContainer: {
-                            backgroundColor: theme.primary,
-                            borderRadius: 8,
-                            height: 40,
-                            width: 110,
-                            justifyContent: "center",
-                            alignItems: "center",
-                          },
-                          inputIOS: {
-                            color: theme.itemBackground,
-                            textAlign: "center",
-                            fontWeight: "500",
-                            ...font.body,
-                            pointerEvents: "none",
-                          },
-                          inputAndroidContainer: {
-                            backgroundColor: theme.primary,
-                            borderRadius: 8,
-                            height: 40,
-                            width: 110,
-                            justifyContent: "center",
-                            alignItems: "center",
-                          },
-                          inputAndroid: {
-                            color: theme.itemBackground,
-                            textAlign: "center",
-                            fontWeight: "500",
-                            ...font.body,
-                            pointerEvents: "none",
-                          },
-                          iconContainer: {
-                            right: 10,
-                            top: Platform.OS === "android" ? 8 : 12,
-                          },
-                        }}
-                      />
-                    </View>
-                  )}
-                  )
-                </View>
 
-                {/* Right Side: Switch */}
-                <Switch
-                  value={calendarSettings[calendar]?.enabled ?? false}
-                  onValueChange={(value) =>
-                    updateCalendarSetting(calendar, { enabled: value })
-                  }
-                  trackColor={{ false: "#767577", true: "#34c658" }}
-                  thumbColor="#fff"
-                />
+                  {/* Right Side: Switch */}
+                  <Switch
+                    value={calendarSettings[calendar]?.enabled ?? false}
+                    onValueChange={(value) =>
+                      updateCalendarSetting(calendar, { enabled: value })
+                    }
+                    trackColor={{ false: "#767577", true: "#34c658" }}
+                    thumbColor="#fff"
+                  />
+                </View>
               </View>
             );
           })}
