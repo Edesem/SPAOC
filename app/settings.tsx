@@ -500,32 +500,6 @@ export default function SettingsScreen() {
               </View>
             );
           })}
-
-          {/* Notification Time Picker */}
-          <TouchableOpacity
-            onPress={() => setShowTimePicker(true)}
-            style={styles.settingItem}
-          >
-            <Text style={[font.body, { color: theme.moreImportantText }]}>
-              Notify Before Event
-            </Text>
-            <Text style={[{ color: theme.primary }]}>
-              {notificationTime.getHours()}:
-              {notificationTime.getMinutes().toString().padStart(2, "0")}
-            </Text>
-          </TouchableOpacity>
-
-          {showTimePicker && (
-            <DateTimePicker
-              value={notificationTime}
-              mode="time"
-              display="default"
-              onChange={(event: any, selectedTime?: Date) => {
-                setShowTimePicker(false);
-                if (selectedTime) setNotificationTime(selectedTime);
-              }}
-            />
-          )}
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
