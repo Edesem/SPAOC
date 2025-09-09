@@ -368,6 +368,7 @@ export default function SettingsScreen() {
 
             return (
               <View
+                key={calendar}
                 style={{
                   borderRadius: 12,
                   shadowColor: "#000",
@@ -490,7 +491,6 @@ export default function SettingsScreen() {
                           />
                         </View>
                       )}
-                      )
                     </View>
 
                     {/* Right Side: Switch */}
