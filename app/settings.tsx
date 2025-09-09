@@ -444,6 +444,7 @@ export default function SettingsScreen() {
                           items={dayOptions}
                           placeholder={{}}
                           useNativeAndroidPickerStyle={false} // important for alignment!
+                          darkTheme={pickerTheme}
                           style={{
                             inputIOSContainer: {
                               backgroundColor: theme.primary,
