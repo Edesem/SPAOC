@@ -37,7 +37,7 @@ export async function scheduleSaintNotificationsForNext7Days() {
     if (alreadyScheduled) continue;
 
     const notificationTime = new Date(date);
-    notificationTime.setHours(8, 0, 0, 0); // 7AM each day
+    notificationTime.setHours(8, 0, 0, 0); // 8AM each day
 
     if (notificationTime < new Date()) {
       console.log(`[${i}] ${dateKey} - Skipping, time is in the past`);
@@ -52,14 +52,90 @@ export async function scheduleSaintNotificationsForNext7Days() {
 
     await AsyncStorage.setItem(`notified-${dateKey}`, "true");
   }
+
+  const all = await Notifications.getAllScheduledNotificationsAsync();
+
+  console.log("Scheduled notifications:");
+  all.forEach((notif) => {
+    const title = notif.content.title;
+    const body = notif.content.body;
+    let date = "-";
+
+    // If trigger has a date/time
+    if (notif.trigger?.seconds) {
+      date = new Date(
+        Date.now() + notif.trigger.seconds * 1000
+      ).toLocaleString();
+    } else if (
+      notif.trigger?.hour !== undefined &&
+      notif.trigger?.minute !== undefined
+    ) {
+      const now = new Date();
+      date = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        notif.trigger.hour,
+        notif.trigger.minute
+      ).toLocaleString();
+    }
+
+    console.log(`- ${title} | ${body} | ${date}`);
+  });
 }
 
 export async function cancelAllSaintNotifications() {
   const all = await Notifications.getAllScheduledNotificationsAsync();
+
+  /*
+  await scheduleNotification(
+    "Saint of the Day",
+    "Test Saint",
+    new Date(Date.now() + 1 * 60 * 1000) // 1 min from now
+  );
+
+  console.log("Scheduled notifications:");
+  all.forEach((notif) => {
+    const title = notif.content.title;
+    const body = notif.content.body;
+    let date = "-";
+
+    // If trigger has a date/time
+    if (notif.trigger?.seconds) {
+      date = new Date(
+        Date.now() + notif.trigger.seconds * 1000
+      ).toLocaleString();
+    } else if (
+      notif.trigger?.hour !== undefined &&
+      notif.trigger?.minute !== undefined
+    ) {
+      const now = new Date();
+      date = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        notif.trigger.hour,
+        notif.trigger.minute
+      ).toLocaleString();
+    }
+
+    console.log(`- ${title} | ${body} | ${date}`);
+  });
+  */
+
   for (const notif of all) {
     if (notif.content.title === "Saint of the Day") {
+      console.log(notif.content);
       await Notifications.cancelScheduledNotificationAsync(notif.identifier);
     }
+  }
+
+  // Remove all AsyncStorage keys related  to saint notifications
+  const keys = await AsyncStorage.getAllKeys();
+  const saintKeys = keys.filter((k) => k.startsWith("notified-"));
+  for (const key of saintKeys) {
+    await AsyncStorage.removeItem(key);
+    console.log(`Removed AsyncStorage key: ${key}`);
   }
 }
 
@@ -112,7 +188,9 @@ export async function scheduleFavouriteNotifications() {
     weekBefore.setHours(9, 0, 0, 0);
 
     if (weekBefore < new Date()) {
-      console.log(`Skipping [${title}] — weekBefore is in the past: ${weekBefore}`);
+      console.log(
+        `Skipping [${title}] — weekBefore is in the past: ${weekBefore}`
+      );
       continue;
     }
 
@@ -136,4 +214,3 @@ export async function cancelAllFavouriteNotifications() {
     }
   }
 }
-
