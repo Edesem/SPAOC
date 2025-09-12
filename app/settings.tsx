@@ -122,7 +122,7 @@ export default function SettingsScreen() {
       const dailySaints = await AsyncStorage.getItem(
         DAILY_SAINTS_NOTIFICATIONS_ENABLED
       );
-      if (dailySaints === null) {
+      if (dailySaints !== "true") {
         setDailySaintsEnabled(true);
         await AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, "true");
       } else {
@@ -320,9 +320,9 @@ export default function SettingsScreen() {
             </Text>
             <Switch
               value={dailySaintsEnabled}
-              onValueChange={(value) => {
+              onValueChange={async (value) => {
                 setDailySaintsEnabled(value);
-                AsyncStorage.setItem(
+                await AsyncStorage.setItem(
                   DAILY_SAINTS_NOTIFICATIONS_ENABLED,
                   value.toString()
                 );
@@ -330,6 +330,7 @@ export default function SettingsScreen() {
                   scheduleSaintNotificationsForNext7Days();
                 } else {
                   // Optional: cancel existing notifications here
+                  console.log("cancel");
                   cancelAllSaintNotifications(); // You’ll define this next
                 }
               }}
