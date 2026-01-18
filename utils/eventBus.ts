@@ -1,5 +1,5 @@
 // utils/eventBus.ts
-import { EventEmitter } from 'events';
+import EventEmitter from 'eventemitter3';
 
 const eventBus = new EventEmitter();
 
