@@ -519,11 +519,13 @@ export default function PrayerScreen(): JSX.Element {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Text style={CommonStyles.sectionTitle}>
-                      {readings.reading1Title
-                        ? toTitleCase(readings.reading1Title.toLowerCase())
-                        : "Loading..."}
-                    </Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={CommonStyles.sectionTitle}>
+                        {readings.reading1Title
+                          ? toTitleCase(readings.reading1Title.toLowerCase())
+                          : "Loading..."}
+                      </Text>
+                    </View>
                     <Ionicons
                       name="chevron-forward"
                       size={font.icon.fontSize}
@@ -583,11 +585,13 @@ export default function PrayerScreen(): JSX.Element {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Text style={CommonStyles.sectionTitle}>
-                      {readings.reading2Title
-                        ? toTitleCase(readings.reading2Title.toLowerCase())
-                        : "Loading..."}
-                    </Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={CommonStyles.sectionTitle}>
+                        {readings.reading2Title
+                          ? toTitleCase(readings.reading2Title.toLowerCase())
+                          : "Loading..."}
+                      </Text>
+                    </View>
                     <Ionicons
                       name="chevron-forward"
                       size={font.icon.fontSize}
@@ -647,11 +651,13 @@ export default function PrayerScreen(): JSX.Element {
                       justifyContent: "space-between",
                     }}
                   >
-                    <Text style={CommonStyles.sectionTitle}>
-                      {readings.reading3Title
-                        ? toTitleCase(readings.reading3Title.toLowerCase())
-                        : "Loading..."}
-                    </Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={CommonStyles.sectionTitle}>
+                        {readings.reading3Title
+                          ? toTitleCase(readings.reading3Title.toLowerCase())
+                          : "Loading..."}
+                      </Text>
+                    </View>
                     <Ionicons
                       name="chevron-forward"
                       size={font.icon.fontSize}
