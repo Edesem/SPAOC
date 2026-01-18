@@ -16,10 +16,13 @@ import { Colours } from "@/styles/Colours";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import RNPickerSelect from "react-native-picker-select";
 import {
+  calendarSettings,
   cancelAllFavouriteNotifications,
   cancelAllSaintNotifications,
+  scheduleCategoryNotifications,
   scheduleFavouriteNotifications,
   scheduleSaintNotificationsForNext7Days,
+  setCalendarSettings,
 } from "@/utils/notifications";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -107,10 +110,10 @@ export default function SettingsScreen() {
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
     useState(true);
 
-  // Calendar states
-  const [calendarSettings, setCalendarSettings] = useState<{
-    [key: string]: { enabled: boolean; daysBefore: number };
-  }>({});
+  interface CalendarSetting {
+    enabled: boolean;
+    daysBefore: number;
+  }
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -149,7 +152,7 @@ export default function SettingsScreen() {
       if (calendarSettingsStore) {
         setCalendarSettings(JSON.parse(calendarSettingsStore));
       } else {
-        const defaultSettings = {};
+        const defaultSettings: { [key: string]: CalendarSetting } = {};
         [
           "youth",
           "church",
@@ -438,68 +441,75 @@ export default function SettingsScreen() {
                           : ""}{" "}
                         before
                       </Text>
-                      {calendarSettings[calendar]?.enabled && (
-                        <View
-                          style={{ marginTop: 10, alignSelf: "flex-start" }}
-                        >
-                          <RNPickerSelect
-                            value={calendarSettings[calendar]?.daysBefore ?? 1}
-                            onValueChange={(newVal) =>
-                              updateCalendarSetting(calendar, {
-                                daysBefore: newVal,
-                              })
-                            }
-                            items={dayOptions}
-                            placeholder={{}}
-                            useNativeAndroidPickerStyle={false} // important for alignment!
-                            darkTheme={pickerTheme}
-                            style={{
-                              inputIOSContainer: {
-                                backgroundColor: theme.primary,
-                                borderRadius: 8,
-                                height: 40,
-                                width: 110,
-                                justifyContent: "center",
-                                alignItems: "center",
-                              },
-                              inputIOS: {
-                                color: theme.itemBackground,
-                                textAlign: "center",
-                                fontWeight: "500",
-                                ...font.body,
-                                pointerEvents: "none",
-                              },
-                              inputAndroidContainer: {
-                                backgroundColor: theme.primary,
-                                borderRadius: 8,
-                                height: 40,
-                                width: 110,
-                                justifyContent: "center",
-                                alignItems: "center",
-                              },
-                              inputAndroid: {
-                                color: theme.itemBackground,
-                                textAlign: "center",
-                                fontWeight: "500",
-                                ...font.body,
-                                pointerEvents: "none",
-                              },
-                              iconContainer: {
-                                right: 10,
-                                top: Platform.OS === "android" ? 8 : 12,
-                              },
-                            }}
-                          />
-                        </View>
-                      )}
+
+                      <View
+                        style={{
+                          marginTop: 10,
+                          alignSelf: "flex-start",
+                          opacity: calendarSettings[calendar]?.enabled
+                            ? 1
+                            : 0.5,
+                        }}
+                      >
+                        <RNPickerSelect
+                          value={calendarSettings[calendar]?.daysBefore ?? 1}
+                          onValueChange={(newVal) =>
+                            updateCalendarSetting(calendar, {
+                              daysBefore: newVal,
+                            })
+                          }
+                          items={dayOptions}
+                          placeholder={{}}
+                          useNativeAndroidPickerStyle={false} // important for alignment!
+                          darkTheme={pickerTheme}
+                          style={{
+                            inputIOSContainer: {
+                              backgroundColor: theme.primary,
+                              borderRadius: 8,
+                              height: 40,
+                              width: 110,
+                              justifyContent: "center",
+                              alignItems: "center",
+                            },
+                            inputIOS: {
+                              color: theme.itemBackground,
+                              textAlign: "center",
+                              fontWeight: "500",
+                              ...font.body,
+                              pointerEvents: "none",
+                            },
+                            inputAndroidContainer: {
+                              backgroundColor: theme.primary,
+                              borderRadius: 8,
+                              height: 40,
+                              width: 110,
+                              justifyContent: "center",
+                              alignItems: "center",
+                            },
+                            inputAndroid: {
+                              color: theme.itemBackground,
+                              textAlign: "center",
+                              fontWeight: "500",
+                              ...font.body,
+                              pointerEvents: "none",
+                            },
+                            iconContainer: {
+                              right: 10,
+                              top: Platform.OS === "android" ? 8 : 12,
+                            },
+                          }}
+                          disabled={!calendarSettings[calendar]?.enabled} // disable when not enabled
+                        />
+                      </View>
                     </View>
 
                     {/* Right Side: Switch */}
                     <Switch
                       value={calendarSettings[calendar]?.enabled ?? false}
-                      onValueChange={(value) =>
-                        updateCalendarSetting(calendar, { enabled: value })
-                      }
+                      onValueChange={(value) => {
+                        updateCalendarSetting(calendar, { enabled: value });
+                        scheduleCategoryNotifications(calendar);
+                      }}
                       trackColor={{ false: "#767577", true: "#34c658" }}
                       thumbColor="#fff"
                     />
