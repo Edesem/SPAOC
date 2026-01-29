@@ -1,5 +1,9 @@
 import { useSettingsStore } from "@/app/settings";
 
+const fontSize = useSettingsStore((state) => state.fontSize);
+console.log("Font size from store:", fontSize);
+
+
 export const useFontStyles = () => {
   const fontSize = useSettingsStore((state) => state.fontSize);
 
