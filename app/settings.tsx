@@ -1,44 +1,30 @@
+import SettingPicker from "@/components/SettingPicker";
 import {
-  View,
-  Text,
-  Switch,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Platform,
-} from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colours } from "@/styles/Colours";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import RNPickerSelect from "react-native-picker-select";
-import {
-  calendarSettings,
-  cancelAllFavouriteNotifications,
-  cancelAllSaintNotifications,
-  scheduleCategoryNotifications,
-  scheduleFavouriteNotifications,
-  scheduleSaintNotificationsForNext7Days,
-  setCalendarSettings,
-} from "@/utils/notifications";
-import DateTimePicker from "react-native-modal-datetime-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  CALENDAR_NOTIFICATION_SETTINGS,
   DAILY_SAINTS_NOTIFICATIONS_ENABLED,
   FAVOURITES_NOTIFICATIONS_ENABLED,
+  CALENDAR_NOTIFICATION_SETTINGS,
 } from "@/constants/consts";
-import eventBus from "@/utils/eventBus";
-import { create } from "zustand";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { useFontStyles } from "@/hooks/useFontStyles";
-import SettingPicker from "@/components/SettingPicker";
-import Slider from "@react-native-community/slider";
+import { Colours } from "@/styles/Colours";
+import eventBus from "@/utils/eventBus";
+import { cancelAllFavouriteNotifications, cancelAllSaintNotifications, scheduleCategoryNotifications, scheduleFavouriteNotifications, scheduleSaintNotificationsForNext7Days, setCalendarSettings } from "@/utils/notifications";
+import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import React, { useState, useEffect } from "react";
+import { View, Text, Platform, SafeAreaView, ScrollView, Switch, TouchableOpacity, StyleSheet } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { create } from "zustand";
+import RNPickerSelect from "react-native-picker-select";
 
 type FontSize = "small" | "medium" | "large";
 type StartOfWeek = "sunday" | "monday";
+
+interface CalendarSetting {
+  enabled: boolean;
+  daysBefore: number;
+}
 
 interface SettingsState {
   fontSize: FontSize;
@@ -87,11 +73,13 @@ export default function SettingsScreen() {
   const pickerTheme = colorScheme === "dark" ? true : false;
   const router = useRouter();
 
-  const [themeSelection, setThemeSelection] = useState("auto");
   const fontSize = useSettingsStore((state) => state.fontSize);
   const setFontSize = useSettingsStore((state) => state.setFontSize);
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
+  const font = useFontStyles();
+
+  const [themeSelection, setThemeSelection] = useState("auto");
   const [timezone, setTimezone] = useState("UTC");
   const [calendarNotifications, setCalendarNotifications] = useState<{
     [key: string]: boolean;
@@ -110,10 +98,9 @@ export default function SettingsScreen() {
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
     useState(true);
 
-  interface CalendarSetting {
-    enabled: boolean;
-    daysBefore: number;
-  }
+  const [calendarSettings, setCalendarSettings] = useState<{
+    [key: string]: CalendarSetting;
+  }>({});
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -141,39 +128,67 @@ export default function SettingsScreen() {
         setFavouriteNotificationsEnabled(favs === "true");
       }
 
-      // Load font size and start of the week
-      useSettingsStore.getState().loadFontSize();
-      useSettingsStore.getState().loadStartOfWeek();
+      // Font size & start of week
+      const savedFont = await AsyncStorage.getItem("FONT_SIZE");
+      if (
+        savedFont === "small" ||
+        savedFont === "medium" ||
+        savedFont === "large"
+      ) {
+        setFontSize(savedFont);
+      }
+
+      const savedWeek = await AsyncStorage.getItem("START_OF_WEEK");
+      if (savedWeek === "sunday" || savedWeek === "monday") {
+        setStartOfWeek(savedWeek);
+      }
 
       // Calendar settings storage
       const calendarSettingsStore = await AsyncStorage.getItem(
         CALENDAR_NOTIFICATION_SETTINGS
       );
-      if (calendarSettingsStore) {
-        setCalendarSettings(JSON.parse(calendarSettingsStore));
-      } else {
-        const defaultSettings: { [key: string]: CalendarSetting } = {};
-        [
-          "youth",
-          "church",
-          "family",
-          "ladies",
-          "parish",
-          "seniors",
-          "weekly",
-          "playgroup",
-          "fellowship",
-        ].forEach((name) => {
-          defaultSettings[name] = { enabled: false, daysBefore: 1 };
-        });
-        await AsyncStorage.setItem(
-          CALENDAR_NOTIFICATION_SETTINGS,
-          JSON.stringify(defaultSettings)
+
+      try {
+        const storedSettings = await AsyncStorage.getItem(
+          CALENDAR_NOTIFICATION_SETTINGS
         );
-        setCalendarSettings(defaultSettings);
+
+        let settings: { [key: string]: CalendarSetting };
+
+        if (storedSettings) {
+          // Parse existing settings
+          settings = JSON.parse(storedSettings);
+        } else {
+          // Create default settings
+          const defaultSettings: { [key: string]: CalendarSetting } = {};
+          [
+            "youth",
+            "church",
+            "family",
+            "ladies",
+            "parish",
+            "seniors",
+            "weekly",
+            "playgroup",
+            "fellowship",
+          ].forEach((name) => {
+            defaultSettings[name] = { enabled: false, daysBefore: 1 };
+          });
+          settings = defaultSettings;
+
+          // Save defaults to storage
+          await AsyncStorage.setItem(
+            CALENDAR_NOTIFICATION_SETTINGS,
+            JSON.stringify(defaultSettings)
+          );
+        }
+
+        // ✅ Update React state once, outside any conditionals
+        setCalendarSettings(settings);
+      } catch (error) {
+        console.error("Failed to load calendar settings", error);
       }
     };
-
     loadSettings();
   }, []);
 
@@ -194,8 +209,6 @@ export default function SettingsScreen() {
       JSON.stringify(updated)
     );
   };
-
-  const font = useFontStyles();
 
   const dayOptions = [...Array(60).keys()].map((n) => ({
     label: `${n} day${n !== 1 ? "s" : ""}`,
@@ -368,7 +381,7 @@ export default function SettingsScreen() {
           </View>
 
           {Object.keys(calendarSettings).map((calendar) => {
-            const color = getEventColor(calendar);
+            const colour = getEventColor(calendar);
 
             return (
               <View
@@ -395,7 +408,7 @@ export default function SettingsScreen() {
                   <View
                     style={{
                       width: 8,
-                      backgroundColor: getEventColor(calendar),
+                      backgroundColor: colour,
                       borderTopLeftRadius: 12,
                       borderBottomLeftRadius: 12,
                     }}
@@ -563,3 +576,4 @@ const pickerSelectStyles = {
     paddingRight: 30,
   },
 };
+
