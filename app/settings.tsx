@@ -8,12 +8,28 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { useFontStyles } from "@/hooks/useFontStyles";
 import { Colours } from "@/styles/Colours";
 import eventBus from "@/utils/eventBus";
-import { cancelAllFavouriteNotifications, cancelAllSaintNotifications, scheduleCategoryNotifications, scheduleFavouriteNotifications, scheduleSaintNotificationsForNext7Days, setCalendarSettings } from "@/utils/notifications";
+import {
+  cancelAllFavouriteNotifications,
+  cancelAllSaintNotifications,
+  scheduleCategoryNotifications,
+  scheduleFavouriteNotifications,
+  scheduleSaintNotificationsForNext7Days,
+  setCalendarSettings,
+} from "@/utils/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
-import { View, Text, Platform, SafeAreaView, ScrollView, Switch, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  Switch,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { create } from "zustand";
 import RNPickerSelect from "react-native-picker-select";
@@ -75,8 +91,12 @@ export default function SettingsScreen() {
 
   const fontSize = useSettingsStore((state) => state.fontSize);
   const setFontSize = useSettingsStore((state) => state.setFontSize);
+  const loadFontSize = useSettingsStore((state) => state.loadFontSize);
+
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
+  const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
+
   const font = useFontStyles();
 
   const [themeSelection, setThemeSelection] = useState("auto");
@@ -103,64 +123,46 @@ export default function SettingsScreen() {
   }>({});
 
   useEffect(() => {
-    const loadSettings = async () => {
-      // Load theme
+    const loadTheme = async () => {
       const savedTheme = await AsyncStorage.getItem("APP_THEME");
       setThemeSelection(savedTheme || "auto");
+    };
+    loadTheme();
+  }, []);
 
-      // Load daily saints notification setting
-      const dailySaints = await AsyncStorage.getItem(
+  useEffect(() => {
+    const loadNotifications = async () => {
+      const daily = await AsyncStorage.getItem(
         DAILY_SAINTS_NOTIFICATIONS_ENABLED
       );
-      if (dailySaints !== "true") {
-        setDailySaintsEnabled(true);
+      setDailySaintsEnabled(daily !== "false");
+      if (daily !== "true")
         await AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, "true");
-      } else {
-        setDailySaintsEnabled(dailySaints === "true");
-      }
 
-      // Load favourites notification setting
       const favs = await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_ENABLED);
-      if (favs === null) {
-        setFavouriteNotificationsEnabled(true);
+      setFavouriteNotificationsEnabled(favs !== "false");
+      if (favs === null)
         await AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, "true");
-      } else {
-        setFavouriteNotificationsEnabled(favs === "true");
-      }
+    };
+    loadNotifications();
+  }, []);
 
-      // Font size & start of week
-      const savedFont = await AsyncStorage.getItem("FONT_SIZE");
-      if (
-        savedFont === "small" ||
-        savedFont === "medium" ||
-        savedFont === "large"
-      ) {
-        setFontSize(savedFont);
-      }
+  useEffect(() => {
+    loadFontSize();
+    loadStartOfWeek();
+  }, []);
 
-      const savedWeek = await AsyncStorage.getItem("START_OF_WEEK");
-      if (savedWeek === "sunday" || savedWeek === "monday") {
-        setStartOfWeek(savedWeek);
-      }
-
-      // Calendar settings storage
-      const calendarSettingsStore = await AsyncStorage.getItem(
-        CALENDAR_NOTIFICATION_SETTINGS
-      );
-
+  useEffect(() => {
+    const loadCalendar = async () => {
       try {
-        const storedSettings = await AsyncStorage.getItem(
+        const stored = await AsyncStorage.getItem(
           CALENDAR_NOTIFICATION_SETTINGS
         );
-
-        let settings: { [key: string]: CalendarSetting };
-
-        if (storedSettings) {
-          // Parse existing settings
-          settings = JSON.parse(storedSettings);
+        let settings;
+        if (stored) {
+          settings = JSON.parse(stored);
         } else {
-          // Create default settings
-          const defaultSettings: { [key: string]: CalendarSetting } = {};
+          settings = {};
           [
             "youth",
             "church",
@@ -172,24 +174,19 @@ export default function SettingsScreen() {
             "playgroup",
             "fellowship",
           ].forEach((name) => {
-            defaultSettings[name] = { enabled: false, daysBefore: 1 };
+            settings[name] = { enabled: false, daysBefore: 1 };
           });
-          settings = defaultSettings;
-
-          // Save defaults to storage
           await AsyncStorage.setItem(
             CALENDAR_NOTIFICATION_SETTINGS,
-            JSON.stringify(defaultSettings)
+            JSON.stringify(settings)
           );
         }
-
-        // ✅ Update React state once, outside any conditionals
         setCalendarSettings(settings);
-      } catch (error) {
-        console.error("Failed to load calendar settings", error);
+      } catch (e) {
+        console.error(e);
       }
     };
-    loadSettings();
+    loadCalendar();
   }, []);
 
   const updateCalendarSetting = (
@@ -285,7 +282,7 @@ export default function SettingsScreen() {
           <SettingPicker
             label="Font Size"
             value={fontSize}
-            onValueChange={setFontSize}
+            onValueChange={(val) => setFontSize(val as FontSize)}
             items={[
               { label: "Small", value: "small" },
               { label: "Medium", value: "medium" },
@@ -576,4 +573,3 @@ const pickerSelectStyles = {
     paddingRight: 30,
   },
 };
-
