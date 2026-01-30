@@ -2,7 +2,7 @@
   "expo": {
     "name": "SPAOC",
     "slug": "St-Paul-Parish-App",
-    "version": "1.1.4",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "assets/images/stpauls-wireframe-logo.png",
     "scheme": "myapp",
@@ -10,11 +10,12 @@
     "newArchEnabled": true,
     "ios": {
       "splash": {
-        "image": "assets/images/stpauls-wireframe-logo-white.png",
+        "image": "assets/images/spaoc.icon",
         "resizeMode": "contain",
         "backgroundColor": "#121212"
       },
       "supportsTablet": true,
+      "icon": "assets/images/spaoc.icon",
       "bundleIdentifier": "com.edesem.StPaulParishApp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
