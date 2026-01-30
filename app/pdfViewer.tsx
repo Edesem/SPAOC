@@ -1,50 +1,77 @@
 // PdfViewer.tsx
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { NativeModules } from 'react-native';
-console.log(NativeModules);
-
-import Pdf from 'react-native-pdf';
+import { View, StyleSheet, Dimensions, Platform } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { useNavigation, useRoute } from '@react-navigation/native';
+
+// TODO: Temporary WebView solution - switch back to react-native-pdf when fixed
+const USE_WEBVIEW = true; // Set to false when react-native-pdf is working again
 
 export default function PdfViewer() {
   const route = useRoute();
   const { url, title } = route.params as { url: string };
   const navigation = useNavigation();
 
-  const source = { uri: url, cache: true }
-
   useEffect(() => {
     navigation.setOptions({
       title: `${title}`,
       headerBackTitle: 'Back',
       headerBackTitleStyle: {
-        color: 'pink', // Set the color of the back button title (if any)
+        color: 'pink',
       },
     });
-    console.log("PDF URL:", url)
-
+    console.log("PDF URL:", url);
   }, [navigation, title]);
+
+  if (USE_WEBVIEW) {
+    // Temporary WebView implementation
+    const webViewUrl = Platform.OS === 'android' 
+      ? `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`
+      : url;
+
+    return (
+      <View style={styles.container}>
+        <WebView
+          source={{ uri: webViewUrl }}
+          style={styles.pdf}
+          onError={(error) => {
+            console.log('WebView error:', error);
+          }}
+        />
+      </View>
+    );
+  }
+
+  // Original react-native-pdf implementation (currently disabled)
+  /* KEEP THIS CODE - Uncomment when react-native-pdf is fixed
+  const { NativeModules } = require('react-native');
+  const Pdf = require('react-native-pdf').default;
+  
+  const source = { uri: url, cache: true };
 
   return (
     <View style={styles.container}>
-    <Pdf
+      <Pdf
         source={source}
-        onLoadComplete={(numberOfPages,filePath) => {
-            console.log(`Number of pages: ${numberOfPages}`);
+        onLoadComplete={(numberOfPages, filePath) => {
+          console.log(`Number of pages: ${numberOfPages}`);
         }}
-        onPageChanged={(page,numberOfPages) => {
-            console.log(`Current page: ${page}`);
+        onPageChanged={(page, numberOfPages) => {
+          console.log(`Current page: ${page}`);
         }}
         onError={(error) => {
-            console.log(error);
+          console.log(error);
         }}
         onPressLink={(uri) => {
-            console.log(`Link pressed: ${uri}`);
+          console.log(`Link pressed: ${uri}`);
         }}
-        style={styles.pdf}/>
-</View>
+        style={styles.pdf}
+      />
+    </View>
   );
+  */
+  
+  return null; // This line won't be reached when USE_WEBVIEW is true
 }
 
 const styles = StyleSheet.create({
@@ -52,11 +79,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginTop: 25,
-},
+  },
   pdf: {
-    flex:1,
-    width:Dimensions.get('window').width,
-    height:Dimensions.get('window').height,
-}
+    flex: 1,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  }
 });
