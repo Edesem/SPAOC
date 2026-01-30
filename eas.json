@@ -7,18 +7,15 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "node": "20.20.0",
-      "yarn": "4.12.0"
+      "node": "20.20.0"
     },
     "preview": {
       "distribution": "internal",
-      "node": "20.20.0",
-      "yarn": "4.12.0"
+      "node": "20.20.0"
     },
     "production": {
       "autoIncrement": true,
-      "node": "20.20.0",
-      "yarn": "4.12.0"
+      "node": "20.20.0"
     }
   },
   "submit": {
