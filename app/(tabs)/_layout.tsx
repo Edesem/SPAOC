@@ -22,27 +22,27 @@ export default function TabLayout() {
     >
       <NativeTabs.Trigger name="index">
         <Label>Home</Label>
-        <Icon sf={{ default: 'house', selected: 'house.fill' }} md="home" />
+        <Icon sf={{ default: 'house', selected: 'house.fill' }} drawable="home" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="favourites">
         <Label>Favourites</Label>
-        <Icon sf={{ default: 'star', selected: 'star.fill' }} md="star" />
+        <Icon sf={{ default: 'star', selected: 'star.fill' }} drawable="star" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="about">
         <Label>About</Label>
-        <Icon sf={{ default: 'person.circle', selected: 'person.circle.fill' }} md="person" />
+        <Icon sf={{ default: 'person.circle', selected: 'person.circle.fill' }} drawable="person" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="prayer">
         <Label>Prayer</Label>
-        <Icon sf={{ default: 'book', selected: 'book.fill' }} md="book-open-variant" />
+        <Icon sf={{ default: 'book', selected: 'book.fill' }} drawable="book-open-variant" />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="help">
         <Label>Help</Label>
-        <Icon sf={{ default: 'questionmark.circle', selected: 'questionmark.circle.fill' }} md="help" />
+        <Icon sf={{ default: 'questionmark.circle', selected: 'questionmark.circle.fill' }} drawable="help" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );
