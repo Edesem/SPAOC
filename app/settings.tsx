@@ -24,13 +24,13 @@ import {
   View,
   Text,
   Platform,
-  SafeAreaView,
   ScrollView,
   Switch,
   TouchableOpacity,
   StyleSheet,
+  ViewStyle,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { create } from "zustand";
 import RNPickerSelect from "react-native-picker-select";
 
@@ -349,6 +349,8 @@ export default function SettingsScreen() {
               }}
               trackColor={{ false: "#767577", true: "#34c658" }}
               thumbColor="#fff"
+              ios_backgroundColor="#ccc" // ensures proper look on iOS background
+              style={styles.switchAndroid}
             />
           </View>
 
@@ -374,6 +376,7 @@ export default function SettingsScreen() {
               }}
               trackColor={{ false: "#767577", true: "#34c658" }}
               thumbColor="#fff"
+              style={styles.switchAndroid}
             />
           </View>
 
@@ -522,6 +525,7 @@ export default function SettingsScreen() {
                       }}
                       trackColor={{ false: "#767577", true: "#34c658" }}
                       thumbColor="#fff"
+                      style={styles.switchAndroid}
                     />
                   </View>
                 </View>
@@ -551,6 +555,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
   },
+  switchAndroid: Platform.select({
+    android: {
+      transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }],
+    },
+    ios: {}, // no transform on iOS
+  }) as ViewStyle,
 });
 
 const pickerSelectStyles = {
