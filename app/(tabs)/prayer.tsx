@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   Text,
-  SafeAreaView,
   Image,
   ActivityIndicator,
   ScrollView,
@@ -18,6 +17,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
+  SafeAreaView
 } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { getCommonStyles } from "@/styles/CommonStyles";

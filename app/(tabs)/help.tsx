@@ -4,7 +4,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   Linking,
   Platform,
@@ -14,6 +13,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
+  SafeAreaView
 } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
 import { getCommonStyles } from "@/styles/CommonStyles";
