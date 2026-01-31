@@ -4,7 +4,7 @@
     "slug": "St-Paul-Parish-App",
     "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "assets/images/stpauls-wireframe-logo.png",
+    "icon": "assets/images/android-logo-primary.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -24,7 +24,7 @@
     },
     "android": {
       "splash": {
-        "image": "assets/images/stpauls-wireframe-logo.png",
+        "image": "assets/images/spaoc-primary.png",
         "resizeMode": "contain",
         "backgroundColor": "#121212"
       },
@@ -42,12 +42,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "assets/images/stpauls-wireframe-logo.png",
+          "image": "assets/images/spaoc-primary.png",
           "imageWidth": 180,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
-            "image": "assets/images/stpauls-wireframe-logo-white.png",
+            "image": "assets/images/spaoc-secondary.png",
             "backgroundColor": "#121212"
           }
         }
