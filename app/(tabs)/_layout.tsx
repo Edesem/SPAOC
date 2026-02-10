@@ -1,9 +1,8 @@
 import React from "react";
-import { DynamicColorIOS, Platform, StyleSheet } from "react-native";
+import { DynamicColorIOS, Platform } from "react-native";
 import { NativeTabs, Label, Icon } from "expo-router/unstable-native-tabs";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
-import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
