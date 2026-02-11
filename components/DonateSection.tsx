@@ -15,14 +15,12 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import Toast from "react-native-toast-message";
 
 import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from "@/constants/consts";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 export default function DonateSection({ theme, CommonStyles }: any) {
   const [copied, setCopied] = useState(false); // Track if the details are copied
   const [copiedMessage, setCopiedMessage] = useState("");
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const handleCopyDetails = async (textToCopy: string, label: string) => {
     Haptic.press();
@@ -149,14 +147,14 @@ export default function DonateSection({ theme, CommonStyles }: any) {
   );
 }
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     header: {
       alignItems: "center",
       marginBottom: 30,
     },
     bibleVerse: {
-      ...font.body,
+      fontSize: 16,
       fontStyle: "italic",
       color: "grey",
       marginTop: 10,
@@ -180,7 +178,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
     },
     squareButtonText: {
       color: "white",
-      ...font.body,
+      fontSize: 16,
       fontWeight: "600",
     },
     bankDetailsSection: {
@@ -207,7 +205,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       marginTop: 20,
     },
     copyValueText: {
-      ...font.subheading,
+      fontSize: 18,
       fontWeight: "600",
       paddingHorizontal: 10,
     },
@@ -216,7 +214,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
     },
     copyButtonText: {
       color: "white",
-      ...font.body,
+      fontSize: 16,
       fontWeight: "600",
     },
     bottomImage: {

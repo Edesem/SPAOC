@@ -16,7 +16,6 @@ import { Colours } from "@/styles/Colours";
 import { useNavigation } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 // Define the expected route params type
 type ReadingScreenRouteParams = {
@@ -32,8 +31,7 @@ export default function ReadingScreen() {
   const { reading, title } = params;
   const navigation = useNavigation();
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const colorScheme = useColorScheme();
   const colors = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -110,7 +108,7 @@ export default function ReadingScreen() {
     </SafeAreaView>
   );
 }
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -121,7 +119,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       paddingTop: 10, // Small top padding to avoid text sticking to the top
     },
     title: {
-      ...font.heading,
+      fontSize: 24,
       fontWeight: "bold",
       textAlign: "center",
       marginBottom: 10,
@@ -133,7 +131,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       alignSelf: "center",
     },
     text: {
-      ...font.subheading,
+      fontSize: 18,
       lineHeight: 26,
       textAlign: "justify",
     },
@@ -147,6 +145,6 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
     copyButtonText: {
       color: "white",
       fontWeight: "600",
-      ...font.body,
+      fontSize: 16,
     },
   });

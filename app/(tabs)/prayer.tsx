@@ -20,7 +20,7 @@ import {
   SafeAreaView
 } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
-import { getCommonStyles } from "@/styles/CommonStyles";
+import { fontSize, getCommonStyles } from "@/styles/CommonStyles";
 import { Colours } from "@/styles/Colours";
 import {
   fetchAntiochian,
@@ -63,7 +63,6 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import * as Haptics from "expo-haptics";
 import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 interface LiturgicalData {
   publicUrl: string;
@@ -222,8 +221,7 @@ export default function PrayerScreen(): JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   type RootStackParamList = {
     Home: undefined;
@@ -421,7 +419,7 @@ export default function PrayerScreen(): JSX.Element {
             >
               <IconSymbol
                 name="calendar"
-                size={font.icon.fontSize}
+                size={fontSize.icon}
                 color={theme.lessImportantText}
               />
             </TouchableOpacity>
@@ -481,7 +479,6 @@ export default function PrayerScreen(): JSX.Element {
                   style={[
                     { color: theme.moreImportantText },
                     { paddingBottom: 20 },
-                    { ...font.body },
                   ]}
                 >
                   Loading readings...
@@ -528,7 +525,7 @@ export default function PrayerScreen(): JSX.Element {
                     </View>
                     <Ionicons
                       name="chevron-forward"
-                      size={font.icon.fontSize}
+                      size={fontSize.icon}
                       color={chevronColor}
                       style={styles.chevronIcon}
                     />
@@ -548,7 +545,7 @@ export default function PrayerScreen(): JSX.Element {
                     style={[
                       { color: theme.moreImportantText },
                       { paddingBottom: 20 },
-                      { ...font.body },
+                      { fontSize: fontSize.body  },
                     ]}
                   >
                     {he.decode(readings.reading1Teaser || "")}
@@ -594,7 +591,7 @@ export default function PrayerScreen(): JSX.Element {
                     </View>
                     <Ionicons
                       name="chevron-forward"
-                      size={font.icon.fontSize}
+                      size={fontSize.icon}
                       color={chevronColor}
                       style={styles.chevronIcon}
                     />
@@ -614,7 +611,7 @@ export default function PrayerScreen(): JSX.Element {
                     style={[
                       { color: theme.moreImportantText },
                       { paddingBottom: 20 },
-                      { ...font.body },
+                      { fontSize: fontSize.body },
                     ]}
                   >
                     {he.decode(readings.reading2Teaser || "")}
@@ -660,7 +657,7 @@ export default function PrayerScreen(): JSX.Element {
                     </View>
                     <Ionicons
                       name="chevron-forward"
-                      size={font.icon.fontSize}
+                      size={fontSize.icon}
                       color={chevronColor}
                       style={styles.chevronIcon}
                     />
@@ -670,7 +667,7 @@ export default function PrayerScreen(): JSX.Element {
                     style={[
                       { color: theme.moreImportantText },
                       { paddingBottom: 20 },
-                      { ...font.body },
+                      { fontSize: fontSize.body },
                     ]}
                   >
                     {he.decode(readings.reading3Teaser || "")}
@@ -697,7 +694,7 @@ export default function PrayerScreen(): JSX.Element {
                   style={[
                     { color: theme.moreImportantText },
                     { paddingBottom: 20 },
-                    { ...font.body },
+                    { fontSize: fontSize.body },
                   ]}
                 >
                   Loading prayers...
@@ -744,7 +741,7 @@ export default function PrayerScreen(): JSX.Element {
                       style={[
                         { color: theme.moreImportantText },
                         { paddingBottom: 20 },
-                        { ...font.body },
+                        { fontSize: fontSize.body },
                       ]}
                     >
                       {service.replace(/\s*\(PDF\)$/, "")}
@@ -966,13 +963,13 @@ export default function PrayerScreen(): JSX.Element {
   );
 }
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     header: {
       alignItems: "center",
     },
     subtitle: {
-      ...font.body,
+      fontSize: 16,
       fontStyle: "italic",
       marginTop: 10,
       marginHorizontal: 26,
@@ -1003,7 +1000,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
     },
     linkText: {
       color: "blue",
-      ...font.body,
+      fontSize: 16,
       fontWeight: "bold",
       textDecorationLine: "underline",
     },
@@ -1014,10 +1011,10 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       backgroundColor: "rgba(0, 0, 0, 0.05)", // Light background for contrast
     },
     prayerTitle: {
-      ...font.subheading,
+      fontSize: 18,
     },
     prayerSubtitle: {
-      ...font.small,
+      fontSize: 14,
       color: "#666",
       fontStyle: "italic",
       paddingBottom: 20,
@@ -1044,7 +1041,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
     },
     noTextsMessage: {
       textAlign: "center",
-      ...font.body,
+      fontSize: 16,
       color: "#666",
       fontStyle: "italic",
       marginVertical: 10,
@@ -1066,7 +1063,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       marginTop: 8, // Space between text and chevron
     },
     dateTitle: {
-      ...font.heading,
+      fontSize: 24,
       fontWeight: "bold",
     },
     headerRow: {
@@ -1075,4 +1072,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       marginBottom: 30,
       paddingLeft: 65,
     },
+    icon: {
+      fontSize: 36,
+    }
   });

@@ -5,7 +5,6 @@ import {
   CALENDAR_NOTIFICATION_SETTINGS,
 } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useFontStyles } from "@/hooks/useFontStyles";
 import { Colours } from "@/styles/Colours";
 import eventBus from "@/utils/eventBus";
 import {
@@ -14,7 +13,6 @@ import {
   scheduleCategoryNotifications,
   scheduleFavouriteNotifications,
   scheduleSaintNotificationsForNext7Days,
-  setCalendarSettings,
 } from "@/utils/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -24,17 +22,15 @@ import {
   View,
   Text,
   Platform,
-  SafeAreaView,
   ScrollView,
   Switch,
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { create } from "zustand";
 import RNPickerSelect from "react-native-picker-select";
 
-type FontSize = "small" | "medium" | "large";
 type StartOfWeek = "sunday" | "monday";
 
 interface CalendarSetting {
@@ -43,10 +39,6 @@ interface CalendarSetting {
 }
 
 interface SettingsState {
-  fontSize: FontSize;
-  setFontSize: (size: FontSize) => void;
-  loadFontSize: () => Promise<void>;
-
   startOfWeek: StartOfWeek;
   setStartOfWeek: (value: StartOfWeek) => void;
   loadStartOfWeek: () => Promise<void>;
@@ -54,20 +46,7 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>((set) => ({
   // Defaults
-  fontSize: "medium",
   startOfWeek: "monday",
-
-  // Font size
-  setFontSize: (size) => {
-    AsyncStorage.setItem("FONT_SIZE", size);
-    set({ fontSize: size });
-  },
-  loadFontSize: async () => {
-    const saved = await AsyncStorage.getItem("FONT_SIZE");
-    if (saved === "small" || saved === "medium" || saved === "large") {
-      set({ fontSize: saved });
-    }
-  },
 
   // Start of week
   setStartOfWeek: (value) => {
@@ -89,15 +68,9 @@ export default function SettingsScreen() {
   const pickerTheme = colorScheme === "dark" ? true : false;
   const router = useRouter();
 
-  const fontSize = useSettingsStore((state) => state.fontSize);
-  const setFontSize = useSettingsStore((state) => state.setFontSize);
-  const loadFontSize = useSettingsStore((state) => state.loadFontSize);
-
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
   const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
-
-  const font = useFontStyles();
 
   const [themeSelection, setThemeSelection] = useState("auto");
   const [timezone, setTimezone] = useState("UTC");
@@ -148,7 +121,6 @@ export default function SettingsScreen() {
   }, []);
 
   useEffect(() => {
-    loadFontSize();
     loadStartOfWeek();
   }, []);
 
@@ -239,7 +211,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
 
           {/* Settings Header */}
-          <Text style={[styles.title, font.heading, { color: theme.primary }]}>
+          <Text style={[styles.title, { color: theme.primary }]}>
             Settings
           </Text>
 
@@ -258,7 +230,6 @@ export default function SettingsScreen() {
               { label: "Auto", value: "auto" },
             ]}
             theme={theme}
-            font={font}
             pickerTheme={pickerTheme}
             styles={styles}
           />
@@ -273,23 +244,6 @@ export default function SettingsScreen() {
               { label: "Monday", value: "monday" },
             ]}
             theme={theme}
-            font={font}
-            pickerTheme={pickerTheme}
-            styles={styles}
-          />
-
-          {/* Font Size Selection */}
-          <SettingPicker
-            label="Font Size"
-            value={fontSize}
-            onValueChange={(val) => setFontSize(val as FontSize)}
-            items={[
-              { label: "Small", value: "small" },
-              { label: "Medium", value: "medium" },
-              { label: "Large", value: "large" },
-            ]}
-            theme={theme}
-            font={font}
             pickerTheme={pickerTheme}
             styles={styles}
           />
@@ -317,7 +271,6 @@ export default function SettingsScreen() {
           <View style={styles.settingItem}>
             <Text
               style={[
-                font.subheading,
                 { color: theme.moreImportantText },
                 { fontWeight: "bold", textDecorationLine: "underline" },
               ]}
@@ -328,7 +281,7 @@ export default function SettingsScreen() {
 
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
-            <Text style={[font.body, { color: theme.moreImportantText }]}>
+            <Text style={{ color: theme.moreImportantText }}>
               Saint of the Day
             </Text>
             <Switch
@@ -354,7 +307,7 @@ export default function SettingsScreen() {
 
           {/* Favourites Notification toggle */}
           <View style={styles.settingItem}>
-            <Text style={[font.body, { color: theme.moreImportantText }]}>
+            <Text style={{ color: theme.moreImportantText }}>
               Favourite Events
             </Text>
             <Switch
@@ -425,7 +378,6 @@ export default function SettingsScreen() {
                     <View style={{ flex: 1, padding: 14 }}>
                       <Text
                         style={[
-                          font.body,
                           {
                             fontSize: 16,
                             fontWeight: "600",
@@ -438,7 +390,6 @@ export default function SettingsScreen() {
                       </Text>
                       <Text
                         style={[
-                          font.body,
                           {
                             color: theme.lessImportantText ?? "#666",
                             marginTop: 4,
@@ -485,7 +436,6 @@ export default function SettingsScreen() {
                               color: theme.itemBackground,
                               textAlign: "center",
                               fontWeight: "500",
-                              ...font.body,
                               pointerEvents: "none",
                             },
                             inputAndroidContainer: {
@@ -500,7 +450,6 @@ export default function SettingsScreen() {
                               color: theme.itemBackground,
                               textAlign: "center",
                               fontWeight: "500",
-                              ...font.body,
                               pointerEvents: "none",
                             },
                             iconContainer: {
