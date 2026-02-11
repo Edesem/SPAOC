@@ -151,7 +151,7 @@ export const EventItem = ({
             >
               <Icon
                 name={isFavourite ? "star" : "star-outline"}
-                style={styles.icon}
+                size={24}
                 color={isFavourite ? "#FFD700" : chevronColor}
               />
             </TouchableOpacity>
