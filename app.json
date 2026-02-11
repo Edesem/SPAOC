@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "icon": "assets/images/spaoc.icon",
+      "icon": "assets/images/spaoc-white-background.icon",
       "bundleIdentifier": "com.edesem.StPaulParishApp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
