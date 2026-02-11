@@ -142,13 +142,6 @@ export default function HelpScreen() {
             />
           </View>
 
-          {/* App Info */}
-          <View style={styles.section}>
-            <Text style={[styles.versionText, { color: theme.detail }]}>
-              App Version: {appVersion}
-            </Text>
-          </View>
-
           {/* Image */}
           <View style={styles.imageContainer}>
             <Image
@@ -230,6 +223,7 @@ const getStyles = () =>
       height: 100,
       resizeMode: "contain",
       marginBottom: 50,
+      marginTop: 60,
     },
     imageContainer: {
       alignItems: "center",
