@@ -8,7 +8,6 @@ import React, {
 import {
   StyleSheet,
   View,
-  SafeAreaView,
   SectionList,
   StatusBar,
   Text,
@@ -21,7 +20,7 @@ import {
   Modal,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { renderItem } from "@/components/RenderItem";
 import { Colours } from "@/styles/Colours";
 import "expo-dev-client";
@@ -42,7 +41,6 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import * as Haptics from "expo-haptics";
 import MonthPicker from "react-native-month-year-picker";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -55,8 +53,7 @@ export default function HomeScreen() {
   const appState = useRef(AppState.currentState);
   const lastRefreshTime = useRef<number>(Date.now());
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -369,7 +366,7 @@ export default function HomeScreen() {
           >
             <IconSymbol
               name="calendar"
-              size={font.icon.fontSize}
+              size={36}
               color={theme.lessImportantText}
             />
           </TouchableOpacity>
@@ -431,7 +428,7 @@ export default function HomeScreen() {
                 >
                   <MaterialIcons
                     name="menu"
-                    size={font.icon.fontSize}
+                    style={styles.icon}
                     color={theme.lessImportantText}
                   />
                 </TouchableOpacity>
@@ -455,7 +452,7 @@ export default function HomeScreen() {
                 >
                   <MaterialIcons
                     name="arrow-upward"
-                    size={font.icon.fontSize}
+                    style={styles.icon}
                     color={theme.lessImportantText}
                   />
                 </TouchableOpacity>
@@ -489,7 +486,7 @@ export default function HomeScreen() {
   );
 }
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -511,7 +508,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
     },
     emptyMessage: {
       textAlign: "center",
-      ...font.subheading,
+      fontSize: 18,
       marginTop: 20,
     },
     topImage: {
@@ -534,35 +531,38 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       alignItems: "center",
     },
     saintOfTheDayTitle: {
-      ...font.heading,
+      fontSize: 24,
       fontWeight: "bold",
       marginBottom: 10,
     },
     saintOfTheDay: {
-      ...font.subheading,
+      fontSize: 18,
       marginBottom: 20,
       textAlign: "center",
     },
     MajorFastText: {
-      ...font.heading,
+      fontSize: 24,
       fontWeight: "bold",
       marginBottom: 10,
       textAlign: "center",
     },
     minorFastText: {
-      ...font.subheading,
+      fontSize: 18,
       textAlign: "center",
     },
     weekLabel: {
       marginLeft: 20,
       marginTop: 15,
-      ...font.heading,
+      fontSize: 24,
       fontWeight: "bold",
     },
     sectionHeader: {
       marginLeft: 15,
       marginTop: 10,
       padding: 5,
-      ...font.subheading,
+      fontSize: 18,
     },
+    icon: {
+      fontSize: 36,
+    }
   });
