@@ -211,9 +211,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
 
           {/* Settings Header */}
-          <Text style={[styles.title, { color: theme.primary }]}>
-            Settings
-          </Text>
+          <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
 
           {/* Theme Selection */}
           <SettingPicker
@@ -463,15 +461,17 @@ export default function SettingsScreen() {
                     </View>
 
                     {/* Right Side: Switch */}
-                    <Switch
-                      value={calendarSettings[calendar]?.enabled ?? false}
-                      onValueChange={(value) => {
-                        updateCalendarSetting(calendar, { enabled: value });
-                        scheduleCategoryNotifications(calendar);
-                      }}
-                      trackColor={{ false: "#767577", true: "#34c658" }}
-                      thumbColor="#fff"
-                    />
+                    <View>
+                      <Switch
+                        value={calendarSettings[calendar]?.enabled ?? false}
+                        onValueChange={(value) => {
+                          updateCalendarSetting(calendar, { enabled: value });
+                          scheduleCategoryNotifications(calendar);
+                        }}
+                        trackColor={{ false: "#767577", true: "#34c658" }}
+                        thumbColor="#fff"
+                      />
+                    </View>
                   </View>
                 </View>
               </View>
