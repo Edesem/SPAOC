@@ -24,7 +24,6 @@ import {
 } from "@expo/vector-icons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import * as Haptics from "expo-haptics";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 export default function AboutScreen() {
   const insets = useSafeAreaInsets();
@@ -33,8 +32,7 @@ export default function AboutScreen() {
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const openLink = (url: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
@@ -162,8 +160,7 @@ function LinkButton({
 }) {
   let IconComponent = MaterialIcons;
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   // Choose the right icon set based on icon name
   if (
@@ -182,7 +179,7 @@ function LinkButton({
   );
 }
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     content: {
       padding: 20,
@@ -193,7 +190,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       marginBottom: 10,
     },
     subtitle: {
-      ...font.body,
+      fontSize: 16,
 
       fontStyle: "italic",
       marginTop: 10,
@@ -213,7 +210,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       backgroundColor: "transparent",
     },
     linkLabel: {
-      ...font.body,
+      fontSize: 16,
       fontWeight: "500",
     },
     imageContainer: {

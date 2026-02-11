@@ -23,7 +23,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as Localization from "expo-localization";
 import DonateSection from "@/components/DonateSection";
 import * as Haptics from "expo-haptics";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 export default function HelpScreen() {
   const insets = useSafeAreaInsets();
@@ -34,8 +33,7 @@ export default function HelpScreen() {
 
   const appVersion = Constants.expoConfig?.version ?? "Unknown";
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const openLink = (url: string) => {
     Linking.openURL(url).catch((err) =>
@@ -177,8 +175,7 @@ function LinkItem({
   onPress: () => void;
   color: string;
 }) {
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   return (
     <TouchableOpacity style={styles.linkItem} onPress={onPress}>
@@ -188,7 +185,7 @@ function LinkItem({
   );
 }
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     content: {
       padding: 20,
@@ -197,10 +194,10 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
     header: {
       alignItems: "center",
       marginBottom: 10,
-      ...font.heading,
+      fontSize: 24,
     },
     subtitle: {
-      ...font.body,
+      fontSize: 16,
       fontStyle: "italic",
       marginTop: 10,
       textAlign: "center",
@@ -218,11 +215,11 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       borderRadius: 12,
     },
     linkLabel: {
-      ...font.body,
+      fontSize: 16,
       fontWeight: "500",
     },
     versionText: {
-      ...font.small,
+      fontSize: 14,
       fontStyle: "italic",
       textAlign: "center",
       marginTop: 20,

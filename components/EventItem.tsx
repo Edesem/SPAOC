@@ -8,7 +8,6 @@ import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colours } from "@/styles/Colours";
 import { FAVOURITES_KEY } from "@/constants/consts";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 export const EventItem = ({
   item,
@@ -19,8 +18,7 @@ export const EventItem = ({
   const router = useRouter();
   const colorScheme = useColorScheme();
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const [isFavourite, setIsFavourite] = useState(false);
 
@@ -153,14 +151,13 @@ export const EventItem = ({
             >
               <Icon
                 name={isFavourite ? "star" : "star-outline"}
-                size={font.heading.fontSize}
+                style={styles.icon}
                 color={isFavourite ? "#FFD700" : chevronColor}
               />
             </TouchableOpacity>
 
             <Icon
               name="chevron-forward"
-              size={font.subheading.fontSize}
               color={chevronColor}
               style={styles.chevronIcon}
             />
@@ -171,7 +168,7 @@ export const EventItem = ({
   );
 };
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     item: {
       padding: 20,
@@ -210,19 +207,20 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       flex: 1,
     },
     itemDate: {
-      ...font.body,
+      fontSize: 16,
       fontWeight: "500",
       marginBottom: 2,
     },
     itemTime: {
-      ...font.small,
+      fontSize: 14,
       marginBottom: 2,
     },
     itemTitle: {
-      ...font.subheading,
+      fontSize: 18,
     },
     chevronIcon: {
       marginLeft: 8,
+      fontSize: 36,
     },
     rightIcons: {
       flexDirection: "row",
@@ -232,4 +230,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       marginRight: 12,
       padding: 4,
     },
+    icon: {
+      fontSize: 36,
+    }
   });
