@@ -18,8 +18,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { getCommonStyles } from "@/styles/CommonStyles";
 import { Colours } from "@/styles/Colours";
 import {
-  FontAwesome,
-  MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";

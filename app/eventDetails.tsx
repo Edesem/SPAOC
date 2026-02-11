@@ -10,7 +10,6 @@ import {
   Linking,
   Platform,
   Dimensions,
-  Alert,
   TouchableOpacity,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";

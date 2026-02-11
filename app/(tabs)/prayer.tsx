@@ -6,7 +6,6 @@ import {
   Image,
   ActivityIndicator,
   ScrollView,
-  Linking,
   TouchableOpacity,
   RefreshControl,
   Alert,
@@ -57,12 +56,11 @@ import { faHandsPraying } from "@fortawesome/free-solid-svg-icons/faHandsPraying
 import { faStar } from "@fortawesome/free-solid-svg-icons/faStar";
 import he from "he";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import toTitleCase from "titlecase";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import * as Haptics from "expo-haptics";
-import { NativeStackNavigationProp } from "react-native-screens/lib/typescript/native-stack/types";
 
 interface LiturgicalData {
   publicUrl: string;
