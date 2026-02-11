@@ -31,8 +31,11 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { create } from "zustand";
 import RNPickerSelect from "react-native-picker-select";
 import { fontSize } from "@/styles/CommonStyles";
+import Constants from "expo-constants";
 
 type StartOfWeek = "sunday" | "monday";
+
+const appVersion = Constants.expoConfig?.version ?? "Unknown";
 
 interface CalendarSetting {
   enabled: boolean;
@@ -490,6 +493,13 @@ export default function SettingsScreen() {
                 </View>
               );
             })}
+
+          {/* App Info */}
+          <View style={styles.section}>
+            <Text style={[styles.versionText, { color: theme.detail }]}>
+              App Version: {appVersion}
+            </Text>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -515,6 +525,16 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 10,
+  },
+  section: {
+    gap: 16,
+  },
+  versionText: {
+    fontSize: 14,
+    fontStyle: "italic",
+    textAlign: "center",
+    marginTop: 500,
+    marginBottom: 60,
   },
 });
 
