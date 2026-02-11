@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ScrollView,
   Image,
-  SafeAreaView,
   Linking,
   Platform,
   Dimensions,
@@ -15,14 +14,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Colours } from "@/styles/Colours";
 import { decode } from "html-entities";
 import * as Clipboard from "expo-clipboard";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import Toast from "react-native-toast-message";
 import * as Haptics from "expo-haptics";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,8 +35,7 @@ const cleanDescription = (description: string): string => {
 const renderDescription = (description: string | null, theme: any) => {
   if (!description) return null;
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const cleanedDescription = cleanDescription(description);
 
@@ -70,8 +67,7 @@ const EventDetailsScreen = () => {
   const { title, start, end, description, location, source } =
     useLocalSearchParams<EventData>();
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -230,7 +226,7 @@ const EventDetailsScreen = () => {
   );
 };
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     container: {
       flexGrow: 1,
@@ -248,7 +244,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       elevation: 5,
     },
     title: {
-      ...font.heading,
+      fontSize: 24,
       fontWeight: "700",
       color: "#333",
       marginBottom: 8,
@@ -259,17 +255,17 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       marginVertical: 10,
     },
     date: {
-      ...font.body,
+      fontSize: 16,
       color: "#555",
       marginVertical: 4,
     },
     detail: {
-      ...font.body,
+      fontSize: 16,
       color: "#555",
       marginVertical: 4,
     },
     description: {
-      ...font.small,
+      fontSize: 14,
       marginTop: 15,
       lineHeight: 20,
     },
@@ -285,7 +281,7 @@ const getStyles = (font: ReturnType<typeof useFontStyles>) =>
       marginTop: 5,
     },
     customBack: {
-      ...font.subheading,
+      fontSize: 18,
       color: "#0a4068",
       marginLeft: 10,
     },

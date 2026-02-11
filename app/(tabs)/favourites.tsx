@@ -16,7 +16,6 @@ import { EventItem } from "@/components/EventItem"; // <-- Import your component
 import { EventData, ItemProps } from "@/types/global"; // <-- adjust import if needed
 import { useFocusEffect } from "@react-navigation/native";
 import { FAVOURITES_KEY } from "@/constants/consts";
-import { useFontStyles } from "@/hooks/useFontStyles";
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
@@ -25,8 +24,7 @@ export default function FavouritesScreen() {
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
-  const font = useFontStyles();
-  const styles = getStyles(font);
+  const styles = getStyles();
 
   const loadFavourites = async () => {
     try {
@@ -110,14 +108,14 @@ export default function FavouritesScreen() {
   );
 }
 
-const getStyles = (font: ReturnType<typeof useFontStyles>) =>
+const getStyles = () =>
   StyleSheet.create({
     header: {
       alignItems: "center",
       marginBottom: 30,
     },
     subtitle: {
-      ...font.body,
+      fontSize: 18,
       fontStyle: "italic",
       marginTop: 10,
       marginHorizontal: 26,

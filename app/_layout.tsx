@@ -40,8 +40,7 @@ export default function RootLayout() {
           headerStyle: { backgroundColor: colorScheme === 'dark' ? Colours.dark.background : Colours.light.background },
           headerTintColor: colorScheme === 'dark' ? Colours.dark.moreImportantText : '#333',
           headerTitleStyle: { fontWeight: 'bold' },
-        }}
-      >
+        }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="eventDetails" />

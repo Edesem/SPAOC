@@ -8,7 +8,6 @@ type SettingPickerProps = {
   items: { label: string; value: string }[];
   onValueChange: (val: string) => void;
   theme: any;
-  font: any;
   pickerTheme?: any;
   styles: any;
 };
@@ -19,7 +18,6 @@ const SettingPicker: React.FC<SettingPickerProps> = ({
   items,
   onValueChange,
   theme,
-  font,
   pickerTheme,
   styles,
 }) => {
@@ -31,7 +29,7 @@ const SettingPicker: React.FC<SettingPickerProps> = ({
       activeOpacity={0.7}
       onPress={() => pickerRef.current?.togglePicker()}
     >
-      <Text style={[font.body, { color: theme.moreImportantText }]}>{label}</Text>
+      <Text style={{ color: theme.moreImportantText }}>{label}</Text>
       <RNPickerSelect
         ref={pickerRef}
         value={value}
@@ -40,8 +38,8 @@ const SettingPicker: React.FC<SettingPickerProps> = ({
         placeholder={{}}
         style={{
           inputIOSContainer: { pointerEvents: "none" },
-          inputIOS: { color: theme.moreImportantText, ...font.body },
-          inputAndroid: { color: theme.moreImportantText, ...font.body },
+          inputIOS: { color: theme.moreImportantText},
+          inputAndroid: { color: theme.moreImportantText},
         }}
         darkTheme={pickerTheme}
       />
