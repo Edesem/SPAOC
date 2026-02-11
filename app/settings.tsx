@@ -303,7 +303,12 @@ export default function SettingsScreen() {
             />
           </View>
 
-          {/* Favourites Notification toggle */}
+          
+          {/* Favourites Notification toggle
+          
+          
+          COMMENTED OUT*/}
+          {false && 
           <View style={styles.settingItem}>
             <Text style={{ color: theme.moreImportantText }}>
               Favourite Events
@@ -327,8 +332,11 @@ export default function SettingsScreen() {
               thumbColor="#fff"
             />
           </View>
+          }
 
-          {Object.keys(calendarSettings).map((calendar) => {
+
+          {/* Comment out code */ }
+          {false && Object.keys(calendarSettings).map((calendar) => {
             const colour = getEventColor(calendar);
 
             return (
