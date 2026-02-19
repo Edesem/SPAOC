@@ -52,6 +52,27 @@ SplashScreen.setOptions({
 export default function HomeScreen() {
   const appState = useRef(AppState.currentState);
   const lastRefreshTime = useRef<number>(Date.now());
+  const navigation =
+    useNavigation<BottomTabNavigationProp<RootTabParamList, "Home">>();
+  const sectionListRef = useRef<SectionList>(null);
+  const { todaysSaints, error, refetchSaints } = useDailySaint();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+
+  const { events, fastLoading, refetch: refetchFast } = useFastDay();
+  const {
+    events: allEvents,
+    groupedEvents,
+    loading: eventsLoading,
+    refetch: refetchEvents,
+  } = useEvents();
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
 
   const styles = getStyles();
 
@@ -90,16 +111,11 @@ export default function HomeScreen() {
     }, [])
   );
 
-  const sectionListRef = useRef<SectionList>(null);
-
   // Your param list type (adjust to your app)
   type RootTabParamList = {
     Home: undefined;
     // other tabs...
   };
-
-  const navigation =
-    useNavigation<BottomTabNavigationProp<RootTabParamList, "Home">>();
 
   // Scroll to top when pressing Home tab
   useEffect(() => {
@@ -113,25 +129,6 @@ export default function HomeScreen() {
 
     return unsubscribe;
   }, [navigation]);
-
-  const { todaysSaints, error, refetchSaints } = useDailySaint();
-
-  const [refreshing, setRefreshing] = useState(false);
-
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
-
-  const { events, fastLoading, refetch: refetchFast } = useFastDay();
-  const {
-    events: allEvents,
-    groupedEvents,
-    loading: eventsLoading,
-    refetch: refetchEvents,
-  } = useEvents();
-
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showMonthPicker, setShowMonthPicker] = useState(false);
-  const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
 
   useEffect(() => {
     if (groupedEvents.length > 0) {
@@ -564,5 +561,5 @@ const getStyles = () =>
     },
     icon: {
       fontSize: 36,
-    }
+    },
   });
