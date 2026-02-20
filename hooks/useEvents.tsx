@@ -10,12 +10,9 @@ import {
   SENIORS_EVENTS_BASE_URL,
   PLAYGROUP_EVENTS_BASE_URL,
   FELLOWSHIP_EVENTS_BASE_URL,
-  CALENDAR_NOTIFICATION_SETTINGS,
 } from "@/constants/consts";
 import { EventData } from "@/types/global";
 import { groupEventsByDay } from "@/utils/dateUtils";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { scheduleNotification } from "@/notifications";
 
 const EVENT_SOURCES = [
   { url: YOUTH_EVENTS_BASE_URL, source: "youth" },
@@ -31,52 +28,26 @@ const EVENT_SOURCES = [
 
 export const useEvents = () => {
   const [events, setEvents] = useState<EventData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const fetchAllEvents = async () => {
+  const fetchAllEvents = () => {
     setLoading(true);
-    try {
-      const storedSettings = await AsyncStorage.getItem(
-        CALENDAR_NOTIFICATION_SETTINGS
-      );
-      const calendarSettings = storedSettings ? JSON.parse(storedSettings) : {};
-      const allEvents: EventData[] = [];
 
-      await Promise.all(
-        EVENT_SOURCES.map(async ({ url, source }) => {
-          const response = await fetch(
-            `${url}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`
-          );
-          if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          const data = await response.json();
+    const now = new Date();
+    const timeMin = now.toISOString();
 
+    const fetchPromises = EVENT_SOURCES.map(({ url, source }) => {
+      const fullUrl = `${url}?key=${API_KEY}&timeMin=${timeMin}&singleEvents=true&orderBy=startTime`;
+
+      return fetch(fullUrl)
+        .then((response) => response.json())
+        .then((data) => {
           const formattedEvents: EventData[] = [];
 
-          for (const item of data.items) {
+          for (const item of data.items || []) {
             if (item.visibility === "private") continue;
 
             const eventStart = new Date(item.start.dateTime || item.start.date);
-            const calendar = source;
-
-            const settings = calendarSettings[calendar];
-            if (settings?.enabled) {
-              const notifyTime = new Date(eventStart);
-              notifyTime.setDate(notifyTime.getDate() - settings.daysBefore);
-
-              const now = new Date();
-              const diffMs = eventStart - now;
-              const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-
-              if (notifyTime > new Date()) {
-                await scheduleNotification(
-                  item.summary || "Upcoming event",
-                  `Event upcoming in ${diffDays} day${diffDays !== 1 ? "s" : ""}!`,
-                  notifyTime
-                );
-              }
-            }
 
             formattedEvents.push({
               id: item.id,
@@ -85,32 +56,47 @@ export const useEvents = () => {
               end: item.end?.dateTime || item.end?.date || "",
               description: item.description,
               location: item.location,
-              source: calendar,
-              data: []
+              source: source,
+              data: [],
             });
           }
 
-          allEvents.push(...formattedEvents);
+          return formattedEvents;
         })
-      );
+        .catch((error) => {
+          console.error(`Error fetching ${source}:`, error);
+          return [];
+        });
+    });
 
-      setEvents(
-        allEvents.sort(
+    Promise.all(fetchPromises)
+      .then((results) => {
+        const allEvents = results.flat();
+        const sorted = allEvents.sort(
           (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
-        )
-      );
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    } finally {
-      setLoading(false);
-    }
+        );
+        setEvents(sorted);
+      })
+      .catch((error) => {
+        console.error("Error in Promise.all:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
     fetchAllEvents();
   }, []);
 
-  const groupedEvents = useMemo(() => groupEventsByDay(events), [events]);
+  const groupedEvents = useMemo(() => {
+    return groupEventsByDay(events);
+  }, [events]);
 
-  return { events, groupedEvents, loading, refetch: fetchAllEvents };
+  return {
+    events,
+    groupedEvents,
+    loading,
+    refetch: fetchAllEvents,
+  };
 };
