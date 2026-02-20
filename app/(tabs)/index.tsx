@@ -50,6 +50,7 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
+  
   const appState = useRef(AppState.currentState);
   const lastRefreshTime = useRef<number>(Date.now());
   const navigation =
@@ -59,10 +60,10 @@ export default function HomeScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
 
-  const { events, fastLoading, refetch: refetchFast } = useFastDay();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  
   const {
     events: allEvents,
     groupedEvents,
@@ -70,11 +71,11 @@ export default function HomeScreen() {
     refetch: refetchEvents,
   } = useEvents();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showMonthPicker, setShowMonthPicker] = useState(false);
-  const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
-
   const styles = getStyles();
+  const { events, fastLoading, refetch: refetchFast } = useFastDay();
+  const colorScheme = useColorScheme();
+  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+  const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
