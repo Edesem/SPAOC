@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   API_KEY,
   YOUTH_EVENTS_BASE_URL,
@@ -32,23 +32,23 @@ export const useEvents = () => {
 
   const fetchAllEvents = () => {
     setLoading(true);
-    
+
     const now = new Date();
     const timeMin = now.toISOString();
-    
+
     const fetchPromises = EVENT_SOURCES.map(({ url, source }) => {
       const fullUrl = `${url}?key=${API_KEY}&timeMin=${timeMin}&singleEvents=true&orderBy=startTime`;
-      
+
       return fetch(fullUrl)
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           const formattedEvents: EventData[] = [];
-          
+
           for (const item of data.items || []) {
             if (item.visibility === "private") continue;
-            
+
             const eventStart = new Date(item.start.dateTime || item.start.date);
-            
+
             formattedEvents.push({
               id: item.id,
               title: item.summary || "No Title",
@@ -60,25 +60,25 @@ export const useEvents = () => {
               data: [],
             });
           }
-          
+
           return formattedEvents;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(`Error fetching ${source}:`, error);
           return [];
         });
     });
-    
+
     Promise.all(fetchPromises)
-      .then(results => {
+      .then((results) => {
         const allEvents = results.flat();
         const sorted = allEvents.sort(
           (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
         );
         setEvents(sorted);
       })
-      .catch(error => {
-        console.error('Error in Promise.all:', error);
+      .catch((error) => {
+        console.error("Error in Promise.all:", error);
       })
       .finally(() => {
         setLoading(false);
@@ -89,12 +89,14 @@ export const useEvents = () => {
     fetchAllEvents();
   }, []);
 
-  const groupedEvents = groupEventsByDay(events);
+  const groupedEvents = useMemo(() => {
+    return groupEventsByDay(events);
+  }, [events]);
 
-  return { 
-    events, 
-    groupedEvents, 
-    loading, 
-    refetch: fetchAllEvents 
+  return {
+    events,
+    groupedEvents,
+    loading,
+    refetch: fetchAllEvents,
   };
 };
