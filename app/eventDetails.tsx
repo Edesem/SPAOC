@@ -143,13 +143,15 @@ const EventDetailsScreen = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.background }]}
+      edges={[]}
+        style={{ flex: 1, backgroundColor: theme.background }}
       >
         <ScrollView
-          contentContainerStyle={[
-            styles.container,
-            { backgroundColor: theme.background },
-          ]}
+          contentContainerStyle={{
+            padding: 20,
+            paddingBottom: 0,
+            backgroundColor: theme.background,
+          }}
         >
           <View
             style={[styles.card, { backgroundColor: theme.itemBackground }]}
