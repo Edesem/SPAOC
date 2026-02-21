@@ -8,9 +8,18 @@ import {
   DarkTheme,
   DefaultTheme,
 } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import HomeScreen from ".";
+import AboutScreen from "./about";
+import FavouritesScreen from "./favourites";
+import HelpScreen from "./help";
+import PrayerScreen from "./prayer";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
+  const Tab = createBottomTabNavigator();
 
   const tintColor =
     Platform.OS === "ios"
@@ -22,55 +31,39 @@ export default function TabLayout() {
       ? Colours.dark.primary
       : Colours.light.primary;
 
+  const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
+
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <NativeTabs
-        // For the selected icon color
-        tintColor={tintColor}
+    <ThemeProvider value={theme}>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          headerShown: false,
+          tabBarActiveTintColor: tintColor,
+          tabBarInactiveTintColor: "#888",
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === "Events")
+              iconName = focused ? "calendar" : "calendar-outline";
+            else if (route.name === "Favourites")
+              iconName = focused ? "star" : "star-outline";
+            else if (route.name === "About")
+              iconName = focused ? "person" : "person-outline";
+            else if (route.name === "Prayer")
+              iconName = focused ? "book" : "book-outline";
+            else if (route.name === "Help")
+              iconName = focused ? "help-circle" : "help-circle-outline";
+
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
       >
-        <NativeTabs.Trigger name="index">
-          <Label>Home</Label>
-          <Icon
-            sf={{ default: "house", selected: "house.fill" }}
-            drawable="home"
-          />
-        </NativeTabs.Trigger>
-
-        <NativeTabs.Trigger name="favourites">
-          <Label>Favourites</Label>
-          <Icon
-            sf={{ default: "star", selected: "star.fill" }}
-            drawable="star"
-          />
-        </NativeTabs.Trigger>
-
-        <NativeTabs.Trigger name="about">
-          <Label>About</Label>
-          <Icon
-            sf={{ default: "person.circle", selected: "person.circle.fill" }}
-            drawable="person"
-          />
-        </NativeTabs.Trigger>
-
-        <NativeTabs.Trigger name="prayer">
-          <Label>Prayer</Label>
-          <Icon
-            sf={{ default: "book", selected: "book.fill" }}
-            drawable="book-open-variant"
-          />
-        </NativeTabs.Trigger>
-
-        <NativeTabs.Trigger name="help">
-          <Label>Help</Label>
-          <Icon
-            sf={{
-              default: "questionmark.circle",
-              selected: "questionmark.circle.fill",
-            }}
-            drawable="help"
-          />
-        </NativeTabs.Trigger>
-      </NativeTabs>
+        <Tab.Screen name="Events" component={HomeScreen} />
+        <Tab.Screen name="Favourites" component={FavouritesScreen} />
+        <Tab.Screen name="Prayer" component={PrayerScreen} />
+        <Tab.Screen name="About" component={AboutScreen} />
+        <Tab.Screen name="Help" component={HelpScreen} />
+      </Tab.Navigator>
     </ThemeProvider>
   );
 }
