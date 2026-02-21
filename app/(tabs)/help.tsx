@@ -104,15 +104,9 @@ export default function HelpScreen() {
 
           {/* Help Links */}
           <View style={styles.section}>
-            <LinkItem
-              icon="info"
-              label="How to use the app"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  openLink("https://example.com");
-              }}
-              color={theme.primary}
-            />
+            
+
+            
             <LinkItem
               icon="bug-report"
               label="Report a bug"
