@@ -1031,9 +1031,6 @@ const getStyles = () =>
       shadowOpacity: 0.1,
       flexDirection: "row", // Align items horizontally
     },
-    icon: {
-      marginRight: 10, // Adjust this value to your preference for spacing
-    },
     textContainer: {
       flex: 1,
     },
@@ -1072,5 +1069,6 @@ const getStyles = () =>
     },
     icon: {
       fontSize: 36,
+      marginRight: 10, // Adjust this value to your preference for spacing
     }
   });
