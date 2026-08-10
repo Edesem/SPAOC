@@ -468,6 +468,7 @@ export default function HomeScreen() {
                   </Text>
                 }
                 stickySectionHeadersEnabled={false} // Disable sticky headers
+                contentContainerStyle={{ paddingBottom: 120 }} // Add padding to the bottom
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
@@ -488,9 +489,7 @@ const getStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingTop: StatusBar.currentHeight || 0,
-      paddingBottom: 10,
-    },
+     },
     loadingContainer: {
       justifyContent: "center",
       paddingVertical: 30,
