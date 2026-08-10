@@ -14,8 +14,8 @@ import { Colours } from "@/styles/Colours";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EventItem } from "@/components/EventItem"; // <-- Import your component
 import { EventData, ItemProps } from "@/types/global"; // <-- adjust import if needed
-import { useFocusEffect } from "@react-navigation/native";
 import { FAVOURITES_KEY } from "@/constants/consts";
+import { useFocusEffect } from "expo-router";
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
