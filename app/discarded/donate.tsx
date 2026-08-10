@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView, Linking, useColorScheme, ScrollView } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import { ThemedText } from '@/components/ThemedText';
 import { getCommonStyles } from '@/styles/CommonStyles'; // Use dynamic styles
 import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from '@/constants/consts';
@@ -10,6 +9,7 @@ import { Haptic } from '@/hooks/hapticPress';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colours } from '@/styles/Colours';
 import Toast from 'react-native-toast-message';
+import { useFocusEffect } from 'expo-router';
 
 export default function DonateScreen() {
   const colorScheme = useColorScheme(); // Get the current system theme (light or dark)

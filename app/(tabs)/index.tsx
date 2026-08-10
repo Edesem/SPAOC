@@ -34,8 +34,7 @@ import {
   setupNotificationListeners,
 } from "@/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { router, useFocusEffect, useNavigation } from "expo-router";
 import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import * as Haptics from "expo-haptics";

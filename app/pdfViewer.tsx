@@ -1,8 +1,8 @@
 // PdfViewer.tsx
+import { useNavigation, useRoute } from 'expo-router';
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Dimensions, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
-import { useNavigation, useRoute } from '@react-navigation/native';
 
 // TODO: Temporary WebView solution - switch back to react-native-pdf when fixed
 const USE_WEBVIEW = true; // Set to false when react-native-pdf is working again

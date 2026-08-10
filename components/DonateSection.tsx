@@ -8,13 +8,13 @@ import {
   ScrollView,
   Linking,
 } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
 import { setStringAsync } from "expo-clipboard";
 import { Haptic } from "@/hooks/hapticPress";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import Toast from "react-native-toast-message";
 
 import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from "@/constants/consts";
+import { useFocusEffect } from "expo-router";
 
 export default function DonateSection({ theme, CommonStyles }: any) {
   const [copied, setCopied] = useState(false); // Track if the details are copied

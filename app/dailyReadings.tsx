@@ -8,14 +8,14 @@ import {
   TextInput,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useRoute, RouteProp, useFocusEffect } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import he from "he";
 import toTitleCase from "titlecase";
 import { Colours } from "@/styles/Colours";
-import { useNavigation } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
+import { useFocusEffect, useNavigation, useRoute } from "expo-router";
+import { RouteProp } from "expo-router/build/react-navigation";
 
 // Define the expected route params type
 type ReadingScreenRouteParams = {
