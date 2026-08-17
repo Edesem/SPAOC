@@ -1,7 +1,7 @@
 import type { StartOfWeek } from "@/app/settings";
 import { EventData } from "@/types/global";
 
-const APP_TIME_ZONE = "Australia/Sydney";
+const APP_TIME_ZONE = "Australia/Melbourne";
 
 export const formatDateHeading = (date: Date) => {
   const timeZone = APP_TIME_ZONE;
@@ -17,8 +17,8 @@ export const formatDateHeading = (date: Date) => {
   const todayKey = getDateKey(new Date());
   const dateKey = getDateKey(date);
 
-  const tomorrow = new Date(`${todayKey}T00:00:00`);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  const [year, month, day] = todayKey.split("-").map(Number);
+  const tomorrow = new Date(Date.UTC(year, month - 1, day + 1, 12));
   const tomorrowKey = getDateKey(tomorrow);
 
   if (dateKey === todayKey) {
@@ -72,9 +72,9 @@ export const groupEventsByDay = (
   const today = new Date();
   const startOfThisWeek = getStartOfWeek(today, startOfWeek);
   const startOfNextWeek = new Date(startOfThisWeek);
-  startOfNextWeek.setDate(startOfNextWeek.getDate() + 6);
+  startOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
   const startOfLater = new Date(startOfNextWeek); // One week after "Next Week"
-  startOfLater.setDate(startOfLater.getDate() + 6); // Start of "Later" label
+  startOfLater.setDate(startOfLater.getDate() + 7); // Start of "Later" label
 
   let addedThisWeekLabel = false;
   let addedNextWeekLabel = false;
@@ -119,15 +119,30 @@ export const groupEventsByDay = (
     .filter((section) => section.data.length > 0); // Remove empty sections
 };
 
-export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek) => {
-  const firstDay = startOfWeek == "monday" ? 2 : 1; // 2 = Monday, 1 = Sunday
-  const { year, month, day, weekday } = getSydneyDateParts(date);
-  date.setHours(0, 0, 0, 0); // Set time to midnight
-  date.setDate(date.getDate() - day + firstDay); // Set the date to the start of the week (Monday)
-  return date;
+export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek): Date => {
+  const { year, month, day, weekday } = getDateParts(date);
+
+  const weekdayIndex = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ].indexOf(weekday);
+
+  const daysToSubtract =
+    startOfWeek === "sunday"
+      ? weekdayIndex
+      : weekdayIndex === 0
+        ? 6
+        : weekdayIndex - 1;
+
+  return new Date(new Date(year, month - 1, day - daysToSubtract));
 };
 
-const getSydneyDateParts = (date: Date) => {
+const getDateParts = (date: Date) => {
   const parts = new Intl.DateTimeFormat("en-AU", {
     timeZone: APP_TIME_ZONE,
     year: "numeric",
@@ -148,8 +163,7 @@ const getSydneyDateParts = (date: Date) => {
 };
 
 // Function to fetch current date in 'YYYY-MM-DD' format
+// TODO: Remove this function and use new Date() directly in the future after we have more test coverage
 export const getCurrentDate = (): Date => {
-  const now = new Date();
-  const offset = now.getTimezoneOffset() * 60000; // Convert offset to milliseconds
-  return new Date(now.getTime() - offset); // Return Date object
+  return new Date();
 };
