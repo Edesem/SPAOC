@@ -119,10 +119,18 @@ describe("useFastDay", () => {
   });
 
   it("handles an API error", async () => {
+    const consoleErrorSpy = jest
+
+      .spyOn(console, "error")
+
+      .mockImplementation(() => {});
+
     globalThis.fetch = jest.fn().mockRejectedValue(new Error("Network error"));
 
     const result = await renderFastDay();
 
     expect(result.current.events).toEqual([]);
+
+    consoleErrorSpy.mockRestore();
   });
 });
