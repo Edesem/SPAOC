@@ -33,7 +33,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { fontSize } from "@/styles/CommonStyles";
 import Constants from "expo-constants";
 
-type StartOfWeek = "sunday" | "monday";
+export type StartOfWeek = "sunday" | "monday";
 
 const appVersion = Constants.expoConfig?.version ?? "Unknown";
 
@@ -110,7 +110,7 @@ export default function SettingsScreen() {
   useEffect(() => {
     const loadNotifications = async () => {
       const daily = await AsyncStorage.getItem(
-        DAILY_SAINTS_NOTIFICATIONS_ENABLED
+        DAILY_SAINTS_NOTIFICATIONS_ENABLED,
       );
       setDailySaintsEnabled(daily !== "false");
       if (daily !== "true")
@@ -132,7 +132,7 @@ export default function SettingsScreen() {
     const loadCalendar = async () => {
       try {
         const stored = await AsyncStorage.getItem(
-          CALENDAR_NOTIFICATION_SETTINGS
+          CALENDAR_NOTIFICATION_SETTINGS,
         );
         let settings;
         if (stored) {
@@ -154,7 +154,7 @@ export default function SettingsScreen() {
           });
           await AsyncStorage.setItem(
             CALENDAR_NOTIFICATION_SETTINGS,
-            JSON.stringify(settings)
+            JSON.stringify(settings),
           );
         }
         setCalendarSettings(settings);
@@ -167,7 +167,7 @@ export default function SettingsScreen() {
 
   const updateCalendarSetting = (
     calendar: string,
-    updates: Partial<{ enabled: boolean; daysBefore: number }>
+    updates: Partial<{ enabled: boolean; daysBefore: number }>,
   ) => {
     const updated = {
       ...calendarSettings,
@@ -179,7 +179,7 @@ export default function SettingsScreen() {
     setCalendarSettings(updated);
     AsyncStorage.setItem(
       CALENDAR_NOTIFICATION_SETTINGS,
-      JSON.stringify(updated)
+      JSON.stringify(updated),
     );
   };
 
@@ -296,7 +296,7 @@ export default function SettingsScreen() {
                 setDailySaintsEnabled(value);
                 await AsyncStorage.setItem(
                   DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-                  value.toString()
+                  value.toString(),
                 );
                 if (value) {
                   scheduleSaintNotificationsForNext7Days();
@@ -326,7 +326,7 @@ export default function SettingsScreen() {
                   setFavouriteNotificationsEnabled(value);
                   AsyncStorage.setItem(
                     FAVOURITES_NOTIFICATIONS_ENABLED,
-                    value.toString()
+                    value.toString(),
                   );
                   if (value) {
                     scheduleFavouriteNotifications();
