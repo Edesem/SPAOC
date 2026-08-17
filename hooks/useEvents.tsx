@@ -13,6 +13,7 @@ import {
 } from "@/constants/consts";
 import { EventData } from "@/types/global";
 import { groupEventsByDay } from "@/utils/dateUtils";
+import { useSettingsStore } from "@/app/settings";
 
 const EVENT_SOURCES = [
   { url: YOUTH_EVENTS_BASE_URL, source: "youth" },
@@ -29,6 +30,8 @@ const EVENT_SOURCES = [
 export const useEvents = () => {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const startOfWeek = useSettingsStore.getState().startOfWeek; // "sunday" | "monday"
 
   const fetchAllEvents = () => {
     setLoading(true);
@@ -73,7 +76,7 @@ export const useEvents = () => {
       .then((results) => {
         const allEvents = results.flat();
         const sorted = allEvents.sort(
-          (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
+          (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
         );
         setEvents(sorted);
       })
@@ -90,8 +93,8 @@ export const useEvents = () => {
   }, []);
 
   const groupedEvents = useMemo(() => {
-    return groupEventsByDay(events);
-  }, [events]);
+    return groupEventsByDay(events, startOfWeek);
+  }, [events, startOfWeek]);
 
   return {
     events,
