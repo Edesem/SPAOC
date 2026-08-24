@@ -63,9 +63,56 @@ describe("favourites", () => {
     expect(AsyncStorage.getItem).toHaveBeenCalledWith(expect.any(String));
   });
 
-  it("displays no favourites when storage is empty", () => {});
+  it("displays no favourites when storage is empty", async () => {
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
 
-  it("removes expired favourites", () => {});
+    await act(async () => {
+      render(React.createElement(FavouritesScreen));
+
+      await Promise.resolve();
+    });
+
+    expect(AsyncStorage.getItem).toHaveBeenCalledWith(expect.any(String));
+  });
+
+  it("adds a new favourite event", () => {});
+
+  it("it removes favourite events", () => {});
+
+  it("removes expired favourites", async () => {
+    const expiredFavourite = {
+      id: "event-1",
+      title: "Expired Event",
+      start: "2025-08-15T10:00:00.000Z",
+      end: "2025-08-15T12:00:00.000Z",
+    };
+
+    const currentFavourite = {
+      id: "event-2",
+      title: "Current Event",
+      start: "2026-08-15T10:00:00.000Z",
+      end: "2026-08-15T12:00:00.000Z",
+    };
+
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+      JSON.stringify({
+        [expiredFavourite.id]: expiredFavourite,
+        [currentFavourite.id]: currentFavourite,
+      }),
+    );
+
+    await act(async () => {
+      render(React.createElement(FavouritesScreen));
+      await Promise.resolve();
+    });
+
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+      expect.any(String),
+      JSON.stringify({
+        [currentFavourite.id]: currentFavourite,
+      }),
+    );
+  });
 
   it("persists the removal of expired favourites", () => {});
 
