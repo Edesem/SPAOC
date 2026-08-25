@@ -10,6 +10,21 @@ import FavouritesScreen from "@/app/(tabs)/favourites";
 // caused many errors and so this is the solution for the
 // time being.
 
+// TODO:
+// ⚠️ Test coverage gaps:
+// - onPress behaviour ❌
+//   You’re mocking it as a no-op.
+// - Persistence after unfavouriting ❌
+//   UI only; storage isn’t updated.
+// - Empty {} storage ❌
+//   Only null is tested.
+// - Missing/invalid event dates ❌
+//   Not tested.
+// - Events exactly at now ❌
+//   Boundary case.
+// - Component rendering details ❌
+//   Header, subtitle, image etc. aren’t tested.
+
 jest.mock("@react-native-async-storage/async-storage", () => ({
   getItem: jest.fn(),
 
