@@ -75,21 +75,21 @@ class Antiochian {
   }
 
   // Get the liturgical day ID from a date
-  private getIdFromDate(dt: Date): number {
+  private getIdFromDate(date: Date): number {
     if (!this.idAnchor) throw new Error("ID Anchor not initialized");
     const [anchorDate, anchorId] = this.idAnchor;
     const span = Math.floor(
-      (dt.getTime() - anchorDate.getTime()) / (1000 * 60 * 60 * 24),
+      (date.getTime() - anchorDate.getTime()) / (1000 * 60 * 60 * 24),
     );
     return span + anchorId;
   }
 
   // Fetch liturgical day information for a specific date
-  async getLiturgicalDay(dt?: Date): Promise<LiturgicalDay | null> {
-    const key = dt ? dt.toISOString().split("T")[0] : "0";
+  async getLiturgicalDay(date?: Date): Promise<LiturgicalDay | null> {
+    const key = date ? date.toISOString().split("T")[0] : "0";
     if (this.days[key]) return this.days[key];
 
-    const dayId = dt ? this.getIdFromDate(dt) : 0;
+    const dayId = date ? this.getIdFromDate(date) : 0;
     const response = await this.axiosInstance.get(
       this.liturgicalDayEndpoint(dayId),
     );
@@ -118,6 +118,8 @@ class Antiochian {
     );
 
     if (response.status !== 200) return null;
+
+    // TODO: Add a caching feature like getLiturgicalDay has
 
     const texts: LiturgicalText[] = response.data;
     return texts;
