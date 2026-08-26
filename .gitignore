@@ -8,6 +8,7 @@ node_modules/
 dist/
 web-build/
 expo-env.d.ts
+build/
 
 # Native
 *.orig.*
@@ -24,8 +25,6 @@ ios
 
 # debug
 npm-debug.*
-yarn-debug.*
-yarn-error.*
 
 # macOS
 .DS_Store
