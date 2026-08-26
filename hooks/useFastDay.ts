@@ -1,6 +1,7 @@
-import { API_KEY, FASTING_BASE_URL } from '@/constants/consts';
-import { getCurrentDate } from '@/utils/dateUtils';
-import { useState, useEffect } from 'react';
+import { API_KEY, FASTING_BASE_URL } from "@/constants/consts";
+import { getCurrentDate } from "@/utils/dateUtils";
+import { toTitleCase } from "@/utils/toTitleCase";
+import { useState, useEffect } from "react";
 
 export const useFastDay = () => {
   const [events, setEvents] = useState<string[]>([]);
@@ -9,16 +10,17 @@ export const useFastDay = () => {
   const fetchEvents = async () => {
     try {
       const response = await fetch(
-        `${FASTING_BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`
+        `${FASTING_BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`,
       );
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
       const data = await response.json();
 
       const formattedEvents = data.items.map((item: any) => ({
         id: item.id,
-        title: item.summary || 'No Title',
+        title: item.summary || "No Title",
         start: item.start.dateTime || item.start.date,
-        end: item.end?.dateTime || item.end?.date || '',
+        end: item.end?.dateTime || item.end?.date || "",
         description: item.description,
         location: item.location,
       }));
@@ -34,26 +36,26 @@ export const useFastDay = () => {
           today.getTime() < eventEnd.getTime() &&
           today.getTime() >= eventStart.getTime() &&
           [
-            'Strict Fast',
-            'Fast',
-            'Meat Fast',
-            'Great Lent',
-            'The Theotokos Fast',
-            'Nativity Fast',
-            'The Apostles\' Fast'
-          ].includes(event.title)
+            "strict fast",
+            "fast",
+            "meat fast",
+            "great lent",
+            "the theotokos fast",
+            "nativity fast",
+            "the apostles' fast",
+          ].includes(event.title.toLowerCase())
         );
       });
 
       const fastDay: string[] = [];
 
       todayFastingEvents.forEach((event: any) => {
-        fastDay.push(event.title);
+        fastDay.push(toTitleCase(event.title));
       });
 
       setEvents(fastDay);
     } catch (error) {
-      console.error('Error fetching events:', error);
+      console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
     }
