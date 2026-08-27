@@ -32,10 +32,6 @@ import {
 import MonthPicker from "react-native-month-year-picker";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-interface EventItem {
-  start: string;
-}
-
 SplashScreen.preventAutoHideAsync();
 
 SplashScreen.setOptions({
