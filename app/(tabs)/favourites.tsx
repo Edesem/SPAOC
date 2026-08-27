@@ -1,21 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Image,
-} from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
-import { getCommonStyles } from "@/styles/CommonStyles";
-import { Colours } from "@/styles/Colours";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EventItem } from "@/components/EventItem"; // <-- Import your component
-import { EventData, ItemProps } from "@/types/global"; // <-- adjust import if needed
+import { ThemedText } from "@/components/ThemedText";
 import { FAVOURITES_KEY } from "@/constants/consts";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colours } from "@/styles/Colours";
+import { getCommonStyles } from "@/styles/CommonStyles";
+import { EventData, ItemProps } from "@/types/global"; // <-- adjust import if needed
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
@@ -43,7 +37,7 @@ export default function FavouritesScreen() {
 
         // Optionally update storage to remove expired ones permanently
         const updatedFavs = Object.fromEntries(
-          upcomingFavs.map((item) => [item.id ?? item.title, item])
+          upcomingFavs.map((item) => [item.id ?? item.title, item]),
         );
         await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify(updatedFavs));
 
@@ -57,7 +51,7 @@ export default function FavouritesScreen() {
   useFocusEffect(
     useCallback(() => {
       loadFavourites();
-    }, [])
+    }, []),
   );
 
   return (
@@ -86,8 +80,8 @@ export default function FavouritesScreen() {
                 onUnfavourite={() => {
                   setFavourites((prev) =>
                     prev.filter(
-                      (f) => (f.id ?? f.title) !== (item.id ?? item.title)
-                    )
+                      (f) => (f.id ?? f.title) !== (item.id ?? item.title),
+                    ),
                   );
                 }}
                 showFullDate={true}
