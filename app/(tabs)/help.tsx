@@ -1,28 +1,27 @@
-import React from "react";
+import DonateSection from "@/components/DonateSection";
+import { ThemedText } from "@/components/ThemedText";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colours } from "@/styles/Colours";
+import { getCommonStyles } from "@/styles/CommonStyles";
+import { MaterialIcons } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import * as Haptics from "expo-haptics";
+import * as Localization from "expo-localization";
 import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
+  Image,
   Linking,
   Platform,
-  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   SafeAreaProvider,
+  SafeAreaView,
   useSafeAreaInsets,
-  SafeAreaView
 } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
-import { getCommonStyles } from "@/styles/CommonStyles";
-import { Colours } from "@/styles/Colours";
-import Constants from "expo-constants";
-import { MaterialIcons } from "@expo/vector-icons";
-import * as Localization from "expo-localization";
-import DonateSection from "@/components/DonateSection";
-import * as Haptics from "expo-haptics";
 
 export default function HelpScreen() {
   const insets = useSafeAreaInsets();
@@ -37,7 +36,7 @@ export default function HelpScreen() {
 
   const openLink = (url: string) => {
     Linking.openURL(url).catch((err) =>
-      console.error("Failed to open URL:", err)
+      console.error("Failed to open URL:", err),
     );
   };
 
@@ -47,7 +46,7 @@ export default function HelpScreen() {
 
   const openMail = (
     type: "Bug" | "Suggestion" | "Support",
-    email = "robertlzoltan@gmail.com"
+    email = "robertlzoltan@gmail.com",
   ) => {
     const version = Constants.expoConfig?.version ?? "unknown";
     const build = Constants.expoConfig?.ios?.buildNumber ?? "N/A";
@@ -72,13 +71,13 @@ export default function HelpScreen() {
     const body = encodeURIComponent(
       `${message}\n\n` +
         `--- Do not DELETE below ---\nApp Version: ${version}\nPlatform: ${Platform.OS} ${Platform.Version}\n` +
-        `Device: ${device}\nBuild: ${build}\nTimezone: ${timezone}\nLocale: ${locale}`
+        `Device: ${device}\nBuild: ${build}\nTimezone: ${timezone}\nLocale: ${locale}`,
     );
 
     const mailtoUrl = `mailto:${email}?subject=${subject}&body=${body}`;
 
     Linking.openURL(mailtoUrl).catch((err) =>
-      console.error("Failed to open email:", err)
+      console.error("Failed to open email:", err),
     );
   };
 
@@ -104,15 +103,12 @@ export default function HelpScreen() {
 
           {/* Help Links */}
           <View style={styles.section}>
-            
-
-            
             <LinkItem
               icon="bug-report"
               label="Report a bug"
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  openMail("Bug");
+                (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  openMail("Bug"));
               }}
               color={theme.primary}
             />
@@ -120,8 +116,8 @@ export default function HelpScreen() {
               icon="lightbulb"
               label="Suggest a feature"
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  openMail("Suggestion");
+                (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  openMail("Suggestion"));
               }}
               color={theme.primary}
             />
@@ -129,8 +125,8 @@ export default function HelpScreen() {
               icon="email"
               label="Contact Support"
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  openMail("Support");
+                (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  openMail("Support"));
               }}
               color={theme.primary}
             />
