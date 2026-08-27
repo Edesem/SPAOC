@@ -1,10 +1,9 @@
 import {
-  CALENDAR_NOTIFICATION_SETTINGS,
   DAILY_SAINTS_NOTIFICATIONS_ENABLED,
   FAVOURITES_KEY,
   FAVOURITES_NOTIFICATIONS_ENABLED,
 } from "@/constants/consts";
-import { fetchSaintsForDate, useDailySaint } from "@/hooks/useDailySaint";
+import { fetchSaintsForDate } from "@/hooks/useDailySaint";
 import { scheduleNotification } from "@/notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
@@ -17,7 +16,7 @@ export const [calendarSettings, setCalendarSettings] = useState<{
 
 export async function scheduleSaintNotificationsForNext7Days() {
   const isEnabled = await AsyncStorage.getItem(
-    DAILY_SAINTS_NOTIFICATIONS_ENABLED
+    DAILY_SAINTS_NOTIFICATIONS_ENABLED,
   );
   if (isEnabled !== "true") {
     console.log("Daily saint notifications are disabled.");
@@ -39,7 +38,7 @@ export async function scheduleSaintNotificationsForNext7Days() {
     console.log(
       `[Day ${i}] ${date.toDateString()} - ${saintText} - Already scheduled: ${
         alreadyScheduled ? "✅ Yes" : "❌ No"
-      }`
+      }`,
     );
     if (alreadyScheduled) continue;
 
@@ -54,7 +53,7 @@ export async function scheduleSaintNotificationsForNext7Days() {
     await scheduleNotification(
       "Saint of the Day",
       `${saintText}`,
-      notificationTime
+      notificationTime,
     );
 
     await AsyncStorage.setItem(`notified-${dateKey}`, "true");
@@ -69,21 +68,23 @@ export async function scheduleSaintNotificationsForNext7Days() {
     let date = "-";
 
     // If trigger has a date/time
-    if (notif.trigger?.seconds) {
-      date = new Date(
-        Date.now() + notif.trigger.seconds * 1000
-      ).toLocaleString();
+    const trigger = notif.trigger;
+    if (trigger && "seconds" in trigger && trigger.seconds) {
+      date = new Date(Date.now() + trigger.seconds * 1000).toLocaleString();
     } else if (
-      notif.trigger?.hour !== undefined &&
-      notif.trigger?.minute !== undefined
+      trigger &&
+      "hour" in trigger &&
+      "minute" in trigger &&
+      trigger.hour !== undefined &&
+      trigger.minute !== undefined
     ) {
       const now = new Date();
       date = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate(),
-        notif.trigger.hour,
-        notif.trigger.minute
+        trigger.hour,
+        trigger.minute,
       ).toLocaleString();
     }
 
@@ -148,7 +149,7 @@ export async function cancelAllSaintNotifications() {
 
 export async function scheduleFavouriteNotifications() {
   const isEnabled = await AsyncStorage.getItem(
-    FAVOURITES_NOTIFICATIONS_ENABLED
+    FAVOURITES_NOTIFICATIONS_ENABLED,
   );
 
   if (isEnabled !== "true") {
@@ -196,7 +197,7 @@ export async function scheduleFavouriteNotifications() {
 
     if (weekBefore < new Date()) {
       console.log(
-        `Skipping [${title}] — weekBefore is in the past: ${weekBefore}`
+        `Skipping [${title}] — weekBefore is in the past: ${weekBefore}`,
       );
       continue;
     }
@@ -207,7 +208,7 @@ export async function scheduleFavouriteNotifications() {
     await scheduleNotification(
       `${title} in 5 days!`,
       `Start time is ${timeOnly}`,
-      weekBefore
+      weekBefore,
     );
     await AsyncStorage.setItem(`notified-${date}`, "true");
   }
@@ -262,7 +263,9 @@ export async function scheduleCategoryNotifications(calendar: string) {
     notifyDate.setHours(9, 0, 0, 0); // notify at 9 AM
 
     if (notifyDate < new Date()) {
-      console.log(`Skipping ${title} — notification time in the past: ${notifyDate}`);
+      console.log(
+        `Skipping ${title} — notification time in the past: ${notifyDate}`,
+      );
       continue;
     }
 
@@ -278,7 +281,7 @@ export async function scheduleCategoryNotifications(calendar: string) {
     await scheduleNotification(
       `${title} coming up!`,
       `Start time: ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
-      notifyDate
+      notifyDate,
     );
 
     // Mark as scheduled
