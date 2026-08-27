@@ -3,8 +3,8 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
 import { getCommonStyles } from "@/styles/CommonStyles";
 import { MaterialIcons } from "@expo/vector-icons";
-import type { MaterialIconsProps } from "@expo/vector-icons/build/MaterialIcons";
 import * as Haptics from "expo-haptics";
+import type { ComponentProps } from "react";
 import {
   Image,
   Linking,
@@ -20,7 +20,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import FontAwesome5, {
-  FontAwesome5Props,
+  FontAwesome5IconProps,
 } from "react-native-vector-icons/FontAwesome5";
 
 export default function AboutScreen() {
@@ -151,7 +151,7 @@ function LinkButton({
   onPress,
   color,
 }: {
-  icon: FontAwesome5Props["name"];
+  icon: FontAwesome5IconProps["name"];
   label: string;
   onPress: () => void;
   color: string;
@@ -173,7 +173,7 @@ function LinkButton({
         <FontAwesome5 name={icon} size={24} color={color} />
       ) : (
         <MaterialIcons
-          name={icon as MaterialIconsProps["name"]}
+          name={icon as ComponentProps<typeof MaterialIcons>["name"]}
           size={24}
           color={color}
         />
