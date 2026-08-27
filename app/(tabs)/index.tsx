@@ -41,29 +41,31 @@ SplashScreen.setOptions({
 
 export default function HomeScreen() {
   const appState = useRef(AppState.currentState);
-  const lastRefreshTime = useRef<number>(Date.now());
+  const lastRefreshTime = useRef<number | null>(null);
   const navigation =
     useNavigation<BottomTabNavigationProp<RootTabParamList, "Home">>();
   const sectionListRef = useRef<SectionList>(null);
-  const { todaysSaints, error, refetchSaints } = useDailySaint();
+  const { todaysSaints, refetchSaints } = useDailySaint();
 
   const [refreshing, setRefreshing] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
 
-  const {
-    events: allEvents,
-    groupedEvents,
-    loading: eventsLoading,
-    refetch: refetchEvents,
-  } = useEvents();
+  const { groupedEvents, refetch: refetchEvents } = useEvents();
 
   const styles = getStyles();
   const { events, fastLoading, refetch: refetchFast } = useFastDay();
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
+
+  // Refresh handler
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refetchSaints(), refetchFast(), refetchEvents()]);
+    setRefreshing(false);
+  }, [refetchSaints, refetchFast, refetchEvents]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -72,6 +74,9 @@ export default function HomeScreen() {
         nextAppState === "active"
       ) {
         const now = Date.now();
+        if (lastRefreshTime.current === null) {
+          lastRefreshTime.current = now;
+        }
         const minutesSinceLastRefresh =
           (now - lastRefreshTime.current) / (1000 * 60);
 
@@ -92,12 +97,12 @@ export default function HomeScreen() {
     scheduleSaintNotificationsForNext7Days();
 
     return () => subscription.remove();
-  }, []);
+  }, [onRefresh]);
 
   useFocusEffect(
     useCallback(() => {
       refetchEvents(); // this will reload event data and favourite status
-    }, []),
+    }, [refetchEvents]),
   );
 
   // Your param list type (adjust to your app)
@@ -168,17 +173,8 @@ export default function HomeScreen() {
     sectionIndex: index,
   }));
 
-  // Refresh handler
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await Promise.all([refetchSaints(), refetchFast(), refetchEvents()]);
-    setRefreshing(false);
-  };
-
-  let todaysSaintsTitle = "";
-  todaysSaints.length > 1
-    ? (todaysSaintsTitle = "Today's Feasts")
-    : (todaysSaintsTitle = "Today's Feast:");
+  const todaysSaintsTitle =
+    todaysSaints.length > 1 ? "Today's Feasts" : "Today's Feast:";
 
   const sectionsWithUpcoming = [
     {
@@ -211,7 +207,7 @@ export default function HomeScreen() {
   } else if (events.includes("The Apostles' Fast")) {
     majorFastText = (
       <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
-        The Apostles' Fast
+        The Apostles&apos; Fast
       </Text>
     );
   } else if (events.includes("The Theotokos Fast")) {
@@ -407,8 +403,8 @@ export default function HomeScreen() {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      router.push("/settings"));
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    router.push("/settings");
                   }}
                   style={{ padding: 10 }}
                 >
@@ -421,12 +417,12 @@ export default function HomeScreen() {
 
                 <TouchableOpacity
                   onPress={() => {
-                    (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      sectionListRef.current?.scrollToLocation({
-                        sectionIndex: 0,
-                        itemIndex: 0,
-                        animated: true,
-                      }));
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    sectionListRef.current?.scrollToLocation({
+                      sectionIndex: 0,
+                      itemIndex: 0,
+                      animated: true,
+                    });
                   }}
                   style={{
                     padding: 10,
