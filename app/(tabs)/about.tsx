@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
 import { getCommonStyles } from "@/styles/CommonStyles";
 import { MaterialIcons } from "@expo/vector-icons";
+import type { MaterialIconsProps } from "@expo/vector-icons/build/MaterialIcons";
 import * as Haptics from "expo-haptics";
 import {
   Image,
@@ -18,7 +19,9 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import FontAwesome5, {
+  FontAwesome5Props,
+} from "react-native-vector-icons/FontAwesome5";
 
 export default function AboutScreen() {
   const insets = useSafeAreaInsets();
@@ -148,27 +151,33 @@ function LinkButton({
   onPress,
   color,
 }: {
-  icon: string;
+  icon: FontAwesome5Props["name"];
   label: string;
   onPress: () => void;
   color: string;
 }) {
-  let IconComponent = MaterialIcons;
-
   const styles = getStyles();
 
   // Choose the right icon set based on icon name
-  if (
-    ["instagram", "youtube", "whatsapp", "spotify", "itunes-note"].includes(
-      icon,
-    )
-  ) {
-    IconComponent = FontAwesome5;
-  }
+  const fontAwesomeIcon = [
+    "instagram",
+    "youtube",
+    "whatsapp",
+    "spotify",
+    "itunes-note",
+  ].includes(icon);
 
   return (
     <TouchableOpacity style={styles.linkButton} onPress={onPress}>
-      <IconComponent name={icon as any} size={24} color={color} />
+      {fontAwesomeIcon ? (
+        <FontAwesome5 name={icon} size={24} color={color} />
+      ) : (
+        <MaterialIcons
+          name={icon as MaterialIconsProps["name"]}
+          size={24}
+          color={color}
+        />
+      )}
       <Text style={[styles.linkLabel, { color }]}>{label}</Text>
     </TouchableOpacity>
   );

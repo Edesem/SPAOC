@@ -123,7 +123,7 @@ export default function SettingsScreen() {
         const stored = await AsyncStorage.getItem(
           CALENDAR_NOTIFICATION_SETTINGS,
         );
-        let settings;
+        let settings: Record<string, CalendarSetting>;
         if (stored) {
           settings = JSON.parse(stored);
         } else {

@@ -5,6 +5,7 @@ import { DynamicColorIOS, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
 import { createBottomTabNavigator } from "expo-router/build/react-navigation/bottom-tabs";
+import type { ComponentProps } from "react";
 import HomeScreen from ".";
 import AboutScreen from "./about";
 import FavouritesScreen from "./favourites";
@@ -36,7 +37,8 @@ export default function TabLayout() {
           tabBarActiveTintColor: tintColor,
           tabBarInactiveTintColor: "#888",
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+            let iconName: ComponentProps<typeof Ionicons>["name"] =
+              "help-circle-outline";
 
             if (route.name === "Events")
               iconName = focused ? "calendar" : "calendar-outline";
