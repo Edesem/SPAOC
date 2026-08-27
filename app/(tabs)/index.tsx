@@ -32,6 +32,15 @@ import {
 import MonthPicker from "react-native-month-year-picker";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
+interface EventItem {
+  start: string;
+}
+
+interface EventSection {
+  title: string;
+  data: EventItem[];
+}
+
 SplashScreen.preventAutoHideAsync();
 
 SplashScreen.setOptions({
@@ -147,7 +156,7 @@ export default function HomeScreen() {
   }, [groupedEvents, selectedMonth]);
 
   const onValueChange = useCallback(
-    (event, newDate) => {
+    (event: string, newDate: Date) => {
       if (event === "dateSetAction") {
         const pickedDate = newDate || selectedDate;
         setSelectedDate(pickedDate);

@@ -9,7 +9,7 @@ const USE_WEBVIEW = true; // Set to false when react-native-pdf is working again
 
 export default function PdfViewer() {
   const route = useRoute();
-  const { url, title } = route.params as { url: string };
+  const { url, title } = route.params as { url: string; title: string };
   const navigation = useNavigation();
 
   useEffect(() => {
