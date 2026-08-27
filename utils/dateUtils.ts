@@ -139,11 +139,33 @@ export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek): Date => {
         ? 6
         : weekdayIndex - 1;
 
-  const startDate = new Date(year, month - 1, day - daysToSubtract);
+  const targetDate = new Date(Date.UTC(year, month - 1, day - daysToSubtract));
 
-  return new Date(
-    startDate.toLocaleString("en-US", { timeZone: APP_TIME_ZONE }),
-  );
+  const offsetFormatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: APP_TIME_ZONE,
+    timeZoneName: "longOffset",
+  });
+
+  const offsetPart = offsetFormatter
+    .formatToParts(targetDate)
+    .find((part) => part.type === "timeZoneName")?.value;
+
+  if (!offsetPart) {
+    throw new Error(`Unable to determine timezone offset for ${APP_TIME_ZONE}`);
+  }
+
+  const match = offsetPart.match(/^GMT([+-])(\d{2}):?(\d{2})?$/);
+
+  if (!match) {
+    throw new Error(`Unexpected timezone offset: ${offsetPart}`);
+  }
+
+  const sign = match[1] === "+" ? 1 : -1;
+  const hours = Number(match[2]);
+  const minutes = Number(match[3] ?? 0);
+  const offsetMinutes = sign * (hours * 60 + minutes);
+
+  return new Date(targetDate.getTime() - offsetMinutes * 60_000);
 };
 
 const getDateParts = (date: Date) => {
@@ -169,7 +191,5 @@ const getDateParts = (date: Date) => {
 // Function to fetch current date in 'YYYY-MM-DD' format
 // TODO: Remove this function and use new Date() directly in the future after we have more test coverage
 export const getCurrentDate = (): Date => {
-  return new Date(
-    new Date().toLocaleDateString("en-US", { timeZone: APP_TIME_ZONE }),
-  );
+  return new Date();
 };
