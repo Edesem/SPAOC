@@ -1,11 +1,12 @@
 import SettingPicker from "@/components/SettingPicker";
 import {
+  CALENDAR_NOTIFICATION_SETTINGS,
   DAILY_SAINTS_NOTIFICATIONS_ENABLED,
   FAVOURITES_NOTIFICATIONS_ENABLED,
-  CALENDAR_NOTIFICATION_SETTINGS,
 } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
+import { fontSize } from "@/styles/CommonStyles";
 import eventBus from "@/utils/eventBus";
 import {
   cancelAllFavouriteNotifications,
@@ -16,22 +17,21 @@ import {
 } from "@/utils/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
-  View,
-  Text,
   Platform,
   ScrollView,
-  Switch,
-  TouchableOpacity,
   StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import RNPickerSelect from "react-native-picker-select";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { create } from "zustand";
-import RNPickerSelect from "react-native-picker-select";
-import { fontSize } from "@/styles/CommonStyles";
-import Constants from "expo-constants";
 
 export type StartOfWeek = "sunday" | "monday";
 
@@ -77,19 +77,8 @@ export default function SettingsScreen() {
   const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
 
   const [themeSelection, setThemeSelection] = useState("auto");
-  const [timezone, setTimezone] = useState("UTC");
-  const [calendarNotifications, setCalendarNotifications] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [notificationTime, setNotificationTime] = useState(new Date());
-  const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const toggleCalendarNotification = (calendar: string) => {
-    setCalendarNotifications((prev) => ({
-      ...prev,
-      [calendar]: !prev[calendar],
-    }));
-  };
+ 
 
   const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
@@ -126,7 +115,7 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     loadStartOfWeek();
-  }, []);
+  }, [loadStartOfWeek]);
 
   useEffect(() => {
     const loadCalendar = async () => {
@@ -134,7 +123,7 @@ export default function SettingsScreen() {
         const stored = await AsyncStorage.getItem(
           CALENDAR_NOTIFICATION_SETTINGS,
         );
-        let settings;
+        let settings: Record<string, CalendarSetting>;
         if (stored) {
           settings = JSON.parse(stored);
         } else {
@@ -537,24 +526,3 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
 });
-
-const pickerSelectStyles = {
-  inputIOS: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 4,
-    color: "black",
-    paddingRight: 30,
-  },
-  inputAndroid: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 4,
-    color: "black",
-    paddingRight: 30,
-  },
-};

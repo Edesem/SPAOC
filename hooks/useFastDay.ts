@@ -1,13 +1,13 @@
 import { API_KEY, FASTING_BASE_URL } from "@/constants/consts";
 import { getCurrentDate } from "@/utils/dateUtils";
 import { toTitleCase } from "@/utils/toTitleCase";
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useFastDay = () => {
   const [events, setEvents] = useState<string[]>([]);
   const [fastLoading, setLoading] = useState(true);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const response = await fetch(
         `${FASTING_BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`,
@@ -59,11 +59,11 @@ export const useFastDay = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [fetchEvents]);
 
   return { events, fastLoading, refetch: fetchEvents };
 };

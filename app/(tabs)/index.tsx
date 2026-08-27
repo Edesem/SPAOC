@@ -1,45 +1,36 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  StyleSheet,
-  View,
-  SectionList,
-  StatusBar,
-  Text,
-  ActivityIndicator,
-  Image,
-  AppState,
-  RefreshControl,
-  Button,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { renderItem } from "@/components/RenderItem";
-import { Colours } from "@/styles/Colours";
-import "expo-dev-client";
-import { useFastDay } from "@/hooks/useFastDay";
-import * as SplashScreen from "expo-splash-screen";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useDailySaint } from "@/hooks/useDailySaint";
 import { useEvents } from "@/hooks/useEvents";
+import { useFastDay } from "@/hooks/useFastDay";
 import {
   requestNotificationPermissions,
-  scheduleNotification,
   setupNotificationListeners,
 } from "@/notifications";
-import { MaterialIcons } from "@expo/vector-icons";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { Colours } from "@/styles/Colours";
 import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
+import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import "expo-dev-client";
 import * as Haptics from "expo-haptics";
+import { router, useFocusEffect, useNavigation } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  AppState,
+  Image,
+  Modal,
+  RefreshControl,
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MonthPicker from "react-native-month-year-picker";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,32 +40,32 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
-  
   const appState = useRef(AppState.currentState);
-  const lastRefreshTime = useRef<number>(Date.now());
+  const lastRefreshTime = useRef<number | null>(null);
   const navigation =
     useNavigation<BottomTabNavigationProp<RootTabParamList, "Home">>();
   const sectionListRef = useRef<SectionList>(null);
-  const { todaysSaints, error, refetchSaints } = useDailySaint();
+  const { todaysSaints, refetchSaints } = useDailySaint();
 
   const [refreshing, setRefreshing] = useState(false);
 
-
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
-  
-  const {
-    events: allEvents,
-    groupedEvents,
-    loading: eventsLoading,
-    refetch: refetchEvents,
-  } = useEvents();
+
+  const { groupedEvents, refetch: refetchEvents } = useEvents();
 
   const styles = getStyles();
   const { events, fastLoading, refetch: refetchFast } = useFastDay();
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
-  const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
+  const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
+
+  // Refresh handler
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refetchSaints(), refetchFast(), refetchEvents()]);
+    setRefreshing(false);
+  }, [refetchSaints, refetchFast, refetchEvents]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -83,6 +74,9 @@ export default function HomeScreen() {
         nextAppState === "active"
       ) {
         const now = Date.now();
+        if (lastRefreshTime.current === null) {
+          lastRefreshTime.current = now;
+        }
         const minutesSinceLastRefresh =
           (now - lastRefreshTime.current) / (1000 * 60);
 
@@ -103,12 +97,12 @@ export default function HomeScreen() {
     scheduleSaintNotificationsForNext7Days();
 
     return () => subscription.remove();
-  }, []);
+  }, [onRefresh]);
 
   useFocusEffect(
     useCallback(() => {
       refetchEvents(); // this will reload event data and favourite status
-    }, [])
+    }, [refetchEvents]),
   );
 
   // Your param list type (adjust to your app)
@@ -130,48 +124,39 @@ export default function HomeScreen() {
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    if (groupedEvents.length > 0) {
-      setFilteredSections(groupedEvents); // show all sections by default
+  const filteredSections = useMemo(() => {
+    // Initial screen behaviour: show every event section.
+    if (!selectedMonth) {
+      return groupedEvents;
     }
-  }, [groupedEvents]);
+
+    const month = selectedMonth.getMonth();
+    const year = selectedMonth.getFullYear();
+
+    return groupedEvents
+      .map((section) => ({
+        ...section,
+        data: section.data.filter((item) => {
+          const itemDate = new Date(item.start);
+          return (
+            itemDate.getFullYear() === year && itemDate.getMonth() === month
+          );
+        }),
+      }))
+      .filter((section) => section.data.length > 0);
+  }, [groupedEvents, selectedMonth]);
 
   const onValueChange = useCallback(
-    (event, newDate) => {
+    (event: string, newDate: Date) => {
       if (event === "dateSetAction") {
         const pickedDate = newDate || selectedDate;
         setSelectedDate(pickedDate);
-
-        const selectedMonth = pickedDate.getMonth();
-        const selectedYear = pickedDate.getFullYear();
-
-        const filtered = groupedEvents.filter((section) =>
-          section.data.some((item) => {
-            const itemDate = new Date(item.start); // make sure item.date is in ISO format or Date object
-            return (
-              itemDate.getFullYear() === selectedYear &&
-              itemDate.getMonth() === selectedMonth
-            );
-          })
-        );
-
-        // Optional: Remove sections with no matching items
-        const cleaned = filtered.map((section) => ({
-          ...section,
-          data: section.data.filter((item) => {
-            const itemDate = new Date(item.start);
-            return (
-              itemDate.getFullYear() === selectedYear &&
-              itemDate.getMonth() === selectedMonth
-            );
-          }),
-        }));
-
-        setFilteredSections(cleaned);
+        setSelectedMonth(pickedDate);
       }
+
       setShowMonthPicker(false);
     },
-    [selectedDate, groupedEvents]
+    [selectedDate],
   );
 
   const sectionsWithIndex = filteredSections.map((section, index) => ({
@@ -179,17 +164,8 @@ export default function HomeScreen() {
     sectionIndex: index,
   }));
 
-  // Refresh handler
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await Promise.all([refetchSaints(), refetchFast(), refetchEvents()]);
-    setRefreshing(false);
-  };
-
-  let todaysSaintsTitle = "";
-  todaysSaints.length > 1
-    ? (todaysSaintsTitle = "Today's Feasts")
-    : (todaysSaintsTitle = "Today's Feast:");
+  const todaysSaintsTitle =
+    todaysSaints.length > 1 ? "Today's Feasts" : "Today's Feast:";
 
   const sectionsWithUpcoming = [
     {
@@ -222,7 +198,7 @@ export default function HomeScreen() {
   } else if (events.includes("The Apostles' Fast")) {
     majorFastText = (
       <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
-        The Apostles' Fast
+        The Apostles&apos; Fast
       </Text>
     );
   } else if (events.includes("The Theotokos Fast")) {
@@ -418,8 +394,8 @@ export default function HomeScreen() {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      router.push("/settings");
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    router.push("/settings");
                   }}
                   style={{ padding: 10 }}
                 >
@@ -432,12 +408,12 @@ export default function HomeScreen() {
 
                 <TouchableOpacity
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      sectionListRef.current?.scrollToLocation({
-                        sectionIndex: 0,
-                        itemIndex: 0,
-                        animated: true,
-                      });
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    sectionListRef.current?.scrollToLocation({
+                      sectionIndex: 0,
+                      itemIndex: 0,
+                      animated: true,
+                    });
                   }}
                   style={{
                     padding: 10,
@@ -488,7 +464,7 @@ const getStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
-     },
+    },
     loadingContainer: {
       justifyContent: "center",
       paddingVertical: 30,

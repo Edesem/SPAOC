@@ -139,7 +139,37 @@ export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek): Date => {
         ? 6
         : weekdayIndex - 1;
 
-  return new Date(new Date(year, month - 1, day - daysToSubtract));
+  const targetDate = new Date(Date.UTC(year, month - 1, day - daysToSubtract));
+
+  // Get the Melbourne-local date/time components.
+  // This avoids relying on `timeZoneName: "longOffset"`,
+  // which can return just "GMT" on some JavaScript runtimes.
+  const localParts = new Intl.DateTimeFormat("en-AU", {
+    timeZone: APP_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(targetDate);
+
+  const getPart = (type: string) =>
+    Number(localParts.find((part) => part.type === type)?.value ?? 0);
+
+  const localAsUtc = Date.UTC(
+    getPart("year"),
+    getPart("month") - 1,
+    getPart("day"),
+    getPart("hour"),
+    getPart("minute"),
+    getPart("second"),
+  );
+
+  const offsetMinutes = (localAsUtc - targetDate.getTime()) / 60_000;
+
+  return new Date(targetDate.getTime() - offsetMinutes * 60_000);
 };
 
 const getDateParts = (date: Date) => {

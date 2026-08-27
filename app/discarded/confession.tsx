@@ -1,10 +1,9 @@
 // screens/EventDetailsScreen.js
-import { EventData } from '@/types/global';
-import { Colours } from '@/styles/Colours';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import WebView from 'react-native-webview';
+import { Colours } from "@/styles/Colours";
+import { useNavigation } from "expo-router";
+import { useEffect } from "react";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
+import WebView from "react-native-webview";
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
@@ -32,10 +31,9 @@ const EventDetailsScreen = () => {
       </html>
     `;
 
-
   useEffect(() => {
     navigation.setOptions({
-      title: 'Book Confession',
+      title: "Book Confession",
     });
   }, [navigation]);
 
@@ -43,14 +41,14 @@ const EventDetailsScreen = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
         <WebView
-          originWhitelist={['*']}
+          originWhitelist={["*"]}
           source={{ html: calendlyHtml }}
           style={{ height: 400 }}
         />
       </View>
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../assets/images/orthodox/transfiguration.png')}  // Adjust the path to your local image
+          source={require("../../assets/images/orthodox/transfiguration.png")} // Adjust the path to your local image
           style={styles.bottomImage}
         />
       </View>
@@ -65,10 +63,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colours.light.background,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 20,
-    shadowColor: 'black',
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -76,40 +74,40 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
-    color: '#333',
+    fontWeight: "700",
+    color: "#333",
     marginBottom: 8,
   },
   divider: {
     height: 1,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
     marginVertical: 10,
   },
   date: {
     fontSize: 16,
-    color: '#555',
+    color: "#555",
     marginVertical: 4,
   },
   detail: {
     fontSize: 16,
-    color: '#555',
+    color: "#555",
     marginVertical: 4,
   },
   description: {
     fontSize: 14,
-    color: '#777',
+    color: "#777",
     marginTop: 15,
     lineHeight: 20,
   },
   bottomImage: {
-    width: 450,   // Adjust the width of the image
-    height: 450,  // Adjust the height of the image
-    resizeMode: 'contain', // Ensure the image doesn't get stretched
-    tintColor: '#0a4068',
+    width: 450, // Adjust the width of the image
+    height: 450, // Adjust the height of the image
+    resizeMode: "contain", // Ensure the image doesn't get stretched
+    tintColor: "#0a4068",
     marginBottom: 50,
   },
   imageContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 5,
   },
 });

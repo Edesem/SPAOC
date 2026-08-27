@@ -7,6 +7,7 @@ const liturgicalDay = {
   originalCalendarDate: "2026-08-13T00:00:00.000Z",
   itemId: anchorId,
   calendarDateLong: "Thursday, 13 August 2026",
+  fastDesignation: "",
   feastDayTitle: "  Dormition Fast",
   reading1Title: "  Romans 8:28-39",
   reading1Teaser: "  All things work together for good.",
