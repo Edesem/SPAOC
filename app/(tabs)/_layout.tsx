@@ -1,17 +1,15 @@
-import React from "react";
-import { DynamicColorIOS, Platform } from "react-native";
-import { NativeTabs, Label, Icon } from "expo-router/unstable-native-tabs";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
+import { DynamicColorIOS, Platform } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
+import { createBottomTabNavigator } from "expo-router/build/react-navigation/bottom-tabs";
 import HomeScreen from ".";
 import AboutScreen from "./about";
 import FavouritesScreen from "./favourites";
 import HelpScreen from "./help";
 import PrayerScreen from "./prayer";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
-import { createBottomTabNavigator } from "expo-router/build/react-navigation/bottom-tabs";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -25,8 +23,8 @@ export default function TabLayout() {
           light: Colours.light.primary,
         })
       : colorScheme === "dark"
-      ? Colours.dark.primary
-      : Colours.light.primary;
+        ? Colours.dark.primary
+        : Colours.light.primary;
 
   const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
 

@@ -1,27 +1,24 @@
-import React from "react";
+import { ThemedText } from "@/components/ThemedText";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colours } from "@/styles/Colours";
+import { getCommonStyles } from "@/styles/CommonStyles";
+import { MaterialIcons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
   Image,
   Linking,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   SafeAreaProvider,
+  SafeAreaView,
   useSafeAreaInsets,
-  SafeAreaView
 } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
-import { getCommonStyles } from "@/styles/CommonStyles";
-import { Colours } from "@/styles/Colours";
-import {
-  MaterialIcons,
-} from "@expo/vector-icons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import * as Haptics from "expo-haptics";
 
 export default function AboutScreen() {
   const insets = useSafeAreaInsets();
@@ -33,10 +30,10 @@ export default function AboutScreen() {
   const styles = getStyles();
 
   const openLink = (url: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-      Linking.openURL(url).catch((err) =>
-        console.error("Failed to open URL:", err)
-      );
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Linking.openURL(url).catch((err) =>
+      console.error("Failed to open URL:", err),
+    );
   };
 
   return (
@@ -79,7 +76,7 @@ export default function AboutScreen() {
               label="Follow on Facebook"
               onPress={() =>
                 openLink(
-                  "https://www.facebook.com/StPaulsAntiochianOrthodoxChurch"
+                  "https://www.facebook.com/StPaulsAntiochianOrthodoxChurch",
                 )
               }
               color={theme.primary}
@@ -97,7 +94,7 @@ export default function AboutScreen() {
               label="Subscribe on YouTube"
               onPress={() =>
                 openLink(
-                  "https://www.youtube.com/@stpaulsantiochianorthodoxc6010/videos"
+                  "https://www.youtube.com/@stpaulsantiochianorthodoxc6010/videos",
                 )
               }
               color={theme.primary}
@@ -115,7 +112,7 @@ export default function AboutScreen() {
               label="Listen to our choir on Spotify"
               onPress={() =>
                 openLink(
-                  "https://open.spotify.com/artist/5KSBKd6aPBEeEDzncaLdT7"
+                  "https://open.spotify.com/artist/5KSBKd6aPBEeEDzncaLdT7",
                 )
               }
               color={theme.primary}
@@ -125,7 +122,7 @@ export default function AboutScreen() {
               label="Listen to our choir on Apple Music"
               onPress={() =>
                 openLink(
-                  "https://music.apple.com/us/artist/st-ephraim-the-syrian-antiochian-orthodox-choir/1785814045"
+                  "https://music.apple.com/us/artist/st-ephraim-the-syrian-antiochian-orthodox-choir/1785814045",
                 )
               }
               color={theme.primary}
@@ -163,7 +160,7 @@ function LinkButton({
   // Choose the right icon set based on icon name
   if (
     ["instagram", "youtube", "whatsapp", "spotify", "itunes-note"].includes(
-      icon
+      icon,
     )
   ) {
     IconComponent = FontAwesome5;
