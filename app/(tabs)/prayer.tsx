@@ -39,7 +39,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import he from "he";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -236,7 +236,7 @@ export default function PrayerScreen(): JSX.Element {
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
-  const [organizedData, setOrganizedData] = useState<OrganizedData>({});
+  const organizedData = useMemo(() => (data ? organizeData(data) : {}), [data]);
 
   const handleConfirm = async (date: Date) => {
     hideDatePicker();
@@ -244,16 +244,15 @@ export default function PrayerScreen(): JSX.Element {
     setLoading(true);
     setError(null);
     setData(null); // Clear stale data
-    setOrganizedData({}); // Clear stale organized data
 
     try {
       const { day, texts } = await fetchAntiochian(date);
 
       // Update raw data and organize it immediately
       if (texts) {
-        setData(texts);
         const newOrganizedData = organizeData(texts);
-        setOrganizedData(newOrganizedData);
+
+        setData(texts);
 
         if (Object.keys(newOrganizedData).length === 0) {
           setError(new Error("No liturgics found"));
@@ -262,7 +261,6 @@ export default function PrayerScreen(): JSX.Element {
         }
       } else {
         setData(null);
-        setOrganizedData({});
         setError(new Error("No liturgics found"));
       }
 
@@ -278,7 +276,6 @@ export default function PrayerScreen(): JSX.Element {
     } catch (err) {
       setError(err as Error);
       setData(null);
-      setOrganizedData({});
       setReadings({});
       setReadingsText({});
       setFeastTitle({});
@@ -347,26 +344,6 @@ export default function PrayerScreen(): JSX.Element {
 
     loadData();
   }, []); // Empty dependency array to run only once when component mounts
-
-  useEffect(() => {
-    if (data) {
-      const newOrganizedData = organizeData(data);
-
-      // If organizeData returns non-empty object, clear error
-      if (Object.keys(newOrganizedData).length > 0) {
-        setError(null); // ✅ Clear previous error
-      }
-
-      setOrganizedData(newOrganizedData);
-      console.log(
-        "organizedData keys:",
-        Object.keys(newOrganizedData),
-        newOrganizedData,
-      );
-    } else {
-      setOrganizedData({});
-    }
-  }, [data]);
 
   return (
     <SafeAreaProvider>
