@@ -1,66 +1,66 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-  Alert,
-  AppState,
-  PressableStateCallbackType,
-} from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-  SafeAreaView
-} from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
-import { fontSize, getCommonStyles } from "@/styles/CommonStyles";
-import { Colours } from "@/styles/Colours";
 import {
   fetchAntiochian,
   getFeastTitle,
   getReadingTeasers,
   getReadingTexts,
 } from "@/api/AntiochianApi";
+import { ThemedText } from "@/components/ThemedText";
+import { IconSymbol } from "@/components/ui/IconSymbol";
 import {
+  AKATHIST_URL,
+  CENSING_HOME_URL,
+  GREAT_COMPLINE_URL,
   GREAT_VESPERS_URL,
-  SMALL_COMPLINE_URL,
-  SMALL_COMPLINE_PRIEST_URL,
-  PARAKLESIS_URL,
   MATINS_BILINGUAL_URL,
   MATINS_URL,
   MORNING_PRAYERS_URL,
+  PARAKLESIS_URL,
   PREPARATION_FOR_COMMUNION_URL,
-  CENSING_HOME_URL,
-  GREAT_COMPLINE_URL,
   PRESANCTIFIED_LITURGY_URL,
-  AKATHIST_URL,
+  SMALL_COMPLINE_PRIEST_URL,
+  SMALL_COMPLINE_URL,
 } from "@/constants/consts";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPersonPraying } from "@fortawesome/free-solid-svg-icons/faPersonPraying";
-import { faCloudMoon } from "@fortawesome/free-solid-svg-icons/faCloudMoon";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colours } from "@/styles/Colours";
+import { fontSize, getCommonStyles } from "@/styles/CommonStyles";
 import { faBed } from "@fortawesome/free-solid-svg-icons/faBed";
+import { faBookOpen } from "@fortawesome/free-solid-svg-icons/faBookOpen";
+import { faBurn } from "@fortawesome/free-solid-svg-icons/faBurn";
 import { faChurch } from "@fortawesome/free-solid-svg-icons/faChurch";
+import { faCloudMoon } from "@fortawesome/free-solid-svg-icons/faCloudMoon";
 import { faCloudSun } from "@fortawesome/free-solid-svg-icons/faCloudSun";
 import { faCoffee } from "@fortawesome/free-solid-svg-icons/faCoffee";
-import { faWineGlass } from "@fortawesome/free-solid-svg-icons/faWineGlass";
-import { faBurn } from "@fortawesome/free-solid-svg-icons/faBurn";
-import { faBookOpen } from "@fortawesome/free-solid-svg-icons/faBookOpen";
-import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
 import { faHandsPraying } from "@fortawesome/free-solid-svg-icons/faHandsPraying";
+import { faMoon } from "@fortawesome/free-solid-svg-icons/faMoon";
+import { faPersonPraying } from "@fortawesome/free-solid-svg-icons/faPersonPraying";
 import { faStar } from "@fortawesome/free-solid-svg-icons/faStar";
-import he from "he";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { useRouter } from "expo-router";
-import toTitleCase from "titlecase";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { faWineGlass } from "@fortawesome/free-solid-svg-icons/faWineGlass";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
+import he from "he";
+import { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  AppState,
+  Image,
+  PressableStateCallbackType,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import toTitleCase from "titlecase";
 
 interface LiturgicalData {
   publicUrl: string;
@@ -361,7 +361,7 @@ export default function PrayerScreen(): JSX.Element {
       console.log(
         "organizedData keys:",
         Object.keys(newOrganizedData),
-        newOrganizedData
+        newOrganizedData,
       );
     } else {
       setOrganizedData({});
@@ -407,8 +407,8 @@ export default function PrayerScreen(): JSX.Element {
 
             <TouchableOpacity
               onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  showDatePicker();
+                (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  showDatePicker());
               }}
               style={{
                 padding: 5,
@@ -497,7 +497,7 @@ export default function PrayerScreen(): JSX.Element {
                     },
                   ]}
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                       router.push({
                         pathname: "/dailyReadings",
                         params: {
@@ -505,7 +505,7 @@ export default function PrayerScreen(): JSX.Element {
                           reading: readingsText.reading1FullText,
                           title: readings.reading1Title, // Added title
                         },
-                      });
+                      }));
                   }}
                 >
                   <View
@@ -543,7 +543,7 @@ export default function PrayerScreen(): JSX.Element {
                     style={[
                       { color: theme.moreImportantText },
                       { paddingBottom: 20 },
-                      { fontSize: fontSize.body  },
+                      { fontSize: fontSize.body },
                     ]}
                   >
                     {he.decode(readings.reading1Teaser || "")}
@@ -563,7 +563,7 @@ export default function PrayerScreen(): JSX.Element {
                     },
                   ]}
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                       router.push({
                         pathname: "/dailyReadings",
                         params: {
@@ -571,7 +571,7 @@ export default function PrayerScreen(): JSX.Element {
                           reading: readingsText.reading2FullText,
                           title: readings.reading2Title, // Added title
                         },
-                      });
+                      }));
                   }}
                 >
                   <View
@@ -629,7 +629,7 @@ export default function PrayerScreen(): JSX.Element {
                     },
                   ]}
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                       router.push({
                         pathname: "/dailyReadings",
                         params: {
@@ -637,7 +637,7 @@ export default function PrayerScreen(): JSX.Element {
                           reading: readingsText.reading3FullText, // Add full text for third reading
                           title: readings.reading3Title, // Add title for third reading
                         },
-                      });
+                      }));
                   }}
                 >
                   <View
@@ -710,7 +710,7 @@ export default function PrayerScreen(): JSX.Element {
                   <TouchableOpacity
                     key={service}
                     onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                      (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                         Alert.alert(
                           "Silence Your Phone!",
                           "Before opening this prayer, please ensure your phone is on silent.",
@@ -727,8 +727,8 @@ export default function PrayerScreen(): JSX.Element {
                                 });
                               },
                             },
-                          ]
-                        );
+                          ],
+                        ));
                     }}
                     style={({ pressed }: PressableStateCallbackType) => [
                       styles.linkText,
@@ -764,14 +764,14 @@ export default function PrayerScreen(): JSX.Element {
               <TouchableOpacity
                 key={prayer.title}
                 onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                     router.push({
                       pathname: "/pdfViewer",
                       params: {
                         url: prayer.url, // Add full text for third reading
                         title: prayer.title, // Add title for third reading
                       },
-                    });
+                    }));
                 }}
                 style={({ pressed }) => [
                   styles.prayerItem,
@@ -822,7 +822,7 @@ export default function PrayerScreen(): JSX.Element {
               <TouchableOpacity
                 key={service.title}
                 onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                     Alert.alert(
                       "Silence Your Phone!",
                       "Before opening this prayer, please ensure your phone is on silent.",
@@ -839,8 +839,8 @@ export default function PrayerScreen(): JSX.Element {
                             });
                           },
                         },
-                      ]
-                    );
+                      ],
+                    ));
                 }}
                 style={({ pressed }) => [
                   styles.prayerItem,
@@ -892,7 +892,7 @@ export default function PrayerScreen(): JSX.Element {
               <TouchableOpacity
                 key={service.title}
                 onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                  (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                     Alert.alert(
                       "Silence Your Phone!",
                       "Before opening this prayer, please ensure your phone is on silent.",
@@ -909,8 +909,8 @@ export default function PrayerScreen(): JSX.Element {
                             });
                           },
                         },
-                      ]
-                    );
+                      ],
+                    ));
                 }}
                 style={({ pressed }) => [
                   styles.prayerItem,
@@ -1070,5 +1070,5 @@ const getStyles = () =>
     icon: {
       fontSize: 36,
       marginRight: 10, // Adjust this value to your preference for spacing
-    }
+    },
   });

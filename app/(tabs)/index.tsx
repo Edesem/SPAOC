@@ -1,45 +1,36 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  StyleSheet,
-  View,
-  SectionList,
-  StatusBar,
-  Text,
-  ActivityIndicator,
-  Image,
-  AppState,
-  RefreshControl,
-  Button,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { renderItem } from "@/components/RenderItem";
-import { Colours } from "@/styles/Colours";
-import "expo-dev-client";
-import { useFastDay } from "@/hooks/useFastDay";
-import * as SplashScreen from "expo-splash-screen";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useDailySaint } from "@/hooks/useDailySaint";
 import { useEvents } from "@/hooks/useEvents";
+import { useFastDay } from "@/hooks/useFastDay";
 import {
   requestNotificationPermissions,
-  scheduleNotification,
   setupNotificationListeners,
 } from "@/notifications";
-import { MaterialIcons } from "@expo/vector-icons";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { Colours } from "@/styles/Colours";
 import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
+import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import "expo-dev-client";
 import * as Haptics from "expo-haptics";
+import { router, useFocusEffect, useNavigation } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  AppState,
+  Image,
+  Modal,
+  RefreshControl,
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MonthPicker from "react-native-month-year-picker";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,7 +40,6 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
-  
   const appState = useRef(AppState.currentState);
   const lastRefreshTime = useRef<number>(Date.now());
   const navigation =
@@ -59,10 +49,9 @@ export default function HomeScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
 
-
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
-  
+
   const {
     events: allEvents,
     groupedEvents,
@@ -108,7 +97,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       refetchEvents(); // this will reload event data and favourite status
-    }, [])
+    }, []),
   );
 
   // Your param list type (adjust to your app)
@@ -152,7 +141,7 @@ export default function HomeScreen() {
               itemDate.getFullYear() === selectedYear &&
               itemDate.getMonth() === selectedMonth
             );
-          })
+          }),
         );
 
         // Optional: Remove sections with no matching items
@@ -171,7 +160,7 @@ export default function HomeScreen() {
       }
       setShowMonthPicker(false);
     },
-    [selectedDate, groupedEvents]
+    [selectedDate, groupedEvents],
   );
 
   const sectionsWithIndex = filteredSections.map((section, index) => ({
@@ -418,8 +407,8 @@ export default function HomeScreen() {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      router.push("/settings");
+                    (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                      router.push("/settings"));
                   }}
                   style={{ padding: 10 }}
                 >
@@ -432,12 +421,12 @@ export default function HomeScreen() {
 
                 <TouchableOpacity
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
+                    (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
                       sectionListRef.current?.scrollToLocation({
                         sectionIndex: 0,
                         itemIndex: 0,
                         animated: true,
-                      });
+                      }));
                   }}
                   style={{
                     padding: 10,
@@ -488,7 +477,7 @@ const getStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
-     },
+    },
     loadingContainer: {
       justifyContent: "center",
       paddingVertical: 30,
