@@ -1,27 +1,27 @@
-import React from "react";
+import { ThemedText } from "@/components/ThemedText";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colours } from "@/styles/Colours";
+import { getCommonStyles } from "@/styles/CommonStyles";
+import { MaterialIcons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import type { ComponentProps } from "react";
 import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
   Image,
   Linking,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   SafeAreaProvider,
+  SafeAreaView,
   useSafeAreaInsets,
-  SafeAreaView
 } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
-import { getCommonStyles } from "@/styles/CommonStyles";
-import { Colours } from "@/styles/Colours";
-import {
-  MaterialIcons,
-} from "@expo/vector-icons";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import * as Haptics from "expo-haptics";
+import FontAwesome5, {
+  FontAwesome5IconProps,
+} from "react-native-vector-icons/FontAwesome5";
 
 export default function AboutScreen() {
   const insets = useSafeAreaInsets();
@@ -33,10 +33,10 @@ export default function AboutScreen() {
   const styles = getStyles();
 
   const openLink = (url: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-      Linking.openURL(url).catch((err) =>
-        console.error("Failed to open URL:", err)
-      );
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Linking.openURL(url).catch((err) =>
+      console.error("Failed to open URL:", err),
+    );
   };
 
   return (
@@ -79,7 +79,7 @@ export default function AboutScreen() {
               label="Follow on Facebook"
               onPress={() =>
                 openLink(
-                  "https://www.facebook.com/StPaulsAntiochianOrthodoxChurch"
+                  "https://www.facebook.com/StPaulsAntiochianOrthodoxChurch",
                 )
               }
               color={theme.primary}
@@ -97,7 +97,7 @@ export default function AboutScreen() {
               label="Subscribe on YouTube"
               onPress={() =>
                 openLink(
-                  "https://www.youtube.com/@stpaulsantiochianorthodoxc6010/videos"
+                  "https://www.youtube.com/@stpaulsantiochianorthodoxc6010/videos",
                 )
               }
               color={theme.primary}
@@ -115,7 +115,7 @@ export default function AboutScreen() {
               label="Listen to our choir on Spotify"
               onPress={() =>
                 openLink(
-                  "https://open.spotify.com/artist/5KSBKd6aPBEeEDzncaLdT7"
+                  "https://open.spotify.com/artist/5KSBKd6aPBEeEDzncaLdT7",
                 )
               }
               color={theme.primary}
@@ -125,7 +125,7 @@ export default function AboutScreen() {
               label="Listen to our choir on Apple Music"
               onPress={() =>
                 openLink(
-                  "https://music.apple.com/us/artist/st-ephraim-the-syrian-antiochian-orthodox-choir/1785814045"
+                  "https://music.apple.com/us/artist/st-ephraim-the-syrian-antiochian-orthodox-choir/1785814045",
                 )
               }
               color={theme.primary}
@@ -151,27 +151,33 @@ function LinkButton({
   onPress,
   color,
 }: {
-  icon: string;
+  icon: FontAwesome5IconProps["name"];
   label: string;
   onPress: () => void;
   color: string;
 }) {
-  let IconComponent = MaterialIcons;
-
   const styles = getStyles();
 
   // Choose the right icon set based on icon name
-  if (
-    ["instagram", "youtube", "whatsapp", "spotify", "itunes-note"].includes(
-      icon
-    )
-  ) {
-    IconComponent = FontAwesome5;
-  }
+  const fontAwesomeIcon = [
+    "instagram",
+    "youtube",
+    "whatsapp",
+    "spotify",
+    "itunes-note",
+  ].includes(icon);
 
   return (
     <TouchableOpacity style={styles.linkButton} onPress={onPress}>
-      <IconComponent name={icon as any} size={24} color={color} />
+      {fontAwesomeIcon ? (
+        <FontAwesome5 name={icon} size={24} color={color} />
+      ) : (
+        <MaterialIcons
+          name={icon as ComponentProps<typeof MaterialIcons>["name"]}
+          size={24}
+          color={color}
+        />
+      )}
       <Text style={[styles.linkLabel, { color }]}>{label}</Text>
     </TouchableOpacity>
   );

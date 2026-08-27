@@ -1,25 +1,25 @@
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Colours } from "@/styles/Colours";
 import { EventData } from "@/types/global";
+import * as Clipboard from "expo-clipboard";
+import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useEffect } from "react";
+import { decode } from "html-entities";
+import { useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
+  Dimensions,
   Image,
   Linking,
   Platform,
-  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { Colours } from "@/styles/Colours";
-import { decode } from "html-entities";
-import * as Clipboard from "expo-clipboard";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import Toast from "react-native-toast-message";
-import * as Haptics from "expo-haptics";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,7 +55,7 @@ const renderDescription = (description: string | null, theme: any) => {
           </Text>
         ) : (
           part
-        )
+        ),
       )}
     </Text>
   );
@@ -143,7 +143,7 @@ const EventDetailsScreen = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-      edges={[]}
+        edges={[]}
         style={{ flex: 1, backgroundColor: theme.background }}
       >
         <ScrollView
@@ -181,8 +181,8 @@ const EventDetailsScreen = () => {
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      copyLocation();
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    copyLocation();
                   }}
                   style={{ marginLeft: 10 }}
                 >
@@ -194,8 +194,8 @@ const EventDetailsScreen = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                      openInMaps();
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    openInMaps();
                   }}
                   style={{ marginLeft: 10 }}
                 >

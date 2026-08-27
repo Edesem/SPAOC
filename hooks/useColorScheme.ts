@@ -1,30 +1,34 @@
 // hooks/useColorScheme.ts
-import { useColorScheme as useSystemColorScheme } from 'react-native';
-import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import eventBus from '@/utils/eventBus';
+import eventBus from "@/utils/eventBus";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
+import { useColorScheme as useSystemColorScheme } from "react-native";
 
-export type ThemeChoice = 'light' | 'dark' | 'auto';
+export type ThemeChoice = "light" | "dark" | "auto";
 
-export function useColorScheme(): 'light' | 'dark' {
+export function useColorScheme(): "light" | "dark" {
   const system = useSystemColorScheme();
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(system ?? 'light');
+  const systemTheme: "light" | "dark" = system === "dark" ? "dark" : "light";
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(
+    systemTheme,
+  );
 
   useEffect(() => {
-    AsyncStorage.getItem('APP_THEME').then((choice) => {
-      const effective = choice === 'dark' || choice === 'light' ? choice : system;
-      setResolvedTheme(effective ?? 'light');
+    AsyncStorage.getItem("APP_THEME").then((choice) => {
+      const effective =
+        choice === "dark" || choice === "light" ? choice : systemTheme;
+      setResolvedTheme(effective);
     });
 
     const handleThemeChange = (choice: ThemeChoice) => {
-      const effective = choice === 'auto' ? system : choice;
-      setResolvedTheme(effective ?? 'light');
+      const effective = choice === "auto" ? systemTheme : choice;
+      setResolvedTheme(effective);
     };
 
-    eventBus.on('themeChanged', handleThemeChange);
+    eventBus.on("themeChanged", handleThemeChange);
 
     return () => {
-      eventBus.off('themeChanged', handleThemeChange);
+      eventBus.off("themeChanged", handleThemeChange);
     };
   }, [system]);
 

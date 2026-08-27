@@ -1,19 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import { useSettingsStore } from "@/app/settings";
 import {
   API_KEY,
-  YOUTH_EVENTS_BASE_URL,
-  WEEKLY_EVENTS_BASE_URL,
   CHURCH_EVENTS_BASE_URL,
   FAMILY_EVENTS_BASE_URL,
+  FELLOWSHIP_EVENTS_BASE_URL,
   LADIES_EVENTS_BASE_URL,
   PARISH_COUNCIL_EVENTS_BASE_URL,
-  SENIORS_EVENTS_BASE_URL,
   PLAYGROUP_EVENTS_BASE_URL,
-  FELLOWSHIP_EVENTS_BASE_URL,
+  SENIORS_EVENTS_BASE_URL,
+  WEEKLY_EVENTS_BASE_URL,
+  YOUTH_EVENTS_BASE_URL,
 } from "@/constants/consts";
 import { EventData } from "@/types/global";
 import { groupEventsByDay } from "@/utils/dateUtils";
-import { useSettingsStore } from "@/app/settings";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const EVENT_SOURCES = [
   { url: YOUTH_EVENTS_BASE_URL, source: "youth" },
@@ -33,7 +33,7 @@ export const useEvents = () => {
 
   const startOfWeek = useSettingsStore.getState().startOfWeek; // "sunday" | "monday"
 
-  const fetchAllEvents = () => {
+  const fetchAllEvents = useCallback(() => {
     setLoading(true);
 
     const now = new Date();
@@ -86,11 +86,11 @@ export const useEvents = () => {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, []);
 
   useEffect(() => {
     fetchAllEvents();
-  }, []);
+  }, [fetchAllEvents]);
 
   const groupedEvents = useMemo(() => {
     return groupEventsByDay(events, startOfWeek);

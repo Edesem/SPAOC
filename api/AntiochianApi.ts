@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from "axios";
-import { getCurrentDate } from "../utils/dateUtils";
 
 const HOST = "www.antiochian.org";
 const CLIENT_ID = "antiochian_api";
@@ -169,7 +168,7 @@ class Antiochian {
 
 const antiochianInstance = new Antiochian();
 
-export const fetchAntiochian = async (date: Date = getCurrentDate()) => {
+export const fetchAntiochian = async (date: Date = new Date()) => {
   if (!antiochianInstance["idAnchor"]) {
     await antiochianInstance.authenticate();
   }
