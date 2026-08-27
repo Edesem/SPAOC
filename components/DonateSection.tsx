@@ -61,8 +61,8 @@ export default function DonateSection({ theme, CommonStyles }: any) {
       <View style={styles.header}>
         <Text style={[CommonStyles.title, { fontWeight: "bold" }]}>Donate</Text>
         <Text style={[styles.bibleVerse, { color: theme.detail }]}>
-          "For where your treasure is, there your heart will be also." - Matthew
-          6:21
+          &quot;For where your treasure is, there your heart will be also.&quot;
+          - Matthew 6:21
         </Text>
       </View>
 
