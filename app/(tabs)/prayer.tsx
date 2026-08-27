@@ -45,7 +45,6 @@ import {
   Alert,
   AppState,
   Image,
-  PressableStateCallbackType,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -705,10 +704,7 @@ export default function PrayerScreen(): JSX.Element {
                         ],
                       );
                     }}
-                    style={({ pressed }: PressableStateCallbackType) => [
-                      styles.linkText,
-                      { opacity: pressed ? 0.6 : 1 },
-                    ]}
+                    activeOpacity={0.6}
                   >
                     <Text
                       style={[
@@ -748,10 +744,7 @@ export default function PrayerScreen(): JSX.Element {
                     },
                   });
                 }}
-                style={({ pressed }) => [
-                  styles.prayerItem,
-                  { opacity: pressed ? 0.6 : 1 },
-                ]}
+                activeOpacity={0.6}
               >
                 <View style={[styles.rowContainer]}>
                   <FontAwesomeIcon
@@ -817,10 +810,7 @@ export default function PrayerScreen(): JSX.Element {
                     ],
                   );
                 }}
-                style={({ pressed }) => [
-                  styles.prayerItem,
-                  { opacity: pressed ? 0.6 : 1 },
-                ]}
+                activeOpacity={0.6}
               >
                 <View style={[styles.rowContainer]}>
                   {/* Render the specific icon for each service */}
@@ -887,10 +877,7 @@ export default function PrayerScreen(): JSX.Element {
                     ],
                   );
                 }}
-                style={({ pressed }) => [
-                  styles.prayerItem,
-                  { opacity: pressed ? 0.6 : 1 },
-                ]}
+                activeOpacity={0.6}
               >
                 <View style={[styles.rowContainer]}>
                   {/* Render the specific icon for each service */}
@@ -976,12 +963,6 @@ const getStyles = () =>
       fontSize: 16,
       fontWeight: "bold",
       textDecorationLine: "underline",
-    },
-    prayerItem: {
-      marginVertical: 10,
-      padding: 10,
-      borderRadius: 8,
-      backgroundColor: "rgba(0, 0, 0, 0.05)", // Light background for contrast
     },
     prayerTitle: {
       fontSize: 18,
