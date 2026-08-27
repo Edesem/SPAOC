@@ -139,7 +139,11 @@ export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek): Date => {
         ? 6
         : weekdayIndex - 1;
 
-  return new Date(new Date(year, month - 1, day - daysToSubtract));
+  const startDate = new Date(year, month - 1, day - daysToSubtract);
+
+  return new Date(
+    startDate.toLocaleString("en-US", { timeZone: APP_TIME_ZONE }),
+  );
 };
 
 const getDateParts = (date: Date) => {
@@ -165,5 +169,7 @@ const getDateParts = (date: Date) => {
 // Function to fetch current date in 'YYYY-MM-DD' format
 // TODO: Remove this function and use new Date() directly in the future after we have more test coverage
 export const getCurrentDate = (): Date => {
-  return new Date();
+  return new Date(
+    new Date().toLocaleDateString("en-US", { timeZone: APP_TIME_ZONE }),
+  );
 };
