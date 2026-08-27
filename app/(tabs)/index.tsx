@@ -16,7 +16,7 @@ import "expo-dev-client";
 import * as Haptics from "expo-haptics";
 import { router, useFocusEffect, useNavigation } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   AppState,
@@ -58,7 +58,7 @@ export default function HomeScreen() {
   const { events, fastLoading, refetch: refetchFast } = useFastDay();
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
-  const [filteredSections, setFilteredSections] = useState(groupedEvents); // default
+  const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
 
   // Refresh handler
   const onRefresh = useCallback(async () => {
@@ -124,48 +124,39 @@ export default function HomeScreen() {
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    if (groupedEvents.length > 0) {
-      setFilteredSections(groupedEvents); // show all sections by default
+  const filteredSections = useMemo(() => {
+    // Initial screen behaviour: show every event section.
+    if (!selectedMonth) {
+      return groupedEvents;
     }
-  }, [groupedEvents]);
+
+    const month = selectedMonth.getMonth();
+    const year = selectedMonth.getFullYear();
+
+    return groupedEvents
+      .map((section) => ({
+        ...section,
+        data: section.data.filter((item) => {
+          const itemDate = new Date(item.start);
+          return (
+            itemDate.getFullYear() === year && itemDate.getMonth() === month
+          );
+        }),
+      }))
+      .filter((section) => section.data.length > 0);
+  }, [groupedEvents, selectedMonth]);
 
   const onValueChange = useCallback(
     (event, newDate) => {
       if (event === "dateSetAction") {
         const pickedDate = newDate || selectedDate;
         setSelectedDate(pickedDate);
-
-        const selectedMonth = pickedDate.getMonth();
-        const selectedYear = pickedDate.getFullYear();
-
-        const filtered = groupedEvents.filter((section) =>
-          section.data.some((item) => {
-            const itemDate = new Date(item.start); // make sure item.date is in ISO format or Date object
-            return (
-              itemDate.getFullYear() === selectedYear &&
-              itemDate.getMonth() === selectedMonth
-            );
-          }),
-        );
-
-        // Optional: Remove sections with no matching items
-        const cleaned = filtered.map((section) => ({
-          ...section,
-          data: section.data.filter((item) => {
-            const itemDate = new Date(item.start);
-            return (
-              itemDate.getFullYear() === selectedYear &&
-              itemDate.getMonth() === selectedMonth
-            );
-          }),
-        }));
-
-        setFilteredSections(cleaned);
+        setSelectedMonth(pickedDate);
       }
+
       setShowMonthPicker(false);
     },
-    [selectedDate, groupedEvents],
+    [selectedDate],
   );
 
   const sectionsWithIndex = filteredSections.map((section, index) => ({
