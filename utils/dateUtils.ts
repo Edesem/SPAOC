@@ -141,29 +141,33 @@ export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek): Date => {
 
   const targetDate = new Date(Date.UTC(year, month - 1, day - daysToSubtract));
 
-  const offsetFormatter = new Intl.DateTimeFormat("en-US", {
+  // Get the Melbourne-local date/time components.
+  // This avoids relying on `timeZoneName: "longOffset"`,
+  // which can return just "GMT" on some JavaScript runtimes.
+  const localParts = new Intl.DateTimeFormat("en-AU", {
     timeZone: APP_TIME_ZONE,
-    timeZoneName: "longOffset",
-  });
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(targetDate);
 
-  const offsetPart = offsetFormatter
-    .formatToParts(targetDate)
-    .find((part) => part.type === "timeZoneName")?.value;
+  const getPart = (type: string) =>
+    Number(localParts.find((part) => part.type === type)?.value ?? 0);
 
-  if (!offsetPart) {
-    throw new Error(`Unable to determine timezone offset for ${APP_TIME_ZONE}`);
-  }
+  const localAsUtc = Date.UTC(
+    getPart("year"),
+    getPart("month") - 1,
+    getPart("day"),
+    getPart("hour"),
+    getPart("minute"),
+    getPart("second"),
+  );
 
-  const match = offsetPart.match(/^GMT([+-])(\d{2}):?(\d{2})?$/);
-
-  if (!match) {
-    throw new Error(`Unexpected timezone offset: ${offsetPart}`);
-  }
-
-  const sign = match[1] === "+" ? 1 : -1;
-  const hours = Number(match[2]);
-  const minutes = Number(match[3] ?? 0);
-  const offsetMinutes = sign * (hours * 60 + minutes);
+  const offsetMinutes = (localAsUtc - targetDate.getTime()) / 60_000;
 
   return new Date(targetDate.getTime() - offsetMinutes * 60_000);
 };
