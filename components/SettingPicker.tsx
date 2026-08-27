@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { TouchableOpacity, View, Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 
 type SettingPickerProps = {
@@ -38,8 +38,8 @@ const SettingPicker: React.FC<SettingPickerProps> = ({
         placeholder={{}}
         style={{
           inputIOSContainer: { pointerEvents: "none" },
-          inputIOS: { color: theme.moreImportantText},
-          inputAndroid: { color: theme.moreImportantText},
+          inputIOS: { color: theme.moreImportantText },
+          inputAndroid: { color: theme.moreImportantText },
         }}
         darkTheme={pickerTheme}
       />
