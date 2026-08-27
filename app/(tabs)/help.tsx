@@ -30,19 +30,7 @@ export default function HelpScreen() {
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
-  const appVersion = Constants.expoConfig?.version ?? "Unknown";
-
   const styles = getStyles();
-
-  const openLink = (url: string) => {
-    Linking.openURL(url).catch((err) =>
-      console.error("Failed to open URL:", err),
-    );
-  };
-
-  const allLocales = Localization.getLocales()
-    .map((loc) => loc.languageTag)
-    .join(", ");
 
   const openMail = (
     type: "Bug" | "Suggestion" | "Support",
@@ -107,8 +95,8 @@ export default function HelpScreen() {
               icon="bug-report"
               label="Report a bug"
               onPress={() => {
-                (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  openMail("Bug"));
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                openMail("Bug");
               }}
               color={theme.primary}
             />
@@ -116,8 +104,8 @@ export default function HelpScreen() {
               icon="lightbulb"
               label="Suggest a feature"
               onPress={() => {
-                (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  openMail("Suggestion"));
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                openMail("Suggestion");
               }}
               color={theme.primary}
             />
@@ -125,8 +113,8 @@ export default function HelpScreen() {
               icon="email"
               label="Contact Support"
               onPress={() => {
-                (Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium),
-                  openMail("Support"));
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                openMail("Support");
               }}
               color={theme.primary}
             />
