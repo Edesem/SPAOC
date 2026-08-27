@@ -1,16 +1,15 @@
-import React, { useState, useCallback } from "react";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import { Haptic } from "@/hooks/hapticPress";
+import { setStringAsync } from "expo-clipboard";
+import { useCallback, useState } from "react";
 import {
-  View,
+  Image,
+  Linking,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Image,
-  ScrollView,
-  Linking,
+  View,
 } from "react-native";
-import { setStringAsync } from "expo-clipboard";
-import { Haptic } from "@/hooks/hapticPress";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import Toast from "react-native-toast-message";
 
 import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from "@/constants/consts";
@@ -18,7 +17,6 @@ import { useFocusEffect } from "expo-router";
 
 export default function DonateSection({ theme, CommonStyles }: any) {
   const [copied, setCopied] = useState(false); // Track if the details are copied
-  const [copiedMessage, setCopiedMessage] = useState("");
 
   const styles = getStyles();
 
@@ -27,7 +25,6 @@ export default function DonateSection({ theme, CommonStyles }: any) {
     await setStringAsync(textToCopy);
 
     const message = `${label} copied`;
-    setCopiedMessage(message); // still keep for UI if you want
 
     Toast.show({
       type: "success",
@@ -55,7 +52,7 @@ export default function DonateSection({ theme, CommonStyles }: any) {
   useFocusEffect(
     useCallback(() => {
       setCopied(false); // Reset copied state when the screen is focused
-    }, [])
+    }, []),
   );
 
   return (
