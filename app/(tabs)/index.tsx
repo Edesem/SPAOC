@@ -36,11 +36,6 @@ interface EventItem {
   start: string;
 }
 
-interface EventSection {
-  title: string;
-  data: EventItem[];
-}
-
 SplashScreen.preventAutoHideAsync();
 
 SplashScreen.setOptions({
