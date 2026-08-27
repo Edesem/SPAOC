@@ -1,8 +1,8 @@
 // PdfViewer.tsx
-import { useNavigation, useRoute } from 'expo-router';
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Dimensions, Platform } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { useNavigation, useRoute } from "expo-router";
+import { useEffect } from "react";
+import { Dimensions, Platform, StyleSheet, View } from "react-native";
+import { WebView } from "react-native-webview";
 
 // TODO: Temporary WebView solution - switch back to react-native-pdf when fixed
 const USE_WEBVIEW = true; // Set to false when react-native-pdf is working again
@@ -15,19 +15,20 @@ export default function PdfViewer() {
   useEffect(() => {
     navigation.setOptions({
       title: `${title}`,
-      headerBackTitle: 'Back',
+      headerBackTitle: "Back",
       headerBackTitleStyle: {
-        color: 'pink',
+        color: "pink",
       },
     });
     console.log("PDF URL:", url);
-  }, [navigation, title]);
+  }, [navigation, title, url]);
 
   if (USE_WEBVIEW) {
     // Temporary WebView implementation
-    const webViewUrl = Platform.OS === 'android' 
-      ? `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`
-      : url;
+    const webViewUrl =
+      Platform.OS === "android"
+        ? `https://docs.google.com/viewer?url=${encodeURIComponent(url)}`
+        : url;
 
     return (
       <View style={styles.container}>
@@ -35,7 +36,7 @@ export default function PdfViewer() {
           source={{ uri: webViewUrl }}
           style={styles.pdf}
           onError={(error) => {
-            console.log('WebView error:', error);
+            console.log("WebView error:", error);
           }}
         />
       </View>
@@ -70,19 +71,19 @@ export default function PdfViewer() {
     </View>
   );
   */
-  
+
   return null; // This line won't be reached when USE_WEBVIEW is true
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   pdf: {
     flex: 1,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  }
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+  },
 });
