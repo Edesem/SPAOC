@@ -1,7 +1,20 @@
 export const CALENDLY_URL = "https://calendly.com/inspectre-pi/30min";
 export const SQUARE_URL = "https://square.link/u/1x7oJTMQ";
+import { Platform } from "react-native";
 
-export const API_KEY = process.env.EXPO_PUBLIC_IOS_CAL_DEBUG_KEY;
+function getCalendarApiKey() {
+  if (Platform.OS === "ios") {
+    return __DEV__
+      ? process.env.EXPO_PUBLIC_IOS_CAL_DEBUG_KEY
+      : process.env.EXPO_PUBLIC_IOS_CAL_PROD_KEY;
+  }
+
+  return __DEV__
+    ? process.env.EXPO_PUBLIC_ANDROID_CAL_DEBUG_KEY
+    : process.env.EXPO_PUBLIC_ANDROID_CAL_PROD_KEY;
+}
+
+export const API_KEY = getCalendarApiKey();
 
 export const YOUTH_EVENTS_CALENDAR_ID = "stpaulsyouthcommittee@gmail.com";
 export const CHURCH_EVENTS_CALENDAR_ID =
