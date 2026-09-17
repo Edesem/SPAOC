@@ -1,6 +1,6 @@
+import { Platform } from "react-native";
 export const CALENDLY_URL = "https://calendly.com/inspectre-pi/30min";
 export const SQUARE_URL = "https://square.link/u/1x7oJTMQ";
-import { Platform } from "react-native";
 
 function getCalendarApiKey() {
   if (Platform.OS === "ios") {
