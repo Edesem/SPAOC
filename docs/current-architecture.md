@@ -75,7 +75,8 @@ flowchart TD
     E --> E1[AsyncStorage favourites]
     E --> E2[EventItem]
 
-    F --> F1[AntiochianApi]
+    F --> F0[LiturgicalDataService]
+    F0 --> F1[AntiochianApi]
     F1 --> F2[Antiochian liturgical API]
     F --> F3[Daily readings screen]
     F --> F4[PDF viewer]
@@ -168,8 +169,9 @@ Entry point:
 - [app/(tabs)/prayer.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/(tabs)/prayer.tsx)
 
 Flow:
-- The Prayer screen loads liturgical data from [api/AntiochianApi.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/api/AntiochianApi.ts) using `fetchAntiochian()`.
-- The screen uses helper methods from the API module to extract reading teasers, full reading text, and feast title.
+- The Prayer screen loads liturgical data through `liturgicalService` from [services/liturgical/](../services/liturgical/index.ts), which implements the `LiturgicalDataService` interface.
+- The screen uses the service's helper methods to extract reading teasers, full reading text, and feast title.
+- The current implementation, `AntiochianLiturgicalService`, wraps the client in [api/AntiochianApi.ts](../api/AntiochianApi.ts). Only the service layer imports that client.
 - Selecting a date triggers a new fetch.
 - Tapping a reading opens [app/dailyReadings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/dailyReadings.tsx).
 - Tapping a service opens [app/pdfViewer.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/pdfViewer.tsx).
