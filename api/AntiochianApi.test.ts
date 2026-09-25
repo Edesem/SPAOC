@@ -60,6 +60,31 @@ describe("AntiochianApi", () => {
     });
   });
 
+  describe("ensureAuthenticated", () => {
+    it("authenticates when no anchor has been set", async () => {
+      const authenticate = jest
+        .spyOn(antiochian, "authenticate")
+        .mockResolvedValue();
+
+      await antiochian.ensureAuthenticated();
+
+      expect(authenticate).toHaveBeenCalledTimes(1);
+      authenticate.mockRestore();
+    });
+
+    it("skips authentication once the anchor is set", async () => {
+      client.idAnchor = [anchorDate, anchorId];
+      const authenticate = jest
+        .spyOn(antiochian, "authenticate")
+        .mockResolvedValue();
+
+      await antiochian.ensureAuthenticated();
+
+      expect(authenticate).not.toHaveBeenCalled();
+      authenticate.mockRestore();
+    });
+  });
+
   it("gets reading teasers", () => {
     expect(antiochian.getReadingTeasers(liturgicalDay)).toEqual({
       date: "Thursday, 13 August 2026",
