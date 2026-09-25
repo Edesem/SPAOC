@@ -179,6 +179,7 @@ export class Antiochian {
 
 const antiochianInstance = new Antiochian();
 
+/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
 export const fetchAntiochian = async (date: Date = new Date()) => {
   await antiochianInstance.ensureAuthenticated();
 
@@ -190,10 +191,13 @@ export const fetchAntiochian = async (date: Date = new Date()) => {
   return { day, texts };
 };
 
+/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
 export const getReadingTeasers = (day: LiturgicalDay) =>
   antiochianInstance.getReadingTeasers(day);
+/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
 export const getReadingTexts = (day: LiturgicalDay) =>
   antiochianInstance.getReadingTexts(day);
+/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
 export const getFeastTitle = (day: LiturgicalDay) =>
   antiochianInstance.getFeastTitle(day);
 
