@@ -4,7 +4,7 @@ const HOST = "www.antiochian.org";
 const CLIENT_ID = "antiochian_api";
 const CLIENT_SECRET = "TAxhx@9tH(l^MgQ9FWE8}T@NWUT9U)";
 
-interface LiturgicalDay {
+export interface LiturgicalDay {
   originalCalendarDate: string;
   itemId: number;
   feastDayTitle: string;
@@ -21,12 +21,12 @@ interface LiturgicalDay {
   [key: string]: any; // Catch any other unexpected fields
 }
 
-interface LiturgicalText {
+export interface LiturgicalText {
   publicUrl: string;
   typeOfService: string;
 }
 
-interface ReadingTeasers {
+export interface ReadingTeasers {
   date: string;
   reading1Title: string;
   reading1Teaser: string;
@@ -36,7 +36,17 @@ interface ReadingTeasers {
   reading3Teaser: string;
 }
 
-class Antiochian {
+export interface ReadingTexts {
+  reading1FullText?: string;
+  reading2FullText?: string;
+  reading3FullText?: string;
+}
+
+export interface FeastTitle {
+  feastTitle?: string;
+}
+
+export class Antiochian {
   private baseUrl = "https://antiochian.org/";
   private tokenEndpoint = `${this.baseUrl}connect/token`;
   private liturgicalDayEndpoint = (id: number) =>
@@ -71,6 +81,13 @@ class Antiochian {
     this.axiosInstance.defaults.headers["Authorization"] =
       `Bearer ${tokenData.access_token}`;
     await this.getLiturgicalDay(); // Populate idAnchor
+  }
+
+  // Authenticate only if the ID anchor has not been populated yet
+  async ensureAuthenticated(): Promise<void> {
+    if (!this.idAnchor) {
+      await this.authenticate();
+    }
   }
 
   // Get the liturgical day ID from a date
@@ -145,11 +162,7 @@ class Antiochian {
     };
   }
 
-  public getReadingTexts(day: LiturgicalDay): {
-    reading1FullText?: string;
-    reading2FullText?: string;
-    reading3FullText?: string;
-  } {
+  public getReadingTexts(day: LiturgicalDay): ReadingTexts {
     return {
       reading1FullText: day.reading1FullText?.trimStart(),
       reading2FullText: day.reading2FullText?.trimStart(),
@@ -157,9 +170,7 @@ class Antiochian {
     };
   }
 
-  public getFeastTitle(day: LiturgicalDay): {
-    feastTitle?: string;
-  } {
+  public getFeastTitle(day: LiturgicalDay): FeastTitle {
     return {
       feastTitle: day.feastDayTitle?.trimStart(),
     };
@@ -169,9 +180,7 @@ class Antiochian {
 const antiochianInstance = new Antiochian();
 
 export const fetchAntiochian = async (date: Date = new Date()) => {
-  if (!antiochianInstance["idAnchor"]) {
-    await antiochianInstance.authenticate();
-  }
+  await antiochianInstance.ensureAuthenticated();
 
   const [day, texts] = await Promise.all([
     antiochianInstance.getLiturgicalDay(date),
