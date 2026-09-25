@@ -1,9 +1,3 @@
-import {
-  fetchAntiochian,
-  getFeastTitle,
-  getReadingTeasers,
-  getReadingTexts,
-} from "@/api/AntiochianApi";
 import { ThemedText } from "@/components/ThemedText";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import {
@@ -21,6 +15,14 @@ import {
   SMALL_COMPLINE_URL,
 } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import {
+  liturgicalService,
+  type FeastTitle,
+  type LiturgicalData,
+  type LiturgicalText,
+  type ReadingTeasers,
+  type ReadingTexts,
+} from "@/services/liturgical";
 import { Colours } from "@/styles/Colours";
 import { fontSize, getCommonStyles } from "@/styles/CommonStyles";
 import { faBed } from "@fortawesome/free-solid-svg-icons/faBed";
@@ -60,11 +62,6 @@ import {
 } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import toTitleCase from "titlecase";
-
-interface LiturgicalData {
-  publicUrl: string;
-  typeOfService: string;
-}
 
 interface OrganizedData {
   [service: string]: {
@@ -163,22 +160,10 @@ export default function PrayerScreen(): JSX.Element {
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
-  const [data, setData] = useState<LiturgicalData[] | null>(null);
-  const [readings, setReadings] = useState<{
-    date?: string;
-    reading1Title?: string;
-    reading1Teaser?: string;
-    reading2Title?: string;
-    reading2Teaser?: string;
-    reading3Title?: string;
-    reading3Teaser?: string;
-  }>({});
-  const [readingsText, setReadingsText] = useState<{
-    reading1FullText?: string;
-    reading2FullText?: string;
-    reading3FullText?: string;
-  }>({});
-  const [feastTitle, setFeastTitle] = useState<{ feastTitle?: string }>({});
+  const [data, setData] = useState<LiturgicalText[] | null>(null);
+  const [readings, setReadings] = useState<Partial<ReadingTeasers>>({});
+  const [readingsText, setReadingsText] = useState<ReadingTexts>({});
+  const [feastTitle, setFeastTitle] = useState<FeastTitle>({});
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -197,7 +182,7 @@ export default function PrayerScreen(): JSX.Element {
 
   const styles = getStyles();
 
-  const organizeData = (data: LiturgicalData[]): OrganizedData => {
+  const organizeData = (data: LiturgicalText[]): OrganizedData => {
     return data.reduce((acc, { publicUrl, typeOfService }) => {
       if (!publicUrl) return acc;
       if (typeOfService.includes("PDF")) {
@@ -208,17 +193,11 @@ export default function PrayerScreen(): JSX.Element {
     }, {} as OrganizedData);
   };
 
-  const processFetchedData = ({
-    day,
-    texts,
-  }: {
-    day: any;
-    texts: LiturgicalData[] | null;
-  }) => {
+  const processFetchedData = ({ day, texts }: LiturgicalData) => {
     if (day) {
-      setReadings(getReadingTeasers(day));
-      setReadingsText(getReadingTexts(day));
-      setFeastTitle(getFeastTitle(day));
+      setReadings(liturgicalService.getReadingTeasers(day));
+      setReadingsText(liturgicalService.getReadingTexts(day));
+      setFeastTitle(liturgicalService.getFeastTitle(day));
     } else {
       setReadings({});
       setReadingsText({});
@@ -245,7 +224,7 @@ export default function PrayerScreen(): JSX.Element {
     setData(null); // Clear stale data
 
     try {
-      const { day, texts } = await fetchAntiochian(date);
+      const { day, texts } = await liturgicalService.getLiturgicalData(date);
 
       // Update raw data and organize it immediately
       if (texts) {
@@ -264,9 +243,9 @@ export default function PrayerScreen(): JSX.Element {
       }
 
       if (day) {
-        setReadings(getReadingTeasers(day));
-        setReadingsText(getReadingTexts(day));
-        setFeastTitle(getFeastTitle(day));
+        setReadings(liturgicalService.getReadingTeasers(day));
+        setReadingsText(liturgicalService.getReadingTexts(day));
+        setFeastTitle(liturgicalService.getFeastTitle(day));
       } else {
         setReadings({});
         setReadingsText({});
@@ -286,7 +265,7 @@ export default function PrayerScreen(): JSX.Element {
   const onRefresh = useCallback(async () => {
     setRefreshing(true); // Set refreshing to true
     try {
-      const { day, texts } = await fetchAntiochian();
+      const { day, texts } = await liturgicalService.getLiturgicalData();
       processFetchedData({ day, texts });
       setSelectedDate(new Date());
     } catch (err) {
@@ -329,7 +308,7 @@ export default function PrayerScreen(): JSX.Element {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const { day, texts } = await fetchAntiochian();
+        const { day, texts } = await liturgicalService.getLiturgicalData();
         processFetchedData({ day, texts });
       } catch (err) {
         setError(err as Error);
