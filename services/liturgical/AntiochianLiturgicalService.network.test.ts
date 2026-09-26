@@ -74,6 +74,13 @@ const defaultGet = async (url: string): Promise<HttpResponse> => {
   throw new Error(`Unexpected GET ${url}`);
 };
 
+// A provider day with fields dropped, as a malformed payload would arrive
+const dayWithout = (...fields: string[]): LiturgicalDay => {
+  const day: Record<string, unknown> = { ...liturgicalDay(ANCHOR_ID) };
+  fields.forEach((field) => delete day[field]);
+  return day as LiturgicalDay;
+};
+
 const getCalls = (http: FakeHttp) =>
   http.get.mock.calls.map(([url]: [string]) => url);
 
@@ -205,6 +212,137 @@ describe("AntiochianLiturgicalService over the network", () => {
       expect(service.getReadingTeasers(day!).reading2Title).toBe(
         "Matthew 14:22-34",
       );
+    });
+  });
+
+  describe("malformed and empty responses", () => {
+    const date = new Date("2026-08-14T00:00:00Z");
+
+    const withGet = (
+      override: (url: string) => HttpResponse | undefined,
+    ): void => {
+      http.get.mockImplementation(
+        async (url: string) => override(url) ?? defaultGet(url),
+      );
+    };
+
+    it("returns null day and texts for non-200 responses", async () => {
+      withGet((url) =>
+        url === `${DAY_URL}0` ? undefined : { status: 204, data: "" },
+      );
+
+      await expect(service.getLiturgicalData(date)).resolves.toEqual({
+        day: null,
+        texts: null,
+      });
+    });
+
+    it("returns an empty text list when no services are published", async () => {
+      withGet((url) => (url.startsWith(TEXTS_URL) ? ok([]) : undefined));
+
+      const { texts } = await service.getLiturgicalData(date);
+
+      expect(texts).toEqual([]);
+    });
+
+    it("returns null texts for an empty body", async () => {
+      withGet((url) => (url.startsWith(TEXTS_URL) ? ok(null) : undefined));
+
+      const { texts } = await service.getLiturgicalData(date);
+
+      expect(texts).toBeNull();
+    });
+
+    it("returns an undefined day when the body lacks liturgicalDay", async () => {
+      withGet((url) =>
+        url === `${DAY_URL}${ANCHOR_ID + 1}` ? ok({}) : undefined,
+      );
+
+      const { day } = await service.getLiturgicalData(date);
+
+      // Not null: callers must treat any falsy day as missing
+      expect(day).toBeUndefined();
+    });
+
+    it("does not cache a missing day, so the next request retries", async () => {
+      withGet((url) =>
+        url === `${DAY_URL}${ANCHOR_ID + 1}` ? ok({}) : undefined,
+      );
+      await service.getLiturgicalData(date);
+
+      http.get.mockImplementation(defaultGet);
+      const { day } = await service.getLiturgicalData(date);
+
+      expect(day).toEqual(liturgicalDay(ANCHOR_ID + 1));
+    });
+
+    it("rejects without fetching data when the token request fails", async () => {
+      http.post.mockRejectedValue(new Error("Request failed with status 401"));
+
+      await expect(service.getLiturgicalData(date)).rejects.toThrow(
+        "Request failed with status 401",
+      );
+      expect(http.get).not.toHaveBeenCalled();
+    });
+
+    it("rejects when the anchor response lacks liturgicalDay, then re-authenticates", async () => {
+      withGet((url) => (url === `${DAY_URL}0` ? ok({}) : undefined));
+
+      await expect(service.getLiturgicalData(date)).rejects.toThrow(TypeError);
+
+      http.get.mockImplementation(defaultGet);
+      await expect(service.getLiturgicalData(date)).resolves.toEqual({
+        day: liturgicalDay(ANCHOR_ID + 1),
+        texts: serviceTexts,
+      });
+      expect(http.post).toHaveBeenCalledTimes(2);
+    });
+
+    it("sends an undefined bearer token when the token body is empty", async () => {
+      http.post.mockResolvedValue(ok({}));
+
+      await service.getLiturgicalData(date);
+
+      expect(http.defaults.headers.Authorization).toBe("Bearer undefined");
+    });
+
+    it("rejects when a data request fails", async () => {
+      withGet((url) => {
+        if (url.startsWith(TEXTS_URL)) {
+          throw new Error("Request failed with status 500");
+        }
+        return undefined;
+      });
+
+      await expect(service.getLiturgicalData(date)).rejects.toThrow(
+        "Request failed with status 500",
+      );
+    });
+
+    it("defaults a missing third reading to empty teasers", () => {
+      const day = dayWithout(
+        "reading3Title",
+        "reading3Teaser",
+        "reading3FullText",
+      );
+
+      expect(service.getReadingTeasers(day)).toMatchObject({
+        reading3Title: "",
+        reading3Teaser: "",
+      });
+      expect(service.getReadingTexts(day).reading3FullText).toBeUndefined();
+    });
+
+    it("leaves a missing feast title undefined", () => {
+      const day = dayWithout("feastDayTitle");
+
+      expect(service.getFeastTitle(day)).toEqual({ feastTitle: undefined });
+    });
+
+    it("throws when a first or second reading title is missing", () => {
+      const day = dayWithout("reading2Title");
+
+      expect(() => service.getReadingTeasers(day)).toThrow(TypeError);
     });
   });
 });
