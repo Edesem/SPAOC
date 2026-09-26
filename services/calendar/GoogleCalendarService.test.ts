@@ -368,3 +368,117 @@ describe("GoogleCalendarService", () => {
     });
   });
 });
+
+describe("GoogleCalendarService with the global fetch", () => {
+  const originalFetch = globalThis.fetch;
+  let fetchMock: jest.Mock;
+
+  // Shape of a real events.list response, including fields the app ignores
+  const eventsListResponse = {
+    kind: "calendar#events",
+    etag: '"p33c9vvnrlso8o0o"',
+    summary: "St Paul Fasting",
+    timeZone: "Australia/Melbourne",
+    updated: "2026-08-01T02:13:45.123Z",
+    accessRole: "reader",
+    nextSyncToken: "CPDAlvWDx70CEPDAlvWDx70CGAU=",
+    items: [
+      {
+        kind: "calendar#event",
+        etag: '"3181161784712000"',
+        id: "7q2m1v0g6c9s",
+        status: "confirmed",
+        htmlLink: "https://www.google.com/calendar/event?eid=abc",
+        created: "2026-07-01T00:00:00.000Z",
+        updated: "2026-07-02T00:00:00.000Z",
+        summary: "Dormition Fast",
+        description: "Fast from <i>meat</i> and dairy",
+        creator: { email: "office@example.com" },
+        organizer: { email: "fasting-id", self: true },
+        start: { date: "2026-08-01" },
+        end: { date: "2026-08-15" },
+        transparency: "transparent",
+        iCalUID: "7q2m1v0g6c9s@google.com",
+        sequence: 0,
+        eventType: "default",
+      },
+      {
+        kind: "calendar#event",
+        id: "a1b2c3",
+        status: "confirmed",
+        summary: "Paraklesis",
+        location: "St Paul's Church",
+        start: {
+          dateTime: "2026-08-03T19:00:00+10:00",
+          timeZone: "Australia/Melbourne",
+        },
+        end: {
+          dateTime: "2026-08-03T20:00:00+10:00",
+          timeZone: "Australia/Melbourne",
+        },
+      },
+    ],
+  };
+
+  beforeEach(() => {
+    fetchMock = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => eventsListResponse,
+    });
+    globalThis.fetch = fetchMock;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("requests through fetch and normalizes a full provider payload", async () => {
+    const service = new GoogleCalendarService({
+      apiKey: "test-key",
+      fastingCalendar: { source: "fasting", calendarId: "fasting-id" },
+    });
+
+    const events = await service.getFastingEvents(
+      new Date("2026-08-01T00:00:00.000Z"),
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe(
+      "https://www.googleapis.com/calendar/v3/calendars/fasting-id/events" +
+        "?key=test-key&singleEvents=true" +
+        "&timeMin=2026-08-01T00%3A00%3A00.000Z&orderBy=startTime",
+    );
+    expect(events).toEqual([
+      {
+        id: "7q2m1v0g6c9s",
+        title: "Dormition Fast",
+        start: "2026-08-01T00:00:00.000Z",
+        end: "2026-08-15",
+        description: "Fast from <i>meat</i> and dairy",
+        location: undefined,
+        source: "fasting",
+        data: [],
+      },
+      {
+        id: "a1b2c3",
+        title: "Paraklesis",
+        start: "2026-08-03T09:00:00.000Z",
+        end: "2026-08-03T20:00:00+10:00",
+        description: undefined,
+        location: "St Paul's Church",
+        source: "fasting",
+        data: [],
+      },
+    ]);
+  });
+
+  it("rejects when the network request itself fails", async () => {
+    fetchMock.mockRejectedValue(new TypeError("Network request failed"));
+    const service = new GoogleCalendarService({ apiKey: "test-key" });
+
+    await expect(service.getFastingEvents()).rejects.toThrow(
+      "Network request failed",
+    );
+  });
+});
