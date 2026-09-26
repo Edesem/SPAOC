@@ -291,9 +291,7 @@ describe("GoogleCalendarService", () => {
     it("rejects fasting events when the body is not JSON", async () => {
       fetchFn.mockResolvedValue(unparseableResponse());
 
-      await expect(service.getFastingEvents(from)).rejects.toThrow(
-        SyntaxError,
-      );
+      await expect(service.getFastingEvents(from)).rejects.toThrow(SyntaxError);
     });
 
     it("rejects fasting events containing an unparseable date", async () => {
@@ -301,9 +299,7 @@ describe("GoogleCalendarService", () => {
         jsonResponse({ items: [{ id: "f1", start: {} }] }),
       );
 
-      await expect(service.getFastingEvents(from)).rejects.toThrow(
-        RangeError,
-      );
+      await expect(service.getFastingEvents(from)).rejects.toThrow(RangeError);
     });
 
     it("returns no saints when the body is not JSON", async () => {
