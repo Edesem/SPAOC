@@ -173,6 +173,130 @@ describe("GoogleCalendarService", () => {
     });
   });
 
+  describe("malformed responses", () => {
+    const from = new Date("2026-08-13T00:00:00.000Z");
+    let consoleErrorSpy: jest.SpyInstance;
+
+    const jsonResponse = (body: unknown) =>
+      ({ ok: true, status: 200, json: async () => body }) as Response;
+
+    const unparseableResponse = () =>
+      ({
+        ok: true,
+        status: 200,
+        json: async () => {
+          throw new SyntaxError("Unexpected token < in JSON");
+        },
+      }) as unknown as Response;
+
+    beforeEach(() => {
+      consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("treats null items as empty", async () => {
+      fetchFn.mockResolvedValue(jsonResponse({ items: null }));
+
+      await expect(service.getParishEvents(from)).resolves.toEqual([]);
+      await expect(service.getFastingEvents(from)).resolves.toEqual([]);
+      await expect(service.getSaintsForDate(from)).resolves.toEqual([]);
+    });
+
+    it("skips a parish calendar whose body is not JSON", async () => {
+      fetchFn.mockImplementation(async (url: string) =>
+        url.includes("youth")
+          ? unparseableResponse()
+          : okResponse([googleEvent("c1", "2026-08-14T10:00:00Z")]),
+      );
+
+      const events = await service.getParishEvents(from);
+
+      expect(events.map((e) => e.id)).toEqual(["c1"]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error fetching youth:",
+        expect.any(SyntaxError),
+      );
+    });
+
+    it("skips a parish calendar containing an event without a start", async () => {
+      fetchFn.mockImplementation(async (url: string) =>
+        url.includes("youth")
+          ? jsonResponse({
+              items: [
+                googleEvent("y1", "2026-08-15T10:00:00Z"),
+                { id: "broken", summary: "No start" },
+              ],
+            })
+          : okResponse([googleEvent("c1", "2026-08-14T10:00:00Z")]),
+      );
+
+      const events = await service.getParishEvents(from);
+
+      // One bad item drops the whole calendar rather than just that event
+      expect(events.map((e) => e.id)).toEqual(["c1"]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error fetching youth:",
+        expect.any(TypeError),
+      );
+    });
+
+    it("skips a parish calendar containing an unparseable date", async () => {
+      fetchFn.mockImplementation(async (url: string) =>
+        url.includes("youth")
+          ? okResponse([googleEvent("y1", "not-a-date")])
+          : okResponse([googleEvent("c1", "2026-08-14T10:00:00Z")]),
+      );
+
+      const events = await service.getParishEvents(from);
+
+      expect(events.map((e) => e.id)).toEqual(["c1"]);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Error fetching youth:",
+        expect.any(RangeError),
+      );
+    });
+
+    it("rejects fasting events when the body is not JSON", async () => {
+      fetchFn.mockResolvedValue(unparseableResponse());
+
+      await expect(service.getFastingEvents(from)).rejects.toThrow(
+        SyntaxError,
+      );
+    });
+
+    it("rejects fasting events containing an unparseable date", async () => {
+      fetchFn.mockResolvedValue(
+        jsonResponse({ items: [{ id: "f1", start: {} }] }),
+      );
+
+      await expect(service.getFastingEvents(from)).rejects.toThrow(
+        RangeError,
+      );
+    });
+
+    it("returns no saints when the body is not JSON", async () => {
+      fetchFn.mockResolvedValue(unparseableResponse());
+
+      await expect(service.getSaintsForDate(from)).resolves.toEqual([]);
+      expect(consoleErrorSpy).toHaveBeenCalled();
+    });
+
+    it("tolerates saint entries missing fields other than summary", async () => {
+      fetchFn.mockResolvedValue(
+        jsonResponse({ items: [{ id: "s1", summary: "St Paul" }] }),
+      );
+
+      await expect(service.getSaintsForDate(from)).resolves.toEqual([
+        "St Paul",
+      ]);
+    });
+  });
+
   describe("getSaintsForDate", () => {
     it("queries the whole local day without mutating the date", async () => {
       fetchFn.mockResolvedValue(okResponse([]));
