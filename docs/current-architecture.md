@@ -226,16 +226,21 @@ The repository currently does not use a conventional `.env` configuration layer.
 There is one visible Jest snapshot test:
 - [components/__tests__/ThemedText-test.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/components/__tests__/ThemedText-test.tsx)
 
+Both data services have service-level tests that mock the network, not React hooks:
+- [services/calendar/](../services/calendar/index.ts) tests inject or stub `fetch` and cover successful Google Calendar payloads, malformed and empty responses, and date normalization of timed and all-day events.
+- [AntiochianLiturgicalService.network.test.ts](../services/liturgical/AntiochianLiturgicalService.network.test.ts) runs the service on the real Antiochian client with only axios mocked. It covers authentication, day ID derivation from dates, caching, malformed and empty responses, and reading/feast transformations.
+
+Date tests build instants with explicit UTC offsets so they pass in any device time zone.
+
 ### What is not tested
 
 The current test coverage does not appear to cover:
 
-- The hook layers that fetch data from Google Calendar or the Antiochian API.
 - Navigation flows between screens.
 - AsyncStorage persistence logic for favourites/settings.
 - Notification scheduling and cancellation logic.
-- Error handling for remote failure, malformed responses, and empty data.
-- State transformation logic such as date grouping and fast-day derivation.
+- How screens present remote failures and empty data to the user.
+- UI-level transformation logic such as date grouping and fast-day derivation.
 
 The test script in [package.json](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/package.json) runs Jest in watch mode, which is not ideal for CI or regression safety.
 
