@@ -76,6 +76,33 @@ describe("GoogleCalendarService", () => {
       );
     });
 
+    it("defaults the window start to now", async () => {
+      jest.useFakeTimers().setSystemTime(new Date("2026-09-25T22:15:00Z"));
+      fetchFn.mockResolvedValue(okResponse([]));
+
+      await service.getParishEvents();
+
+      expect(requestedUrl(fetchFn).searchParams.get("timeMin")).toBe(
+        "2026-09-25T22:15:00.000Z",
+      );
+      jest.useRealTimers();
+    });
+
+    it("sorts across calendars by instant when offsets differ", async () => {
+      fetchFn.mockImplementation(async (url: string) =>
+        url.includes("youth")
+          ? okResponse([googleEvent("y1", "2026-08-14T08:00:00-05:00")])
+          : okResponse([googleEvent("c1", "2026-08-14T20:00:00+10:00")]),
+      );
+
+      const events = await service.getParishEvents(from);
+
+      expect(events.map(({ id, start }) => ({ id, start }))).toEqual([
+        { id: "c1", start: "2026-08-14T10:00:00.000Z" },
+        { id: "y1", start: "2026-08-14T13:00:00.000Z" },
+      ]);
+    });
+
     it("merges calendars, tags sources, and sorts by start", async () => {
       fetchFn.mockImplementation(async (url: string) =>
         url.includes("youth")
