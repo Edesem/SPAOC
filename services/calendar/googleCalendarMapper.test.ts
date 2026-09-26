@@ -72,9 +72,7 @@ describe("normalizeGoogleEvent", () => {
 
 describe("isPrivateEvent", () => {
   it("is true only for private visibility", () => {
-    expect(isPrivateEvent({ ...timedEvent, visibility: "private" })).toBe(
-      true,
-    );
+    expect(isPrivateEvent({ ...timedEvent, visibility: "private" })).toBe(true);
     expect(isPrivateEvent({ ...timedEvent, visibility: "public" })).toBe(false);
     expect(isPrivateEvent(timedEvent)).toBe(false);
   });
