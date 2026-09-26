@@ -345,4 +345,78 @@ describe("AntiochianLiturgicalService over the network", () => {
       expect(() => service.getReadingTeasers(day)).toThrow(TypeError);
     });
   });
+
+  describe("date parsing and normalization", () => {
+    // Day and texts URLs requested for a date, ignoring the anchor lookup
+    const requestsFor = async (date?: Date) => {
+      await service.getLiturgicalData(date);
+      return getCalls(http).filter((url) => url !== `${DAY_URL}0`);
+    };
+
+    it.each([
+      ["the anchor day", "2026-08-13", ANCHOR_ID],
+      ["the next day", "2026-08-14", ANCHOR_ID + 1],
+      ["a later month", "2026-09-01", ANCHOR_ID + 19],
+      ["the next year", "2027-01-01", ANCHOR_ID + 141],
+      ["an earlier day", "2026-08-01", ANCHOR_ID - 12],
+    ])("maps %s to its day ID and text date", async (_, isoDate, id) => {
+      await expect(
+        requestsFor(new Date(`${isoDate}T00:00:00Z`)),
+      ).resolves.toEqual([`${DAY_URL}${id}`, `${TEXTS_URL}${isoDate}`]);
+    });
+
+    it("ignores the time of day within a UTC day", async () => {
+      await expect(
+        requestsFor(new Date("2026-08-16T23:59:59.999Z")),
+      ).resolves.toEqual([
+        `${DAY_URL}${ANCHOR_ID + 3}`,
+        `${TEXTS_URL}2026-08-16`,
+      ]);
+    });
+
+    it("keys requests by UTC calendar day, not the device's local day", async () => {
+      // 8am on the 16th in Melbourne is still the 15th in UTC
+      await expect(
+        requestsFor(new Date("2026-08-16T08:00:00+10:00")),
+      ).resolves.toEqual([
+        `${DAY_URL}${ANCHOR_ID + 2}`,
+        `${TEXTS_URL}2026-08-15`,
+      ]);
+    });
+
+    it("anchors IDs on the anchor day's originalCalendarDate", async () => {
+      http.get.mockImplementation(async (url: string) =>
+        url === `${DAY_URL}0`
+          ? ok({
+              liturgicalDay: liturgicalDay(500, {
+                originalCalendarDate: "2026-09-01T00:00:00.000Z",
+              }),
+            })
+          : defaultGet(url),
+      );
+
+      await expect(
+        requestsFor(new Date("2026-09-03T00:00:00Z")),
+      ).resolves.toEqual([`${DAY_URL}502`, `${TEXTS_URL}2026-09-03`]);
+    });
+
+    it("shares one cached day between times on the same UTC day", async () => {
+      await service.getLiturgicalData(new Date("2026-08-14T01:00:00Z"));
+      await service.getLiturgicalData(new Date("2026-08-14T22:00:00Z"));
+
+      expect(
+        getCalls(http).filter((url) => url === `${DAY_URL}${ANCHOR_ID + 1}`),
+      ).toHaveLength(1);
+    });
+
+    it("defaults to the current instant", async () => {
+      jest.useFakeTimers().setSystemTime(new Date("2026-09-25T22:15:00Z"));
+
+      await expect(requestsFor()).resolves.toEqual([
+        `${DAY_URL}${ANCHOR_ID + 43}`,
+        `${TEXTS_URL}2026-09-25`,
+      ]);
+      jest.useRealTimers();
+    });
+  });
 });
