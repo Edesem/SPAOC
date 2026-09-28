@@ -72,9 +72,7 @@ describe("normalizeGoogleEvent", () => {
 
 describe("isPrivateEvent", () => {
   it("is true only for private visibility", () => {
-    expect(isPrivateEvent({ ...timedEvent, visibility: "private" })).toBe(
-      true,
-    );
+    expect(isPrivateEvent({ ...timedEvent, visibility: "private" })).toBe(true);
     expect(isPrivateEvent({ ...timedEvent, visibility: "public" })).toBe(false);
     expect(isPrivateEvent(timedEvent)).toBe(false);
   });
@@ -95,5 +93,86 @@ describe("byStartTime", () => {
       "1",
       "2",
     ]);
+  });
+});
+
+describe("date normalization", () => {
+  const withStart = (start: GoogleCalendarEvent["start"]) =>
+    normalizeGoogleEvent({ id: "d", start }, "church").start;
+
+  it.each([
+    ["UTC", "2026-08-13T09:00:00Z"],
+    ["a positive offset", "2026-08-13T19:00:00+10:00"],
+    ["a negative offset", "2026-08-13T05:00:00-04:00"],
+    ["fractional seconds", "2026-08-13T09:00:00.000Z"],
+  ])("normalizes a dateTime with %s to a UTC ISO string", (_, dateTime) => {
+    expect(withStart({ dateTime })).toBe("2026-08-13T09:00:00.000Z");
+  });
+
+  it("parses an all-day date as UTC midnight regardless of device zone", () => {
+    expect(withStart({ date: "2026-12-31" })).toBe("2026-12-31T00:00:00.000Z");
+  });
+
+  it("prefers dateTime over date when both are present", () => {
+    expect(
+      withStart({ date: "2026-08-20", dateTime: "2026-08-13T09:00:00Z" }),
+    ).toBe("2026-08-13T09:00:00.000Z");
+  });
+
+  it("keeps the provider's end value, offset included", () => {
+    const event = normalizeGoogleEvent(
+      {
+        id: "d",
+        start: { dateTime: "2026-08-13T19:00:00+10:00" },
+        end: { dateTime: "2026-08-13T21:00:00+10:00" },
+      },
+      "church",
+    );
+
+    expect(event.end).toBe("2026-08-13T21:00:00+10:00");
+  });
+
+  it("prefers the end dateTime over the end date", () => {
+    const event = normalizeGoogleEvent(
+      {
+        id: "d",
+        start: { date: "2026-08-13" },
+        end: { date: "2026-08-14", dateTime: "2026-08-13T21:00:00Z" },
+      },
+      "church",
+    );
+
+    expect(event.end).toBe("2026-08-13T21:00:00Z");
+  });
+
+  it.each([
+    ["an empty start", {}],
+    ["an unparseable dateTime", { dateTime: "13/08/2026 7pm" }],
+    ["an unparseable date", { date: "2026-02-30x" }],
+  ])("throws a RangeError for %s", (_, start) => {
+    expect(() => withStart(start)).toThrow(RangeError);
+  });
+});
+
+describe("byStartTime with mixed event kinds", () => {
+  it("compares instants, not the provider's local wall time", () => {
+    // 9am in Sydney on the 13th is 23:00 UTC on the 12th, so it sorts ahead
+    // of an all-day event on the 13th, which is anchored at UTC midnight
+    const allDay = normalizeGoogleEvent(
+      { id: "all-day", start: { date: "2026-08-13" } },
+      "church",
+    );
+    const morning = normalizeGoogleEvent(
+      { id: "morning", start: { dateTime: "2026-08-13T09:00:00+10:00" } },
+      "church",
+    );
+    const evening = normalizeGoogleEvent(
+      { id: "evening", start: { dateTime: "2026-08-13T19:00:00+10:00" } },
+      "church",
+    );
+
+    expect(
+      [evening, allDay, morning].sort(byStartTime).map((e) => e.id),
+    ).toEqual(["morning", "all-day", "evening"]);
   });
 });
