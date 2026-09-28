@@ -5,7 +5,7 @@ export const SQUARE_URL = "https://square.link/u/1x7oJTMQ";
 function getCalendarApiKey() {
   if (Platform.OS === "ios") {
     return __DEV__
-      ? process.env.EXPO_PUBLIC_IOS_CAL_DEBUG_KEY
+      ? process.env.EXPO_PUBLIC_IOS_CAL_DEV_KEY
       : process.env.EXPO_PUBLIC_IOS_CAL_PROD_KEY;
   }
 
