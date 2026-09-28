@@ -3,8 +3,8 @@ import {
   FAVOURITES_KEY,
   FAVOURITES_NOTIFICATIONS_ENABLED,
 } from "@/constants/consts";
-import { fetchSaintsForDate } from "@/hooks/useDailySaint";
 import { scheduleNotification } from "@/notifications";
+import { calendarService } from "@/services/calendar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 import { useState } from "react";
@@ -28,7 +28,7 @@ export async function scheduleSaintNotificationsForNext7Days() {
     date.setDate(date.getDate() + i);
     const dateKey = date.toDateString();
 
-    const saints = await fetchSaintsForDate(date);
+    const saints = await calendarService.getSaintsForDate(date);
 
     if (saints.length === 0) continue;
 

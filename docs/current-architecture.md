@@ -67,9 +67,10 @@ flowchart TD
     D --> D2[useDailySaint]
     D --> D3[useFastDay]
     D --> D4[utils/notifications]
-    D1 --> D5[Google Calendar events API]
-    D2 --> D6[Google Calendar saints API]
-    D3 --> D7[Google Calendar fasting API]
+    D1 --> D0[CalendarDataService]
+    D2 --> D0
+    D3 --> D0
+    D0 --> D5[Google Calendar API]
     D4 --> D8[Expo Notifications + AsyncStorage]
 
     E --> E1[AsyncStorage favourites]
@@ -104,9 +105,11 @@ Entry point:
 Flow:
 - On mount, the Home screen requests notification permissions, sets up notification listeners, and schedules Saint of the Day notifications.
 - It calls three hooks:
-  - [hooks/useEvents.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useEvents.tsx) to fetch event data from multiple Google Calendar endpoints.
-  - [hooks/useDailySaint.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useDailySaint.ts) to fetch saints for the current date.
-  - [hooks/useFastDay.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useFastDay.ts) to fetch fasting calendar events and derive fast labels.
+  - [hooks/useEvents.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useEvents.tsx) to load parish events from every event calendar.
+  - [hooks/useDailySaint.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useDailySaint.ts) to load saints for the current date.
+  - [hooks/useFastDay.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useFastDay.ts) to load fasting calendar events and derive fast labels.
+- All three hooks load data through `calendarService` from [services/calendar/](../services/calendar/index.ts), which implements the `CalendarDataService` interface. `useEvents` is kept as a compatibility wrapper so the screen is unchanged.
+- The current implementation, `GoogleCalendarService`, holds the calendar IDs, request URLs, and error handling. [services/calendar/googleCalendarMapper.ts](../services/calendar/googleCalendarMapper.ts) normalizes Google events into the app's `EventData` shape. Nothing outside [services/calendar/](../services/calendar/index.ts) knows about Google Calendar.
 - The data is grouped by date with [utils/dateUtils.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/dateUtils.ts) and passed to a SectionList.
 - Tapping an event navigates to [app/eventDetails.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/eventDetails.tsx) with the event payload.
 
@@ -198,7 +201,8 @@ The app uses the following configuration mechanisms:
 - [app.json](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app.json) for Expo app metadata, bundle ID, orientation, scheme, and plugin configuration.
 - [eas.json](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/eas.json) for build profiles.
 - [package.json](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/package.json) for scripts, dependencies, and Expo/Jest configuration.
-- [constants/consts.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/constants/consts.tsx) for many hard-coded URLs, calendar IDs, storage keys, and API-related values.
+- [constants/consts.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/constants/consts.tsx) for many hard-coded URLs, storage keys, and API-related values.
+- [services/calendar/googleCalendarConfig.ts](../services/calendar/googleCalendarConfig.ts) for the Google Calendar IDs and API base URL.
 - AsyncStorage keys defined in [constants/consts.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/constants/consts.tsx).
 
 ### Environment variables and secrets

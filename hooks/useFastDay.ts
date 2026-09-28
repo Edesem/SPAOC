@@ -1,4 +1,4 @@
-import { API_KEY, FASTING_BASE_URL } from "@/constants/consts";
+import { calendarService } from "@/services/calendar";
 import { getCurrentDate } from "@/utils/dateUtils";
 import { toTitleCase } from "@/utils/toTitleCase";
 import { useCallback, useEffect, useState } from "react";
@@ -9,26 +9,12 @@ export const useFastDay = () => {
 
   const fetchEvents = useCallback(async () => {
     try {
-      const response = await fetch(
-        `${FASTING_BASE_URL}?key=${API_KEY}&timeMin=${new Date().toISOString()}&singleEvents=true&orderBy=startTime`,
-      );
-      if (!response.ok)
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      const data = await response.json();
-
-      const formattedEvents = data.items.map((item: any) => ({
-        id: item.id,
-        title: item.summary || "No Title",
-        start: item.start.dateTime || item.start.date,
-        end: item.end?.dateTime || item.end?.date || "",
-        description: item.description,
-        location: item.location,
-      }));
+      const fastingEvents = await calendarService.getFastingEvents();
 
       const today = getCurrentDate();
 
       // Filter for fasting events on today's date
-      const todayFastingEvents = formattedEvents.filter((event: any) => {
+      const todayFastingEvents = fastingEvents.filter((event) => {
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
 
@@ -49,7 +35,7 @@ export const useFastDay = () => {
 
       const fastDay: string[] = [];
 
-      todayFastingEvents.forEach((event: any) => {
+      todayFastingEvents.forEach((event) => {
         fastDay.push(toTitleCase(event.title));
       });
 
