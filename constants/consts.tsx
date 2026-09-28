@@ -10,7 +10,7 @@ function getCalendarApiKey() {
   }
 
   return __DEV__
-    ? process.env.EXPO_PUBLIC_ANDROID_CAL_DEBUG_KEY
+    ? process.env.EXPO_PUBLIC_ANDROID_CAL_DEV_KEY
     : process.env.EXPO_PUBLIC_ANDROID_CAL_PROD_KEY;
 }
 
