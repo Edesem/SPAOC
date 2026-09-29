@@ -73,8 +73,10 @@ flowchart TD
     D0 --> D5[Google Calendar API]
     D4 --> D8[Expo Notifications + AsyncStorage]
 
-    E --> E1[AsyncStorage favourites]
+    E --> E0[Favourites repository]
     E --> E2[EventItem]
+    E2 --> E0
+    E0 --> E1[AsyncStorage favourites]
 
     F --> F0[LiturgicalDataService]
     F0 --> F1[AntiochianApi]
@@ -144,13 +146,15 @@ Entry point:
 - [components/EventItem.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/components/EventItem.tsx) and [app/(tabs)/favourites.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/(tabs)/favourites.tsx)
 
 Flow:
-- Tapping the star icon in the event item writes the event to AsyncStorage under the `favourites` key.
-- The Favourites screen reads that key on focus, filters out expired events, and re-writes the data back to storage.
+- Tapping the star icon in the event item calls `addFavourite` or `removeFavourite` on the [favourites repository](../services/favourites/favouritesRepository.ts).
+- The Favourites screen calls `removeExpiredFavourites` on focus, which drops expired events from storage and returns the upcoming ones.
+- Favourite event notifications read the list with `getFavourites`.
 - The screen renders favourite items using [components/EventItem.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/components/EventItem.tsx).
 
 State and side effects:
-- Favourites are stored as a JSON object keyed by event ID/title.
-- The screen mutates and re-persisted storage during load.
+- Favourites are stored in AsyncStorage under the `favourites` key as a JSON object keyed by event ID/title.
+- Only the repository reads or writes that key, so callers do not depend on the storage format.
+- Expired favourites are removed from storage whenever the Favourites screen loads.
 
 ### 3.4 Settings and notification flow
 
@@ -232,12 +236,15 @@ Both data services have service-level tests that mock the network, not React hoo
 
 Date tests build instants with explicit UTC offsets so they pass in any device time zone.
 
+Favourites persistence has repository-level tests against the AsyncStorage Jest mock:
+- [favouritesRepository.test.ts](../services/favourites/favouritesRepository.test.ts) covers loading data already stored in the existing format, add/remove, expiry at the end-time boundary, and invalid stored JSON.
+
 ### What is not tested
 
 The current test coverage does not appear to cover:
 
 - Navigation flows between screens.
-- AsyncStorage persistence logic for favourites/settings.
+- AsyncStorage persistence logic for settings.
 - Notification scheduling and cancellation logic.
 - How screens present remote failures and empty data to the user.
 - UI-level transformation logic such as date grouping and fast-day derivation.
@@ -262,15 +269,13 @@ Evidence:
 ### 6.2 Persistence logic is duplicated and scattered
 
 Relevant files:
-- [components/EventItem.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/components/EventItem.tsx)
-- [app/(tabs)/favourites.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/(tabs)/favourites.tsx)
 - [app/settings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/settings.tsx)
 - [utils/notifications.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/notifications.ts)
 
 Evidence:
-- Favourites are written in one place and read/rewritten in another.
+- Favourites now go through a single [repository](../services/favourites/favouritesRepository.ts); settings do not yet have an equivalent.
 - Notification preferences and calendar settings use multiple direct AsyncStorage reads/writes.
-- There is no single persistence abstraction or storage contract.
+- There is no persistence abstraction or storage contract for settings.
 
 ### 6.3 Remote integration logic is embedded in hooks and screens
 
