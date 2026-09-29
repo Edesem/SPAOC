@@ -2,16 +2,22 @@ import { Platform } from "react-native";
 export const CALENDLY_URL = "https://calendly.com/inspectre-pi/30min";
 export const SQUARE_URL = "https://square.link/u/1x7oJTMQ";
 
-function getCalendarApiKey() {
-  if (Platform.OS === "ios") {
-    return __DEV__
+function getCalendarApiKey(): string {
+  const key = Platform.OS === "ios"
+    ? __DEV__
       ? process.env.EXPO_PUBLIC_IOS_CAL_DEV_KEY
-      : process.env.EXPO_PUBLIC_IOS_CAL_PROD_KEY;
+      : process.env.EXPO_PUBLIC_IOS_CAL_PROD_KEY
+    : __DEV__
+      ? process.env.EXPO_PUBLIC_ANDROID_CAL_DEV_KEY
+      : process.env.EXPO_PUBLIC_ANDROID_CAL_PROD_KEY;
+
+  if (!key) {
+    throw new Error(
+      "Missing calendar API key: set the EXPO_PUBLIC_*_CAL_*_KEY environment variable for this platform and build.",
+    );
   }
 
-  return __DEV__
-    ? process.env.EXPO_PUBLIC_ANDROID_CAL_DEV_KEY
-    : process.env.EXPO_PUBLIC_ANDROID_CAL_PROD_KEY;
+  return key;
 }
 
 export const API_KEY = getCalendarApiKey();
