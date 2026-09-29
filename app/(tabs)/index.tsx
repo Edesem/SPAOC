@@ -1,25 +1,17 @@
 import { renderItem } from "@/components/RenderItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
-import { useDailySaint } from "@/hooks/useDailySaint";
-import { useEvents } from "@/hooks/useEvents";
-import { useFastDay } from "@/hooks/useFastDay";
-import {
-  requestNotificationPermissions,
-  setupNotificationListeners,
-} from "@/notifications";
+import { useHomeFeature } from "@/hooks/useHomeFeature";
 import { Colours } from "@/styles/Colours";
-import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import "expo-dev-client";
 import * as Haptics from "expo-haptics";
-import { router, useFocusEffect, useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   ActivityIndicator,
-  AppState,
   Image,
   Modal,
   RefreshControl,
@@ -40,70 +32,28 @@ SplashScreen.setOptions({
 });
 
 export default function HomeScreen() {
-  const appState = useRef(AppState.currentState);
-  const lastRefreshTime = useRef<number | null>(null);
   const navigation =
     useNavigation<BottomTabNavigationProp<RootTabParamList, "Home">>();
   const sectionListRef = useRef<SectionList>(null);
-  const { todaysSaints, refetchSaints } = useDailySaint();
-
-  const [refreshing, setRefreshing] = useState(false);
-
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showMonthPicker, setShowMonthPicker] = useState(false);
-
-  const { groupedEvents, refetch: refetchEvents } = useEvents();
 
   const styles = getStyles();
-  const { events, fastLoading, refetch: refetchFast } = useFastDay();
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
-  const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
 
-  // Refresh handler
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await Promise.all([refetchSaints(), refetchFast(), refetchEvents()]);
-    setRefreshing(false);
-  }, [refetchSaints, refetchFast, refetchEvents]);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        const now = Date.now();
-        if (lastRefreshTime.current === null) {
-          lastRefreshTime.current = now;
-        }
-        const minutesSinceLastRefresh =
-          (now - lastRefreshTime.current) / (1000 * 60);
-
-        if (minutesSinceLastRefresh > 300) {
-          // 5 hour threshold
-          onRefresh();
-          lastRefreshTime.current = now;
-        }
-      }
-
-      appState.current = nextAppState;
-    });
-
-    requestNotificationPermissions();
-    setupNotificationListeners();
-
-    // Schedule saint notification
-    scheduleSaintNotificationsForNext7Days();
-
-    return () => subscription.remove();
-  }, [onRefresh]);
-
-  useFocusEffect(
-    useCallback(() => {
-      refetchEvents(); // this will reload event data and favourite status
-    }, [refetchEvents]),
-  );
+  const {
+    todaysSaints,
+    todaysSaintsTitle,
+    fastLoading,
+    majorFastLabel,
+    minorFastLabel,
+    sections: sectionsWithUpcoming,
+    refreshing,
+    onRefresh,
+    selectedDate,
+    showMonthPicker,
+    setShowMonthPicker,
+    onValueChange,
+  } = useHomeFeature();
 
   // Your param list type (adjust to your app)
   type RootTabParamList = {
@@ -124,124 +74,17 @@ export default function HomeScreen() {
     return unsubscribe;
   }, [navigation]);
 
-  const filteredSections = useMemo(() => {
-    // Initial screen behaviour: show every event section.
-    if (!selectedMonth) {
-      return groupedEvents;
-    }
+  const majorFastText = majorFastLabel ? (
+    <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
+      {majorFastLabel}
+    </Text>
+  ) : null;
 
-    const month = selectedMonth.getMonth();
-    const year = selectedMonth.getFullYear();
-
-    return groupedEvents
-      .map((section) => ({
-        ...section,
-        data: section.data.filter((item) => {
-          const itemDate = new Date(item.start);
-          return (
-            itemDate.getFullYear() === year && itemDate.getMonth() === month
-          );
-        }),
-      }))
-      .filter((section) => section.data.length > 0);
-  }, [groupedEvents, selectedMonth]);
-
-  const onValueChange = useCallback(
-    (event: string, newDate: Date) => {
-      if (event === "dateSetAction") {
-        const pickedDate = newDate || selectedDate;
-        setSelectedDate(pickedDate);
-        setSelectedMonth(pickedDate);
-      }
-
-      setShowMonthPicker(false);
-    },
-    [selectedDate],
+  const minorFastText = (
+    <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
+      {minorFastLabel}
+    </Text>
   );
-
-  const sectionsWithIndex = filteredSections.map((section, index) => ({
-    ...section,
-    sectionIndex: index,
-  }));
-
-  const todaysSaintsTitle =
-    todaysSaints.length > 1 ? "Today's Feasts" : "Today's Feast:";
-
-  const sectionsWithUpcoming = [
-    {
-      title: "Top Image",
-      data: [],
-    },
-    {
-      title: "Saint of the Day",
-      data: [],
-    },
-    ...sectionsWithIndex,
-    {
-      title: "Bottom Image",
-      data: [],
-    },
-  ];
-
-  console.log(events);
-
-  // Fasting Logic
-  let majorFastText = null;
-  let minorFastText = null;
-
-  if (events.includes("Great Lent")) {
-    majorFastText = (
-      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
-        Great Lent
-      </Text>
-    );
-  } else if (events.includes("The Apostles' Fast")) {
-    majorFastText = (
-      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
-        The Apostles&apos; Fast
-      </Text>
-    );
-  } else if (events.includes("The Theotokos Fast")) {
-    majorFastText = (
-      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
-        Theotokos Fast
-      </Text>
-    );
-  } else if (events.includes("The Nativity Fast")) {
-    majorFastText = (
-      <Text style={[styles.MajorFastText, { color: theme.moreImportantText }]}>
-        The Nativity Fast
-      </Text>
-    );
-  } else {
-    majorFastText = null;
-  }
-
-  if (events.includes("Strict Fast")) {
-    minorFastText = (
-      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
-        Abstain from meat, fish, dairy, eggs, wine, olive oil
-      </Text>
-    );
-  } else if (events.includes("Fast")) {
-    minorFastText = (
-      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
-        Abstain from meat, dairy, eggs
-      </Text>
-    );
-  } else if (events.includes("Meat Fast")) {
-    minorFastText = (
-      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
-        Abstain from meat
-      </Text>
-    );
-  } else {
-    minorFastText = (
-      <Text style={[styles.minorFastText, { color: theme.moreImportantText }]}>
-        No Fast
-      </Text>
-    );
-  }
 
   const SectionHeader = ({ section }: { section: any }) => {
     return section.title === "Top Image" ? (
