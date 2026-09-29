@@ -1,8 +1,3 @@
-import {
-  CALENDAR_NOTIFICATION_SETTINGS,
-  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-  FAVOURITES_NOTIFICATIONS_ENABLED,
-} from "@/constants/consts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // App settings and notification preferences are persisted in AsyncStorage
@@ -12,6 +7,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // is the only place that knows about those keys and formats.
 const START_OF_WEEK_KEY = "START_OF_WEEK";
 const THEME_KEY = "APP_THEME";
+const DAILY_SAINTS_NOTIFICATIONS_KEY = "dailySaintsNotificationsEnabled";
+const FAVOURITES_NOTIFICATIONS_KEY = "favouriteNotificationsEnabled";
+const CALENDAR_NOTIFICATIONS_KEY = "calendarNotificationSettings";
 
 export type StartOfWeek = "sunday" | "monday";
 export type ThemeChoice = "light" | "dark" | "auto";
@@ -73,26 +71,24 @@ export async function saveThemeChoice(choice: ThemeChoice): Promise<void> {
 // as enabled.
 export async function isDailySaintNotificationsEnabled(): Promise<boolean> {
   return (
-    (await AsyncStorage.getItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED)) === "true"
+    (await AsyncStorage.getItem(DAILY_SAINTS_NOTIFICATIONS_KEY)) === "true"
   );
 }
 
 export async function saveDailySaintNotificationsEnabled(
   enabled: boolean,
 ): Promise<void> {
-  await writeFlag(DAILY_SAINTS_NOTIFICATIONS_ENABLED, enabled);
+  await writeFlag(DAILY_SAINTS_NOTIFICATIONS_KEY, enabled);
 }
 
 export async function isFavouriteNotificationsEnabled(): Promise<boolean> {
-  return (
-    (await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_ENABLED)) === "true"
-  );
+  return (await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_KEY)) === "true";
 }
 
 export async function saveFavouriteNotificationsEnabled(
   enabled: boolean,
 ): Promise<void> {
-  await writeFlag(FAVOURITES_NOTIFICATIONS_ENABLED, enabled);
+  await writeFlag(FAVOURITES_NOTIFICATIONS_KEY, enabled);
 }
 
 // Returns the toggle values the Settings screen shows (on unless stored as
@@ -104,16 +100,13 @@ export async function loadNotificationToggles(): Promise<{
   favourites: boolean;
 }> {
   const dailySaints = await AsyncStorage.getItem(
-    DAILY_SAINTS_NOTIFICATIONS_ENABLED,
+    DAILY_SAINTS_NOTIFICATIONS_KEY,
   );
   if (dailySaints !== "true")
-    await writeFlag(DAILY_SAINTS_NOTIFICATIONS_ENABLED, true);
+    await writeFlag(DAILY_SAINTS_NOTIFICATIONS_KEY, true);
 
-  const favourites = await AsyncStorage.getItem(
-    FAVOURITES_NOTIFICATIONS_ENABLED,
-  );
-  if (favourites === null)
-    await writeFlag(FAVOURITES_NOTIFICATIONS_ENABLED, true);
+  const favourites = await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_KEY);
+  if (favourites === null) await writeFlag(FAVOURITES_NOTIFICATIONS_KEY, true);
 
   return {
     dailySaints: dailySaints !== "false",
@@ -127,7 +120,7 @@ export async function loadNotificationToggles(): Promise<{
 // entry for each default calendar when none have been saved. Throws if the
 // stored value is not valid JSON, so callers can decide how to report it.
 export async function getCalendarNotificationSettings(): Promise<CalendarNotificationSettings> {
-  const stored = await AsyncStorage.getItem(CALENDAR_NOTIFICATION_SETTINGS);
+  const stored = await AsyncStorage.getItem(CALENDAR_NOTIFICATIONS_KEY);
   if (stored) return JSON.parse(stored);
 
   const defaults: CalendarNotificationSettings = Object.fromEntries(
@@ -144,7 +137,7 @@ export async function saveCalendarNotificationSettings(
   settings: CalendarNotificationSettings,
 ): Promise<void> {
   await AsyncStorage.setItem(
-    CALENDAR_NOTIFICATION_SETTINGS,
+    CALENDAR_NOTIFICATIONS_KEY,
     JSON.stringify(settings),
   );
 }

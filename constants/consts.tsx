@@ -86,8 +86,4 @@ export const AKATHIST_URL =
   "https://antiochianprodsa.blob.core.windows.net/liturgicalinstructions/Little%20Compline%20Akathist%20Bilingual%201-4.pdf";
 
 // Local storage keys
-export const FAVOURITES_NOTIFICATIONS_ENABLED = "favouriteNotificationsEnabled";
 export const DAILY_SAINTS_KEY = "dailySaints";
-export const DAILY_SAINTS_NOTIFICATIONS_ENABLED =
-  "dailySaintsNotificationsEnabled";
-export const CALENDAR_NOTIFICATION_SETTINGS = "calendarNotificationSettings";
