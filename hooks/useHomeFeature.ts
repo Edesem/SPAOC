@@ -5,6 +5,14 @@ import {
   requestNotificationPermissions,
   setupNotificationListeners,
 } from "@/notifications";
+import {
+  addSectionIndexes,
+  buildHomeSections,
+  filterSectionsByMonth,
+  getMajorFastLabel,
+  getMinorFastLabel,
+  getSaintsTitle,
+} from "@/utils/homeRules";
 import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -12,35 +20,6 @@ import { AppState } from "react-native";
 
 // Background refresh only kicks in once the app has been away this long.
 const BACKGROUND_REFRESH_THRESHOLD_MINUTES = 300;
-
-const getMajorFastLabel = (fastEvents: string[]): string | null => {
-  if (fastEvents.includes("Great Lent")) {
-    return "Great Lent";
-  }
-  if (fastEvents.includes("The Apostles' Fast")) {
-    return "The Apostles' Fast";
-  }
-  if (fastEvents.includes("The Theotokos Fast")) {
-    return "Theotokos Fast";
-  }
-  if (fastEvents.includes("The Nativity Fast")) {
-    return "The Nativity Fast";
-  }
-  return null;
-};
-
-const getMinorFastLabel = (fastEvents: string[]): string => {
-  if (fastEvents.includes("Strict Fast")) {
-    return "Abstain from meat, fish, dairy, eggs, wine, olive oil";
-  }
-  if (fastEvents.includes("Fast")) {
-    return "Abstain from meat, dairy, eggs";
-  }
-  if (fastEvents.includes("Meat Fast")) {
-    return "Abstain from meat";
-  }
-  return "No Fast";
-};
 
 // Coordinates the Home screen's data: events, the daily saint, and the fast
 // day, plus their loading/refresh/error behaviour. The screen itself just
@@ -108,53 +87,18 @@ export const useHomeFeature = () => {
     }, [refetchEvents]),
   );
 
-  const filteredSections = useMemo(() => {
-    // Initial screen behaviour: show every event section.
-    if (!selectedMonth) {
-      return groupedEvents;
-    }
-
-    const month = selectedMonth.getMonth();
-    const year = selectedMonth.getFullYear();
-
-    return groupedEvents
-      .map((section) => ({
-        ...section,
-        data: section.data.filter((item) => {
-          const itemDate = new Date(item.start);
-          return (
-            itemDate.getFullYear() === year && itemDate.getMonth() === month
-          );
-        }),
-      }))
-      .filter((section) => section.data.length > 0);
-  }, [groupedEvents, selectedMonth]);
+  const filteredSections = useMemo(
+    () => filterSectionsByMonth(groupedEvents, selectedMonth),
+    [groupedEvents, selectedMonth],
+  );
 
   const sectionsWithIndex = useMemo(
-    () =>
-      filteredSections.map((section, index) => ({
-        ...section,
-        sectionIndex: index,
-      })),
+    () => addSectionIndexes(filteredSections),
     [filteredSections],
   );
 
   const sections = useMemo(
-    () => [
-      {
-        title: "Top Image",
-        data: [],
-      },
-      {
-        title: "Saint of the Day",
-        data: [],
-      },
-      ...sectionsWithIndex,
-      {
-        title: "Bottom Image",
-        data: [],
-      },
-    ],
+    () => buildHomeSections(sectionsWithIndex),
     [sectionsWithIndex],
   );
 
@@ -171,8 +115,7 @@ export const useHomeFeature = () => {
     [selectedDate],
   );
 
-  const todaysSaintsTitle =
-    todaysSaints.length > 1 ? "Today's Feasts" : "Today's Feast:";
+  const todaysSaintsTitle = getSaintsTitle(todaysSaints);
 
   return {
     todaysSaints,
