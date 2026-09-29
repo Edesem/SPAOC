@@ -184,8 +184,9 @@ describe("GoogleCalendarService", () => {
         expect.objectContaining({
           id: "f1",
           title: "Strict Fast",
-          start: "2026-08-13T00:00:00.000Z",
-          end: "2026-08-14",
+          start: "2026-08-12T14:00:00.000Z",
+          end: "2026-08-13T14:00:00.000Z",
+          allDay: true,
           source: "fasting",
         }),
       ]);
@@ -465,8 +466,9 @@ describe("GoogleCalendarService with the global fetch", () => {
       {
         id: "7q2m1v0g6c9s",
         title: "Dormition Fast",
-        start: "2026-08-01T00:00:00.000Z",
-        end: "2026-08-15",
+        start: "2026-07-31T14:00:00.000Z",
+        end: "2026-08-14T14:00:00.000Z",
+        allDay: true,
         description: "Fast from <i>meat</i> and dairy",
         location: undefined,
         source: "fasting",
@@ -477,6 +479,7 @@ describe("GoogleCalendarService with the global fetch", () => {
         title: "Paraklesis",
         start: "2026-08-03T09:00:00.000Z",
         end: "2026-08-03T20:00:00+10:00",
+        allDay: false,
         description: undefined,
         location: "St Paul's Church",
         source: "fasting",
