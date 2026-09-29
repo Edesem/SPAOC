@@ -374,7 +374,7 @@ describe("AntiochianLiturgicalService over the network", () => {
       ]);
     });
 
-    it("keys requests by UTC calendar day, not the device's local day", async () => {
+    it("pins #59: keys requests by UTC calendar day, not the device's local day", async () => {
       // 8am on the 16th in Melbourne is still the 15th in UTC
       await expect(
         requestsFor(new Date("2026-08-16T08:00:00+10:00")),

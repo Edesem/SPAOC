@@ -123,7 +123,7 @@ describe("settingsRepository", () => {
       expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
 
-    it("shows stored 'false' flags as off, keeping the existing defaulting behaviour", async () => {
+    it("pins #69: shows stored 'false' flags as off, keeping the existing defaulting behaviour", async () => {
       await AsyncStorage.setItem(DAILY_SAINTS, "false");
       await AsyncStorage.setItem(FAVOURITES, "false");
 

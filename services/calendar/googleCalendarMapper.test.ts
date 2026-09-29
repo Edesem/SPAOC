@@ -109,7 +109,7 @@ describe("date normalization", () => {
     expect(withStart({ dateTime })).toBe("2026-08-13T09:00:00.000Z");
   });
 
-  it("parses an all-day date as UTC midnight regardless of device zone", () => {
+  it("pins #61: parses an all-day date as UTC midnight regardless of device zone", () => {
     expect(withStart({ date: "2026-12-31" })).toBe("2026-12-31T00:00:00.000Z");
   });
 
@@ -155,7 +155,7 @@ describe("date normalization", () => {
 });
 
 describe("byStartTime with mixed event kinds", () => {
-  it("compares instants, not the provider's local wall time", () => {
+  it("pins #61: compares instants, not the provider's local wall time", () => {
     // 9am in Sydney on the 13th is 23:00 UTC on the 12th, so it sorts ahead
     // of an all-day event on the 13th, which is anchored at UTC midnight
     const allDay = normalizeGoogleEvent(
