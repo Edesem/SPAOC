@@ -1,3 +1,4 @@
+import { FastKind, getMajorLabel, getMinorLabel } from "@/domain/fasting";
 import { useFastDay } from "@/hooks/useFastDay";
 import { resetNow, setNow } from "@/domain/parishTime";
 import { renderHook, waitFor } from "@testing-library/react-native";
@@ -50,7 +51,7 @@ describe("useFastDay", () => {
 
     const result = await renderFastDay();
 
-    expect(result.current.events).toEqual(["Strict Fast"]);
+    expect(result.current.events).toEqual([FastKind.StrictFast]);
   });
 
   it("ignores non-fast events", async () => {
@@ -92,7 +93,29 @@ describe("useFastDay", () => {
 
     const result = await renderFastDay();
 
-    expect(result.current.events).toEqual(["Strict Fast"]);
+    expect(result.current.events).toEqual([FastKind.StrictFast]);
+  });
+
+  it("turns fasting calendar entries into the labels shown on Home (#77)", async () => {
+    mockFetch([
+      mockEvent(
+        "Nativity Fast",
+        "2026-08-01T00:00:00.000Z",
+        "2026-09-01T00:00:00.000Z",
+      ),
+      mockEvent("Fast", "2026-08-13T00:00:00.000Z", "2026-08-14T00:00:00.000Z"),
+    ]);
+
+    const result = await renderFastDay();
+
+    expect(result.current.events).toEqual([
+      FastKind.NativityFast,
+      FastKind.Fast,
+    ]);
+    expect(getMajorLabel(result.current.events)).toBe("The Nativity Fast");
+    expect(getMinorLabel(result.current.events)).toBe(
+      "Abstain from meat, dairy, eggs",
+    );
   });
 
   it("ignores a past fast", async () => {

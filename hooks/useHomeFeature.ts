@@ -1,3 +1,4 @@
+import { getMajorLabel, getMinorLabel } from "@/domain/fasting";
 import { useDailySaint } from "@/hooks/useDailySaint";
 import { useEvents } from "@/hooks/useEvents";
 import { useFastDay } from "@/hooks/useFastDay";
@@ -9,8 +10,6 @@ import {
   addSectionIndexes,
   buildHomeSections,
   filterSectionsByMonth,
-  getMajorFastLabel,
-  getMinorFastLabel,
   getSaintsTitle,
 } from "@/utils/homeRules";
 import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
@@ -121,8 +120,8 @@ export const useHomeFeature = () => {
     todaysSaints,
     todaysSaintsTitle,
     fastLoading,
-    majorFastLabel: getMajorFastLabel(fastEvents),
-    minorFastLabel: getMinorFastLabel(fastEvents),
+    majorFastLabel: getMajorLabel(fastEvents),
+    minorFastLabel: getMinorLabel(fastEvents),
     sections,
     refreshing,
     onRefresh,
