@@ -27,7 +27,9 @@ jest.mock("react-native-vector-icons/Ionicons", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
-  return ({ name }: { name: string }) => React.createElement(Text, null, name);
+  const Icon = ({ name }: { name: string }) =>
+    React.createElement(Text, null, name);
+  return Icon;
 });
 
 const event = {
