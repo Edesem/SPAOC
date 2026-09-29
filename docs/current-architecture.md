@@ -47,7 +47,7 @@ The current architecture is a feature-oriented screen-based app with a fairly th
 - Custom hooks act as data-fetching adapters for specific screens.
 - Utilities contain notification scheduling, date grouping, and small helpers.
 - Constants contain many hard-coded calendar IDs, API keys, and URLs.
-- Persistence is handled directly by screens/hooks in AsyncStorage rather than through a distinct repository or storage layer.
+- Favourites persistence goes through a [favourites repository](../services/favourites/favouritesRepository.ts); other persistence (settings, notification flags, cached events) is still handled directly by screens/hooks in AsyncStorage.
 
 ### Mermaid diagram
 
@@ -237,8 +237,9 @@ Both data services have service-level tests that mock the network, not React hoo
 Date tests build instants with explicit UTC offsets so they pass in any device time zone.
 
 Favourites persistence has repository-level tests against the AsyncStorage Jest mock:
-- [favouritesRepository.test.ts](../services/favourites/favouritesRepository.test.ts) covers loading data already stored in the existing format, add/remove, expiry at the end-time boundary, and invalid stored JSON.
+- [favouritesRepository.test.ts](../services/favourites/favouritesRepository.test.ts) covers loading data already stored in the existing format, add/remove, expiry at the end-time boundary, leaving storage untouched when there are no favourites, and invalid stored JSON.
 - [EventItem.test.tsx](../components/__tests__/EventItem.test.tsx) mocks the repository and covers the star toggle: initial state, favouriting, unfavouriting with the `onUnfavourite` callback, and error logging on load or save failure.
+- [favourites.test.ts](../__tests__/favourites.test.ts) mocks the repository and covers the Favourites screen: expiry cleanup on focus, never touching the `favourites` key directly, the empty state, removing unfavourited items by id or title, and error logging on load failure.
 
 ### What is not tested
 
