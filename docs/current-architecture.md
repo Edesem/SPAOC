@@ -116,7 +116,7 @@ Flow:
   - [hooks/useFastDay.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useFastDay.ts) to load fasting calendar events and derive fast labels.
 - All three hooks load data through `calendarService` from [services/calendar/](../services/calendar/index.ts), which implements the `CalendarDataService` interface. `useEvents` is kept as a compatibility wrapper so the screen is unchanged.
 - The current implementation, `GoogleCalendarService`, holds the calendar IDs, request URLs, and error handling. [services/calendar/googleCalendarMapper.ts](../services/calendar/googleCalendarMapper.ts) normalizes Google events into the app's `EventData` shape. Nothing outside [services/calendar/](../services/calendar/index.ts) knows about Google Calendar.
-- `useHomeFeature` groups the data by date with [utils/dateUtils.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/dateUtils.ts), filters it by the selected month, derives the major/minor fast labels and saint title, and returns section data ready for the `SectionList`.
+- `useHomeFeature` groups the data by date with [utils/dateUtils.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/dateUtils.ts), then delegates the remaining Home business rules to pure functions in [utils/homeRules.ts](../utils/homeRules.ts): filtering sections by the selected month, indexing sections for the `SectionList`, wrapping them with the static image sections, and deriving the major/minor fast labels and saint title. The hook only calls these functions and wires their results into React state.
 - Tapping an event navigates to [app/eventDetails.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/eventDetails.tsx) with the event payload.
 
 State and side effects:
@@ -255,6 +255,7 @@ Settings persistence is tested the same way:
 
 Home screen orchestration is tested at the hook level:
 - [useHomeFeature.test.ts](../__tests__/useHomeFeature.test.ts) mocks `useEvents`, `useDailySaint`, `useFastDay`, and the notification modules, and covers: notification setup and the initial event load on mount, saint-title pluralisation, major/minor fast label derivation (including the "No Fast" fallback), refreshing all three data sources together, and filtering sections to the picked month while closing the month picker.
+- Home's business rules are also tested directly, without rendering React: [homeRules.test.ts](../__tests__/homeRules.test.ts) covers [utils/homeRules.ts](../utils/homeRules.ts)'s major/minor fast label precedence, saint-title pluralisation, month filtering (including sections left with no events), section indexing, and the static Top Image/Saint of the Day/Bottom Image wrapping.
 
 ### What is not tested
 
@@ -320,14 +321,13 @@ Evidence:
 ### 6.5 Business/domain logic is mixed with UI concerns
 
 Relevant files:
-- [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts)
 - [hooks/useFastDay.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useFastDay.ts)
 - [utils/dateUtils.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/dateUtils.ts)
 
 Evidence:
-- The fast-day display rules (which major/minor fast label to show) live in `useHomeFeature`, a hook, rather than a domain or feature module; the Home screen itself now only renders the label it is given.
-- Date grouping and “this week / next week / later” labels are computed in a utility file that also depends on application settings.
-- The logic for what counts as a fast day is embedded in the hook's data flow rather than in a domain or feature module.
+- The Home screen's business rules (which major/minor fast label to show, saint-title pluralisation, month filtering, and section building) now live in [utils/homeRules.ts](../utils/homeRules.ts) as pure functions with unit tests; [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts) only calls them and wires the results into React state, so this problem no longer applies to Home.
+- Date grouping and “this week / next week / later” labels are still computed in a utility file that also depends on application settings.
+- `useFastDay` still fetches and interprets raw fasting-calendar events itself rather than going through a domain module.
 
 ### 6.6 Security-sensitive configuration is embedded in source
 
