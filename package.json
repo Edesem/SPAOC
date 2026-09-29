@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "typecheck": "npx tsc --noEmit"
+    "typecheck": "npx tsc --noEmit",
+    "coverage": "npm test -- --watchAll=false --runInBand --coverage --coverageThreshold='{\"global\":{\"lines\":80}}'"
   },
   "jest": {
     "preset": "jest-expo",
