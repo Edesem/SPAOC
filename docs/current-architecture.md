@@ -228,7 +228,7 @@ The repository currently does not use a conventional `.env` configuration layer.
 ### What is tested today
 
 There is one visible Jest snapshot test:
-- [components/__tests__/ThemedText-test.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/components/__tests__/ThemedText-test.tsx)
+- [components/__tests__/ThemedText.test.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/components/__tests__/ThemedText.test.tsx)
 
 Both data services have service-level tests that mock the network, not React hooks:
 - [services/calendar/](../services/calendar/index.ts) tests inject or stub `fetch` and cover successful Google Calendar payloads, malformed and empty responses, and date normalization of timed and all-day events.
@@ -238,7 +238,7 @@ Date tests build instants with explicit UTC offsets so they pass in any device t
 
 Favourites persistence has repository-level tests against the AsyncStorage Jest mock:
 - [favouritesRepository.test.ts](../services/favourites/favouritesRepository.test.ts) covers loading data already stored in the existing format, add/remove, expiry at the end-time boundary, and invalid stored JSON.
-- [EventItem-test.tsx](../components/__tests__/EventItem-test.tsx) mocks the repository and covers the star toggle: initial state, favouriting, unfavouriting with the `onUnfavourite` callback, and error logging on load or save failure.
+- [EventItem.test.tsx](../components/__tests__/EventItem.test.tsx) mocks the repository and covers the star toggle: initial state, favouriting, unfavouriting with the `onUnfavourite` callback, and error logging on load or save failure.
 
 ### What is not tested
 
