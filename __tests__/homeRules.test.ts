@@ -14,6 +14,7 @@ const event = (id: string, start: string): EventData => ({
   title: `Event ${id}`,
   start,
   end: start,
+  allDay: false,
   description: "",
   location: "",
   source: "source",

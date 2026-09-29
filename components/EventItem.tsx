@@ -113,7 +113,12 @@ export const EventItem = ({
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
         router.push({
           pathname: "/eventDetails",
-          params: { ...item, start: formattedStart, end: formattedEnd },
+          params: {
+            ...item,
+            allDay: undefined, // route params are strings; the screen shows the formatted times
+            start: formattedStart,
+            end: formattedEnd,
+          },
         });
         onPress();
       }}
