@@ -1,25 +1,20 @@
+import {
+  APP_TIME_ZONE,
+  getParishDateParts,
+  now,
+  parishDayKey,
+  startOfParishDay,
+} from "@/domain/parishTime";
 import type { StartOfWeek } from "@/services/settings";
 import { EventData } from "@/types/global";
-
-const APP_TIME_ZONE = "Australia/Melbourne";
 
 export const formatDateHeading = (date: Date) => {
   const timeZone = APP_TIME_ZONE;
 
-  const getDateKey = (value: Date) =>
-    value.toLocaleDateString("en-CA", {
-      timeZone,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-
-  const todayKey = getDateKey(new Date());
-  const dateKey = getDateKey(date);
-
-  const [year, month, day] = todayKey.split("-").map(Number);
-  const tomorrow = new Date(Date.UTC(year, month - 1, day + 1, 12));
-  const tomorrowKey = getDateKey(tomorrow);
+  const today = now();
+  const todayKey = parishDayKey(today);
+  const dateKey = parishDayKey(date);
+  const tomorrowKey = parishDayKey(startOfParishDay(today, 1));
 
   if (dateKey === todayKey) {
     return `Today, ${date.toLocaleDateString("en-AU", {
@@ -55,13 +50,8 @@ export const groupEventsByDay = (
     // Parse the event start time into a Date object
     const eventDate = new Date(event.start);
 
-    // Convert the event date to Australian local date string (YYYY-MM-DD format)
-    const dayKey = eventDate.toLocaleDateString("en-CA", {
-      timeZone: APP_TIME_ZONE,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
+    // Convert the event date to the parish's local date string (YYYY-MM-DD)
+    const dayKey = parishDayKey(eventDate);
 
     if (!grouped[dayKey]) {
       grouped[dayKey] = [];
@@ -69,8 +59,7 @@ export const groupEventsByDay = (
     grouped[dayKey].push(event);
   });
 
-  const today = new Date();
-  const startOfThisWeek = getStartOfWeek(today, startOfWeek);
+  const startOfThisWeek = getStartOfWeek(now(), startOfWeek);
   const startOfNextWeek = new Date(startOfThisWeek);
   startOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
   const startOfLater = new Date(startOfNextWeek); // One week after "Next Week"
@@ -120,7 +109,7 @@ export const groupEventsByDay = (
 };
 
 export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek): Date => {
-  const { year, month, day, weekday } = getDateParts(date);
+  const { weekday } = getParishDateParts(date);
 
   const weekdayIndex = [
     "Sunday",
@@ -139,61 +128,5 @@ export const getStartOfWeek = (date: Date, startOfWeek: StartOfWeek): Date => {
         ? 6
         : weekdayIndex - 1;
 
-  const targetDate = new Date(Date.UTC(year, month - 1, day - daysToSubtract));
-
-  // Get the Melbourne-local date/time components.
-  // This avoids relying on `timeZoneName: "longOffset"`,
-  // which can return just "GMT" on some JavaScript runtimes.
-  const localParts = new Intl.DateTimeFormat("en-AU", {
-    timeZone: APP_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(targetDate);
-
-  const getPart = (type: string) =>
-    Number(localParts.find((part) => part.type === type)?.value ?? 0);
-
-  const localAsUtc = Date.UTC(
-    getPart("year"),
-    getPart("month") - 1,
-    getPart("day"),
-    getPart("hour"),
-    getPart("minute"),
-    getPart("second"),
-  );
-
-  const offsetMinutes = (localAsUtc - targetDate.getTime()) / 60_000;
-
-  return new Date(targetDate.getTime() - offsetMinutes * 60_000);
-};
-
-const getDateParts = (date: Date) => {
-  const parts = new Intl.DateTimeFormat("en-AU", {
-    timeZone: APP_TIME_ZONE,
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    weekday: "long",
-  }).formatToParts(date);
-
-  const getPart = (type: string) =>
-    parts.find((part) => part.type === type)?.value ?? "";
-
-  return {
-    year: Number(getPart("year")),
-    month: Number(getPart("month")),
-    day: Number(getPart("day")),
-    weekday: getPart("weekday"),
-  };
-};
-
-// Function to fetch current date in 'YYYY-MM-DD' format
-// TODO: Remove this function and use new Date() directly in the future after we have more test coverage
-export const getCurrentDate = (): Date => {
-  return new Date();
+  return startOfParishDay(date, -daysToSubtract);
 };

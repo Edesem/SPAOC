@@ -107,6 +107,26 @@ describe("filterSectionsByMonth", () => {
     ]);
   });
 
+  it("uses Melbourne months at a month boundary", () => {
+    // 2026-02-28T13:00Z is midnight on 1 March in Melbourne
+    const boundary = [
+      {
+        title: "Day",
+        data: [
+          event("1", "2026-02-28T12:59:00.000Z"),
+          event("2", "2026-02-28T13:00:00.000Z"),
+        ],
+      },
+    ];
+
+    expect(
+      filterSectionsByMonth(boundary, new Date("2026-03-15T12:00:00.000Z")),
+    ).toEqual([{ title: "Day", data: [event("2", "2026-02-28T13:00:00.000Z")] }]);
+    expect(
+      filterSectionsByMonth(boundary, new Date("2026-02-15T12:00:00.000Z")),
+    ).toEqual([{ title: "Day", data: [event("1", "2026-02-28T12:59:00.000Z")] }]);
+  });
+
   it("drops sections that have no events left in the selected month", () => {
     const filtered = filterSectionsByMonth(
       groupedEvents,

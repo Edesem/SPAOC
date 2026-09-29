@@ -1,3 +1,4 @@
+import { atParishHour, now } from "@/domain/parishTime";
 import { scheduleNotification } from "@/notifications";
 import { calendarService } from "@/services/calendar";
 import { getFavourites } from "@/services/favourites";
@@ -22,8 +23,9 @@ export async function scheduleSaintNotificationsForNext7Days() {
   }
 
   for (let i = 0; i < 7; i++) {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
+    // Midday on the i-th parish day from today; any instant in the day works
+    // for the saints lookup and for the day's dedupe key
+    const date = atParishHour(now(), 12, i);
     const dateKey = date.toDateString();
 
     const saints = await calendarService.getSaintsForDate(date);
@@ -40,10 +42,9 @@ export async function scheduleSaintNotificationsForNext7Days() {
     );
     if (alreadyScheduled) continue;
 
-    const notificationTime = new Date(date);
-    notificationTime.setHours(8, 0, 0, 0); // 8AM each day
+    const notificationTime = atParishHour(date, 8); // 8AM each day
 
-    if (notificationTime < new Date()) {
+    if (notificationTime < now()) {
       console.log(`[${i}] ${dateKey} - Skipping, time is in the past`);
       continue;
     }
@@ -180,18 +181,14 @@ export async function scheduleFavouriteNotifications() {
       continue;
     }
 
-    const weekBefore = new Date(date);
-    weekBefore.setDate(date.getDate() - 5);
-    weekBefore.setHours(9, 0, 0, 0);
+    const weekBefore = atParishHour(date, 9, -5);
 
-    if (weekBefore < new Date()) {
+    if (weekBefore < now()) {
       console.log(
         `Skipping [${title}] — weekBefore is in the past: ${weekBefore}`,
       );
       continue;
     }
-
-    const fiveSecondsLater = new Date(Date.now() + 5000);
 
     console.log(`Scheduling... [${title}] @ ${weekBefore}`);
     await scheduleNotification(
@@ -246,12 +243,10 @@ export async function scheduleCategoryNotifications(calendar: string) {
     }
 
     // Calculate notification time based on daysBefore
-    const notifyDate = new Date(date);
     const daysBefore = setting.daysBefore ?? 1;
-    notifyDate.setDate(date.getDate() - daysBefore);
-    notifyDate.setHours(9, 0, 0, 0); // notify at 9 AM
+    const notifyDate = atParishHour(date, 9, -daysBefore); // notify at 9 AM
 
-    if (notifyDate < new Date()) {
+    if (notifyDate < now()) {
       console.log(
         `Skipping ${title} — notification time in the past: ${notifyDate}`,
       );
