@@ -47,7 +47,7 @@ The current architecture is a feature-oriented screen-based app with a fairly th
 - Custom hooks act as data-fetching adapters for specific screens.
 - Utilities contain notification scheduling, date grouping, and small helpers.
 - Constants contain many hard-coded calendar IDs, API keys, and URLs.
-- Favourites persistence goes through a [favourites repository](../services/favourites/favouritesRepository.ts); other persistence (settings, notification flags, cached events) is still handled directly by screens/hooks in AsyncStorage.
+- Favourites persistence goes through a [favourites repository](../services/favourites/favouritesRepository.ts), and settings and notification preferences go through a [settings repository](../services/settings/settingsRepository.ts). Notification scheduling bookkeeping (`notified-*` keys) and cached category events are still read and written directly in [utils/notifications.ts](../utils/notifications.ts).
 
 ### Mermaid diagram
 
@@ -85,8 +85,11 @@ flowchart TD
     F --> F4[PDF viewer]
 
     G --> G1[Zustand store]
-    G --> G2[AsyncStorage settings]
+    G --> G0[Settings repository]
+    G1 --> G0
     G --> G3[utils/notifications]
+    G3 --> G0
+    G0 --> G2[AsyncStorage settings]
 ```
 
 ### Notable architectural characteristics
@@ -162,12 +165,16 @@ Entry point:
 - [app/settings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/settings.tsx)
 
 Flow:
-- The settings screen reads and writes settings to AsyncStorage.
-- It uses a Zustand store for the start-of-week preference ([app/settings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/settings.tsx)).
-- The settings screen interacts with [utils/notifications.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/notifications.ts) to schedule or cancel local notifications.
+- The settings screen reads and writes settings through the [settings repository](../services/settings/settingsRepository.ts).
+- It uses a Zustand store for the start-of-week preference ([app/settings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/settings.tsx)), which loads and saves the value with `getStartOfWeek` and `saveStartOfWeek`.
+- On load, `loadNotificationToggles` returns the toggle values to show and writes the first-run defaults. `getCalendarNotificationSettings` returns the saved per-calendar settings, or saves and returns disabled defaults.
+- [hooks/useColorScheme.ts](../hooks/useColorScheme.ts) reads the saved theme with `getThemeChoice`.
+- The settings screen interacts with [utils/notifications.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/notifications.ts) to schedule or cancel local notifications. Scheduling checks `isDailySaintNotificationsEnabled` / `isFavouriteNotificationsEnabled` before doing any work.
 
 State and side effects:
-- Notification toggle state lives partly in React local state and partly in AsyncStorage.
+- Settings are stored in AsyncStorage under `START_OF_WEEK`, `APP_THEME`, `dailySaintsNotificationsEnabled`, `favouriteNotificationsEnabled` (`"true"`/`"false"` strings) and `calendarNotificationSettings` (a JSON object keyed by calendar name).
+- Only the repository reads or writes those keys, so callers do not depend on the storage format.
+- Notification toggle state lives in React local state and is persisted through the repository.
 - Notification scheduling is a side effect triggered from the UI layer.
 
 ### 3.5 Prayer / liturgical reading flow
@@ -205,9 +212,9 @@ The app uses the following configuration mechanisms:
 - [app.json](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app.json) for Expo app metadata, bundle ID, orientation, scheme, and plugin configuration.
 - [eas.json](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/eas.json) for build profiles.
 - [package.json](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/package.json) for scripts, dependencies, and Expo/Jest configuration.
-- [constants/consts.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/constants/consts.tsx) for many hard-coded URLs, storage keys, and API-related values.
+- [constants/consts.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/constants/consts.tsx) for many hard-coded URLs and API-related values.
 - [services/calendar/googleCalendarConfig.ts](../services/calendar/googleCalendarConfig.ts) for the Google Calendar IDs and API base URL.
-- AsyncStorage keys defined in [constants/consts.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/constants/consts.tsx).
+- AsyncStorage keys for favourites and settings are private to the [favourites](../services/favourites/favouritesRepository.ts) and [settings](../services/settings/settingsRepository.ts) repositories.
 
 ### Environment variables and secrets
 
@@ -241,12 +248,15 @@ Favourites persistence has repository-level tests against the AsyncStorage Jest 
 - [EventItem.test.tsx](../components/__tests__/EventItem.test.tsx) mocks the repository and covers the star toggle: initial state, favouriting, unfavouriting with the `onUnfavourite` callback, and error logging on load or save failure.
 - [favourites.test.ts](../__tests__/favourites.test.ts) mocks the repository and covers the Favourites screen: expiry cleanup on focus, never touching the `favourites` key directly, the empty state, removing unfavourited items by id or title, and error logging on load failure.
 
+Settings persistence is tested the same way:
+- [settingsRepository.test.ts](../services/settings/settingsRepository.test.ts) runs against the AsyncStorage Jest mock. It covers reading values stored in the existing format, the stored value formats, fallbacks for unset or unrecognised values, first-run notification and calendar defaults, and invalid stored JSON.
+- [settings.test.tsx](../__tests__/settings.test.tsx) mocks the repository and covers the Settings screen: loading and saving the saint notification toggle, scheduling or cancelling notifications, loading and saving the start of week, error logging when calendar settings fail to load, and never touching the settings keys directly.
+
 ### What is not tested
 
 The current test coverage does not appear to cover:
 
 - Navigation flows between screens.
-- AsyncStorage persistence logic for settings.
 - Notification scheduling and cancellation logic.
 - How screens present remote failures and empty data to the user.
 - UI-level transformation logic such as date grouping and fast-day derivation.
@@ -271,13 +281,12 @@ Evidence:
 ### 6.2 Persistence logic is duplicated and scattered
 
 Relevant files:
-- [app/settings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/settings.tsx)
 - [utils/notifications.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/notifications.ts)
 
 Evidence:
-- Favourites now go through a single [repository](../services/favourites/favouritesRepository.ts); settings do not yet have an equivalent.
-- Notification preferences and calendar settings use multiple direct AsyncStorage reads/writes.
-- There is no persistence abstraction or storage contract for settings.
+- Favourites and settings now each go through a single repository ([favourites](../services/favourites/favouritesRepository.ts), [settings](../services/settings/settingsRepository.ts)).
+- [utils/notifications.ts](../utils/notifications.ts) still reads and writes `notified-*` scheduling markers and `events-*` cached events directly in AsyncStorage.
+- `scheduleCategoryNotifications` reads calendar settings from a module-level `useState` rather than from the settings repository.
 
 ### 6.3 Remote integration logic is embedded in hooks and screens
 
