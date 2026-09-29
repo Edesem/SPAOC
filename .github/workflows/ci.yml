@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
-        run: npm test -- --watchAll=false --runInBand --coverage --coverageThreshold='{"global":{"lines":80}}'
+        run: npm run coverage
 
       - name: Lint
         run: npm run lint
