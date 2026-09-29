@@ -1,3 +1,4 @@
+import { isSameParishMonth } from "@/domain/parishTime";
 import { EventData } from "@/types/global";
 
 export type GroupedEventSection = {
@@ -53,18 +54,12 @@ export const filterSectionsByMonth = (
     return groupedEvents;
   }
 
-  const month = selectedMonth.getMonth();
-  const year = selectedMonth.getFullYear();
-
   return groupedEvents
     .map((section) => ({
       ...section,
-      data: section.data.filter((item) => {
-        const itemDate = new Date(item.start);
-        return (
-          itemDate.getFullYear() === year && itemDate.getMonth() === month
-        );
-      }),
+      data: section.data.filter((item) =>
+        isSameParishMonth(new Date(item.start), selectedMonth),
+      ),
     }))
     .filter((section) => section.data.length > 0);
 };
