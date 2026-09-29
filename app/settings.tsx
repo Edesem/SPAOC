@@ -1,14 +1,16 @@
 import SettingPicker from "@/components/SettingPicker";
-import { CALENDAR_NOTIFICATION_SETTINGS } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
+  getCalendarNotificationSettings,
   getStartOfWeek,
   getThemeChoice,
   loadNotificationToggles,
+  saveCalendarNotificationSettings,
   saveDailySaintNotificationsEnabled,
   saveFavouriteNotificationsEnabled,
   saveStartOfWeek,
   saveThemeChoice,
+  type CalendarNotificationSettings,
   type StartOfWeek,
   type ThemeChoice,
 } from "@/services/settings";
@@ -23,7 +25,6 @@ import {
   scheduleSaintNotificationsForNext7Days,
 } from "@/utils/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -41,11 +42,6 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { create } from "zustand";
 
 const appVersion = Constants.expoConfig?.version ?? "Unknown";
-
-interface CalendarSetting {
-  enabled: boolean;
-  daysBefore: number;
-}
 
 interface SettingsState {
   startOfWeek: StartOfWeek;
@@ -89,9 +85,8 @@ export default function SettingsScreen() {
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
     useState(true);
 
-  const [calendarSettings, setCalendarSettings] = useState<{
-    [key: string]: CalendarSetting;
-  }>({});
+  const [calendarSettings, setCalendarSettings] =
+    useState<CalendarNotificationSettings>({});
 
   useEffect(() => {
     const loadTheme = async () => {
@@ -116,33 +111,7 @@ export default function SettingsScreen() {
   useEffect(() => {
     const loadCalendar = async () => {
       try {
-        const stored = await AsyncStorage.getItem(
-          CALENDAR_NOTIFICATION_SETTINGS,
-        );
-        let settings: Record<string, CalendarSetting>;
-        if (stored) {
-          settings = JSON.parse(stored);
-        } else {
-          settings = {};
-          [
-            "youth",
-            "church",
-            "family",
-            "ladies",
-            "parish",
-            "seniors",
-            "weekly",
-            "playgroup",
-            "fellowship",
-          ].forEach((name) => {
-            settings[name] = { enabled: false, daysBefore: 1 };
-          });
-          await AsyncStorage.setItem(
-            CALENDAR_NOTIFICATION_SETTINGS,
-            JSON.stringify(settings),
-          );
-        }
-        setCalendarSettings(settings);
+        setCalendarSettings(await getCalendarNotificationSettings());
       } catch (e) {
         console.error(e);
       }
@@ -162,10 +131,7 @@ export default function SettingsScreen() {
       },
     };
     setCalendarSettings(updated);
-    AsyncStorage.setItem(
-      CALENDAR_NOTIFICATION_SETTINGS,
-      JSON.stringify(updated),
-    );
+    saveCalendarNotificationSettings(updated);
   };
 
   const dayOptions = [...Array(60).keys()].map((n) => ({
