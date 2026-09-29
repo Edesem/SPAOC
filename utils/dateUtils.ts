@@ -1,4 +1,4 @@
-import type { StartOfWeek } from "@/app/settings";
+import type { StartOfWeek } from "@/services/settings";
 import { EventData } from "@/types/global";
 
 const APP_TIME_ZONE = "Australia/Melbourne";

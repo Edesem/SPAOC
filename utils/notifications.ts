@@ -1,10 +1,10 @@
-import {
-  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-  FAVOURITES_NOTIFICATIONS_ENABLED,
-} from "@/constants/consts";
 import { scheduleNotification } from "@/notifications";
 import { calendarService } from "@/services/calendar";
 import { getFavourites } from "@/services/favourites";
+import {
+  isDailySaintNotificationsEnabled,
+  isFavouriteNotificationsEnabled,
+} from "@/services/settings";
 import type { EventData } from "@/types/global";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
@@ -16,10 +16,7 @@ export const [calendarSettings, setCalendarSettings] = useState<{
 }>({});
 
 export async function scheduleSaintNotificationsForNext7Days() {
-  const isEnabled = await AsyncStorage.getItem(
-    DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-  );
-  if (isEnabled !== "true") {
+  if (!(await isDailySaintNotificationsEnabled())) {
     console.log("Daily saint notifications are disabled.");
     return;
   }
@@ -149,11 +146,7 @@ export async function cancelAllSaintNotifications() {
 }
 
 export async function scheduleFavouriteNotifications() {
-  const isEnabled = await AsyncStorage.getItem(
-    FAVOURITES_NOTIFICATIONS_ENABLED,
-  );
-
-  if (isEnabled !== "true") {
+  if (!(await isFavouriteNotificationsEnabled())) {
     console.log("Favourite event notifications are disabled.");
     return;
   }
