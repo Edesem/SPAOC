@@ -50,11 +50,41 @@ const liturgicalDay = (
 const serviceTexts = [
   {
     publicUrl: "https://files.antiochian.org/liturgy.pdf",
-    typeOfService: "Divine Liturgy",
+    typeOfService: "Divine Liturgy (PDF)",
   },
   {
     publicUrl: "https://files.antiochian.org/vespers.pdf",
-    typeOfService: "Great Vespers",
+    typeOfService: "Great Vespers (PDF)",
+  },
+];
+
+// What the app sees for `liturgicalDay(id)` and `serviceTexts`
+const mappedDay = (id: number) => ({
+  feastTitle: `Feast ${id}`,
+  readings: [
+    {
+      kind: "epistle",
+      title: "Romans 8:28-39",
+      teaser: "All things work together for good.",
+      fullText: "<p>First reading</p>",
+    },
+    {
+      kind: "gospel",
+      title: "Matthew 14:22-34",
+      teaser: "Jesus walks on water.",
+      fullText: "<p>Second reading</p>",
+    },
+  ],
+});
+
+const mappedServices = [
+  {
+    title: "Divine Liturgy",
+    pdfUrl: "https://files.antiochian.org/liturgy.pdf",
+  },
+  {
+    title: "Great Vespers",
+    pdfUrl: "https://files.antiochian.org/vespers.pdf",
   },
 ];
 
@@ -130,8 +160,8 @@ describe("AntiochianLiturgicalService over the network", () => {
         `${TEXTS_URL}2026-08-16`,
       ]);
       expect(result).toEqual({
-        day: liturgicalDay(ANCHOR_ID + 3),
-        texts: serviceTexts,
+        day: mappedDay(ANCHOR_ID + 3),
+        services: mappedServices,
       });
     });
 
@@ -151,7 +181,7 @@ describe("AntiochianLiturgicalService over the network", () => {
       const first = await service.getLiturgicalData(date);
       const second = await service.getLiturgicalData(date);
 
-      expect(second.day).toBe(first.day);
+      expect(second).toEqual(first);
       expect(
         getCalls(http).filter((url) => url === `${DAY_URL}${ANCHOR_ID + 1}`),
       ).toHaveLength(1);
@@ -161,58 +191,110 @@ describe("AntiochianLiturgicalService over the network", () => {
     });
   });
 
-  describe("reading and feast transformations", () => {
-    it("trims leading whitespace from reading teasers", () => {
-      expect(service.getReadingTeasers(liturgicalDay(ANCHOR_ID))).toEqual({
-        date: `Day ${ANCHOR_ID}`,
-        reading1Title: "Romans 8:28-39",
-        reading1Teaser: "All things work together for good.",
-        reading2Title: "Matthew 14:22-34",
-        reading2Teaser: "Jesus walks on water.",
-        reading3Title: "",
-        reading3Teaser: "",
-      });
-    });
+  describe("mapping into the app's shape", () => {
+    const date = new Date("2026-08-14T00:00:00Z");
 
-    it("keeps trailing whitespace and inner markup", () => {
-      const day = liturgicalDay(ANCHOR_ID, {
-        reading1Title: "\n\t Romans 8:28-39  ",
-        reading1FullText: "  <p>First</p>\n<p>Second</p>  ",
-      });
-
-      expect(service.getReadingTeasers(day).reading1Title).toBe(
-        "Romans 8:28-39  ",
+    // Serve the given provider day for `date`
+    const serveDay = (day: LiturgicalDay): void => {
+      http.get.mockImplementation(async (url: string) =>
+        url === `${DAY_URL}${ANCHOR_ID + 1}`
+          ? ok({ liturgicalDay: day })
+          : defaultGet(url),
       );
-      expect(service.getReadingTexts(day).reading1FullText).toBe(
-        "<p>First</p>\n<p>Second</p>  ",
+    };
+
+    const mapDay = async (day: LiturgicalDay) => {
+      serveDay(day);
+      return (await service.getLiturgicalData(date)).day!;
+    };
+
+    it("trims leading whitespace from readings and the feast title", async () => {
+      await expect(mapDay(liturgicalDay(ANCHOR_ID + 1))).resolves.toEqual(
+        mappedDay(ANCHOR_ID + 1),
       );
     });
 
-    it("trims full reading texts and the feast title", () => {
-      const day = liturgicalDay(ANCHOR_ID);
+    it("keeps trailing whitespace and inner markup", async () => {
+      const day = await mapDay(
+        liturgicalDay(ANCHOR_ID, {
+          reading1Title: "\n\t Romans 8:28-39  ",
+          reading1FullText: "  <p>First</p>\n<p>Second</p>  ",
+        }),
+      );
 
-      expect(service.getReadingTexts(day)).toEqual({
-        reading1FullText: "<p>First reading</p>",
-        reading2FullText: "<p>Second reading</p>",
-        reading3FullText: "",
-      });
-      expect(service.getFeastTitle(day)).toEqual({
-        feastTitle: `Feast ${ANCHOR_ID}`,
+      expect(day.readings[0].title).toBe("Romans 8:28-39  ");
+      expect(day.readings[0].fullText).toBe("<p>First</p>\n<p>Second</p>  ");
+    });
+
+    it("includes a third reading when the provider has one", async () => {
+      const day = await mapDay(
+        liturgicalDay(ANCHOR_ID, {
+          reading3Title: "  Acts 1:1-8",
+          reading3Teaser: "  A third teaser.",
+          reading3FullText: "  <p>Third reading</p>",
+        }),
+      );
+
+      expect(day.readings.map((reading) => reading.kind)).toEqual([
+        "epistle",
+        "gospel",
+        "thirdReading",
+      ]);
+      expect(day.readings[2]).toEqual({
+        kind: "thirdReading",
+        title: "Acts 1:1-8",
+        teaser: "A third teaser.",
+        fullText: "<p>Third reading</p>",
       });
     });
 
-    it("transforms a day fetched through the service", async () => {
-      const { day } = await service.getLiturgicalData(
-        new Date("2026-08-13T00:00:00Z"),
+    it("leaves out a third reading the provider omits (#64)", async () => {
+      const day = await mapDay(
+        dayWithout("reading3Title", "reading3Teaser", "reading3FullText"),
       );
 
-      expect(service.getFeastTitle(day!)).toEqual({
-        feastTitle: `Feast ${ANCHOR_ID}`,
-      });
-      expect(service.getReadingTeasers(day!).reading2Title).toBe(
-        "Matthew 14:22-34",
-      );
+      expect(day.readings.map((reading) => reading.kind)).toEqual([
+        "epistle",
+        "gospel",
+      ]);
     });
+
+    it("has no feast title when the provider omits it (#62)", async () => {
+      const day = await mapDay(dayWithout("feastDayTitle"));
+
+      expect(day.feastTitle).toBeNull();
+    });
+
+    it("leaves out a reading whose title is missing instead of throwing (#64)", async () => {
+      const day = await mapDay(dayWithout("reading2Title"));
+
+      expect(day.readings.map((reading) => reading.kind)).toEqual(["epistle"]);
+    });
+
+    it("leaves out a reading whose full text is missing", async () => {
+      const day = await mapDay(dayWithout("reading1FullText"));
+
+      expect(day.readings.map((reading) => reading.kind)).toEqual(["gospel"]);
+    });
+
+    it("keeps only the PDF services, titled without the suffix", async () => {
+      withServices([
+        { publicUrl: "https://files/a.pdf", typeOfService: "Matins (PDF)" },
+        { publicUrl: "https://files/b.mp3", typeOfService: "Matins Audio" },
+      ]);
+
+      const { services } = await service.getLiturgicalData(date);
+
+      expect(services).toEqual([
+        { title: "Matins", pdfUrl: "https://files/a.pdf" },
+      ]);
+    });
+
+    const withServices = (texts: unknown): void => {
+      http.get.mockImplementation(async (url: string) =>
+        url.startsWith(TEXTS_URL) ? ok(texts) : defaultGet(url),
+      );
+    };
   });
 
   describe("malformed and empty responses", () => {
@@ -226,42 +308,41 @@ describe("AntiochianLiturgicalService over the network", () => {
       );
     };
 
-    it("returns null day and texts for non-200 responses", async () => {
+    it("returns null day and services for non-200 responses", async () => {
       withGet((url) =>
         url === `${DAY_URL}0` ? undefined : { status: 204, data: "" },
       );
 
       await expect(service.getLiturgicalData(date)).resolves.toEqual({
         day: null,
-        texts: null,
+        services: null,
       });
     });
 
-    it("returns an empty text list when no services are published", async () => {
+    it("returns an empty service list when none are published", async () => {
       withGet((url) => (url.startsWith(TEXTS_URL) ? ok([]) : undefined));
 
-      const { texts } = await service.getLiturgicalData(date);
+      const { services } = await service.getLiturgicalData(date);
 
-      expect(texts).toEqual([]);
+      expect(services).toEqual([]);
     });
 
-    it("returns null texts for an empty body", async () => {
+    it("returns null services for an empty body", async () => {
       withGet((url) => (url.startsWith(TEXTS_URL) ? ok(null) : undefined));
 
-      const { texts } = await service.getLiturgicalData(date);
+      const { services } = await service.getLiturgicalData(date);
 
-      expect(texts).toBeNull();
+      expect(services).toBeNull();
     });
 
-    it("returns an undefined day when the body lacks liturgicalDay", async () => {
+    it("returns a null day when the body lacks liturgicalDay", async () => {
       withGet((url) =>
         url === `${DAY_URL}${ANCHOR_ID + 1}` ? ok({}) : undefined,
       );
 
       const { day } = await service.getLiturgicalData(date);
 
-      // Not null: callers must treat any falsy day as missing
-      expect(day).toBeUndefined();
+      expect(day).toBeNull();
     });
 
     it("does not cache a missing day, so the next request retries", async () => {
@@ -273,7 +354,7 @@ describe("AntiochianLiturgicalService over the network", () => {
       http.get.mockImplementation(defaultGet);
       const { day } = await service.getLiturgicalData(date);
 
-      expect(day).toEqual(liturgicalDay(ANCHOR_ID + 1));
+      expect(day).toEqual(mappedDay(ANCHOR_ID + 1));
     });
 
     it("rejects without fetching data when the token request fails", async () => {
@@ -292,8 +373,8 @@ describe("AntiochianLiturgicalService over the network", () => {
 
       http.get.mockImplementation(defaultGet);
       await expect(service.getLiturgicalData(date)).resolves.toEqual({
-        day: liturgicalDay(ANCHOR_ID + 1),
-        texts: serviceTexts,
+        day: mappedDay(ANCHOR_ID + 1),
+        services: mappedServices,
       });
       expect(http.post).toHaveBeenCalledTimes(2);
     });
@@ -317,32 +398,6 @@ describe("AntiochianLiturgicalService over the network", () => {
       await expect(service.getLiturgicalData(date)).rejects.toThrow(
         "Request failed with status 500",
       );
-    });
-
-    it("defaults a missing third reading to empty teasers", () => {
-      const day = dayWithout(
-        "reading3Title",
-        "reading3Teaser",
-        "reading3FullText",
-      );
-
-      expect(service.getReadingTeasers(day)).toMatchObject({
-        reading3Title: "",
-        reading3Teaser: "",
-      });
-      expect(service.getReadingTexts(day).reading3FullText).toBeUndefined();
-    });
-
-    it("leaves a missing feast title undefined", () => {
-      const day = dayWithout("feastDayTitle");
-
-      expect(service.getFeastTitle(day)).toEqual({ feastTitle: undefined });
-    });
-
-    it("throws when a first or second reading title is missing", () => {
-      const day = dayWithout("reading2Title");
-
-      expect(() => service.getReadingTeasers(day)).toThrow(TypeError);
     });
   });
 

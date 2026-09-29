@@ -17,11 +17,9 @@ import {
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   liturgicalService,
-  type FeastTitle,
   type LiturgicalData,
-  type LiturgicalText,
-  type ReadingTeasers,
-  type ReadingTexts,
+  type LiturgicalDay,
+  type LiturgicalService,
 } from "@/services/liturgical";
 import { Colours } from "@/styles/Colours";
 import { fontSize, getCommonStyles } from "@/styles/CommonStyles";
@@ -41,7 +39,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import he from "he";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -62,12 +60,6 @@ import {
 } from "react-native-safe-area-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import toTitleCase from "titlecase";
-
-interface OrganizedData {
-  [service: string]: {
-    pdf: string | null;
-  };
-}
 
 const prayers = [
   {
@@ -160,10 +152,13 @@ export default function PrayerScreen(): JSX.Element {
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
-  const [data, setData] = useState<LiturgicalText[] | null>(null);
-  const [readings, setReadings] = useState<Partial<ReadingTeasers>>({});
-  const [readingsText, setReadingsText] = useState<ReadingTexts>({});
-  const [feastTitle, setFeastTitle] = useState<FeastTitle>({});
+  const [liturgicalServices, setLiturgicalServices] = useState<
+    LiturgicalService[] | null
+  >(null);
+  const [day, setDay] = useState<LiturgicalDay | null>(null);
+  const epistle = day?.readings.find((r) => r.kind === "epistle");
+  const gospel = day?.readings.find((r) => r.kind === "gospel");
+  const thirdReading = day?.readings.find((r) => r.kind === "thirdReading");
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -182,81 +177,34 @@ export default function PrayerScreen(): JSX.Element {
 
   const styles = getStyles();
 
-  const organizeData = (data: LiturgicalText[]): OrganizedData => {
-    return data.reduce((acc, { publicUrl, typeOfService }) => {
-      if (!publicUrl) return acc;
-      if (typeOfService.includes("PDF")) {
-        if (!acc[typeOfService]) acc[typeOfService] = { pdf: null };
-        acc[typeOfService].pdf = publicUrl;
-      }
-      return acc;
-    }, {} as OrganizedData);
-  };
-
-  const processFetchedData = ({ day, texts }: LiturgicalData) => {
-    if (day) {
-      setReadings(liturgicalService.getReadingTeasers(day));
-      setReadingsText(liturgicalService.getReadingTexts(day));
-      setFeastTitle(liturgicalService.getFeastTitle(day));
-    } else {
-      setReadings({});
-      setReadingsText({});
-      setFeastTitle({});
-    }
-
-    if (texts) {
-      setData(texts);
-    } else {
-      setData(null);
-    }
+  const processFetchedData = ({ day, services }: LiturgicalData) => {
+    setDay(day);
+    setLiturgicalServices(services);
   };
 
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
-
-  const organizedData = useMemo(() => (data ? organizeData(data) : {}), [data]);
 
   const handleConfirm = async (date: Date) => {
     hideDatePicker();
     setSelectedDate(date);
     setLoading(true);
     setError(null);
-    setData(null); // Clear stale data
+    setLiturgicalServices(null); // Clear stale data
 
     try {
-      const { day, texts } = await liturgicalService.getLiturgicalData(date);
+      const data = await liturgicalService.getLiturgicalData(date);
 
-      // Update raw data and organize it immediately
-      if (texts) {
-        const newOrganizedData = organizeData(texts);
-
-        setData(texts);
-
-        if (Object.keys(newOrganizedData).length === 0) {
-          setError(new Error("No liturgics found"));
-        } else {
-          setError(null); // Clear any previous error
-        }
-      } else {
-        setData(null);
-        setError(new Error("No liturgics found"));
-      }
-
-      if (day) {
-        setReadings(liturgicalService.getReadingTeasers(day));
-        setReadingsText(liturgicalService.getReadingTexts(day));
-        setFeastTitle(liturgicalService.getFeastTitle(day));
-      } else {
-        setReadings({});
-        setReadingsText({});
-        setFeastTitle({});
-      }
+      processFetchedData(data);
+      setError(
+        data.services && data.services.length > 0
+          ? null
+          : new Error("No liturgics found"),
+      );
     } catch (err) {
       setError(err as Error);
-      setData(null);
-      setReadings({});
-      setReadingsText({});
-      setFeastTitle({});
+      setLiturgicalServices(null);
+      setDay(null);
     }
 
     setLoading(false);
@@ -265,14 +213,11 @@ export default function PrayerScreen(): JSX.Element {
   const onRefresh = useCallback(async () => {
     setRefreshing(true); // Set refreshing to true
     try {
-      const { day, texts } = await liturgicalService.getLiturgicalData();
-      processFetchedData({ day, texts });
+      processFetchedData(await liturgicalService.getLiturgicalData());
       setSelectedDate(new Date());
     } catch (err) {
       setError(err as Error);
-      setReadings({});
-      setReadingsText({});
-      setFeastTitle({});
+      setDay(null);
     }
     setRefreshing(false); // Set refreshing to false once done
   }, []);
@@ -308,13 +253,10 @@ export default function PrayerScreen(): JSX.Element {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const { day, texts } = await liturgicalService.getLiturgicalData();
-        processFetchedData({ day, texts });
+        processFetchedData(await liturgicalService.getLiturgicalData());
       } catch (err) {
         setError(err as Error);
-        setReadings({});
-        setReadingsText({});
-        setFeastTitle({});
+        setDay(null);
       } finally {
         setLoading(false); // Set loading to false when initial data fetch is done
       }
@@ -397,14 +339,14 @@ export default function PrayerScreen(): JSX.Element {
               })}
             </Text>
 
-            {feastTitle.feastTitle && (
+            {day?.feastTitle && (
               <Text
                 style={[
                   styles.subtitle,
                   { marginTop: 5, color: theme.lessImportantText },
                 ]}
               >
-                {toTitleCase(feastTitle.feastTitle.toLowerCase())}
+                {toTitleCase(day.feastTitle.toLowerCase())}
               </Text>
             )}
           </View>
@@ -439,7 +381,7 @@ export default function PrayerScreen(): JSX.Element {
           ) : (
             <>
               {/* Epistle Navigation */}
-              {readings.reading1Title && readingsText.reading1FullText && (
+              {epistle && (
                 <TouchableOpacity
                   style={[
                     styles.contentSection,
@@ -455,8 +397,8 @@ export default function PrayerScreen(): JSX.Element {
                       pathname: "/dailyReadings",
                       params: {
                         type: "epistle",
-                        reading: readingsText.reading1FullText,
-                        title: readings.reading1Title, // Added title
+                        reading: epistle.fullText,
+                        title: epistle.title, // Added title
                       },
                     });
                   }}
@@ -469,9 +411,7 @@ export default function PrayerScreen(): JSX.Element {
                   >
                     <View style={{ flex: 1 }}>
                       <Text style={CommonStyles.sectionTitle}>
-                        {readings.reading1Title
-                          ? toTitleCase(readings.reading1Title.toLowerCase())
-                          : "Loading..."}
+                        {toTitleCase(epistle.title.toLowerCase())}
                       </Text>
                     </View>
                     <Ionicons
@@ -481,7 +421,7 @@ export default function PrayerScreen(): JSX.Element {
                       style={styles.chevronIcon}
                     />
                   </View>
-                  {!readings.reading3Title ? (
+                  {!thirdReading ? (
                     <View
                       style={[
                         styles.divider,
@@ -499,13 +439,13 @@ export default function PrayerScreen(): JSX.Element {
                       { fontSize: fontSize.body },
                     ]}
                   >
-                    {he.decode(readings.reading1Teaser || "")}
+                    {he.decode(epistle.teaser)}
                   </Text>
                 </TouchableOpacity>
               )}
 
               {/* Gospel Navigation */}
-              {readings.reading2Title && readingsText.reading2FullText && (
+              {gospel && (
                 <TouchableOpacity
                   style={[
                     styles.contentSection,
@@ -521,8 +461,8 @@ export default function PrayerScreen(): JSX.Element {
                       pathname: "/dailyReadings",
                       params: {
                         type: "gospel",
-                        reading: readingsText.reading2FullText,
-                        title: readings.reading2Title, // Added title
+                        reading: gospel.fullText,
+                        title: gospel.title, // Added title
                       },
                     });
                   }}
@@ -535,9 +475,7 @@ export default function PrayerScreen(): JSX.Element {
                   >
                     <View style={{ flex: 1 }}>
                       <Text style={CommonStyles.sectionTitle}>
-                        {readings.reading2Title
-                          ? toTitleCase(readings.reading2Title.toLowerCase())
-                          : "Loading..."}
+                        {toTitleCase(gospel.title.toLowerCase())}
                       </Text>
                     </View>
                     <Ionicons
@@ -547,7 +485,7 @@ export default function PrayerScreen(): JSX.Element {
                       style={styles.chevronIcon}
                     />
                   </View>
-                  {!readings.reading3Title ? (
+                  {!thirdReading ? (
                     <View
                       style={[
                         styles.divider,
@@ -565,13 +503,13 @@ export default function PrayerScreen(): JSX.Element {
                       { fontSize: fontSize.body },
                     ]}
                   >
-                    {he.decode(readings.reading2Teaser || "")}
+                    {he.decode(gospel.teaser)}
                   </Text>
                 </TouchableOpacity>
               )}
 
               {/* Third Reading Navigation */}
-              {readings.reading3Title && readingsText.reading3FullText && (
+              {thirdReading && (
                 <TouchableOpacity
                   style={[
                     styles.contentSection,
@@ -587,8 +525,8 @@ export default function PrayerScreen(): JSX.Element {
                       pathname: "/dailyReadings",
                       params: {
                         type: "thirdReading",
-                        reading: readingsText.reading3FullText, // Add full text for third reading
-                        title: readings.reading3Title, // Add title for third reading
+                        reading: thirdReading.fullText, // Add full text for third reading
+                        title: thirdReading.title, // Add title for third reading
                       },
                     });
                   }}
@@ -601,9 +539,7 @@ export default function PrayerScreen(): JSX.Element {
                   >
                     <View style={{ flex: 1 }}>
                       <Text style={CommonStyles.sectionTitle}>
-                        {readings.reading3Title
-                          ? toTitleCase(readings.reading3Title.toLowerCase())
-                          : "Loading..."}
+                        {toTitleCase(thirdReading.title.toLowerCase())}
                       </Text>
                     </View>
                     <Ionicons
@@ -621,7 +557,7 @@ export default function PrayerScreen(): JSX.Element {
                       { fontSize: fontSize.body },
                     ]}
                   >
-                    {he.decode(readings.reading3Teaser || "")}
+                    {he.decode(thirdReading.teaser)}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -653,15 +589,15 @@ export default function PrayerScreen(): JSX.Element {
               </View>
             ) : error ? (
               <Text style={styles.errorText}>Error loading prayers</Text>
-            ) : Object.keys(organizedData).length === 0 ? (
+            ) : !liturgicalServices?.length ? (
               <Text style={styles.noTextsMessage}>
                 There are no liturgical texts today.
               </Text>
             ) : (
               <View>
-                {Object.keys(organizedData).map((service) => (
+                {liturgicalServices.map((service) => (
                   <TouchableOpacity
-                    key={service}
+                    key={service.title}
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                       Alert.alert(
@@ -674,8 +610,8 @@ export default function PrayerScreen(): JSX.Element {
                               router.push({
                                 pathname: "/pdfViewer",
                                 params: {
-                                  url: organizedData[service].pdf!, // Add full text for third reading
-                                  title: service.replace(/\s*\(PDF\)$/, ""), // Add title for third reading
+                                  url: service.pdfUrl,
+                                  title: service.title,
                                 },
                               });
                             },
@@ -692,7 +628,7 @@ export default function PrayerScreen(): JSX.Element {
                         { fontSize: fontSize.body },
                       ]}
                     >
-                      {service.replace(/\s*\(PDF\)$/, "")}
+                      {service.title}
                     </Text>
                   </TouchableOpacity>
                 ))}
