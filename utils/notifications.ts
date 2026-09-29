@@ -1,10 +1,11 @@
 import {
   DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-  FAVOURITES_KEY,
   FAVOURITES_NOTIFICATIONS_ENABLED,
 } from "@/constants/consts";
 import { scheduleNotification } from "@/notifications";
 import { calendarService } from "@/services/calendar";
+import { getFavourites } from "@/services/favourites";
+import type { EventData } from "@/types/global";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 import { useState } from "react";
@@ -157,25 +158,20 @@ export async function scheduleFavouriteNotifications() {
     return;
   }
 
-  const storedFavourites = await AsyncStorage.getItem(FAVOURITES_KEY);
-
-  if (!storedFavourites) {
-    console.log("No favourites found.");
-    return;
-  }
-
-  let favourites: Record<string, any> = {};
+  let favourites: EventData[];
   try {
-    favourites = JSON.parse(storedFavourites);
+    favourites = await getFavourites();
   } catch (e) {
     console.error("Failed to parse favourites:", e);
     return;
   }
 
-  const entries = Object.entries(favourites);
+  if (favourites.length === 0) {
+    console.log("No favourites found.");
+    return;
+  }
 
-  for (let i = 0; i < entries.length; i++) {
-    const [_, fav] = entries[i];
+  for (const fav of favourites) {
     const title = fav.title;
     const dateStr = fav.start;
     const date = new Date(dateStr);
