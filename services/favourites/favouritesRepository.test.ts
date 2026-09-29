@@ -131,6 +131,14 @@ describe("favouritesRepository", () => {
       expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
 
+    it("does not write to storage when an empty object is stored", async () => {
+      await AsyncStorage.setItem("favourites", "{}");
+      jest.clearAllMocks();
+
+      expect(await removeExpiredFavourites(now)).toEqual([]);
+      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+    });
+
     it("rejects when the stored value is not valid JSON", async () => {
       await AsyncStorage.setItem("favourites", "not valid JSON");
 
