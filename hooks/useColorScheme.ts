@@ -1,10 +1,10 @@
 // hooks/useColorScheme.ts
+import { getThemeChoice, type ThemeChoice } from "@/services/settings";
 import eventBus from "@/utils/eventBus";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { useColorScheme as useSystemColorScheme } from "react-native";
 
-export type ThemeChoice = "light" | "dark" | "auto";
+export type { ThemeChoice };
 
 export function useColorScheme(): "light" | "dark" {
   const system = useSystemColorScheme();
@@ -14,9 +14,8 @@ export function useColorScheme(): "light" | "dark" {
   );
 
   useEffect(() => {
-    AsyncStorage.getItem("APP_THEME").then((choice) => {
-      const effective =
-        choice === "dark" || choice === "light" ? choice : systemTheme;
+    getThemeChoice().then((choice) => {
+      const effective = choice === "auto" ? systemTheme : choice;
       setResolvedTheme(effective);
     });
 
