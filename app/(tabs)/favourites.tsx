@@ -1,11 +1,10 @@
 import { EventItem } from "@/components/EventItem"; // <-- Import your component
 import { ThemedText } from "@/components/ThemedText";
-import { FAVOURITES_KEY } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
 import { getCommonStyles } from "@/styles/CommonStyles";
-import { EventData, ItemProps } from "@/types/global"; // <-- adjust import if needed
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { removeExpiredFavourites } from "@/services/favourites";
+import { ItemProps } from "@/types/global"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -22,27 +21,8 @@ export default function FavouritesScreen() {
 
   const loadFavourites = async () => {
     try {
-      const stored = await AsyncStorage.getItem(FAVOURITES_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const now = new Date();
-
-        const allFavs = Object.values(parsed) as EventData[];
-
-        // Filter out expired items
-        const upcomingFavs = allFavs.filter((item) => {
-          const itemDate = new Date(item.end); // ensure item.date is a parsable date string or timestamp
-          return itemDate > now;
-        });
-
-        // Optionally update storage to remove expired ones permanently
-        const updatedFavs = Object.fromEntries(
-          upcomingFavs.map((item) => [item.id ?? item.title, item]),
-        );
-        await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify(updatedFavs));
-
-        setFavourites(upcomingFavs);
-      }
+      // Drops expired favourites from storage and returns the upcoming ones
+      setFavourites(await removeExpiredFavourites());
     } catch (e) {
       console.error("Failed to load favourites", e);
     }
