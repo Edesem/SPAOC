@@ -321,21 +321,37 @@ describe("GoogleCalendarService", () => {
   });
 
   describe("getSaintsForDate", () => {
-    it("queries the whole local day without mutating the date", async () => {
+    it("queries the whole parish day without mutating the date", async () => {
       fetchFn.mockResolvedValue(okResponse([]));
-      const date = new Date(2026, 7, 13, 15, 30);
+      const date = new Date("2026-08-13T05:30:00+00:00"); // 3:30pm Melbourne
       const original = date.getTime();
 
       await service.getSaintsForDate(date);
 
       const params = requestedUrl(fetchFn).searchParams;
-      expect(params.get("timeMin")).toBe(
-        new Date(2026, 7, 13, 0, 0, 0, 0).toISOString(),
-      );
-      expect(params.get("timeMax")).toBe(
-        new Date(2026, 7, 13, 23, 59, 59, 999).toISOString(),
-      );
+      expect(params.get("timeMin")).toBe("2026-08-12T14:00:00.000Z");
+      expect(params.get("timeMax")).toBe("2026-08-13T13:59:59.999Z");
       expect(date.getTime()).toBe(original);
+    });
+
+    it("uses the parish day for an early-morning instant that is still the day before in UTC", async () => {
+      fetchFn.mockResolvedValue(okResponse([]));
+
+      await service.getSaintsForDate(new Date("2026-08-16T08:00:00+10:00"));
+
+      const params = requestedUrl(fetchFn).searchParams;
+      expect(params.get("timeMin")).toBe("2026-08-15T14:00:00.000Z");
+      expect(params.get("timeMax")).toBe("2026-08-16T13:59:59.999Z");
+    });
+
+    it("queries a 23-hour day when daylight saving starts", async () => {
+      fetchFn.mockResolvedValue(okResponse([]));
+
+      await service.getSaintsForDate(new Date("2026-10-04T12:00:00+11:00"));
+
+      const params = requestedUrl(fetchFn).searchParams;
+      expect(params.get("timeMin")).toBe("2026-10-03T14:00:00.000Z");
+      expect(params.get("timeMax")).toBe("2026-10-04T12:59:59.999Z");
     });
 
     it("returns saint names with a fallback for untitled entries", async () => {

@@ -1,3 +1,4 @@
+import { now, parishDayKey, parishDaysBetween } from "@/domain/parishTime";
 import axios, { AxiosInstance } from "axios";
 
 const HOST = "www.antiochian.org";
@@ -94,15 +95,14 @@ export class Antiochian {
   private getIdFromDate(date: Date): number {
     if (!this.idAnchor) throw new Error("ID Anchor not initialized");
     const [anchorDate, anchorId] = this.idAnchor;
-    const span = Math.floor(
-      (date.getTime() - anchorDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
-    return span + anchorId;
+    // Whole parish calendar days, not 24-hour spans, so the time of day
+    // (and daylight saving) never moves a date onto a neighbouring day.
+    return parishDaysBetween(anchorDate, date) + anchorId;
   }
 
   // Fetch liturgical day information for a specific date
   async getLiturgicalDay(date?: Date): Promise<LiturgicalDay | null> {
-    const key = date ? date.toISOString().split("T")[0] : "0";
+    const key = date ? parishDayKey(date) : "0";
     if (this.days[key]) return this.days[key];
 
     const dayId = date ? this.getIdFromDate(date) : 0;
@@ -128,7 +128,7 @@ export class Antiochian {
 
   // Fetch liturgical text data for a specific date
   async getLiturgicalText(date: Date): Promise<LiturgicalText[] | null> {
-    const key = date.toISOString().split("T")[0]; // Format the date as YYYY-MM-DD
+    const key = parishDayKey(date); // YYYY-MM-DD in the parish's time zone
     const response = await this.axiosInstance.get(
       this.liturgicalTextEndpoint(key),
     );
@@ -180,7 +180,7 @@ export class Antiochian {
 const antiochianInstance = new Antiochian();
 
 /** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
-export const fetchAntiochian = async (date: Date = new Date()) => {
+export const fetchAntiochian = async (date: Date = now()) => {
   await antiochianInstance.ensureAuthenticated();
 
   const [day, texts] = await Promise.all([

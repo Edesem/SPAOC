@@ -1,3 +1,4 @@
+import { endOfParishDay, startOfParishDay } from "@/domain/parishTime";
 import type {
   CalendarDataService,
   CalendarEvent,
@@ -84,10 +85,8 @@ export class GoogleCalendarService implements CalendarDataService {
 
   // Returns an empty list on failure so callers can treat it as "no saints"
   async getSaintsForDate(date: Date): Promise<string[]> {
-    const dayStart = new Date(date);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(date);
-    dayEnd.setHours(23, 59, 59, 999);
+    const dayStart = startOfParishDay(date);
+    const dayEnd = endOfParishDay(date);
 
     try {
       const items = await this.listEvents(this.saintsCalendar.calendarId, {

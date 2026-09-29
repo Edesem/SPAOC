@@ -1,5 +1,5 @@
+import { now } from "@/domain/parishTime";
 import { calendarService } from "@/services/calendar";
-import { getCurrentDate } from "@/utils/dateUtils";
 import { toTitleCase } from "@/utils/toTitleCase";
 import { useCallback, useEffect, useState } from "react";
 
@@ -11,7 +11,7 @@ export const useFastDay = () => {
     try {
       const fastingEvents = await calendarService.getFastingEvents();
 
-      const today = getCurrentDate();
+      const today = now();
 
       // Filter for fasting events on today's date
       const todayFastingEvents = fastingEvents.filter((event) => {

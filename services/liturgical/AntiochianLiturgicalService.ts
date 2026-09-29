@@ -1,4 +1,5 @@
 import type { Antiochian } from "@/api/AntiochianApi";
+import { now } from "@/domain/parishTime";
 import type {
   FeastTitle,
   LiturgicalData,
@@ -22,7 +23,7 @@ export type AntiochianClient = Pick<
 export class AntiochianLiturgicalService implements LiturgicalDataService {
   constructor(private readonly client: AntiochianClient) {}
 
-  async getLiturgicalData(date: Date = new Date()): Promise<LiturgicalData> {
+  async getLiturgicalData(date: Date = now()): Promise<LiturgicalData> {
     await this.client.ensureAuthenticated();
 
     const [day, texts] = await Promise.all([
