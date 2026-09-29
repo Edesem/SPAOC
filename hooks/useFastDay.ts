@@ -1,10 +1,10 @@
+import { classifyFastingEvent, type FastKind } from "@/domain/fasting";
 import { now } from "@/domain/parishTime";
 import { calendarService } from "@/services/calendar";
-import { toTitleCase } from "@/utils/toTitleCase";
 import { useCallback, useEffect, useState } from "react";
 
 export const useFastDay = () => {
-  const [events, setEvents] = useState<string[]>([]);
+  const [events, setEvents] = useState<FastKind[]>([]);
   const [fastLoading, setLoading] = useState(true);
 
   const fetchEvents = useCallback(async () => {
@@ -13,30 +13,13 @@ export const useFastDay = () => {
 
       const today = now();
 
-      // Filter for fasting events on today's date
-      const todayFastingEvents = fastingEvents.filter((event) => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
-
-        return (
-          today.getTime() < eventEnd.getTime() &&
-          today.getTime() >= eventStart.getTime() &&
-          [
-            "strict fast",
-            "fast",
-            "meat fast",
-            "great lent",
-            "the theotokos fast",
-            "nativity fast",
-            "the apostles' fast",
-          ].includes(event.title.toLowerCase())
-        );
-      });
-
-      const fastDay: string[] = [];
-
-      todayFastingEvents.forEach((event) => {
-        fastDay.push(toTitleCase(event.title));
+      // Classify the fasting events in effect today, dropping non-fasts
+      const fastDay = fastingEvents.flatMap((event) => {
+        const inEffect =
+          today.getTime() < new Date(event.end).getTime() &&
+          today.getTime() >= new Date(event.start).getTime();
+        const kind = inEffect ? classifyFastingEvent(event.title) : null;
+        return kind ? [kind] : [];
       });
 
       setEvents(fastDay);

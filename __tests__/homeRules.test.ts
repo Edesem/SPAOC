@@ -3,8 +3,6 @@ import {
   addSectionIndexes,
   buildHomeSections,
   filterSectionsByMonth,
-  getMajorFastLabel,
-  getMinorFastLabel,
   getSaintsTitle,
   GroupedEventSection,
 } from "@/utils/homeRules";
@@ -18,50 +16,6 @@ const event = (id: string, start: string): EventData => ({
   location: "",
   source: "source",
   data: [],
-});
-
-describe("getMajorFastLabel", () => {
-  it("returns null when there is no major fast", () => {
-    expect(getMajorFastLabel([])).toBeNull();
-    expect(getMajorFastLabel(["Fast"])).toBeNull();
-  });
-
-  it("returns the matching major fast label", () => {
-    expect(getMajorFastLabel(["Great Lent"])).toBe("Great Lent");
-    expect(getMajorFastLabel(["The Apostles' Fast"])).toBe(
-      "The Apostles' Fast",
-    );
-    expect(getMajorFastLabel(["The Theotokos Fast"])).toBe("Theotokos Fast");
-    expect(getMajorFastLabel(["The Nativity Fast"])).toBe(
-      "The Nativity Fast",
-    );
-  });
-
-  it("prioritises Great Lent over other concurrent major fasts", () => {
-    expect(
-      getMajorFastLabel(["The Nativity Fast", "Great Lent"]),
-    ).toBe("Great Lent");
-  });
-});
-
-describe("getMinorFastLabel", () => {
-  it("falls back to 'No Fast' when there are no fasting events", () => {
-    expect(getMinorFastLabel([])).toBe("No Fast");
-  });
-
-  it("returns the matching minor fast label", () => {
-    expect(getMinorFastLabel(["Strict Fast"])).toBe(
-      "Abstain from meat, fish, dairy, eggs, wine, olive oil",
-    );
-    expect(getMinorFastLabel(["Fast"])).toBe("Abstain from meat, dairy, eggs");
-    expect(getMinorFastLabel(["Meat Fast"])).toBe("Abstain from meat");
-  });
-
-  it("prioritises Strict Fast over other concurrent minor fasts", () => {
-    expect(getMinorFastLabel(["Meat Fast", "Strict Fast"])).toBe(
-      "Abstain from meat, fish, dairy, eggs, wine, olive oil",
-    );
-  });
 });
 
 describe("getSaintsTitle", () => {

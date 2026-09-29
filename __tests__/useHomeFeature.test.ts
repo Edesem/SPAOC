@@ -1,3 +1,4 @@
+import { FastKind } from "@/domain/fasting";
 import { useHomeFeature } from "@/hooks/useHomeFeature";
 import { act, renderHook } from "@testing-library/react-native";
 
@@ -16,7 +17,11 @@ let mockEventsState: { groupedEvents: any[]; refetch: jest.Mock } = {
   groupedEvents: [],
   refetch: mockRefetchEvents,
 };
-let mockFastDayState: { events: string[]; fastLoading: boolean; refetch: jest.Mock } = {
+let mockFastDayState: {
+  events: FastKind[];
+  fastLoading: boolean;
+  refetch: jest.Mock;
+} = {
   events: [],
   fastLoading: false,
   refetch: mockRefetchFast,
@@ -61,7 +66,11 @@ describe("useHomeFeature", () => {
       refetchSaints: mockRefetchSaints,
     };
     mockEventsState = { groupedEvents: [], refetch: mockRefetchEvents };
-    mockFastDayState = { events: [], fastLoading: false, refetch: mockRefetchFast };
+    mockFastDayState = {
+      events: [],
+      fastLoading: false,
+      refetch: mockRefetchFast,
+    };
   });
 
   it("sets up notifications and loads events on mount", async () => {
@@ -99,7 +108,7 @@ describe("useHomeFeature", () => {
 
   it("derives the major and minor fast labels from fasting events", async () => {
     mockFastDayState = {
-      events: ["Great Lent", "Strict Fast"],
+      events: [FastKind.GreatLent, FastKind.StrictFast],
       fastLoading: false,
       refetch: mockRefetchFast,
     };
