@@ -238,6 +238,7 @@ Date tests build instants with explicit UTC offsets so they pass in any device t
 
 Favourites persistence has repository-level tests against the AsyncStorage Jest mock:
 - [favouritesRepository.test.ts](../services/favourites/favouritesRepository.test.ts) covers loading data already stored in the existing format, add/remove, expiry at the end-time boundary, and invalid stored JSON.
+- [EventItem-test.tsx](../components/__tests__/EventItem-test.tsx) mocks the repository and covers the star toggle: initial state, favouriting, unfavouriting with the `onUnfavourite` callback, and error logging on load or save failure.
 
 ### What is not tested
 
