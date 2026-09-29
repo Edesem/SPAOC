@@ -3,6 +3,7 @@ import {
   groupEventsByDay,
   getStartOfWeek,
 } from "@/utils/dateUtils";
+import { resetNow, setNow } from "@/domain/parishTime";
 
 describe("formatDateHeading", () => {
   beforeEach(() => {
@@ -75,7 +76,37 @@ describe("formatDateHeading", () => {
   });
 });
 
+describe("formatDateHeading with an injected clock", () => {
+  afterEach(() => {
+    resetNow();
+  });
+
+  it("takes today from the parish clock, not the system clock", () => {
+    setNow(() => new Date("2026-08-13T10:00:00.000Z"));
+
+    expect(formatDateHeading(new Date("2026-08-13T10:00:00.000Z"))).toBe(
+      "Today, 13 August",
+    );
+    expect(formatDateHeading(new Date("2026-08-14T10:00:00.000Z"))).toBe(
+      "Tomorrow, 14 August",
+    );
+  });
+});
+
 describe("getStartOfWeek", () => {
+  it("returns Melbourne midnight on the Sunday daylight saving starts", () => {
+    const date = new Date("2026-10-07T12:00:00.000+11:00"); // Wednesday
+    const startOfWeek = getStartOfWeek(date, "sunday");
+    // Sunday 4 October: clocks go forward at 2am, so midnight is still +10:00
+    expect(startOfWeek.toISOString()).toBe("2026-10-03T14:00:00.000Z");
+  });
+
+  it("returns Melbourne midnight in daylight saving time", () => {
+    const date = new Date("2026-12-03T12:00:00.000+11:00"); // Thursday
+    const startOfWeek = getStartOfWeek(date, "monday");
+    expect(startOfWeek.toISOString()).toBe("2026-11-29T13:00:00.000Z"); // Monday 30 Nov
+  });
+
   it("should return the correct start of the week for Sunday", () => {
     const date = new Date("2026-08-13T00:00:00.000+10:00"); // Thursday
     const startOfWeek = getStartOfWeek(date, "sunday");

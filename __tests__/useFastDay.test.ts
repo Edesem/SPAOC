@@ -1,9 +1,6 @@
 import { useFastDay } from "@/hooks/useFastDay";
+import { resetNow, setNow } from "@/domain/parishTime";
 import { renderHook, waitFor } from "@testing-library/react-native";
-
-jest.mock("@/utils/dateUtils", () => ({
-  getCurrentDate: jest.fn(() => new Date("2026-08-13T10:00:00.000Z")),
-}));
 
 const mockFetch = (items: unknown[] = []) => {
   globalThis.fetch = jest.fn().mockResolvedValue({
@@ -34,6 +31,14 @@ const renderFastDay = async () => {
 };
 
 describe("useFastDay", () => {
+  beforeEach(() => {
+    setNow(() => new Date("2026-08-13T10:00:00.000Z"));
+  });
+
+  afterEach(() => {
+    resetNow();
+  });
+
   it("identifies a fast day", async () => {
     mockFetch([
       mockEvent(
