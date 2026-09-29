@@ -2,33 +2,23 @@ import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FavouritesScreen from "@/app/(tabs)/favourites";
+import { removeExpiredFavourites } from "@/services/favourites";
 
-// TODO: These tests are not deterministic.
-// Currently they are set to 2099 but technically 
-// there will be a date where these test cases start failing
-// For now is this good, however setting the clock to be a set date
-// caused many errors and so this is the solution for the
-// time being.
+// The screen is tested against a mocked favourites repository. Storage
+// format, expiry boundaries and invalid stored data are covered by
+// services/favourites/favouritesRepository.test.ts.
 
 // TODO:
 // ⚠️ Test coverage gaps:
 // - onPress behaviour ❌
 //   You’re mocking it as a no-op.
-// - Persistence after unfavouriting ❌
-//   UI only; storage isn’t updated.
-// - Empty {} storage ❌
-//   Only null is tested.
 // - Missing/invalid event dates ❌
 //   Not tested.
-// - Events exactly at now ❌
-//   Boundary case.
 // - Component rendering details ❌
 //   Header, subtitle, image etc. aren’t tested.
 
-jest.mock("@react-native-async-storage/async-storage", () => ({
-  getItem: jest.fn(),
-
-  setItem: jest.fn(),
+jest.mock("@/services/favourites", () => ({
+  removeExpiredFavourites: jest.fn(),
 }));
 
 jest.mock("react-native-safe-area-context", () => {
@@ -63,13 +53,13 @@ jest.mock("@/components/EventItem", () => {
       item,
       onUnfavourite,
     }: {
-      item: { id: string; title: string };
+      item: { id?: string; title: string };
       onUnfavourite: () => void;
     }) =>
       React.createElement(
         Text,
         {
-          testID: `event-item-${item.id}`,
+          testID: `event-item-${item.id ?? item.title}`,
           onPress: onUnfavourite,
         },
         item.title,
@@ -77,67 +67,61 @@ jest.mock("@/components/EventItem", () => {
   };
 });
 
+const event = (id: string, title: string) => ({
+  id,
+  title,
+  start: "2099-08-15T10:00:00.000Z",
+  end: "2099-08-15T12:00:00.000Z",
+});
+
 describe("favourites", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("loads stored upcoming favourites", async () => {
-    const favourite = {
-      id: "event-1",
-      title: "Divine Liturgy",
-      start: "2099-08-15T10:00:00.000Z",
-      end: "2099-08-15T12:00:00.000Z",
-    };
-
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-      JSON.stringify({
-        [favourite.id]: favourite,
-      }),
-    );
+  it("cleans up expired favourites and shows the upcoming ones on focus", async () => {
+    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+      event("event-1", "Divine Liturgy"),
+    ]);
 
     const { findByTestId } = await render(React.createElement(FavouritesScreen));
 
     expect(await findByTestId("event-item-event-1")).toBeTruthy();
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+    expect(removeExpiredFavourites).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not read or write favourites storage directly", async () => {
+    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+      event("event-1", "Divine Liturgy"),
+    ]);
+
+    const { findByTestId } = await render(React.createElement(FavouritesScreen));
+    await findByTestId("event-item-event-1");
+
+    expect(AsyncStorage.getItem).not.toHaveBeenCalledWith("favourites");
+    expect(AsyncStorage.setItem).not.toHaveBeenCalledWith(
       "favourites",
-      JSON.stringify({ [favourite.id]: favourite }),
+      expect.anything(),
     );
   });
 
-  it("displays an empty state when storage is empty", async () => {
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+  it("displays an empty state when there are no favourites", async () => {
+    (removeExpiredFavourites as jest.Mock).mockResolvedValue([]);
 
     const { getByText } = await render(React.createElement(FavouritesScreen));
 
     await waitFor(() => {
-      expect(AsyncStorage.getItem).toHaveBeenCalledWith("favourites");
+      expect(removeExpiredFavourites).toHaveBeenCalled();
     });
 
     expect(getByText("No favourites yet.")).toBeTruthy();
   });
 
   it("unfavouriting removes the item from the displayed list", async () => {
-    const eventBeingDeleted = {
-      id: "event-1",
-      title: "Event Being Removed",
-      start: "2099-08-15T10:00:00.000Z",
-      end: "2099-08-15T12:00:00.000Z",
-    };
-
-    const eventStaying = {
-      id: "event-2",
-      title: "Current Event",
-      start: "2099-08-16T10:00:00.000Z",
-      end: "2099-08-16T12:00:00.000Z",
-    };
-
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-      JSON.stringify({
-        [eventBeingDeleted.id]: eventBeingDeleted,
-        [eventStaying.id]: eventStaying,
-      }),
-    );
+    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+      event("event-1", "Event Being Removed"),
+      event("event-2", "Current Event"),
+    ]);
 
     const { findByTestId, getByTestId, queryByTestId } = await render(
       React.createElement(FavouritesScreen),
@@ -154,55 +138,36 @@ describe("favourites", () => {
     expect(getByTestId("event-item-event-2")).toBeTruthy();
   });
 
-  it("removes expired favourites from storage and the displayed list", async () => {
-    const expiredFavourite = {
-      id: "event-1",
-      title: "Expired Event",
-      start: "2000-08-15T10:00:00.000Z",
-      end: "2000-08-15T12:00:00.000Z",
-    };
+  it("unfavouriting an event without an id removes it by title", async () => {
+    const { id: _, ...vespers } = event("unused", "Vespers");
+    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+      vespers,
+      event("event-2", "Current Event"),
+    ]);
 
-    const currentFavourite = {
-      id: "event-2",
-      title: "Current Event",
-      start: "2099-08-15T10:00:00.000Z",
-      end: "2099-08-15T12:00:00.000Z",
-    };
-
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
-      JSON.stringify({
-        [expiredFavourite.id]: expiredFavourite,
-        [currentFavourite.id]: currentFavourite,
-      }),
-    );
-
-    const { findByTestId, queryByTestId } = await render(
+    const { findByTestId, getByTestId, queryByTestId } = await render(
       React.createElement(FavouritesScreen),
     );
 
-    expect(await findByTestId("event-item-event-2")).toBeTruthy();
-    expect(queryByTestId("event-item-event-1")).toBeNull();
+    fireEvent.press(await findByTestId("event-item-Vespers"));
 
     await waitFor(() => {
-      expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-        "favourites",
-        JSON.stringify({
-          [currentFavourite.id]: currentFavourite,
-        }),
-      );
+      expect(queryByTestId("event-item-Vespers")).toBeNull();
     });
+    expect(getByTestId("event-item-event-2")).toBeTruthy();
   });
 
-  it("shows the empty state and logs an error for invalid stored data", async () => {
+  it("shows the empty state and logs an error when loading fails", async () => {
     const consoleError = jest.spyOn(console, "error").mockImplementation();
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue("not valid JSON");
+    const error = new SyntaxError("Unexpected token");
+    (removeExpiredFavourites as jest.Mock).mockRejectedValue(error);
 
     const { getByText } = await render(React.createElement(FavouritesScreen));
 
     await waitFor(() => {
       expect(consoleError).toHaveBeenCalledWith(
         "Failed to load favourites",
-        expect.any(SyntaxError),
+        error,
       );
     });
 
