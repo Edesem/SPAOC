@@ -1,10 +1,11 @@
-import { FAVOURITES_KEY } from "@/constants/consts";
 import type { EventData } from "@/types/global";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Favourites are persisted under a single AsyncStorage key as a JSON object
 // mapping each event's key (its id, falling back to its title) to the event.
 // This module is the only place that knows about that format.
+const FAVOURITES_KEY = "favourites";
+
 type StoredFavourites = Record<string, EventData>;
 
 const favouriteKey = (event: EventData) => event.id ?? event.title;
