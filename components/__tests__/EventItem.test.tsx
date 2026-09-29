@@ -37,14 +37,17 @@ const event = {
   title: "Divine Liturgy",
   start: "2099-08-15T10:00:00.000Z",
   end: "2099-08-15T12:00:00.000Z",
+  allDay: false,
   description: "",
   location: "",
   source: "church",
   data: [],
 };
 
-const renderItem = (props: { onUnfavourite?: () => void } = {}) =>
-  render(<EventItem item={event} onPress={jest.fn()} {...props} />);
+const renderItem = (
+  props: { onUnfavourite?: () => void } = {},
+  item = event,
+) => render(<EventItem item={item} onPress={jest.fn()} {...props} />);
 
 describe("EventItem favourites", () => {
   beforeEach(() => {
@@ -131,5 +134,33 @@ describe("EventItem favourites", () => {
     });
     expect(getByText("star-outline")).toBeTruthy();
     consoleError.mockRestore();
+  });
+});
+
+describe("EventItem time label", () => {
+  beforeEach(() => {
+    (isFavourite as jest.Mock).mockResolvedValue(false);
+  });
+
+  it("shows 'All day' for an all-day event", async () => {
+    const { findByText, queryByText } = await renderItem(
+      {},
+      {
+        ...event,
+        start: "2099-08-14T14:00:00.000Z",
+        end: "2099-08-15T14:00:00.000Z",
+        allDay: true,
+      },
+    );
+
+    expect(await findByText(/All day/)).toBeTruthy();
+    expect(queryByText(/ to /)).toBeNull();
+  });
+
+  it("shows the start and end times for a timed event", async () => {
+    const { findByText, queryByText } = await renderItem();
+
+    expect(await findByText(/ to /)).toBeTruthy();
+    expect(queryByText(/All day/)).toBeNull();
   });
 });
