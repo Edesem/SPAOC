@@ -5,9 +5,12 @@ import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colours } from "@/styles/Colours";
-import { FAVOURITES_KEY } from "@/constants/consts";
+import {
+  addFavourite,
+  isFavourite as isStoredFavourite,
+  removeFavourite,
+} from "@/services/favourites";
 
 export const EventItem = ({
   item,
@@ -26,13 +29,7 @@ export const EventItem = ({
   useEffect(() => {
     const loadFavourite = async () => {
       try {
-        const storedFavourites = await AsyncStorage.getItem(FAVOURITES_KEY);
-        if (storedFavourites) {
-          const favourites = JSON.parse(storedFavourites);
-          // Use unique key - here assume item.id or fallback to title
-          const key = item.id ?? item.title;
-          setIsFavourite(!!favourites[key]);
-        }
+        setIsFavourite(await isStoredFavourite(item));
       } catch (e) {
         console.error("Failed to load favourites", e);
       }
@@ -44,19 +41,14 @@ export const EventItem = ({
   const toggleFavourite = async () => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const storedFavourites = await AsyncStorage.getItem(FAVOURITES_KEY);
-      const favourites = storedFavourites ? JSON.parse(storedFavourites) : {};
-      const key = item.id ?? item.title;
-
       const newStatus = !isFavourite;
 
       if (newStatus) {
-        favourites[key] = item;
+        await addFavourite(item);
       } else {
-        delete favourites[key];
+        await removeFavourite(item);
       }
 
-      await AsyncStorage.setItem(FAVOURITES_KEY, JSON.stringify(favourites));
       setIsFavourite(newStatus);
 
       if (!newStatus && onUnfavourite) {
