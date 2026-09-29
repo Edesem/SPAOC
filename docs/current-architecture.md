@@ -63,10 +63,11 @@ flowchart TD
     C --> I[Daily readings screen]
     C --> J[PDF viewer]
 
-    D --> D1[useEvents]
-    D --> D2[useDailySaint]
-    D --> D3[useFastDay]
-    D --> D4[utils/notifications]
+    D --> D6[useHomeFeature]
+    D6 --> D1[useEvents]
+    D6 --> D2[useDailySaint]
+    D6 --> D3[useFastDay]
+    D6 --> D4[utils/notifications]
     D1 --> D0[CalendarDataService]
     D2 --> D0
     D3 --> D0
@@ -108,19 +109,19 @@ Entry point:
 - [app/(tabs)/index.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/(tabs)/index.tsx)
 
 Flow:
-- On mount, the Home screen requests notification permissions, sets up notification listeners, and schedules Saint of the Day notifications.
-- It calls three hooks:
+- The Home screen delegates data loading, refresh, and coordination to [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts). The screen connects the hook's return values to components (SectionList, header, month picker) and keeps only the `SectionList` ref, tab-press-to-scroll-to-top wiring, navigation, and rendering.
+- `useHomeFeature` requests notification permissions, sets up notification listeners, and schedules Saint of the Day notifications on mount, and calls three hooks:
   - [hooks/useEvents.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useEvents.tsx) to load parish events from every event calendar.
   - [hooks/useDailySaint.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useDailySaint.ts) to load saints for the current date.
   - [hooks/useFastDay.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useFastDay.ts) to load fasting calendar events and derive fast labels.
 - All three hooks load data through `calendarService` from [services/calendar/](../services/calendar/index.ts), which implements the `CalendarDataService` interface. `useEvents` is kept as a compatibility wrapper so the screen is unchanged.
 - The current implementation, `GoogleCalendarService`, holds the calendar IDs, request URLs, and error handling. [services/calendar/googleCalendarMapper.ts](../services/calendar/googleCalendarMapper.ts) normalizes Google events into the app's `EventData` shape. Nothing outside [services/calendar/](../services/calendar/index.ts) knows about Google Calendar.
-- The data is grouped by date with [utils/dateUtils.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/dateUtils.ts) and passed to a SectionList.
+- `useHomeFeature` groups the data by date with [utils/dateUtils.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/dateUtils.ts), filters it by the selected month, derives the major/minor fast labels and saint title, and returns section data ready for the `SectionList`.
 - Tapping an event navigates to [app/eventDetails.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/eventDetails.tsx) with the event payload.
 
 State and side effects:
-- The screen uses local state for refresh status, date selection, month filtering, and the visible section list state.
-- Side effects occur in the component itself (network requests, notifications, app-state refresh, navigation, haptics).
+- `useHomeFeature` owns refresh status, date selection, month filtering, and the background-refresh app-state listener. The screen keeps only the `SectionList` ref and navigation-driven scroll-to-top state.
+- Side effects (network requests via the data hooks, notifications, app-state refresh) live in `useHomeFeature`; navigation and haptics stay in the screen component.
 
 External calls:
 - Google Calendar events endpoints, saints endpoint, fasting endpoint.
@@ -252,6 +253,9 @@ Settings persistence is tested the same way:
 - [settingsRepository.test.ts](../services/settings/settingsRepository.test.ts) runs against the AsyncStorage Jest mock. It covers reading values stored in the existing format, the stored value formats, fallbacks for unset or unrecognised values, first-run notification and calendar defaults, and invalid stored JSON.
 - [settings.test.tsx](../__tests__/settings.test.tsx) mocks the repository and covers the Settings screen: loading and saving the saint notification toggle, scheduling or cancelling notifications, loading and saving the start of week, error logging when calendar settings fail to load, and never touching the settings keys directly.
 
+Home screen orchestration is tested at the hook level:
+- [useHomeFeature.test.ts](../__tests__/useHomeFeature.test.ts) mocks `useEvents`, `useDailySaint`, `useFastDay`, and the notification modules, and covers: notification setup and the initial event load on mount, saint-title pluralisation, major/minor fast label derivation (including the "No Fast" fallback), refreshing all three data sources together, and filtering sections to the picked month while closing the month picker.
+
 ### What is not tested
 
 The current test coverage does not appear to cover:
@@ -270,13 +274,13 @@ The following are concrete issues visible in the codebase.
 ### 6.1 UI and data fetching are tightly coupled
 
 Relevant files:
-- [app/(tabs)/index.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/(tabs)/index.tsx)
 - [app/(tabs)/prayer.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/(tabs)/prayer.tsx)
 - [app/settings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/settings.tsx)
 
 Evidence:
 - The screen components orchestrate data loading, state changes, navigation, and side effects directly.
-- Home and Prayer screens mix presentation, data loading, refresh logic, and external side effects in the same component.
+- Prayer and Settings screens mix presentation, data loading, refresh logic, and external side effects in the same component.
+- The Home screen moved this coordination into [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts), so it no longer has this problem; the same pattern has not yet been applied to Prayer or Settings.
 
 ### 6.2 Persistence logic is duplicated and scattered
 
@@ -316,14 +320,14 @@ Evidence:
 ### 6.5 Business/domain logic is mixed with UI concerns
 
 Relevant files:
-- [app/(tabs)/index.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/(tabs)/index.tsx)
+- [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts)
 - [hooks/useFastDay.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/hooks/useFastDay.ts)
 - [utils/dateUtils.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/dateUtils.ts)
 
 Evidence:
-- The Home screen contains hard-coded fast-day display rules and UI-specific rendering logic.
+- The fast-day display rules (which major/minor fast label to show) live in `useHomeFeature`, a hook, rather than a domain or feature module; the Home screen itself now only renders the label it is given.
 - Date grouping and “this week / next week / later” labels are computed in a utility file that also depends on application settings.
-- The logic for what counts as a fast day is embedded in the UI data flow rather than in a domain or feature module.
+- The logic for what counts as a fast day is embedded in the hook's data flow rather than in a domain or feature module.
 
 ### 6.6 Security-sensitive configuration is embedded in source
 
