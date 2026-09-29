@@ -365,22 +365,46 @@ describe("AntiochianLiturgicalService over the network", () => {
       ).resolves.toEqual([`${DAY_URL}${id}`, `${TEXTS_URL}${isoDate}`]);
     });
 
-    it("ignores the time of day within a UTC day", async () => {
+    it("ignores the time of day within a parish day", async () => {
       await expect(
-        requestsFor(new Date("2026-08-16T23:59:59.999Z")),
+        requestsFor(new Date("2026-08-16T23:59:59.999+10:00")),
       ).resolves.toEqual([
         `${DAY_URL}${ANCHOR_ID + 3}`,
         `${TEXTS_URL}2026-08-16`,
       ]);
     });
 
-    it("pins #59: keys requests by UTC calendar day, not the device's local day", async () => {
+    it("keys requests by the parish day, not the UTC day (#59)", async () => {
       // 8am on the 16th in Melbourne is still the 15th in UTC
       await expect(
         requestsFor(new Date("2026-08-16T08:00:00+10:00")),
       ).resolves.toEqual([
-        `${DAY_URL}${ANCHOR_ID + 2}`,
-        `${TEXTS_URL}2026-08-15`,
+        `${DAY_URL}${ANCHOR_ID + 3}`,
+        `${TEXTS_URL}2026-08-16`,
+      ]);
+    });
+
+    it.each([
+      ["just after midnight, standard time", "2026-08-16T00:00:00+10:00", 3, "2026-08-16"],
+      ["just before midnight, standard time", "2026-08-15T23:59:59+10:00", 2, "2026-08-15"],
+      ["just after midnight, daylight saving", "2026-12-01T00:30:00+11:00", 110, "2026-12-01"],
+      ["just before midnight, daylight saving", "2026-11-30T23:59:59+11:00", 109, "2026-11-30"],
+    ])(
+      "requests the local day for %s (#59)",
+      async (_, instant, daysFromAnchor, textsDate) => {
+        await expect(requestsFor(new Date(instant))).resolves.toEqual([
+          `${DAY_URL}${ANCHOR_ID + daysFromAnchor}`,
+          `${TEXTS_URL}${textsDate}`,
+        ]);
+      },
+    );
+
+    it("counts a day across a daylight saving change as one", async () => {
+      await expect(
+        requestsFor(new Date("2026-10-04T12:00:00+11:00")),
+      ).resolves.toEqual([
+        `${DAY_URL}${ANCHOR_ID + 52}`,
+        `${TEXTS_URL}2026-10-04`,
       ]);
     });
 
@@ -400,9 +424,9 @@ describe("AntiochianLiturgicalService over the network", () => {
       ).resolves.toEqual([`${DAY_URL}502`, `${TEXTS_URL}2026-09-03`]);
     });
 
-    it("shares one cached day between times on the same UTC day", async () => {
-      await service.getLiturgicalData(new Date("2026-08-14T01:00:00Z"));
-      await service.getLiturgicalData(new Date("2026-08-14T22:00:00Z"));
+    it("shares one cached day between times on the same parish day", async () => {
+      await service.getLiturgicalData(new Date("2026-08-14T00:30:00+10:00"));
+      await service.getLiturgicalData(new Date("2026-08-14T23:30:00+10:00"));
 
       expect(
         getCalls(http).filter((url) => url === `${DAY_URL}${ANCHOR_ID + 1}`),
@@ -412,9 +436,10 @@ describe("AntiochianLiturgicalService over the network", () => {
     it("defaults to the current instant", async () => {
       jest.useFakeTimers().setSystemTime(new Date("2026-09-25T22:15:00Z"));
 
+      // 8:15am on the 26th in Melbourne
       await expect(requestsFor()).resolves.toEqual([
-        `${DAY_URL}${ANCHOR_ID + 43}`,
-        `${TEXTS_URL}2026-09-25`,
+        `${DAY_URL}${ANCHOR_ID + 44}`,
+        `${TEXTS_URL}2026-09-26`,
       ]);
       jest.useRealTimers();
     });
