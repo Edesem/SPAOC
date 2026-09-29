@@ -10,6 +10,7 @@ import {
   resetNow,
   setNow,
   startOfParishDay,
+  startOfParishDayFromKey,
 } from "@/domain/parishTime";
 
 const iso = (date: Date) => date.toISOString();
@@ -124,6 +125,33 @@ describe("startOfParishDay / endOfParishDay", () => {
     expect(parishDayKey(startOfParishDay(date, 1))).toBe("2027-01-01");
     expect(parishDayKey(startOfParishDay(date, -31))).toBe("2026-11-30");
   });
+});
+
+describe("startOfParishDayFromKey", () => {
+  it("returns parish midnight at +10:00 in standard time", () => {
+    expect(iso(startOfParishDayFromKey("2026-08-13"))).toBe(
+      "2026-08-12T14:00:00.000Z",
+    );
+  });
+
+  it("returns parish midnight at +11:00 in daylight saving time", () => {
+    expect(iso(startOfParishDayFromKey("2026-12-01"))).toBe(
+      "2026-11-30T13:00:00.000Z",
+    );
+  });
+
+  it("round-trips through parishDayKey", () => {
+    expect(parishDayKey(startOfParishDayFromKey("2026-12-31"))).toBe(
+      "2026-12-31",
+    );
+  });
+
+  it.each(["", "2026-8-13", "2026-02-30", "2026-02-30x", "13/08/2026"])(
+    "throws a RangeError for %p",
+    (key) => {
+      expect(() => startOfParishDayFromKey(key)).toThrow(RangeError);
+    },
+  );
 });
 
 describe("atParishHour", () => {
