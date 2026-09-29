@@ -1,13 +1,12 @@
 import SettingPicker from "@/components/SettingPicker";
-import {
-  CALENDAR_NOTIFICATION_SETTINGS,
-  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-  FAVOURITES_NOTIFICATIONS_ENABLED,
-} from "@/constants/consts";
+import { CALENDAR_NOTIFICATION_SETTINGS } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   getStartOfWeek,
   getThemeChoice,
+  loadNotificationToggles,
+  saveDailySaintNotificationsEnabled,
+  saveFavouriteNotificationsEnabled,
   saveStartOfWeek,
   saveThemeChoice,
   type StartOfWeek,
@@ -103,17 +102,9 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     const loadNotifications = async () => {
-      const daily = await AsyncStorage.getItem(
-        DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-      );
-      setDailySaintsEnabled(daily !== "false");
-      if (daily !== "true")
-        await AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, "true");
-
-      const favs = await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_ENABLED);
-      setFavouriteNotificationsEnabled(favs !== "false");
-      if (favs === null)
-        await AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, "true");
+      const { dailySaints, favourites } = await loadNotificationToggles();
+      setDailySaintsEnabled(dailySaints);
+      setFavouriteNotificationsEnabled(favourites);
     };
     loadNotifications();
   }, []);
@@ -288,10 +279,7 @@ export default function SettingsScreen() {
               value={dailySaintsEnabled}
               onValueChange={async (value) => {
                 setDailySaintsEnabled(value);
-                await AsyncStorage.setItem(
-                  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-                  value.toString(),
-                );
+                await saveDailySaintNotificationsEnabled(value);
                 if (value) {
                   scheduleSaintNotificationsForNext7Days();
                 } else {
@@ -318,10 +306,7 @@ export default function SettingsScreen() {
                 value={favouriteNotificationsEnabled}
                 onValueChange={(value) => {
                   setFavouriteNotificationsEnabled(value);
-                  AsyncStorage.setItem(
-                    FAVOURITES_NOTIFICATIONS_ENABLED,
-                    value.toString(),
-                  );
+                  saveFavouriteNotificationsEnabled(value);
                   if (value) {
                     scheduleFavouriteNotifications();
                   } else {
