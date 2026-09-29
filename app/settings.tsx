@@ -5,6 +5,11 @@ import {
   FAVOURITES_NOTIFICATIONS_ENABLED,
 } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import {
+  getStartOfWeek,
+  saveStartOfWeek,
+  type StartOfWeek,
+} from "@/services/settings";
 import { Colours } from "@/styles/Colours";
 import { fontSize } from "@/styles/CommonStyles";
 import eventBus from "@/utils/eventBus";
@@ -33,8 +38,6 @@ import RNPickerSelect from "react-native-picker-select";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { create } from "zustand";
 
-export type StartOfWeek = "sunday" | "monday";
-
 const appVersion = Constants.expoConfig?.version ?? "Unknown";
 
 interface CalendarSetting {
@@ -54,12 +57,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
 
   // Start of week
   setStartOfWeek: (value) => {
-    AsyncStorage.setItem("START_OF_WEEK", value);
+    saveStartOfWeek(value);
     set({ startOfWeek: value });
   },
   loadStartOfWeek: async () => {
-    const saved = await AsyncStorage.getItem("START_OF_WEEK");
-    if (saved === "sunday" || saved === "monday") {
+    const saved = await getStartOfWeek();
+    if (saved) {
       set({ startOfWeek: saved });
     }
   },
@@ -231,7 +234,7 @@ export default function SettingsScreen() {
           <SettingPicker
             label="Start of the Week"
             value={startOfWeek}
-            onValueChange={(val) => setStartOfWeek(val as "sunday" | "monday")}
+            onValueChange={(val) => setStartOfWeek(val as StartOfWeek)}
             items={[
               { label: "Sunday", value: "sunday" },
               { label: "Monday", value: "monday" },
