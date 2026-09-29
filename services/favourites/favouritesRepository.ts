@@ -42,16 +42,14 @@ export async function removeFavourite(event: EventData): Promise<void> {
 }
 
 // Permanently drops favourites whose end time is not after `now` and returns
-// the ones that remain. Leaves storage untouched when nothing is stored.
+// the ones that remain. Leaves storage untouched when there are no favourites.
 export async function removeExpiredFavourites(
   now: Date = new Date(),
 ): Promise<EventData[]> {
-  const stored = await AsyncStorage.getItem(FAVOURITES_KEY);
-  if (!stored) return [];
+  const favourites = await getFavourites();
+  if (favourites.length === 0) return [];
 
-  const upcoming = (Object.values(JSON.parse(stored)) as EventData[]).filter(
-    (event) => new Date(event.end) > now,
-  );
+  const upcoming = favourites.filter((event) => new Date(event.end) > now);
 
   await writeFavourites(
     Object.fromEntries(upcoming.map((event) => [favouriteKey(event), event])),
