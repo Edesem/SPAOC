@@ -7,8 +7,11 @@ import {
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   getStartOfWeek,
+  getThemeChoice,
   saveStartOfWeek,
+  saveThemeChoice,
   type StartOfWeek,
+  type ThemeChoice,
 } from "@/services/settings";
 import { Colours } from "@/styles/Colours";
 import { fontSize } from "@/styles/CommonStyles";
@@ -79,7 +82,7 @@ export default function SettingsScreen() {
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
   const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
 
-  const [themeSelection, setThemeSelection] = useState("auto");
+  const [themeSelection, setThemeSelection] = useState<ThemeChoice>("auto");
 
  
 
@@ -93,8 +96,7 @@ export default function SettingsScreen() {
 
   useEffect(() => {
     const loadTheme = async () => {
-      const savedTheme = await AsyncStorage.getItem("APP_THEME");
-      setThemeSelection(savedTheme || "auto");
+      setThemeSelection(await getThemeChoice());
     };
     loadTheme();
   }, []);
@@ -215,8 +217,8 @@ export default function SettingsScreen() {
               label="Theme"
               value={themeSelection}
               onValueChange={(val) => {
-                setThemeSelection(val);
-                AsyncStorage.setItem("APP_THEME", val);
+                setThemeSelection(val as ThemeChoice);
+                saveThemeChoice(val as ThemeChoice);
                 eventBus.emit("themeChanged", val);
               }}
               items={[
