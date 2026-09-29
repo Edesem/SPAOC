@@ -1,10 +1,19 @@
 import SettingPicker from "@/components/SettingPicker";
-import {
-  CALENDAR_NOTIFICATION_SETTINGS,
-  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-  FAVOURITES_NOTIFICATIONS_ENABLED,
-} from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import {
+  getCalendarNotificationSettings,
+  getStartOfWeek,
+  getThemeChoice,
+  loadNotificationToggles,
+  saveCalendarNotificationSettings,
+  saveDailySaintNotificationsEnabled,
+  saveFavouriteNotificationsEnabled,
+  saveStartOfWeek,
+  saveThemeChoice,
+  type CalendarNotificationSettings,
+  type StartOfWeek,
+  type ThemeChoice,
+} from "@/services/settings";
 import { Colours } from "@/styles/Colours";
 import { fontSize } from "@/styles/CommonStyles";
 import eventBus from "@/utils/eventBus";
@@ -16,7 +25,6 @@ import {
   scheduleSaintNotificationsForNext7Days,
 } from "@/utils/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -33,14 +41,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { create } from "zustand";
 
-export type StartOfWeek = "sunday" | "monday";
-
 const appVersion = Constants.expoConfig?.version ?? "Unknown";
-
-interface CalendarSetting {
-  enabled: boolean;
-  daysBefore: number;
-}
 
 interface SettingsState {
   startOfWeek: StartOfWeek;
@@ -54,12 +55,12 @@ export const useSettingsStore = create<SettingsState>((set) => ({
 
   // Start of week
   setStartOfWeek: (value) => {
-    AsyncStorage.setItem("START_OF_WEEK", value);
+    saveStartOfWeek(value);
     set({ startOfWeek: value });
   },
   loadStartOfWeek: async () => {
-    const saved = await AsyncStorage.getItem("START_OF_WEEK");
-    if (saved === "sunday" || saved === "monday") {
+    const saved = await getStartOfWeek();
+    if (saved) {
       set({ startOfWeek: saved });
     }
   },
@@ -76,7 +77,7 @@ export default function SettingsScreen() {
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
   const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
 
-  const [themeSelection, setThemeSelection] = useState("auto");
+  const [themeSelection, setThemeSelection] = useState<ThemeChoice>("auto");
 
  
 
@@ -84,31 +85,21 @@ export default function SettingsScreen() {
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
     useState(true);
 
-  const [calendarSettings, setCalendarSettings] = useState<{
-    [key: string]: CalendarSetting;
-  }>({});
+  const [calendarSettings, setCalendarSettings] =
+    useState<CalendarNotificationSettings>({});
 
   useEffect(() => {
     const loadTheme = async () => {
-      const savedTheme = await AsyncStorage.getItem("APP_THEME");
-      setThemeSelection(savedTheme || "auto");
+      setThemeSelection(await getThemeChoice());
     };
     loadTheme();
   }, []);
 
   useEffect(() => {
     const loadNotifications = async () => {
-      const daily = await AsyncStorage.getItem(
-        DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-      );
-      setDailySaintsEnabled(daily !== "false");
-      if (daily !== "true")
-        await AsyncStorage.setItem(DAILY_SAINTS_NOTIFICATIONS_ENABLED, "true");
-
-      const favs = await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_ENABLED);
-      setFavouriteNotificationsEnabled(favs !== "false");
-      if (favs === null)
-        await AsyncStorage.setItem(FAVOURITES_NOTIFICATIONS_ENABLED, "true");
+      const { dailySaints, favourites } = await loadNotificationToggles();
+      setDailySaintsEnabled(dailySaints);
+      setFavouriteNotificationsEnabled(favourites);
     };
     loadNotifications();
   }, []);
@@ -120,33 +111,7 @@ export default function SettingsScreen() {
   useEffect(() => {
     const loadCalendar = async () => {
       try {
-        const stored = await AsyncStorage.getItem(
-          CALENDAR_NOTIFICATION_SETTINGS,
-        );
-        let settings: Record<string, CalendarSetting>;
-        if (stored) {
-          settings = JSON.parse(stored);
-        } else {
-          settings = {};
-          [
-            "youth",
-            "church",
-            "family",
-            "ladies",
-            "parish",
-            "seniors",
-            "weekly",
-            "playgroup",
-            "fellowship",
-          ].forEach((name) => {
-            settings[name] = { enabled: false, daysBefore: 1 };
-          });
-          await AsyncStorage.setItem(
-            CALENDAR_NOTIFICATION_SETTINGS,
-            JSON.stringify(settings),
-          );
-        }
-        setCalendarSettings(settings);
+        setCalendarSettings(await getCalendarNotificationSettings());
       } catch (e) {
         console.error(e);
       }
@@ -166,10 +131,7 @@ export default function SettingsScreen() {
       },
     };
     setCalendarSettings(updated);
-    AsyncStorage.setItem(
-      CALENDAR_NOTIFICATION_SETTINGS,
-      JSON.stringify(updated),
-    );
+    saveCalendarNotificationSettings(updated);
   };
 
   const dayOptions = [...Array(60).keys()].map((n) => ({
@@ -212,8 +174,8 @@ export default function SettingsScreen() {
               label="Theme"
               value={themeSelection}
               onValueChange={(val) => {
-                setThemeSelection(val);
-                AsyncStorage.setItem("APP_THEME", val);
+                setThemeSelection(val as ThemeChoice);
+                saveThemeChoice(val as ThemeChoice);
                 eventBus.emit("themeChanged", val);
               }}
               items={[
@@ -231,7 +193,7 @@ export default function SettingsScreen() {
           <SettingPicker
             label="Start of the Week"
             value={startOfWeek}
-            onValueChange={(val) => setStartOfWeek(val as "sunday" | "monday")}
+            onValueChange={(val) => setStartOfWeek(val as StartOfWeek)}
             items={[
               { label: "Sunday", value: "sunday" },
               { label: "Monday", value: "monday" },
@@ -283,10 +245,7 @@ export default function SettingsScreen() {
               value={dailySaintsEnabled}
               onValueChange={async (value) => {
                 setDailySaintsEnabled(value);
-                await AsyncStorage.setItem(
-                  DAILY_SAINTS_NOTIFICATIONS_ENABLED,
-                  value.toString(),
-                );
+                await saveDailySaintNotificationsEnabled(value);
                 if (value) {
                   scheduleSaintNotificationsForNext7Days();
                 } else {
@@ -313,10 +272,7 @@ export default function SettingsScreen() {
                 value={favouriteNotificationsEnabled}
                 onValueChange={(value) => {
                   setFavouriteNotificationsEnabled(value);
-                  AsyncStorage.setItem(
-                    FAVOURITES_NOTIFICATIONS_ENABLED,
-                    value.toString(),
-                  );
+                  saveFavouriteNotificationsEnabled(value);
                   if (value) {
                     scheduleFavouriteNotifications();
                   } else {
