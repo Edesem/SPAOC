@@ -59,7 +59,7 @@ export const EventItem = ({
     }
   };
 
-  const isAllDayEvent = item.start && !item.start.includes("T");
+  const isAllDayEvent = item.allDay;
   const eventStart = new Date(item.start);
   const eventEnd = new Date(item.end);
   const formattedDate = eventStart.toLocaleDateString([], {
