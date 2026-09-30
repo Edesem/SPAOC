@@ -29,15 +29,4 @@ export const Colours = {
     donateButton: '#b51a25',
     chevronColor: '#777',
   },
-  event: {
-    youth: '#3F51B5',
-    church: '#F6BF26',
-    family: '#0B8043',
-    ladies: '#9E69AF',
-    parish: '#F4511E',
-    seniors: '#7986CB',
-    weekly: '#039BE5',
-    playgroup: '#ae9cce',
-    fellowship: '#489160',
-  },
 };

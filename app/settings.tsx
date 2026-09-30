@@ -14,6 +14,7 @@ import {
   type StartOfWeek,
   type ThemeChoice,
 } from "@/services/settings";
+import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
 import { fontSize } from "@/styles/CommonStyles";
 import eventBus from "@/utils/eventBus";
@@ -138,20 +139,6 @@ export default function SettingsScreen() {
     label: `${n} day${n !== 1 ? "s" : ""}`,
     value: n,
   }));
-
-  const eventColorMap = new Map<string, string>([
-    ["youth", Colours.event.youth],
-    ["weekly", Colours.event.weekly],
-    ["church", Colours.event.church],
-    ["family", Colours.event.family],
-    ["ladies", Colours.event.ladies],
-    ["parish", Colours.event.parish],
-    ["seniors", Colours.event.seniors],
-    ["playgroup", Colours.event.playgroup],
-    ["fellowship", Colours.event.fellowship],
-  ]);
-
-  const getEventColor = (source: string) => eventColorMap.get(source) || "#000";
 
   return (
     <SafeAreaProvider>
@@ -289,7 +276,7 @@ export default function SettingsScreen() {
           {/* Comment out code */}
           {false &&
             Object.keys(calendarSettings).map((calendar) => {
-              const colour = getEventColor(calendar);
+              const colour = getCalendarColour(calendar);
 
               return (
                 <View
