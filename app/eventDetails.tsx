@@ -1,5 +1,6 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { getCalendarImage } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
 import { EventData } from "@/types/global";
 import * as Clipboard from "expo-clipboard";
@@ -71,20 +72,7 @@ const EventDetailsScreen = () => {
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
 
-  const imageMap: Record<string, any> = {
-    youth: require("../assets/images/orthodox/procession.png"),
-    church: require("../assets/images/orthodox/church.png"),
-    family: require("../assets/images/orthodox/village.png"),
-    ladies: require("../assets/images/orthodox/Theotokos.png"),
-    parish: require("../assets/images/orthodox/parish.png"),
-    seniors: require("../assets/images/orthodox/icon towel.png"),
-    weekly: require("../assets/images/orthodox/icon corner.png"),
-    playgroup: require("../assets/images/orthodox/annunciation.png"),
-    fellowship: require("../assets/images/orthodox/fellowship.png"),
-  };
-
-  // Get the image based on the source or fallback to default
-  const image = imageMap[source] || imageMap.default;
+  const image = getCalendarImage(source);
 
   useEffect(() => {
     navigation.setOptions({
