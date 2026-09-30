@@ -64,7 +64,7 @@ const renderDescription = (description: string | null, theme: any) => {
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
   const { title, start, end, description, location, source } =
-    useLocalSearchParams<EventData>();
+    useLocalSearchParams<Omit<EventData, "allDay">>();
 
   const styles = getStyles();
 

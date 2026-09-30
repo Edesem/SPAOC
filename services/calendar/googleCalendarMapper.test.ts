@@ -21,6 +21,7 @@ describe("normalizeGoogleEvent", () => {
       title: "Youth Night",
       start: "2026-08-13T09:00:00.000Z",
       end: "2026-08-13T21:00:00+10:00",
+      allDay: false,
       description: "<b>Pizza</b>",
       location: "Church Hall",
       source: "youth",
@@ -28,7 +29,7 @@ describe("normalizeGoogleEvent", () => {
     });
   });
 
-  it("parses all-day events from their date", () => {
+  it("maps an all-day event to the parish day boundaries", () => {
     const event = normalizeGoogleEvent(
       {
         id: "fast",
@@ -39,8 +40,37 @@ describe("normalizeGoogleEvent", () => {
       "fasting",
     );
 
-    expect(event.start).toBe("2026-08-13T00:00:00.000Z");
-    expect(event.end).toBe("2026-08-14");
+    expect(event.allDay).toBe(true);
+    expect(event.start).toBe("2026-08-12T14:00:00.000Z");
+    expect(event.end).toBe("2026-08-13T14:00:00.000Z");
+  });
+
+  it("uses the daylight saving offset for all-day events in summer", () => {
+    const event = normalizeGoogleEvent(
+      {
+        id: "summer",
+        start: { date: "2026-12-01" },
+        end: { date: "2026-12-02" },
+      },
+      "church",
+    );
+
+    expect(event.start).toBe("2026-11-30T13:00:00.000Z");
+    expect(event.end).toBe("2026-12-01T13:00:00.000Z");
+  });
+
+  it("keeps an all-day event's end empty when the provider omits it", () => {
+    const event = normalizeGoogleEvent(
+      { id: "x", start: { date: "2026-08-13" } },
+      "church",
+    );
+
+    expect(event.allDay).toBe(true);
+    expect(event.end).toBe("");
+  });
+
+  it("does not flag a timed event as all-day", () => {
+    expect(normalizeGoogleEvent(timedEvent, "youth").allDay).toBe(false);
   });
 
   it("falls back to a default title", () => {
@@ -109,8 +139,8 @@ describe("date normalization", () => {
     expect(withStart({ dateTime })).toBe("2026-08-13T09:00:00.000Z");
   });
 
-  it("pins #61: parses an all-day date as UTC midnight regardless of device zone", () => {
-    expect(withStart({ date: "2026-12-31" })).toBe("2026-12-31T00:00:00.000Z");
+  it("anchors an all-day date at parish midnight regardless of device zone", () => {
+    expect(withStart({ date: "2026-12-31" })).toBe("2026-12-30T13:00:00.000Z");
   });
 
   it("prefers dateTime over date when both are present", () => {
@@ -136,7 +166,7 @@ describe("date normalization", () => {
     const event = normalizeGoogleEvent(
       {
         id: "d",
-        start: { date: "2026-08-13" },
+        start: { dateTime: "2026-08-13T19:00:00+10:00" },
         end: { date: "2026-08-14", dateTime: "2026-08-13T21:00:00Z" },
       },
       "church",
@@ -155,9 +185,7 @@ describe("date normalization", () => {
 });
 
 describe("byStartTime with mixed event kinds", () => {
-  it("pins #61: compares instants, not the provider's local wall time", () => {
-    // 9am in Sydney on the 13th is 23:00 UTC on the 12th, so it sorts ahead
-    // of an all-day event on the 13th, which is anchored at UTC midnight
+  it("sorts an all-day event before a morning event on the same parish day", () => {
     const allDay = normalizeGoogleEvent(
       { id: "all-day", start: { date: "2026-08-13" } },
       "church",
@@ -172,7 +200,7 @@ describe("byStartTime with mixed event kinds", () => {
     );
 
     expect(
-      [evening, allDay, morning].sort(byStartTime).map((e) => e.id),
-    ).toEqual(["morning", "all-day", "evening"]);
+      [evening, morning, allDay].sort(byStartTime).map((e) => e.id),
+    ).toEqual(["all-day", "morning", "evening"]);
   });
 });
