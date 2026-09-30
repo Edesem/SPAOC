@@ -21,16 +21,34 @@ const liturgicalDay = {
 };
 
 const texts = [
-  { publicUrl: "https://example.com", typeOfService: "Divine Liturgy PDF" },
+  {
+    publicUrl: "https://example.com",
+    typeOfService: "Divine Liturgy (PDF)",
+  },
 ];
+
+const mappedDay = {
+  feastTitle: "Dormition Fast",
+  readings: [
+    {
+      kind: "epistle",
+      title: "Romans 8:28-39",
+      teaser: "All things work together for good.",
+      fullText: "First reading",
+    },
+    {
+      kind: "gospel",
+      title: "Matthew 14:22-34",
+      teaser: "Jesus walks on water.",
+      fullText: "Second reading",
+    },
+  ],
+};
 
 const createClient = (): jest.Mocked<AntiochianClient> => ({
   ensureAuthenticated: jest.fn().mockResolvedValue(undefined),
   getLiturgicalDay: jest.fn().mockResolvedValue(liturgicalDay),
   getLiturgicalText: jest.fn().mockResolvedValue(texts),
-  getReadingTeasers: jest.fn().mockReturnValue({ date: "teasers" }),
-  getReadingTexts: jest.fn().mockReturnValue({ reading1FullText: "text" }),
-  getFeastTitle: jest.fn().mockReturnValue({ feastTitle: "feast" }),
 });
 
 describe("AntiochianLiturgicalService", () => {
@@ -47,8 +65,8 @@ describe("AntiochianLiturgicalService", () => {
       const date = new Date("2026-08-13T00:00:00.000Z");
 
       await expect(service.getLiturgicalData(date)).resolves.toEqual({
-        day: liturgicalDay,
-        texts,
+        day: mappedDay,
+        services: [{ title: "Divine Liturgy", pdfUrl: "https://example.com" }],
       });
 
       expect(client.ensureAuthenticated).toHaveBeenCalledTimes(1);
@@ -70,13 +88,13 @@ describe("AntiochianLiturgicalService", () => {
       jest.useRealTimers();
     });
 
-    it("passes through null results from the provider", async () => {
+    it("maps missing provider results to null", async () => {
       client.getLiturgicalDay.mockResolvedValue(null);
       client.getLiturgicalText.mockResolvedValue(null);
 
       await expect(service.getLiturgicalData()).resolves.toEqual({
         day: null,
-        texts: null,
+        services: null,
       });
     });
 
@@ -86,20 +104,5 @@ describe("AntiochianLiturgicalService", () => {
       await expect(service.getLiturgicalData()).rejects.toThrow("auth failed");
       expect(client.getLiturgicalDay).not.toHaveBeenCalled();
     });
-  });
-
-  it("delegates reading and feast helpers to the client", () => {
-    expect(service.getReadingTeasers(liturgicalDay)).toEqual({
-      date: "teasers",
-    });
-    expect(service.getReadingTexts(liturgicalDay)).toEqual({
-      reading1FullText: "text",
-    });
-    expect(service.getFeastTitle(liturgicalDay)).toEqual({
-      feastTitle: "feast",
-    });
-    expect(client.getReadingTeasers).toHaveBeenCalledWith(liturgicalDay);
-    expect(client.getReadingTexts).toHaveBeenCalledWith(liturgicalDay);
-    expect(client.getFeastTitle).toHaveBeenCalledWith(liturgicalDay);
   });
 });
