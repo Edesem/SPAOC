@@ -136,6 +136,7 @@ describe("groupEventsByDay", () => {
         title: "Event 1",
         start: "2026-08-13T10:00:00.000+10:00",
         end: "2026-08-13T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -146,6 +147,7 @@ describe("groupEventsByDay", () => {
         title: "Event 2",
         start: "2026-08-13T12:00:00.000+10:00",
         end: "2026-08-13T13:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source2",
@@ -156,6 +158,7 @@ describe("groupEventsByDay", () => {
         title: "Event 3",
         start: "2026-08-14T10:00:00.000+10:00",
         end: "2026-08-14T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -182,6 +185,7 @@ describe("groupEventsByDay", () => {
         title: "Event 1",
         start: "2026-08-13T10:00:00.000+10:00",
         end: "2026-08-13T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -192,6 +196,7 @@ describe("groupEventsByDay", () => {
         title: "Event 2",
         start: "2026-08-20T12:00:00.000+10:00", // Next week
         end: "2026-08-20T13:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source2",
@@ -202,6 +207,7 @@ describe("groupEventsByDay", () => {
         title: "Event 3",
         start: "2026-08-27T10:00:00.000+10:00", // Later
         end: "2026-08-27T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -235,6 +241,7 @@ describe("groupEventsByDay", () => {
         title: "Event 1",
         start: "2026-08-06T10:00:00.000+10:00", // Last week
         end: "2026-08-06T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -245,6 +252,7 @@ describe("groupEventsByDay", () => {
         title: "Event 2",
         start: "2026-08-13T12:00:00.000+10:00", // This week
         end: "2026-08-13T13:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source2",
@@ -274,6 +282,7 @@ describe("groupEventsByDay", () => {
         title: "Event 3",
         start: "2026-08-27T10:00:00.000+10:00", // Later
         end: "2026-08-27T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -284,6 +293,7 @@ describe("groupEventsByDay", () => {
         title: "Event 2",
         start: "2026-08-20T12:00:00.000+10:00", // Next week
         end: "2026-08-20T13:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source2",
@@ -294,6 +304,7 @@ describe("groupEventsByDay", () => {
         title: "Event 1",
         start: "2026-08-13T10:00:00.000+10:00",
         end: "2026-08-13T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -327,6 +338,7 @@ describe("groupEventsByDay", () => {
         title: "Event 1",
         start: "2026-08-16T10:00:00.000+10:00", // This week
         end: "2026-08-16T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -337,6 +349,7 @@ describe("groupEventsByDay", () => {
         title: "Event 2",
         start: "2026-08-17T12:00:00.000+10:00", // Next week
         end: "2026-08-17T13:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source2",
@@ -347,6 +360,7 @@ describe("groupEventsByDay", () => {
         title: "Event 3",
         start: "2026-08-23T10:00:00.000+10:00",
         end: "2026-08-23T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",
@@ -357,6 +371,7 @@ describe("groupEventsByDay", () => {
         title: "Event 4",
         start: "2026-08-24T10:00:00.000+10:00", // Later
         end: "2026-08-24T11:00:00.000+10:00",
+        allDay: false,
         description: "",
         location: "",
         source: "source1",

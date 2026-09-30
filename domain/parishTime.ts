@@ -107,6 +107,20 @@ export const startOfParishDay = (date: Date, dayOffset = 0): Date => {
   return parishWallClockToDate(year, month, day + dayOffset, 0);
 };
 
+// Midnight at the start of a "YYYY-MM-DD" parish day, e.g. the `date` Google
+// Calendar sends for an all-day event. Throws a RangeError for anything else.
+export const startOfParishDayFromKey = (key: string): Date => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(key);
+  if (!match) {
+    throw new RangeError(`Invalid parish day: ${key}`);
+  }
+  const [year, month, day] = match.slice(1).map(Number);
+  if (parishDayKey(new Date(Date.UTC(year, month - 1, day, 12))) !== key) {
+    throw new RangeError(`Invalid parish day: ${key}`);
+  }
+  return parishWallClockToDate(year, month, day, 0);
+};
+
 // The last millisecond of the parish day.
 export const endOfParishDay = (date: Date): Date =>
   new Date(startOfParishDay(date, 1).getTime() - 1);

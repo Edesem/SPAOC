@@ -59,7 +59,7 @@ export const EventItem = ({
     }
   };
 
-  const isAllDayEvent = item.start && !item.start.includes("T");
+  const isAllDayEvent = item.allDay;
   const eventStart = new Date(item.start);
   const eventEnd = new Date(item.end);
   const formattedDate = eventStart.toLocaleDateString([], {
@@ -113,7 +113,12 @@ export const EventItem = ({
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
         router.push({
           pathname: "/eventDetails",
-          params: { ...item, start: formattedStart, end: formattedEnd },
+          params: {
+            ...item,
+            allDay: undefined, // route params are strings; the screen shows the formatted times
+            start: formattedStart,
+            end: formattedEnd,
+          },
         });
         onPress();
       }}

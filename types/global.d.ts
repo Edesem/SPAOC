@@ -4,6 +4,7 @@ type EventData = {
     title: string;
     start: string;
     end: string;
+    allDay: boolean;
     description: string;
     location: string;
     source: string;
