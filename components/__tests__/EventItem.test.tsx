@@ -1,14 +1,16 @@
 import React from "react";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { EventItem } from "@/components/EventItem";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFavouritesStore } from "@/services/favourites";
 import {
   addFavourite,
-  isFavourite,
   removeFavourite,
-} from "@/services/favourites";
+} from "@/services/favourites/favouritesRepository";
 
-jest.mock("@/services/favourites", () => ({
-  isFavourite: jest.fn(),
+// The store runs for real; only the repository's writes are observed.
+jest.mock("@/services/favourites/favouritesRepository", () => ({
+  ...jest.requireActual("@/services/favourites/favouritesRepository"),
   addFavourite: jest.fn(),
   removeFavourite: jest.fn(),
 }));
@@ -49,35 +51,52 @@ const renderItem = (
   item = event,
 ) => render(<EventItem item={item} onPress={jest.fn()} {...props} />);
 
+const initialState = useFavouritesStore.getState();
+
 describe("EventItem favourites", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useFavouritesStore.setState(initialState, true);
     (addFavourite as jest.Mock).mockResolvedValue(undefined);
     (removeFavourite as jest.Mock).mockResolvedValue(undefined);
   });
 
-  it("shows a filled star when the event is already a favourite", async () => {
-    (isFavourite as jest.Mock).mockResolvedValue(true);
+  it("shows a filled star when the store has the event as a favourite", async () => {
+    useFavouritesStore.setState({ favourites: { [event.id]: event } });
 
     const { findByText } = await renderItem();
 
     expect(await findByText("star")).toBeTruthy();
-    expect(isFavourite).toHaveBeenCalledWith(event);
   });
 
-  it("favourites the event through the repository", async () => {
-    (isFavourite as jest.Mock).mockResolvedValue(false);
+  it("shows an empty star when the event is not a favourite", async () => {
+    const { findByText } = await renderItem();
 
+    expect(await findByText("star-outline")).toBeTruthy();
+  });
+
+  it("does not read storage when rendering", async () => {
+    useFavouritesStore.setState({ favourites: { [event.id]: event } });
+    (AsyncStorage.getItem as jest.Mock).mockClear();
+
+    await renderItem();
+    await renderItem({}, { ...event, id: "event-2" });
+
+    expect(AsyncStorage.getItem).not.toHaveBeenCalled();
+  });
+
+  it("favourites the event through the store", async () => {
     const { findByText } = await renderItem();
     await fireEvent.press(await findByText("star-outline"));
 
     expect(await findByText("star")).toBeTruthy();
     expect(addFavourite).toHaveBeenCalledWith(event);
     expect(removeFavourite).not.toHaveBeenCalled();
+    expect(useFavouritesStore.getState().isFavourite(event)).toBe(true);
   });
 
   it("unfavourites the event and notifies the parent", async () => {
-    (isFavourite as jest.Mock).mockResolvedValue(true);
+    useFavouritesStore.setState({ favourites: { [event.id]: event } });
     const onUnfavourite = jest.fn();
 
     const { findByText } = await renderItem({ onUnfavourite });
@@ -87,10 +106,10 @@ describe("EventItem favourites", () => {
     expect(removeFavourite).toHaveBeenCalledWith(event);
     expect(addFavourite).not.toHaveBeenCalled();
     expect(onUnfavourite).toHaveBeenCalledTimes(1);
+    expect(useFavouritesStore.getState().isFavourite(event)).toBe(false);
   });
 
   it("does not notify the parent when favouriting", async () => {
-    (isFavourite as jest.Mock).mockResolvedValue(false);
     const onUnfavourite = jest.fn();
 
     const { findByText } = await renderItem({ onUnfavourite });
@@ -100,10 +119,24 @@ describe("EventItem favourites", () => {
     expect(onUnfavourite).not.toHaveBeenCalled();
   });
 
+  it("updates every row showing the same event", async () => {
+    const { findAllByText } = await render(
+      <>
+        <EventItem item={event} onPress={jest.fn()} />
+        <EventItem item={event} onPress={jest.fn()} />
+      </>,
+    );
+    const [first] = await findAllByText("star-outline");
+    await fireEvent.press(first);
+
+    await waitFor(async () =>
+      expect(await findAllByText("star")).toHaveLength(2),
+    );
+  });
+
   it("keeps the star unchanged and logs when saving fails", async () => {
     const consoleError = jest.spyOn(console, "error").mockImplementation();
     const failure = new Error("storage unavailable");
-    (isFavourite as jest.Mock).mockResolvedValue(false);
     (addFavourite as jest.Mock).mockRejectedValue(failure);
 
     const { findByText, getByText } = await renderItem();
@@ -118,30 +151,9 @@ describe("EventItem favourites", () => {
     expect(getByText("star-outline")).toBeTruthy();
     consoleError.mockRestore();
   });
-
-  it("shows an empty star and logs when loading fails", async () => {
-    const consoleError = jest.spyOn(console, "error").mockImplementation();
-    const failure = new SyntaxError("bad JSON");
-    (isFavourite as jest.Mock).mockRejectedValue(failure);
-
-    const { getByText } = await renderItem();
-
-    await waitFor(() => {
-      expect(consoleError).toHaveBeenCalledWith(
-        "Failed to load favourites",
-        failure,
-      );
-    });
-    expect(getByText("star-outline")).toBeTruthy();
-    consoleError.mockRestore();
-  });
 });
 
 describe("EventItem time label", () => {
-  beforeEach(() => {
-    (isFavourite as jest.Mock).mockResolvedValue(false);
-  });
-
   it("shows 'All day' for an all-day event", async () => {
     const { findByText, queryByText } = await renderItem(
       {},

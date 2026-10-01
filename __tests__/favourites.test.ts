@@ -2,11 +2,11 @@ import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FavouritesScreen from "@/app/(tabs)/favourites";
-import { removeExpiredFavourites } from "@/services/favourites";
 
-// The screen is tested against a mocked favourites repository. Storage
-// format, expiry boundaries and invalid stored data are covered by
-// services/favourites/favouritesRepository.test.ts.
+// The screen is tested against a mocked favourites store. Storage format,
+// expiry boundaries and invalid stored data are covered by
+// services/favourites/favouritesRepository.test.ts, and the store's own
+// behaviour by services/favourites/favouritesStore.test.ts.
 
 // TODO:
 // ⚠️ Test coverage gaps:
@@ -17,8 +17,12 @@ import { removeExpiredFavourites } from "@/services/favourites";
 // - Component rendering details ❌
 //   Header, subtitle, image etc. aren’t tested.
 
+const mockRemoveExpired = jest.fn();
+
 jest.mock("@/services/favourites", () => ({
-  removeExpiredFavourites: jest.fn(),
+  useFavouritesStore: {
+    getState: () => ({ removeExpired: mockRemoveExpired }),
+  },
 }));
 
 jest.mock("react-native-safe-area-context", () => {
@@ -80,18 +84,18 @@ describe("favourites", () => {
   });
 
   it("cleans up expired favourites and shows the upcoming ones on focus", async () => {
-    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+    (mockRemoveExpired).mockResolvedValue([
       event("event-1", "Divine Liturgy"),
     ]);
 
     const { findByTestId } = await render(React.createElement(FavouritesScreen));
 
     expect(await findByTestId("event-item-event-1")).toBeTruthy();
-    expect(removeExpiredFavourites).toHaveBeenCalledTimes(1);
+    expect(mockRemoveExpired).toHaveBeenCalledTimes(1);
   });
 
   it("does not read or write favourites storage directly", async () => {
-    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+    (mockRemoveExpired).mockResolvedValue([
       event("event-1", "Divine Liturgy"),
     ]);
 
@@ -106,19 +110,19 @@ describe("favourites", () => {
   });
 
   it("displays an empty state when there are no favourites", async () => {
-    (removeExpiredFavourites as jest.Mock).mockResolvedValue([]);
+    (mockRemoveExpired).mockResolvedValue([]);
 
     const { getByText } = await render(React.createElement(FavouritesScreen));
 
     await waitFor(() => {
-      expect(removeExpiredFavourites).toHaveBeenCalled();
+      expect(mockRemoveExpired).toHaveBeenCalled();
     });
 
     expect(getByText("No favourites yet.")).toBeTruthy();
   });
 
   it("unfavouriting removes the item from the displayed list", async () => {
-    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+    (mockRemoveExpired).mockResolvedValue([
       event("event-1", "Event Being Removed"),
       event("event-2", "Current Event"),
     ]);
@@ -140,7 +144,7 @@ describe("favourites", () => {
 
   it("unfavouriting an event without an id removes it by title", async () => {
     const { id: _, ...vespers } = event("unused", "Vespers");
-    (removeExpiredFavourites as jest.Mock).mockResolvedValue([
+    (mockRemoveExpired).mockResolvedValue([
       vespers,
       event("event-2", "Current Event"),
     ]);
@@ -160,7 +164,7 @@ describe("favourites", () => {
   it("shows the empty state and logs an error when loading fails", async () => {
     const consoleError = jest.spyOn(console, "error").mockImplementation();
     const error = new SyntaxError("Unexpected token");
-    (removeExpiredFavourites as jest.Mock).mockRejectedValue(error);
+    (mockRemoveExpired).mockRejectedValue(error);
 
     const { getByText } = await render(React.createElement(FavouritesScreen));
 

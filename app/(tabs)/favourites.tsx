@@ -3,7 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
 import { getCommonStyles } from "@/styles/CommonStyles";
-import { removeExpiredFavourites } from "@/services/favourites";
+import { useFavouritesStore } from "@/services/favourites";
 import { ItemProps } from "@/types/global"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -22,7 +22,7 @@ export default function FavouritesScreen() {
   const loadFavourites = async () => {
     try {
       // Drops expired favourites from storage and returns the upcoming ones
-      setFavourites(await removeExpiredFavourites());
+      setFavourites(await useFavouritesStore.getState().removeExpired());
     } catch (e) {
       console.error("Failed to load favourites", e);
     }
