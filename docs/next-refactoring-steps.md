@@ -159,7 +159,7 @@ On top of that, [constants/consts.tsx:19-53](../constants/consts.tsx) still hold
 
 ### 3.8 Home still has seams between rules and presentation
 
-- **The month filter can trap the user.** The month picker and its button are rendered inside the header of `sectionIndex === 0`. If the chosen month has no events, `filterSectionsByMonth` returns `[]`, section 0 disappears, and so does the only way to change or clear the filter. `ListEmptyComponent` now shows "No events found." (#89 removed the sentinel sections), but it offers no way out either.
+- ✅ (#90) **The month filter used to trap the user.** The month picker lived in the header of `sectionIndex === 0`, so a month with no events removed the only way to change the filter. The calendar button is now in the top bar, the picker modal sits outside the `SectionList`, and a "Clear month filter" button shows whenever a month is selected.
 - Loading and error state is dropped. `useDailySaint` returns `error` and `useEvents` returns `loading`, but `useHomeFeature` uses neither. Only `fastLoading` gates the screen.
 
 ### 3.9 There is no error-handling convention
@@ -275,7 +275,7 @@ Zustand is already a dependency, so this adds no new library.
 
 **What:**
 - ✅ (#89) Render the top image and the saint/fast block as `ListHeaderComponent` and the bottom image as `ListFooterComponent`. `buildHomeSections` and its sentinel strings are gone, and `ListEmptyComponent` works.
-- Move the month picker into the top bar and add "clear filter". This removes the trap in 3.8 and is probably related to #26.
+- ✅ (#90) Move the month picker into the top bar and add "clear filter". This removes the trap in 3.8 and is probably related to #26.
 - ✅ (#89) Hoist `SectionHeader` out of the render function.
 - Surface events, saint and fast loading and error states from `useHomeFeature`, following the convention agreed in Step G.
 
