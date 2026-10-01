@@ -15,7 +15,7 @@ The app is an Expo Router application with five layers of differing maturity.
 | Routes / screens | [app/](../app) | Root `Stack` in [app/_layout.tsx](../app/_layout.tsx). The tab bar in [<app/(tabs)/_layout.tsx>](<../app/(tabs)/_layout.tsx>) builds its own bottom-tab navigator and imports the five tab screens directly. |
 | Feature orchestration | [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts) | Only the Home tab has one. |
 | Data hooks | [hooks/useEvents.tsx](../hooks/useEvents.tsx), [useDailySaint.ts](../hooks/useDailySaint.ts), [useFastDay.ts](../hooks/useFastDay.ts) | Thin React wrappers over `calendarService`. |
-| Pure rules | [utils/homeRules.ts](../utils/homeRules.ts), [utils/dateUtils.ts](../utils/dateUtils.ts) | Home labels and section building, date grouping, week labels. |
+| Pure rules | [utils/homeRules.ts](../utils/homeRules.ts), [utils/dateUtils.ts](../utils/dateUtils.ts) | Home labels and section indexing, date grouping, week labels. |
 | Remote services | [services/calendar/](../services/calendar/index.ts), [services/liturgical/](../services/liturgical/index.ts) | An interface, one provider implementation, and a module-level singleton for each. Google and Antiochian details stay inside. |
 | Local repositories | [services/favourites/](../services/favourites/favouritesRepository.ts), [services/settings/](../services/settings/settingsRepository.ts) | Module functions over AsyncStorage. Storage keys are private. |
 | Side effects not yet behind a boundary | [utils/notifications.ts](../utils/notifications.ts), [notifications.tsx](../notifications.tsx), [utils/eventBus.ts](../utils/eventBus.ts), the Zustand store in [app/settings.tsx](../app/settings.tsx) | Notification scheduling and bookkeeping, theme change broadcast, start-of-week state. |
@@ -58,7 +58,7 @@ Feature by feature, the refactoring has reached very different depths:
 
 | Feature | Orchestration | Business rules | Data access | Tests |
 | --- | --- | --- | --- | --- |
-| Home | `useHomeFeature` ✅ | `homeRules` ✅ (fast classification still split, see 3.1) | `calendarService` ✅ | Hook and rules tested. The screen is never rendered. |
+| Home | `useHomeFeature` ✅ | `homeRules` ✅ (fast classification still split, see 3.1) | `calendarService` ✅ | Hook, rules and screen tested. |
 | Favourites | In screen (small, fine) | Expiry in repository ✅ | Repository ✅ | Screen and repository tested. |
 | Settings | In screen | Defaults in repository ✅ | Repository ✅, store in route file ❌ | Screen and repository tested. |
 | Prayer | In screen ❌ | In screen ❌ | `liturgicalService` ✅ (Antiochian-shaped types) | Service only. The screen is never loaded by a test. |
@@ -159,10 +159,8 @@ On top of that, [constants/consts.tsx:19-53](../constants/consts.tsx) still hold
 
 ### 3.8 Home still has seams between rules and presentation
 
-- `buildHomeSections` ([homeRules.ts:79-95](../utils/homeRules.ts)) injects the sentinel sections `"Top Image"`, `"Saint of the Day"` and `"Bottom Image"`. The screen then switches on those strings ([<index.tsx:89-211>](<../app/(tabs)/index.tsx>)). This is page layout inside the business-rules module, and the two modules are joined by a string contract.
-- **The month filter can trap the user.** The month picker and its button are rendered inside the header of `sectionIndex === 0` (`index.tsx:122`). If the chosen month has no events, `filterSectionsByMonth` returns `[]`, section 0 disappears, and so does the only way to change or clear the filter. `ListEmptyComponent` (`:283`) is unreachable, because the three static sections mean the list is never empty.
+- **The month filter can trap the user.** The month picker and its button are rendered inside the header of `sectionIndex === 0`. If the chosen month has no events, `filterSectionsByMonth` returns `[]`, section 0 disappears, and so does the only way to change or clear the filter. `ListEmptyComponent` now shows "No events found." (#89 removed the sentinel sections), but it offers no way out either.
 - Loading and error state is dropped. `useDailySaint` returns `error` and `useEvents` returns `loading`, but `useHomeFeature` uses neither. Only `fastLoading` gates the screen.
-- `SectionHeader` is defined inside the render function, so it remounts, together with its `Modal`, on every render.
 
 ### 3.9 There is no error-handling convention
 
@@ -276,9 +274,9 @@ Zustand is already a dependency, so this adds no new library.
 ### Step H: Finish Home's presentation seam
 
 **What:**
-- Render the top image and the saint/fast block as `ListHeaderComponent` and the bottom image as `ListFooterComponent`. `buildHomeSections` and its sentinel strings then disappear, and `ListEmptyComponent` starts working.
+- ✅ (#89) Render the top image and the saint/fast block as `ListHeaderComponent` and the bottom image as `ListFooterComponent`. `buildHomeSections` and its sentinel strings are gone, and `ListEmptyComponent` works.
 - Move the month picker into the top bar and add "clear filter". This removes the trap in 3.8 and is probably related to #26.
-- Hoist `SectionHeader` out of the render function.
+- ✅ (#89) Hoist `SectionHeader` out of the render function.
 - Surface events, saint and fast loading and error states from `useHomeFeature`, following the convention agreed in Step G.
 
 **Why:** these are small changes that finish the Home epic and remove a user-facing dead end.
