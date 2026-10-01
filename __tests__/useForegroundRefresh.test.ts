@@ -84,7 +84,7 @@ describe("useForegroundRefresh", () => {
   it("calls the latest callback after a re-render", async () => {
     const first = jest.fn();
     const second = jest.fn();
-    const { rerender } = await renderHook(
+    const { rerender } = await renderHook<void, { callback: () => void }>(
       ({ callback }) => useForegroundRefresh(THRESHOLD_MS, callback),
       { initialProps: { callback: first } },
     );
