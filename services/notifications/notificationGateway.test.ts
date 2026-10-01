@@ -3,29 +3,9 @@ import * as Notifications from "expo-notifications";
 
 import { cancel, listScheduled, schedule } from "./notificationGateway";
 
-// An in-memory stand-in for Expo's scheduler: it keeps what is scheduled and
-// hands out identifiers the way Expo does, so the gateway is tested against
-// what it would actually get back.
-jest.mock("expo-notifications", () => {
-  const store = new Map<string, unknown>();
-  let counter = 0;
-  return {
-    SchedulableTriggerInputTypes: { DATE: "date" },
-    scheduleNotificationAsync: jest.fn(async (request: unknown) => {
-      const identifier = `expo-${++counter}`;
-      store.set(identifier, { identifier, ...(request as object) });
-      return identifier;
-    }),
-    getAllScheduledNotificationsAsync: jest.fn(async () => [...store.values()]),
-    cancelScheduledNotificationAsync: jest.fn(async (identifier: string) => {
-      store.delete(identifier);
-    }),
-    __reset: () => {
-      store.clear();
-      counter = 0;
-    },
-  };
-});
+jest.mock("expo-notifications", () =>
+  require("@/test-utils/fakeExpoNotifications").createFakeExpoNotifications(),
+);
 
 const planned = (overrides: Partial<PlannedNotification> = {}) => ({
   key: "saint:2099-01-02",
