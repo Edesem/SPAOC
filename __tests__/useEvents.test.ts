@@ -1,13 +1,11 @@
 import { useEvents } from "@/hooks/useEvents";
 import { calendarService } from "@/services/calendar";
+import { useSettingsStore } from "@/services/settings";
+import { groupEventsByDay } from "@/utils/dateUtils";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 jest.mock("@/services/calendar", () => ({
   calendarService: { getParishEvents: jest.fn() },
-}));
-
-jest.mock("@/app/settings", () => ({
-  useSettingsStore: { getState: () => ({ startOfWeek: "monday" }) },
 }));
 
 jest.mock("@/utils/dateUtils", () => ({
@@ -32,6 +30,8 @@ const event = {
 describe("useEvents", () => {
   beforeEach(() => {
     getParishEvents.mockReset();
+    (groupEventsByDay as jest.Mock).mockClear();
+    useSettingsStore.setState({ startOfWeek: "monday" });
   });
 
   it("loads parish events from the calendar service", async () => {
@@ -72,5 +72,19 @@ describe("useEvents", () => {
     expect(result.current.events).toEqual([]);
     expect(result.current.loading).toBe(false);
     consoleErrorSpy.mockRestore();
+  });
+
+  it("regroups events when the start of week changes", async () => {
+    getParishEvents.mockResolvedValue([event]);
+    await renderHook(() => useEvents());
+    await waitFor(() =>
+      expect(groupEventsByDay).toHaveBeenLastCalledWith([event], "monday"),
+    );
+
+    await act(async () => {
+      useSettingsStore.getState().setStartOfWeek("sunday");
+    });
+
+    expect(groupEventsByDay).toHaveBeenLastCalledWith([event], "sunday");
   });
 });

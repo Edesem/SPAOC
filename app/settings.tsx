@@ -2,14 +2,11 @@ import SettingPicker from "@/components/SettingPicker";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   getCalendarNotificationSettings,
-  getStartOfWeek,
-  getThemeChoice,
   loadNotificationToggles,
   saveCalendarNotificationSettings,
   saveDailySaintNotificationsEnabled,
   saveFavouriteNotificationsEnabled,
-  saveStartOfWeek,
-  saveThemeChoice,
+  useSettingsStore,
   type CalendarNotificationSettings,
   type StartOfWeek,
   type ThemeChoice,
@@ -17,7 +14,6 @@ import {
 import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
 import { fontSize } from "@/styles/CommonStyles";
-import eventBus from "@/utils/eventBus";
 import {
   cancelAllFavouriteNotifications,
   cancelAllSaintNotifications,
@@ -40,32 +36,8 @@ import {
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { create } from "zustand";
 
 const appVersion = Constants.expoConfig?.version ?? "Unknown";
-
-interface SettingsState {
-  startOfWeek: StartOfWeek;
-  setStartOfWeek: (value: StartOfWeek) => void;
-  loadStartOfWeek: () => Promise<void>;
-}
-
-export const useSettingsStore = create<SettingsState>((set) => ({
-  // Defaults
-  startOfWeek: "monday",
-
-  // Start of week
-  setStartOfWeek: (value) => {
-    saveStartOfWeek(value);
-    set({ startOfWeek: value });
-  },
-  loadStartOfWeek: async () => {
-    const saved = await getStartOfWeek();
-    if (saved) {
-      set({ startOfWeek: saved });
-    }
-  },
-}));
 
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
@@ -76,11 +48,8 @@ export default function SettingsScreen() {
 
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
-  const loadStartOfWeek = useSettingsStore((state) => state.loadStartOfWeek);
-
-  const [themeSelection, setThemeSelection] = useState<ThemeChoice>("auto");
-
- 
+  const themeChoice = useSettingsStore((state) => state.themeChoice);
+  const setThemeChoice = useSettingsStore((state) => state.setThemeChoice);
 
   const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
   const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
@@ -90,13 +59,6 @@ export default function SettingsScreen() {
     useState<CalendarNotificationSettings>({});
 
   useEffect(() => {
-    const loadTheme = async () => {
-      setThemeSelection(await getThemeChoice());
-    };
-    loadTheme();
-  }, []);
-
-  useEffect(() => {
     const loadNotifications = async () => {
       const { dailySaints, favourites } = await loadNotificationToggles();
       setDailySaintsEnabled(dailySaints);
@@ -104,10 +66,6 @@ export default function SettingsScreen() {
     };
     loadNotifications();
   }, []);
-
-  useEffect(() => {
-    loadStartOfWeek();
-  }, [loadStartOfWeek]);
 
   useEffect(() => {
     const loadCalendar = async () => {
@@ -159,12 +117,8 @@ export default function SettingsScreen() {
           {false && (
             <SettingPicker
               label="Theme"
-              value={themeSelection}
-              onValueChange={(val) => {
-                setThemeSelection(val as ThemeChoice);
-                saveThemeChoice(val as ThemeChoice);
-                eventBus.emit("themeChanged", val);
-              }}
+              value={themeChoice}
+              onValueChange={(val) => setThemeChoice(val as ThemeChoice)}
               items={[
                 { label: "Light", value: "light" },
                 { label: "Dark", value: "dark" },
