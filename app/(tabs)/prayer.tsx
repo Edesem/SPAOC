@@ -15,12 +15,7 @@ import {
   SMALL_COMPLINE_URL,
 } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import {
-  liturgicalService,
-  type LiturgicalData,
-  type LiturgicalDay,
-  type LiturgicalService,
-} from "@/services/liturgical";
+import { usePrayerFeature } from "@/hooks/usePrayerFeature";
 import { Colours } from "@/styles/Colours";
 import { fontSize, getCommonStyles } from "@/styles/CommonStyles";
 import { faBed } from "@fortawesome/free-solid-svg-icons/faBed";
@@ -39,7 +34,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import he from "he";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -152,75 +147,32 @@ export default function PrayerScreen(): JSX.Element {
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(scheme);
 
-  const [liturgicalServices, setLiturgicalServices] = useState<
-    LiturgicalService[] | null
-  >(null);
-  const [day, setDay] = useState<LiturgicalDay | null>(null);
+  const { selectedDate, loading, refreshing, error, data, load, refresh } =
+    usePrayerFeature();
+  const day = data?.day;
+  const liturgicalServices = data?.services;
   const epistle = day?.readings.find((r) => r.kind === "epistle");
   const gospel = day?.readings.find((r) => r.kind === "gospel");
   const thirdReading = day?.readings.find((r) => r.kind === "thirdReading");
-
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
 
   const chevronColor =
     colorScheme === "dark"
       ? Colours.dark.chevronColor
       : Colours.light.chevronColor;
 
-  const [refreshing, setRefreshing] = useState<boolean>(false);
-
   const router = useRouter();
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const styles = getStyles();
 
-  const processFetchedData = ({ day, services }: LiturgicalData) => {
-    setDay(day);
-    setLiturgicalServices(services);
-  };
-
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
-  const handleConfirm = async (date: Date) => {
+  const handleConfirm = (date: Date) => {
     hideDatePicker();
-    setSelectedDate(date);
-    setLoading(true);
-    setError(null);
-    setLiturgicalServices(null); // Clear stale data
-
-    try {
-      const data = await liturgicalService.getLiturgicalData(date);
-
-      processFetchedData(data);
-      setError(
-        data.services && data.services.length > 0
-          ? null
-          : new Error("No liturgics found"),
-      );
-    } catch (err) {
-      setError(err as Error);
-      setLiturgicalServices(null);
-      setDay(null);
-    }
-
-    setLoading(false);
+    load(date);
   };
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true); // Set refreshing to true
-    try {
-      processFetchedData(await liturgicalService.getLiturgicalData());
-      setSelectedDate(new Date());
-    } catch (err) {
-      setError(err as Error);
-      setDay(null);
-    }
-    setRefreshing(false); // Set refreshing to false once done
-  }, []);
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
@@ -238,7 +190,7 @@ export default function PrayerScreen(): JSX.Element {
 
         if (minutesSinceLastRefresh > 300) {
           // 👈 5 hour threshold
-          onRefresh();
+          refresh();
           lastRefreshTime.current = now;
         }
       }
@@ -247,23 +199,7 @@ export default function PrayerScreen(): JSX.Element {
     });
 
     return () => subscription.remove();
-  }, [onRefresh]);
-
-  // Use useEffect for the initial load
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        processFetchedData(await liturgicalService.getLiturgicalData());
-      } catch (err) {
-        setError(err as Error);
-        setDay(null);
-      } finally {
-        setLoading(false); // Set loading to false when initial data fetch is done
-      }
-    };
-
-    loadData();
-  }, []); // Empty dependency array to run only once when component mounts
+  }, [refresh]);
 
   return (
     <SafeAreaProvider>
@@ -273,7 +209,7 @@ export default function PrayerScreen(): JSX.Element {
             paddingBottom: insets.bottom + 20,
           }}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={refresh} />
           }
         >
           {/* Header */}
