@@ -7,6 +7,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/styles/Colours';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
+import { useSettingsStore } from '@/services/settings';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -18,13 +19,23 @@ export default function RootLayout() {
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
+  const hydrated = useSettingsStore((state) => state.hydrated);
+
+  // Load persisted settings once at startup so the first screen already has
+  // the saved start of week and theme.
   useEffect(() => {
-    if (loaded) {
+    useSettingsStore.getState().hydrate();
+  }, []);
+
+  const ready = loaded && hydrated;
+
+  useEffect(() => {
+    if (ready) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [ready]);
 
-  if (!loaded) {
+  if (!ready) {
     return null;
   }
 
