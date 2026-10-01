@@ -1,6 +1,10 @@
+import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
 import type { LiturgicalData } from "@/services/liturgical";
 import { liturgicalService } from "@/services/liturgical";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+// Background refresh only kicks in once the app has been away this long.
+const BACKGROUND_REFRESH_THRESHOLD_MS = 300 * 60 * 1000;
 
 // Coordinates the Prayer screen's data: the selected date, the liturgical day
 // and services for it, and their loading/refresh/error behaviour. The screen
@@ -58,6 +62,8 @@ export const usePrayerFeature = () => {
   useEffect(() => {
     load(selectedDateRef.current);
   }, [load]);
+
+  useForegroundRefresh(BACKGROUND_REFRESH_THRESHOLD_MS, refresh);
 
   return { selectedDate, loading, refreshing, error, data, load, refresh };
 };
