@@ -1,4 +1,9 @@
-import type { PlannedNotification } from "@/domain/notificationPlanner";
+import {
+  SAINT_NOTIFICATION_TITLE,
+  type NotificationKind,
+  type PlannedNotification,
+  type ScheduledNotification,
+} from "@/domain/notificationPlanner";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 
@@ -26,4 +31,51 @@ export async function schedule(
       date: fireAt,
     },
   });
+}
+
+const KINDS: NotificationKind[] = ["saint", "favourite", "calendar"];
+
+const isKind = (value: unknown): value is NotificationKind =>
+  KINDS.includes(value as NotificationKind);
+
+const readFireAt = (value: unknown): Date | null => {
+  if (typeof value !== "string") return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const toScheduled = ({
+  identifier,
+  content,
+}: Notifications.NotificationRequest): ScheduledNotification => {
+  const title = content.title ?? "";
+  const data = content.data ?? {};
+  const { key, kind } = data;
+
+  if (typeof key === "string" && isKind(kind)) {
+    return {
+      identifier,
+      key,
+      kind,
+      title,
+      body: content.body ?? "",
+      fireAt: readFireAt(data.fireAt),
+    };
+  }
+
+  // Scheduled before keys existed; only the saint title is recognisable
+  return {
+    identifier,
+    key: null,
+    kind: title === SAINT_NOTIFICATION_TITLE ? "saint" : null,
+    title,
+    body: content.body ?? "",
+    fireAt: null,
+  };
+};
+
+// Everything Expo has scheduled, which is the only record of what is.
+export async function listScheduled(): Promise<ScheduledNotification[]> {
+  const all = await Notifications.getAllScheduledNotificationsAsync();
+  return all.map(toScheduled);
 }

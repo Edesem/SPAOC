@@ -1,7 +1,7 @@
 import type { PlannedNotification } from "@/domain/notificationPlanner";
 import * as Notifications from "expo-notifications";
 
-import { schedule } from "./notificationGateway";
+import { listScheduled, schedule } from "./notificationGateway";
 
 // An in-memory stand-in for Expo's scheduler: it keeps what is scheduled and
 // hands out identifiers the way Expo does, so the gateway is tested against
@@ -71,6 +71,69 @@ describe("notificationGateway", () => {
         kind: "saint",
         fireAt: "2099-01-01T21:00:00.000Z",
       });
+    });
+  });
+
+  describe("listScheduled", () => {
+    it("returns scheduled notifications with the key, kind and fireAt they were scheduled with", async () => {
+      const identifier = await schedule(planned());
+
+      expect(await listScheduled()).toEqual([
+        {
+          identifier,
+          key: "saint:2099-01-02",
+          kind: "saint",
+          title: "Saint of the Day",
+          body: "St Paul",
+          fireAt: new Date("2099-01-01T21:00:00.000Z"),
+        },
+      ]);
+    });
+
+    it("returns nothing when nothing is scheduled", async () => {
+      expect(await listScheduled()).toEqual([]);
+    });
+
+    it("returns a notification scheduled before keys existed with no key or fireAt", async () => {
+      await Notifications.scheduleNotificationAsync({
+        content: { title: "Something else", body: "Old", data: {} },
+        trigger: null,
+      });
+
+      expect(await listScheduled()).toEqual([
+        expect.objectContaining({
+          key: null,
+          kind: null,
+          title: "Something else",
+          fireAt: null,
+        }),
+      ]);
+    });
+
+    it("recognises an old Saint of the Day notification by its title", async () => {
+      await Notifications.scheduleNotificationAsync({
+        content: { title: "Saint of the Day", body: "St Paul" },
+        trigger: null,
+      });
+
+      expect(await listScheduled()).toEqual([
+        expect.objectContaining({ key: null, kind: "saint", fireAt: null }),
+      ]);
+    });
+
+    it("treats data it cannot read as unkeyed rather than failing", async () => {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Odd",
+          body: "",
+          data: { key: 42, kind: "bogus", fireAt: "not a date" },
+        },
+        trigger: null,
+      });
+
+      expect(await listScheduled()).toEqual([
+        expect.objectContaining({ key: null, kind: null, fireAt: null }),
+      ]);
     });
   });
 });
