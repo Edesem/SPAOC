@@ -8,7 +8,7 @@ const FAVOURITES_KEY = "favourites";
 
 type StoredFavourites = Record<string, EventData>;
 
-const favouriteKey = (event: EventData) => event.id ?? event.title;
+export const favouriteKey = (event: EventData) => event.id ?? event.title;
 
 // Throws if the stored value is not valid JSON, so callers can decide how to
 // report a corrupted store.
