@@ -1,5 +1,6 @@
 import { FastKind } from "@/domain/fasting";
 import { useHomeFeature } from "@/hooks/useHomeFeature";
+import { installFakeAppState } from "@/test-utils/fakeAppState";
 import { act, renderHook } from "@testing-library/react-native";
 
 const mockRefetchSaints = jest.fn();
@@ -165,5 +166,52 @@ describe("useHomeFeature", () => {
       { id: "1", start: "2026-03-10T12:00:00.000Z" },
     ]);
     expect(result.current.showMonthPicker).toBe(false);
+  });
+});
+
+describe("useHomeFeature foreground refresh", () => {
+  // Home refreshes once the app has been open for 5 hours since it last did.
+  const FIVE_HOURS_MS = 300 * 60 * 1000;
+  let appState: ReturnType<typeof installFakeAppState>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockDailySaintState = {
+      todaysSaints: ["St. Test"],
+      refetchSaints: mockRefetchSaints,
+    };
+    mockEventsState = { groupedEvents: [], refetch: mockRefetchEvents };
+    mockFastDayState = {
+      events: [],
+      fastLoading: false,
+      refetch: mockRefetchFast,
+    };
+    appState = installFakeAppState();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("refetches everything when the app returns after 5 hours", async () => {
+    await renderHook(() => useHomeFeature());
+    await appState.returnToForegroundAt(0);
+
+    await appState.returnToForegroundAt(FIVE_HOURS_MS + 1);
+
+    expect(mockRefetchSaints).toHaveBeenCalledTimes(1);
+    expect(mockRefetchFast).toHaveBeenCalledTimes(1);
+    expect(mockRefetchEvents).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not refetch when the app returns within 5 hours", async () => {
+    await renderHook(() => useHomeFeature());
+    await appState.returnToForegroundAt(0);
+
+    await appState.returnToForegroundAt(FIVE_HOURS_MS);
+
+    expect(mockRefetchSaints).not.toHaveBeenCalled();
+    expect(mockRefetchFast).not.toHaveBeenCalled();
+    expect(mockRefetchEvents).not.toHaveBeenCalled();
   });
 });

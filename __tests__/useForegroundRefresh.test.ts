@@ -1,45 +1,14 @@
 import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
 import { renderHook } from "@testing-library/react-native";
-import { act } from "react";
-import { AppState, type AppStateStatus } from "react-native";
+import { installFakeAppState } from "@/test-utils/fakeAppState";
 
 const THRESHOLD_MS = 1000;
 
-let listeners: ((state: AppStateStatus) => void)[];
-let removeSubscription: jest.Mock;
-let now: number;
-
-const changeAppState = (state: AppStateStatus) => {
-  act(() => {
-    listeners.forEach((listener) => listener(state));
-  });
-};
-
-// Sends the app to the background and back at `at` (ms since the test began).
-const returnToForegroundAt = (at: number) => {
-  changeAppState("background");
-  now = at;
-  changeAppState("active");
-};
+let appState: ReturnType<typeof installFakeAppState>;
 
 describe("useForegroundRefresh", () => {
   beforeEach(() => {
-    listeners = [];
-    removeSubscription = jest.fn();
-    now = 0;
-    jest.spyOn(Date, "now").mockImplementation(() => now);
-    jest
-      .spyOn(AppState, "addEventListener")
-      .mockImplementation((_type, listener) => {
-        listeners.push(listener);
-        return {
-          remove: () => {
-            removeSubscription();
-            listeners = listeners.filter((l) => l !== listener);
-          },
-        };
-      });
-    AppState.currentState = "active";
+    appState = installFakeAppState();
   });
 
   afterEach(() => {
@@ -50,7 +19,7 @@ describe("useForegroundRefresh", () => {
     const callback = jest.fn();
     await renderHook(() => useForegroundRefresh(THRESHOLD_MS, callback));
 
-    returnToForegroundAt(THRESHOLD_MS * 10);
+    await appState.returnToForegroundAt(THRESHOLD_MS * 10);
 
     expect(callback).not.toHaveBeenCalled();
   });
@@ -58,9 +27,9 @@ describe("useForegroundRefresh", () => {
   it("refreshes when the app returns after the threshold has passed", async () => {
     const callback = jest.fn();
     await renderHook(() => useForegroundRefresh(THRESHOLD_MS, callback));
-    returnToForegroundAt(0);
+    await appState.returnToForegroundAt(0);
 
-    returnToForegroundAt(THRESHOLD_MS + 1);
+    await appState.returnToForegroundAt(THRESHOLD_MS + 1);
 
     expect(callback).toHaveBeenCalledTimes(1);
   });
@@ -68,9 +37,9 @@ describe("useForegroundRefresh", () => {
   it("does not refresh when the app returns within the threshold", async () => {
     const callback = jest.fn();
     await renderHook(() => useForegroundRefresh(THRESHOLD_MS, callback));
-    returnToForegroundAt(0);
+    await appState.returnToForegroundAt(0);
 
-    returnToForegroundAt(THRESHOLD_MS);
+    await appState.returnToForegroundAt(THRESHOLD_MS);
 
     expect(callback).not.toHaveBeenCalled();
   });
@@ -78,24 +47,24 @@ describe("useForegroundRefresh", () => {
   it("measures the next threshold from the last refresh", async () => {
     const callback = jest.fn();
     await renderHook(() => useForegroundRefresh(THRESHOLD_MS, callback));
-    returnToForegroundAt(0);
-    returnToForegroundAt(THRESHOLD_MS + 1);
+    await appState.returnToForegroundAt(0);
+    await appState.returnToForegroundAt(THRESHOLD_MS + 1);
 
-    returnToForegroundAt(THRESHOLD_MS + 2);
+    await appState.returnToForegroundAt(THRESHOLD_MS + 2);
     expect(callback).toHaveBeenCalledTimes(1);
 
-    returnToForegroundAt(THRESHOLD_MS * 2 + 2);
+    await appState.returnToForegroundAt(THRESHOLD_MS * 2 + 2);
     expect(callback).toHaveBeenCalledTimes(2);
   });
 
   it("only refreshes on a return to active, not when the app leaves", async () => {
     const callback = jest.fn();
     await renderHook(() => useForegroundRefresh(THRESHOLD_MS, callback));
-    returnToForegroundAt(0);
+    await appState.returnToForegroundAt(0);
 
-    now = THRESHOLD_MS * 10;
-    changeAppState("inactive");
-    changeAppState("background");
+    appState.setNow(THRESHOLD_MS * 10);
+    await appState.change("inactive");
+    await appState.change("background");
 
     expect(callback).not.toHaveBeenCalled();
   });
@@ -103,11 +72,11 @@ describe("useForegroundRefresh", () => {
   it("treats a return from inactive as a return to the foreground", async () => {
     const callback = jest.fn();
     await renderHook(() => useForegroundRefresh(THRESHOLD_MS, callback));
-    returnToForegroundAt(0);
+    await appState.returnToForegroundAt(0);
 
-    changeAppState("inactive");
-    now = THRESHOLD_MS + 1;
-    changeAppState("active");
+    await appState.change("inactive");
+    appState.setNow(THRESHOLD_MS + 1);
+    await appState.change("active");
 
     expect(callback).toHaveBeenCalledTimes(1);
   });
@@ -119,10 +88,10 @@ describe("useForegroundRefresh", () => {
       ({ callback }) => useForegroundRefresh(THRESHOLD_MS, callback),
       { initialProps: { callback: first } },
     );
-    returnToForegroundAt(0);
+    await appState.returnToForegroundAt(0);
 
     await rerender({ callback: second });
-    returnToForegroundAt(THRESHOLD_MS + 1);
+    await appState.returnToForegroundAt(THRESHOLD_MS + 1);
 
     expect(first).not.toHaveBeenCalled();
     expect(second).toHaveBeenCalledTimes(1);
@@ -135,6 +104,6 @@ describe("useForegroundRefresh", () => {
 
     await unmount();
 
-    expect(removeSubscription).toHaveBeenCalledTimes(1);
+    expect(appState.removeSubscription).toHaveBeenCalledTimes(1);
   });
 });
