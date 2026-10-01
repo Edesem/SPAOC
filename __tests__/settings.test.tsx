@@ -1,14 +1,13 @@
 import React from "react";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SettingsScreen, { useSettingsStore } from "@/app/settings";
+import SettingsScreen from "@/app/settings";
 import {
   getCalendarNotificationSettings,
-  getStartOfWeek,
-  getThemeChoice,
   loadNotificationToggles,
   saveDailySaintNotificationsEnabled,
   saveStartOfWeek,
+  useSettingsStore,
 } from "@/services/settings";
 import {
   cancelAllSaintNotifications,
@@ -17,9 +16,10 @@ import {
 
 // The screen is tested against a mocked settings repository. Storage keys,
 // value formats and first-run defaults are covered by
-// services/settings/settingsRepository.test.ts.
+// services/settings/settingsRepository.test.ts, and the settings store by
+// services/settings/settingsStore.test.ts.
 
-jest.mock("@/services/settings", () => ({
+jest.mock("@/services/settings/settingsRepository", () => ({
   getCalendarNotificationSettings: jest.fn(),
   getStartOfWeek: jest.fn(),
   getThemeChoice: jest.fn(),
@@ -89,9 +89,7 @@ const renderScreen = () => render(React.createElement(SettingsScreen));
 describe("settings", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useSettingsStore.setState({ startOfWeek: "monday" });
-    (getThemeChoice as jest.Mock).mockResolvedValue("auto");
-    (getStartOfWeek as jest.Mock).mockResolvedValue(null);
+    useSettingsStore.setState({ startOfWeek: "monday", themeChoice: "auto" });
     (getCalendarNotificationSettings as jest.Mock).mockResolvedValue({});
     (loadNotificationToggles as jest.Mock).mockResolvedValue({
       dailySaints: true,
@@ -145,8 +143,8 @@ describe("settings", () => {
     consoleLog.mockRestore();
   });
 
-  it("loads the saved start of week and saves a new choice", async () => {
-    (getStartOfWeek as jest.Mock).mockResolvedValue("sunday");
+  it("shows the hydrated start of week and saves a new choice", async () => {
+    useSettingsStore.setState({ startOfWeek: "sunday" });
 
     const { findByText, getByTestId } = await renderScreen();
 
@@ -156,15 +154,6 @@ describe("settings", () => {
 
     expect(await findByText("monday")).toBeTruthy();
     expect(saveStartOfWeek).toHaveBeenCalledWith("monday");
-  });
-
-  it("keeps the default start of week when none is saved", async () => {
-    const { getByTestId } = await renderScreen();
-
-    await waitFor(() => expect(getStartOfWeek).toHaveBeenCalled());
-    expect(getByTestId("picker-Start of the Week").props.children).toBe(
-      "monday",
-    );
   });
 
   it("logs an error when calendar notification settings fail to load", async () => {

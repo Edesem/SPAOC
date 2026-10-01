@@ -1,5 +1,5 @@
-import { useSettingsStore } from "@/app/settings";
 import { calendarService, type CalendarEvent } from "@/services/calendar";
+import { useSettingsStore } from "@/services/settings";
 import { groupEventsByDay } from "@/utils/dateUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -9,7 +9,7 @@ export const useEvents = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const startOfWeek = useSettingsStore.getState().startOfWeek; // "sunday" | "monday"
+  const startOfWeek = useSettingsStore((state) => state.startOfWeek); // "sunday" | "monday"
 
   const fetchAllEvents = useCallback(() => {
     setLoading(true);

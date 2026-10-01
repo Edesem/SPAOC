@@ -1,35 +1,15 @@
 // hooks/useColorScheme.ts
-import { getThemeChoice, type ThemeChoice } from "@/services/settings";
-import eventBus from "@/utils/eventBus";
-import { useEffect, useState } from "react";
+import { useSettingsStore, type ThemeChoice } from "@/services/settings";
 import { useColorScheme as useSystemColorScheme } from "react-native";
 
 export type { ThemeChoice };
 
 export function useColorScheme(): "light" | "dark" {
   const system = useSystemColorScheme();
-  const systemTheme: "light" | "dark" = system === "dark" ? "dark" : "light";
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(
-    systemTheme,
-  );
+  const themeChoice = useSettingsStore((state) => state.themeChoice);
 
-  useEffect(() => {
-    getThemeChoice().then((choice) => {
-      const effective = choice === "auto" ? systemTheme : choice;
-      setResolvedTheme(effective);
-    });
-
-    const handleThemeChange = (choice: ThemeChoice) => {
-      const effective = choice === "auto" ? systemTheme : choice;
-      setResolvedTheme(effective);
-    };
-
-    eventBus.on("themeChanged", handleThemeChange);
-
-    return () => {
-      eventBus.off("themeChanged", handleThemeChange);
-    };
-  }, [system]);
-
-  return resolvedTheme;
+  if (themeChoice === "auto") {
+    return system === "dark" ? "dark" : "light";
+  }
+  return themeChoice;
 }
