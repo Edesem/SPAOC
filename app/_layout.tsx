@@ -9,6 +9,12 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
 import { useFavouritesStore } from '@/services/favourites';
 import { useSettingsStore } from '@/services/settings';
+import {
+  requestNotificationPermissions,
+  setupNotificationHandler,
+  setupNotificationListeners,
+} from '@/notifications';
+import { scheduleSaintNotificationsForNext7Days } from '@/services/notifications';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,6 +39,18 @@ export default function RootLayout() {
   // in a moment later is harmless.
   useEffect(() => {
     useFavouritesStore.getState().hydrate();
+  }, []);
+
+  // Notification infrastructure belongs to the app, not to a screen: install
+  // the handler, ask for permission, listen, and top up the saint schedule once
+  // here, so it all works whichever screen opens first.
+  useEffect(() => {
+    setupNotificationHandler();
+    requestNotificationPermissions();
+    const removeListeners = setupNotificationListeners();
+    scheduleSaintNotificationsForNext7Days();
+
+    return removeListeners;
   }, []);
 
   const ready = loaded && hydrated;
