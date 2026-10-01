@@ -7,6 +7,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/styles/Colours';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
+import { useFavouritesStore } from '@/services/favourites';
 import { useSettingsStore } from '@/services/settings';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -25,6 +26,13 @@ export default function RootLayout() {
   // the saved start of week and theme.
   useEffect(() => {
     useSettingsStore.getState().hydrate();
+  }, []);
+
+  // Load every favourite in one read so event rows can check their star from
+  // memory. Unlike settings this doesn't hold the splash screen: a star filling
+  // in a moment later is harmless.
+  useEffect(() => {
+    useFavouritesStore.getState().hydrate();
   }, []);
 
   const ready = loaded && hydrated;

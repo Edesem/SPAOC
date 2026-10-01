@@ -1,4 +1,5 @@
 import RootLayout from "@/app/_layout";
+import { useFavouritesStore } from "@/services/favourites";
 import { useSettingsStore } from "@/services/settings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, render, waitFor } from "@testing-library/react-native";
@@ -28,6 +29,7 @@ jest.mock("expo-router", () => {
 });
 
 const initialState = useSettingsStore.getState();
+const initialFavouritesState = useFavouritesStore.getState();
 
 describe("RootLayout", () => {
   beforeEach(async () => {
@@ -35,6 +37,7 @@ describe("RootLayout", () => {
     jest.spyOn(console, "log").mockImplementation(() => {});
     await AsyncStorage.clear();
     useSettingsStore.setState(initialState, true);
+    useFavouritesStore.setState(initialFavouritesState, true);
   });
 
   it("hydrates the settings store before rendering the app", async () => {
@@ -46,6 +49,18 @@ describe("RootLayout", () => {
     expect(useSettingsStore.getState().hydrated).toBe(true);
     expect(useSettingsStore.getState().getStartOfWeek()).toBe("sunday");
     expect(SplashScreen.hideAsync).toHaveBeenCalled();
+  });
+
+  it("hydrates the favourites store at startup", async () => {
+    const event = { id: "a", title: "Divine Liturgy" };
+    await AsyncStorage.setItem("favourites", JSON.stringify({ a: event }));
+
+    await render(<RootLayout />);
+
+    await waitFor(() =>
+      expect(useFavouritesStore.getState().hydrated).toBe(true),
+    );
+    expect(useFavouritesStore.getState().isFavourite(event as any)).toBe(true);
   });
 
   it("holds the splash screen until settings have loaded", async () => {

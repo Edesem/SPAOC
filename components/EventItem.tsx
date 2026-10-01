@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { ItemProps } from "@/types/global";
 import { useRouter } from "expo-router";
 import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
@@ -7,11 +7,7 @@ import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
-import {
-  addFavourite,
-  isFavourite as isStoredFavourite,
-  removeFavourite,
-} from "@/services/favourites";
+import { favouriteKey, useFavouritesStore } from "@/services/favourites";
 
 export const EventItem = ({
   item,
@@ -24,33 +20,17 @@ export const EventItem = ({
 
   const styles = getStyles();
 
-  const [isFavourite, setIsFavourite] = useState(false);
-
-  // Load favourite status on mount
-  useEffect(() => {
-    const loadFavourite = async () => {
-      try {
-        setIsFavourite(await isStoredFavourite(item));
-      } catch (e) {
-        console.error("Failed to load favourites", e);
-      }
-    };
-    loadFavourite();
-  }, [item]);
+  // Subscribes to just this event's star, so toggling one row re-renders only
+  // that row.
+  const isFavourite = useFavouritesStore(
+    (state) => favouriteKey(item) in state.favourites,
+  );
 
   // Toggle favourite and save state
   const toggleFavourite = async () => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const newStatus = !isFavourite;
-
-      if (newStatus) {
-        await addFavourite(item);
-      } else {
-        await removeFavourite(item);
-      }
-
-      setIsFavourite(newStatus);
+      const newStatus = await useFavouritesStore.getState().toggle(item);
 
       if (!newStatus && onUnfavourite) {
         onUnfavourite(); // ← callback to remove from list
