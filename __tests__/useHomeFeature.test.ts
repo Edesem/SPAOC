@@ -186,6 +186,94 @@ describe("useHomeFeature", () => {
     ]);
     expect(result.current.showMonthPicker).toBe(false);
   });
+
+  describe("clearing the month filter", () => {
+    const marchAndApril = () => ({
+      groupedEvents: [
+        {
+          title: "Day",
+          data: [
+            { id: "1", start: "2026-03-10T12:00:00.000Z" },
+            { id: "2", start: "2026-04-10T12:00:00.000Z" },
+          ],
+        },
+      ],
+      refetch: mockRefetchEvents,
+    });
+
+    it("is not filtering by month until a month is picked", async () => {
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.isMonthFiltered).toBe(false);
+    });
+
+    it("reports the filter as active once a month is picked", async () => {
+      const { result } = await renderHook(() => useHomeFeature());
+
+      await act(async () => {
+        result.current.onValueChange(
+          "dateSetAction",
+          new Date("2026-03-15T12:00:00.000Z"),
+        );
+      });
+
+      expect(result.current.isMonthFiltered).toBe(true);
+    });
+
+    it("shows every event again after the filter is cleared", async () => {
+      mockEventsState = marchAndApril();
+      const { result } = await renderHook(() => useHomeFeature());
+
+      await act(async () => {
+        result.current.onValueChange(
+          "dateSetAction",
+          new Date("2026-03-15T12:00:00.000Z"),
+        );
+      });
+      await act(async () => {
+        result.current.clearMonthFilter();
+      });
+
+      expect(result.current.isMonthFiltered).toBe(false);
+      expect(result.current.sections).toHaveLength(1);
+      expect((result.current.sections[0] as any).data).toHaveLength(2);
+    });
+
+    it("recovers from a month with no events", async () => {
+      mockEventsState = marchAndApril();
+      const { result } = await renderHook(() => useHomeFeature());
+
+      await act(async () => {
+        result.current.onValueChange(
+          "dateSetAction",
+          new Date("2026-08-15T12:00:00.000Z"),
+        );
+      });
+      expect(result.current.sections).toEqual([]);
+
+      await act(async () => {
+        result.current.clearMonthFilter();
+      });
+
+      expect(result.current.sections).toHaveLength(1);
+    });
+
+    it("keeps the filter when the picker is dismissed without choosing", async () => {
+      const { result } = await renderHook(() => useHomeFeature());
+
+      await act(async () => {
+        result.current.onValueChange(
+          "dateSetAction",
+          new Date("2026-03-15T12:00:00.000Z"),
+        );
+      });
+      await act(async () => {
+        result.current.onValueChange("dismissedAction", new Date());
+      });
+
+      expect(result.current.isMonthFiltered).toBe(true);
+    });
+  });
 });
 
 describe("useHomeFeature foreground refresh", () => {
