@@ -3,16 +3,11 @@ import { useDailySaint } from "@/hooks/useDailySaint";
 import { useEvents } from "@/hooks/useEvents";
 import { useFastDay } from "@/hooks/useFastDay";
 import {
-  requestNotificationPermissions,
-  setupNotificationListeners,
-} from "@/notifications";
-import {
   addSectionIndexes,
   buildHomeSections,
   filterSectionsByMonth,
   getSaintsTitle,
 } from "@/utils/homeRules";
-import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppState } from "react-native";
 
@@ -69,12 +64,6 @@ export const useHomeFeature = () => {
         appState.current = nextAppState;
       },
     );
-
-    requestNotificationPermissions();
-    setupNotificationListeners();
-
-    // Schedule saint notification
-    scheduleSaintNotificationsForNext7Days();
 
     return () => subscription.remove();
   }, [onRefresh]);

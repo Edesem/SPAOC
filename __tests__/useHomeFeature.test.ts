@@ -64,12 +64,12 @@ describe("useHomeFeature", () => {
     };
   });
 
-  it("sets up notifications on mount", async () => {
+  it("leaves notification setup to the root layout", async () => {
     await renderHook(() => useHomeFeature());
 
-    expect(mockRequestNotificationPermissions).toHaveBeenCalled();
-    expect(mockSetupNotificationListeners).toHaveBeenCalled();
-    expect(mockScheduleSaintNotificationsForNext7Days).toHaveBeenCalled();
+    expect(mockRequestNotificationPermissions).not.toHaveBeenCalled();
+    expect(mockSetupNotificationListeners).not.toHaveBeenCalled();
+    expect(mockScheduleSaintNotificationsForNext7Days).not.toHaveBeenCalled();
   });
 
   it("does not refetch events on mount or screen focus", async () => {
