@@ -5,6 +5,7 @@ import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
+import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
 import {
   addFavourite,
@@ -91,21 +92,7 @@ export const EventItem = ({
       ? Colours.dark.chevronColor
       : Colours.light.chevronColor;
 
-  const eventColorMap = new Map<string, string>([
-    ["youth", Colours.event.youth],
-    ["weekly", Colours.event.weekly],
-    ["church", Colours.event.church],
-    ["family", Colours.event.family],
-    ["ladies", Colours.event.ladies],
-    ["parish", Colours.event.parish],
-    ["seniors", Colours.event.seniors],
-    ["playgroup", Colours.event.playgroup],
-    ["fellowship", Colours.event.fellowship],
-  ]);
-
-  const getEventColor = (source: string) => eventColorMap.get(source) || "#000";
-
-  const sourceColor = getEventColor(item.source) || Colours.light.secondary;
+  const sourceColor = getCalendarColour(item.source);
 
   return (
     <TouchableOpacity
