@@ -115,7 +115,7 @@ describe("favouritesStore", () => {
     });
 
     it("identifies events without an id by their title", async () => {
-      const untitled = { ...event("a"), id: undefined } as EventData;
+      const untitled = { ...event("a"), id: undefined } as unknown as EventData;
 
       await useFavouritesStore.getState().toggle(untitled);
 
