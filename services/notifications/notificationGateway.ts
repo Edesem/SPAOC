@@ -79,3 +79,9 @@ export async function listScheduled(): Promise<ScheduledNotification[]> {
   const all = await Notifications.getAllScheduledNotificationsAsync();
   return all.map(toScheduled);
 }
+
+export async function cancel(identifiers: string[]): Promise<void> {
+  for (const identifier of identifiers) {
+    await Notifications.cancelScheduledNotificationAsync(identifier);
+  }
+}

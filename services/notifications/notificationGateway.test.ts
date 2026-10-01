@@ -1,7 +1,7 @@
 import type { PlannedNotification } from "@/domain/notificationPlanner";
 import * as Notifications from "expo-notifications";
 
-import { listScheduled, schedule } from "./notificationGateway";
+import { cancel, listScheduled, schedule } from "./notificationGateway";
 
 // An in-memory stand-in for Expo's scheduler: it keeps what is scheduled and
 // hands out identifiers the way Expo does, so the gateway is tested against
@@ -134,6 +134,31 @@ describe("notificationGateway", () => {
       expect(await listScheduled()).toEqual([
         expect.objectContaining({ key: null, kind: null, fireAt: null }),
       ]);
+    });
+  });
+
+  describe("cancel", () => {
+    it("cancels only the given identifiers", async () => {
+      const first = await schedule(planned());
+      const second = await schedule(planned({ key: "saint:2099-01-03" }));
+      const third = await schedule(planned({ key: "saint:2099-01-04" }));
+
+      await cancel([first, third]);
+
+      expect((await listScheduled()).map((n) => n.identifier)).toEqual([
+        second,
+      ]);
+    });
+
+    it("does nothing for an empty list", async () => {
+      await schedule(planned());
+
+      await cancel([]);
+
+      expect(await listScheduled()).toHaveLength(1);
+      expect(
+        Notifications.cancelScheduledNotificationAsync,
+      ).not.toHaveBeenCalled();
     });
   });
 });
