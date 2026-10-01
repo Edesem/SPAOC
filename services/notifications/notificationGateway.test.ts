@@ -4,7 +4,9 @@ import * as Notifications from "expo-notifications";
 import { cancel, listScheduled, schedule } from "./notificationGateway";
 
 jest.mock("expo-notifications", () =>
-  require("@/test-utils/fakeExpoNotifications").createFakeExpoNotifications(),
+  jest
+    .requireActual("@/test-utils/fakeExpoNotifications")
+    .createFakeExpoNotifications(),
 );
 
 const planned = (overrides: Partial<PlannedNotification> = {}) => ({
