@@ -1,6 +1,6 @@
 # Notification planner
 
-Design for splitting [utils/notifications.ts](../utils/notifications.ts) (issue #84). This step adds the pure planner and documents the rest. `utils/notifications.ts` is unchanged and nothing calls the planner yet.
+Design for splitting [utils/notifications.ts](../utils/notifications.ts) (issue #84). #84 added the pure planner and documented the rest. #85 added the gateway and moved the existing saint, favourite and category scheduling onto it. Nothing calls the planner's `planNotifications` or `reconcileNotifications` yet: the saint code uses `planSaintNotifications` and the gateway directly.
 
 ## What the app needs
 
@@ -19,11 +19,11 @@ Design for splitting [utils/notifications.ts](../utils/notifications.ts) (issue 
 
 ## Three parts
 
-| Part           | Where                                                             | Does                                                                                                                                                    | Must not                                               |
-| -------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| Planner        | [domain/notificationPlanner.ts](../domain/notificationPlanner.ts) | From saints, events, settings and now, returns the notifications that should exist. Also diffs a plan against what is scheduled.                        | Import React, Expo or AsyncStorage, or read the clock. |
-| Gateway        | not written yet, wraps [notifications.tsx](../notifications.tsx)  | Schedules, lists and cancels with Expo. Stores `key`, `kind` and `fireAt` in each notification's data and reads them back when listing.                 | Decide what should be scheduled.                       |
-| Reconcile step | not written yet                                                   | Loads inputs, asks the planner for the plan, lists scheduled notifications, runs `reconcileNotifications` for the kinds that loaded, calls the gateway. | Keep its own record of what was scheduled.             |
+| Part           | Where                                                                                             | Does                                                                                                                                                    | Must not                                               |
+| -------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Planner        | [domain/notificationPlanner.ts](../domain/notificationPlanner.ts)                                 | From saints, events, settings and now, returns the notifications that should exist. Also diffs a plan against what is scheduled.                        | Import React, Expo or AsyncStorage, or read the clock. |
+| Gateway        | [services/notifications/notificationGateway.ts](../services/notifications/notificationGateway.ts) | `schedule`, `listScheduled` and `cancel` with Expo. Stores `key`, `kind` and `fireAt` in each notification's data and reads them back when listing.     | Decide what should be scheduled.                       |
+| Reconcile step | not written yet                                                                                   | Loads inputs, asks the planner for the plan, lists scheduled notifications, runs `reconcileNotifications` for the kinds that loaded, calls the gateway. | Keep its own record of what was scheduled.             |
 
 Expo's own list of scheduled notifications is the only record of what is scheduled. The `notified-*` markers go away, which fixes the cold-start problem: each reconcile compares against what Expo actually holds.
 
@@ -154,7 +154,16 @@ Rules for the reconcile step:
 
 ## Out of scope here
 
-- Changing `utils/notifications.ts` or the Settings screen.
+- Changing the Settings screen.
 - Moving app-lifecycle work to the root layout.
-- Writing the gateway, the reconcile step or the settingsStore changes.
+- Writing the reconcile step or the settingsStore changes.
 - Deciding favourite notifications.
+
+## What #85 changed
+
+- [notificationGateway.ts](../services/notifications/notificationGateway.ts) is the only code that calls Expo to schedule, list or cancel. `listScheduled` returns `key: null` for anything without usable stored data, and `kind: "saint"` for an old "Saint of the Day" notification.
+- [saintNotifications.ts](../services/notifications/saintNotifications.ts) plans the next 7 days with `planSaintNotifications` and schedules only the parish days Expo does not already hold. It does not cancel a saint that is no longer planned: `getSaintsForDate` returns `[]` on a failed fetch, so cancelling would drop the week. A saint notification with no key (scheduled before this change) is cancelled and replaced. `cancelAllSaintNotifications` cancels by kind.
+- [favouriteNotifications.ts](../services/notifications/favouriteNotifications.ts) keeps the existing timing and text, keys each notification `favourite:<event id>`, and cancels by kind. This fixes the title mismatch that made favourites impossible to cancel.
+- [calendarNotifications.ts](../services/notifications/calendarNotifications.ts) holds the old category scheduling, keyed `calendar:<calendar>:<event id>`. It is still not wired to anything.
+- No code reads or writes `notified-*` in AsyncStorage any more. Markers left on devices by older versions are harmless and are not cleaned up.
+- [utils/notifications.ts](../utils/notifications.ts) now only re-exports these, so the Settings screen and Home hook are unchanged.
