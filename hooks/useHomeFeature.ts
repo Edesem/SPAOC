@@ -5,7 +5,6 @@ import { useFastDay } from "@/hooks/useFastDay";
 import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
 import {
   addSectionIndexes,
-  buildHomeSections,
   filterSectionsByMonth,
   getSaintsTitle,
 } from "@/utils/homeRules";
@@ -44,14 +43,9 @@ export const useHomeFeature = () => {
     [groupedEvents, selectedMonth],
   );
 
-  const sectionsWithIndex = useMemo(
+  const sections = useMemo(
     () => addSectionIndexes(filteredSections),
     [filteredSections],
-  );
-
-  const sections = useMemo(
-    () => buildHomeSections(sectionsWithIndex),
-    [sectionsWithIndex],
   );
 
   const onValueChange = useCallback(

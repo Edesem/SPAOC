@@ -9,8 +9,6 @@ export type GroupedEventSection = {
 
 export type HomeEventSection = GroupedEventSection & { sectionIndex: number };
 
-export type HomeSection = HomeEventSection | { title: string; data: never[] };
-
 export const getSaintsTitle = (todaysSaints: string[]): string =>
   todaysSaints.length > 1 ? "Today's Feasts" : "Today's Feast:";
 
@@ -37,23 +35,3 @@ export const addSectionIndexes = (
   sections: GroupedEventSection[],
 ): HomeEventSection[] =>
   sections.map((section, index) => ({ ...section, sectionIndex: index }));
-
-// Wraps the event sections with the static image/header sections the Home
-// screen's SectionList expects at the top and bottom.
-export const buildHomeSections = (
-  eventSections: HomeEventSection[],
-): HomeSection[] => [
-  {
-    title: "Top Image",
-    data: [],
-  },
-  {
-    title: "Saint of the Day",
-    data: [],
-  },
-  ...eventSections,
-  {
-    title: "Bottom Image",
-    data: [],
-  },
-];

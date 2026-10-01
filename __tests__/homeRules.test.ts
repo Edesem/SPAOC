@@ -1,7 +1,6 @@
 import { EventData } from "@/types/global";
 import {
   addSectionIndexes,
-  buildHomeSections,
   filterSectionsByMonth,
   getSaintsTitle,
   GroupedEventSection,
@@ -107,32 +106,5 @@ describe("addSectionIndexes", () => {
 
   it("returns an empty array for no sections", () => {
     expect(addSectionIndexes([])).toEqual([]);
-  });
-});
-
-describe("buildHomeSections", () => {
-  it("wraps the event sections with the static image sections", () => {
-    const eventSections = addSectionIndexes([
-      { title: "Today", data: [event("1", "2026-03-10T12:00:00.000Z")] },
-    ]);
-
-    expect(buildHomeSections(eventSections)).toEqual([
-      { title: "Top Image", data: [] },
-      { title: "Saint of the Day", data: [] },
-      {
-        title: "Today",
-        data: [event("1", "2026-03-10T12:00:00.000Z")],
-        sectionIndex: 0,
-      },
-      { title: "Bottom Image", data: [] },
-    ]);
-  });
-
-  it("still includes the static sections when there are no events", () => {
-    expect(buildHomeSections([])).toEqual([
-      { title: "Top Image", data: [] },
-      { title: "Saint of the Day", data: [] },
-      { title: "Bottom Image", data: [] },
-    ]);
   });
 });

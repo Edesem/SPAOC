@@ -131,6 +131,25 @@ describe("useHomeFeature", () => {
     expect(result.current.refreshing).toBe(false);
   });
 
+  it("returns only the event sections, with no placeholder sections", async () => {
+    mockEventsState = {
+      groupedEvents: [{ title: "Day", data: [{ id: "1" }] }],
+      refetch: mockRefetchEvents,
+    };
+
+    const { result } = await renderHook(() => useHomeFeature());
+
+    expect(result.current.sections).toEqual([
+      { title: "Day", data: [{ id: "1" }], sectionIndex: 0 },
+    ]);
+  });
+
+  it("returns no sections when there are no events", async () => {
+    const { result } = await renderHook(() => useHomeFeature());
+
+    expect(result.current.sections).toEqual([]);
+  });
+
   it("filters events to the picked month and closes the picker", async () => {
     mockEventsState = {
       groupedEvents: [
