@@ -1,4 +1,10 @@
 import RootLayout from "@/app/_layout";
+import {
+  requestNotificationPermissions,
+  setupNotificationHandler,
+  setupNotificationListeners,
+} from "@/notifications";
+import { scheduleSaintNotificationsForNext7Days } from "@/services/notifications";
 import { useFavouritesStore } from "@/services/favourites";
 import { useSettingsStore } from "@/services/settings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +19,14 @@ jest.mock("expo-splash-screen", () => ({
 }));
 jest.mock("expo-status-bar", () => ({ StatusBar: () => null }));
 jest.mock("react-native-toast-message", () => () => null);
+jest.mock("@/notifications", () => ({
+  setupNotificationHandler: jest.fn(),
+  requestNotificationPermissions: jest.fn(),
+  setupNotificationListeners: jest.fn(),
+}));
+jest.mock("@/services/notifications", () => ({
+  scheduleSaintNotificationsForNext7Days: jest.fn(),
+}));
 jest.mock("@/components/ui/toastConfig", () => ({ toastConfig: () => ({}) }));
 jest.mock("expo-router", () => {
   const { View } = require("react-native");
@@ -35,6 +49,7 @@ describe("RootLayout", () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     jest.spyOn(console, "log").mockImplementation(() => {});
+    (setupNotificationListeners as jest.Mock).mockReturnValue(() => {});
     await AsyncStorage.clear();
     useSettingsStore.setState(initialState, true);
     useFavouritesStore.setState(initialFavouritesState, true);
@@ -82,5 +97,48 @@ describe("RootLayout", () => {
 
     expect(queryByTestId("stack")).toBeTruthy();
     expect(SplashScreen.hideAsync).toHaveBeenCalled();
+  });
+  describe("notification infrastructure", () => {
+    it("installs the notification handler before the app is ready to render", async () => {
+      jest
+        .spyOn(useSettingsStore.getState(), "hydrate")
+        .mockImplementation(() => new Promise<void>(() => {}));
+      useSettingsStore.setState({
+        hydrate: useSettingsStore.getState().hydrate,
+      });
+
+      const { queryByTestId } = await render(<RootLayout />);
+
+      expect(queryByTestId("stack")).toBeNull();
+      expect(setupNotificationHandler).toHaveBeenCalledTimes(1);
+    });
+
+    it("requests notification permissions once at startup", async () => {
+      await render(<RootLayout />);
+
+      expect(requestNotificationPermissions).toHaveBeenCalledTimes(1);
+    });
+
+    it("schedules the saint notifications once at startup", async () => {
+      await render(<RootLayout />);
+
+      expect(scheduleSaintNotificationsForNext7Days).toHaveBeenCalledTimes(1);
+    });
+
+    it("adds the notification listeners and removes them on unmount", async () => {
+      const removeListeners = jest.fn();
+      (setupNotificationListeners as jest.Mock).mockReturnValue(
+        removeListeners,
+      );
+
+      const { unmount } = await render(<RootLayout />);
+
+      expect(setupNotificationListeners).toHaveBeenCalledTimes(1);
+      expect(removeListeners).not.toHaveBeenCalled();
+
+      await unmount();
+
+      expect(removeListeners).toHaveBeenCalledTimes(1);
+    });
   });
 });
