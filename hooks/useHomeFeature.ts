@@ -2,25 +2,22 @@ import { getMajorLabel, getMinorLabel } from "@/domain/fasting";
 import { useDailySaint } from "@/hooks/useDailySaint";
 import { useEvents } from "@/hooks/useEvents";
 import { useFastDay } from "@/hooks/useFastDay";
+import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
 import {
   addSectionIndexes,
   buildHomeSections,
   filterSectionsByMonth,
   getSaintsTitle,
 } from "@/utils/homeRules";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AppState } from "react-native";
+import { useCallback, useMemo, useState } from "react";
 
 // Background refresh only kicks in once the app has been away this long.
-const BACKGROUND_REFRESH_THRESHOLD_MINUTES = 300;
+const BACKGROUND_REFRESH_THRESHOLD_MS = 300 * 60 * 1000;
 
 // Coordinates the Home screen's data: events, the daily saint, and the fast
 // day, plus their loading/refresh/error behaviour. The screen itself just
 // renders whatever this returns.
 export const useHomeFeature = () => {
-  const appState = useRef(AppState.currentState);
-  const lastRefreshTime = useRef<number | null>(null);
-
   const { todaysSaints, refetchSaints } = useDailySaint();
   const { groupedEvents, refetch: refetchEvents } = useEvents();
   const {
@@ -40,33 +37,7 @@ export const useHomeFeature = () => {
     setRefreshing(false);
   }, [refetchSaints, refetchFast, refetchEvents]);
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      "change",
-      (nextAppState) => {
-        if (
-          appState.current.match(/inactive|background/) &&
-          nextAppState === "active"
-        ) {
-          const now = Date.now();
-          if (lastRefreshTime.current === null) {
-            lastRefreshTime.current = now;
-          }
-          const minutesSinceLastRefresh =
-            (now - lastRefreshTime.current) / (1000 * 60);
-
-          if (minutesSinceLastRefresh > BACKGROUND_REFRESH_THRESHOLD_MINUTES) {
-            onRefresh();
-            lastRefreshTime.current = now;
-          }
-        }
-
-        appState.current = nextAppState;
-      },
-    );
-
-    return () => subscription.remove();
-  }, [onRefresh]);
+  useForegroundRefresh(BACKGROUND_REFRESH_THRESHOLD_MS, onRefresh);
 
   const filteredSections = useMemo(
     () => filterSectionsByMonth(groupedEvents, selectedMonth),
