@@ -68,6 +68,7 @@ flowchart TD
     D6 --> D2[useDailySaint]
     D6 --> D3[useFastDay]
     D6 --> D4[utils/notifications]
+    D6 --> D7[useForegroundRefresh]
     D1 --> D0[CalendarDataService]
     D2 --> D0
     D3 --> D0
@@ -120,8 +121,8 @@ Flow:
 - Tapping an event navigates to [app/eventDetails.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/eventDetails.tsx) with the event payload.
 
 State and side effects:
-- `useHomeFeature` owns refresh status, date selection, month filtering, and the background-refresh app-state listener. The screen keeps only the `SectionList` ref and navigation-driven scroll-to-top state.
-- Side effects (network requests via the data hooks, notifications, app-state refresh) live in `useHomeFeature`; navigation and haptics stay in the screen component.
+- `useHomeFeature` owns refresh status, date selection, and month filtering, and registers the background refresh through [hooks/useForegroundRefresh.ts](../hooks/useForegroundRefresh.ts). The screen keeps only the `SectionList` ref and navigation-driven scroll-to-top state.
+- Side effects (network requests via the data hooks, notifications, and the foreground refresh via `useForegroundRefresh`) live in `useHomeFeature`; navigation and haptics stay in the screen component.
 
 External calls:
 - Google Calendar events endpoints, saints endpoint, fasting endpoint.
@@ -188,13 +189,13 @@ Flow:
 - The screen uses the service's helper methods to extract reading teasers, full reading text, and feast title.
 - The current implementation, `AntiochianLiturgicalService`, wraps the client in [api/AntiochianApi.ts](../api/AntiochianApi.ts). Only the service layer imports that client.
 - Selecting a date calls the hook's `load(date)`, the single load path; the initial load on mount uses it too. Only the most recent request may write results, so a slow response for an earlier date is ignored.
-- Pull-to-refresh and the foreground refresh call the hook's `refresh()`, which reloads the selected date rather than resetting to today.
+- Pull-to-refresh and the foreground refresh (registered in the hook through `useForegroundRefresh`) call the hook's `refresh()`, which reloads the selected date rather than resetting to today.
 - Tapping a reading opens [app/dailyReadings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/dailyReadings.tsx).
 - Tapping a service opens [app/pdfViewer.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/pdfViewer.tsx).
 
 State and side effects:
 - `usePrayerFeature` owns the selected date, the loaded data, and the loading, refreshing, and error state. `error` means the load failed; a day with no services is empty data, not an error, so every route to the same day shows the same message.
-- The screen keeps the date picker visibility, the foreground-refresh `AppState` listener (which calls `refresh()`), and navigation to other routes.
+- The screen keeps the date picker visibility and navigation to other routes. It no longer touches `AppState`: `usePrayerFeature` registers the foreground refresh itself.
 
 ### 3.6 AI / agent flow
 
@@ -255,10 +256,13 @@ Settings persistence is tested the same way:
 - [settings.test.tsx](../__tests__/settings.test.tsx) mocks the repository and covers the Settings screen: loading and saving the saint notification toggle, scheduling or cancelling notifications, loading and saving the start of week, error logging when calendar settings fail to load, and never touching the settings keys directly.
 
 Prayer screen orchestration is tested at the hook level:
-- [usePrayerFeature.test.ts](../__tests__/usePrayerFeature.test.ts) mocks `liturgicalService` and covers: the initial load, error and empty results, loading a chosen date, ignoring slow responses and failures for a date that is no longer selected, and refresh reloading the selected date, clearing earlier errors, and always ending the refreshing state.
+- [usePrayerFeature.test.ts](../__tests__/usePrayerFeature.test.ts) mocks `liturgicalService` and covers: the initial load, error and empty results, loading a chosen date, ignoring slow responses and failures for a date that is no longer selected, refresh reloading the selected date, clearing earlier errors, and always ending the refreshing state, and the foreground refresh reloading the selected date after 5 hours but not before.
+
+The shared foreground-refresh hook is tested on its own:
+- [useForegroundRefresh.test.ts](../__tests__/useForegroundRefresh.test.ts) drives a fake `AppState` and clock ([test-utils/fakeAppState.ts](../test-utils/fakeAppState.ts)) and covers: the first return to the foreground only starting the clock, refreshing once the threshold has passed and not within it, measuring the next threshold from the last refresh, ignoring the app leaving, treating a return from inactive as a return, calling the latest callback after a re-render, and unsubscribing on unmount.
 
 Home screen orchestration is tested at the hook level:
-- [useHomeFeature.test.ts](../__tests__/useHomeFeature.test.ts) mocks `useEvents`, `useDailySaint`, `useFastDay`, and the notification modules, and covers: notification setup and the initial event load on mount, saint-title pluralisation, major/minor fast label derivation (including the "No Fast" fallback), refreshing all three data sources together, and filtering sections to the picked month while closing the month picker.
+- [useHomeFeature.test.ts](../__tests__/useHomeFeature.test.ts) mocks `useEvents`, `useDailySaint`, `useFastDay`, and the notification modules, and covers: notification setup and the initial event load on mount, saint-title pluralisation, major/minor fast label derivation (including the "No Fast" fallback), refreshing all three data sources together, filtering sections to the picked month while closing the month picker, and the foreground refresh refetching all three sources after 5 hours but not before.
 - Home's business rules are also tested directly, without rendering React: [homeRules.test.ts](../__tests__/homeRules.test.ts) covers [utils/homeRules.ts](../utils/homeRules.ts)'s major/minor fast label precedence, saint-title pluralisation, month filtering (including sections left with no events), section indexing, and the static Top Image/Saint of the Day/Bottom Image wrapping.
 
 ### What is not tested
@@ -285,7 +289,7 @@ Relevant files:
 Evidence:
 - The screen components orchestrate data loading, state changes, navigation, and side effects directly.
 - Prayer and Settings screens mix presentation, data loading, refresh logic, and external side effects in the same component.
-- The Home screen moved this coordination into [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts), and Prayer's data loading and refresh moved into [hooks/usePrayerFeature.ts](../hooks/usePrayerFeature.ts). Prayer still keeps the foreground-refresh listener and its presentation in the screen, and the pattern has not yet been applied to Settings.
+- The Home screen moved this coordination into [hooks/useHomeFeature.ts](../hooks/useHomeFeature.ts), and Prayer's data loading and refresh moved into [hooks/usePrayerFeature.ts](../hooks/usePrayerFeature.ts). Both now share one foreground-refresh hook, [hooks/useForegroundRefresh.ts](../hooks/useForegroundRefresh.ts). Prayer still keeps its presentation in the screen, and the pattern has not yet been applied to Settings.
 
 ### 6.2 Persistence logic is duplicated and scattered
 
