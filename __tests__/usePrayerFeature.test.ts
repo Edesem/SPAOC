@@ -1,5 +1,6 @@
 import type { LiturgicalData } from "@/domain/liturgical";
 import { usePrayerFeature } from "@/hooks/usePrayerFeature";
+import { installFakeAppState } from "@/test-utils/fakeAppState";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 const mockGetLiturgicalData = jest.fn();
@@ -277,5 +278,48 @@ describe("usePrayerFeature", () => {
       expect(result.current.data).toEqual(dataFor("Picked"));
       expect(result.current.refreshing).toBe(false);
     });
+  });
+});
+
+describe("usePrayerFeature foreground refresh", () => {
+  // Prayer reloads once the app has been open for 5 hours since it last did.
+  const FIVE_HOURS_MS = 300 * 60 * 1000;
+  let appState: ReturnType<typeof installFakeAppState>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetLiturgicalData.mockResolvedValue(dataFor("Today"));
+    appState = installFakeAppState();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("reloads the selected date when the app returns after 5 hours", async () => {
+    const { result } = await renderHook(() => usePrayerFeature());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    const picked = new Date(2026, 3, 12);
+    await act(async () => {
+      await result.current.load(picked);
+    });
+    await appState.returnToForegroundAt(0);
+    mockGetLiturgicalData.mockClear();
+
+    await appState.returnToForegroundAt(FIVE_HOURS_MS + 1);
+
+    expect(mockGetLiturgicalData).toHaveBeenCalledTimes(1);
+    expect(mockGetLiturgicalData).toHaveBeenCalledWith(picked);
+  });
+
+  it("does not reload when the app returns within 5 hours", async () => {
+    const { result } = await renderHook(() => usePrayerFeature());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    await appState.returnToForegroundAt(0);
+    mockGetLiturgicalData.mockClear();
+
+    await appState.returnToForegroundAt(FIVE_HOURS_MS);
+
+    expect(mockGetLiturgicalData).not.toHaveBeenCalled();
   });
 });

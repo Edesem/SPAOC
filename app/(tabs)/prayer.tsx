@@ -34,11 +34,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import he from "he";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  AppState,
   Image,
   RefreshControl,
   ScrollView,
@@ -138,9 +137,6 @@ const lentenServices = [
 ];
 
 export default function PrayerScreen(): JSX.Element {
-  const appState = useRef(AppState.currentState);
-  const lastRefreshTime = useRef<number | null>(null);
-
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
@@ -173,33 +169,6 @@ export default function PrayerScreen(): JSX.Element {
     hideDatePicker();
     load(date);
   };
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active"
-      ) {
-        const now = Date.now();
-        if (lastRefreshTime.current === null) {
-          lastRefreshTime.current = now;
-          return;
-        }
-        const minutesSinceLastRefresh =
-          (now - lastRefreshTime.current) / (1000 * 60);
-
-        if (minutesSinceLastRefresh > 300) {
-          // 👈 5 hour threshold
-          refresh();
-          lastRefreshTime.current = now;
-        }
-      }
-
-      appState.current = nextAppState;
-    });
-
-    return () => subscription.remove();
-  }, [refresh]);
 
   return (
     <SafeAreaProvider>
