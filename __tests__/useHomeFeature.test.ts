@@ -49,15 +49,6 @@ jest.mock("@/utils/notifications", () => ({
     mockScheduleSaintNotificationsForNext7Days(),
 }));
 
-jest.mock("expo-router", () => {
-  const React = require("react");
-  return {
-    useFocusEffect: (callback: () => void) => {
-      React.useEffect(callback, []);
-    },
-  };
-});
-
 describe("useHomeFeature", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -73,13 +64,18 @@ describe("useHomeFeature", () => {
     };
   });
 
-  it("sets up notifications and loads events on mount", async () => {
+  it("sets up notifications on mount", async () => {
     await renderHook(() => useHomeFeature());
 
     expect(mockRequestNotificationPermissions).toHaveBeenCalled();
     expect(mockSetupNotificationListeners).toHaveBeenCalled();
     expect(mockScheduleSaintNotificationsForNext7Days).toHaveBeenCalled();
-    expect(mockRefetchEvents).toHaveBeenCalled();
+  });
+
+  it("does not refetch events on mount or screen focus", async () => {
+    await renderHook(() => useHomeFeature());
+
+    expect(mockRefetchEvents).not.toHaveBeenCalled();
   });
 
   it("titles the saint section for a single saint", async () => {
@@ -130,7 +126,7 @@ describe("useHomeFeature", () => {
 
     expect(mockRefetchSaints).toHaveBeenCalled();
     expect(mockRefetchFast).toHaveBeenCalled();
-    expect(mockRefetchEvents).toHaveBeenCalledTimes(2); // once on mount, once on refresh
+    expect(mockRefetchEvents).toHaveBeenCalledTimes(1);
     expect(result.current.refreshing).toBe(false);
   });
 

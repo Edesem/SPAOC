@@ -13,7 +13,6 @@ import {
   getSaintsTitle,
 } from "@/utils/homeRules";
 import { scheduleSaintNotificationsForNext7Days } from "@/utils/notifications";
-import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppState } from "react-native";
 
@@ -79,12 +78,6 @@ export const useHomeFeature = () => {
 
     return () => subscription.remove();
   }, [onRefresh]);
-
-  useFocusEffect(
-    useCallback(() => {
-      refetchEvents(); // this will reload event data and favourite status
-    }, [refetchEvents]),
-  );
 
   const filteredSections = useMemo(
     () => filterSectionsByMonth(groupedEvents, selectedMonth),
