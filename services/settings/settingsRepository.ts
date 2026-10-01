@@ -1,5 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { CALENDAR_SOURCE_NAMES } from "@/domain/calendarSources";
+
 // App settings and notification preferences are persisted in AsyncStorage
 // exactly as the app has always stored them: flags as the strings
 // "true"/"false", the start of week and theme as plain strings, and calendar
@@ -23,19 +25,6 @@ export type CalendarNotificationSettings = Record<
   string,
   CalendarNotificationSetting
 >;
-
-// Calendars that get a (disabled) entry when no settings have been saved yet.
-const DEFAULT_NOTIFICATION_CALENDARS = [
-  "youth",
-  "church",
-  "family",
-  "ladies",
-  "parish",
-  "seniors",
-  "weekly",
-  "playgroup",
-  "fellowship",
-];
 
 const writeFlag = (key: string, enabled: boolean) =>
   AsyncStorage.setItem(key, enabled.toString());
@@ -117,14 +106,14 @@ export async function loadNotificationToggles(): Promise<{
 // Calendar notification settings
 
 // Returns the saved settings, or saves and returns a disabled, one-day-before
-// entry for each default calendar when none have been saved. Throws if the
+// entry for each registered calendar when none have been saved. Throws if the
 // stored value is not valid JSON, so callers can decide how to report it.
 export async function getCalendarNotificationSettings(): Promise<CalendarNotificationSettings> {
   const stored = await AsyncStorage.getItem(CALENDAR_NOTIFICATIONS_KEY);
   if (stored) return JSON.parse(stored);
 
   const defaults: CalendarNotificationSettings = Object.fromEntries(
-    DEFAULT_NOTIFICATION_CALENDARS.map((name) => [
+    CALENDAR_SOURCE_NAMES.map((name) => [
       name,
       { enabled: false, daysBefore: 1 },
     ]),
