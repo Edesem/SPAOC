@@ -8,6 +8,7 @@ import { SectionList } from "react-native";
 
 const mockSetShowMonthPicker = jest.fn();
 const mockOnValueChange = jest.fn();
+const mockClearMonthFilter = jest.fn();
 const mockOnRefresh = jest.fn();
 
 const baseFeature = {
@@ -20,6 +21,8 @@ const baseFeature = {
   refreshing: false,
   onRefresh: mockOnRefresh,
   selectedDate: new Date("2026-03-15T12:00:00.000Z"),
+  isMonthFiltered: false,
+  clearMonthFilter: mockClearMonthFilter,
   showMonthPicker: false,
   setShowMonthPicker: mockSetShowMonthPicker,
   onValueChange: mockOnValueChange,
@@ -177,19 +180,67 @@ describe("HomeScreen", () => {
     expect(queryByText("No events found.")).toBeNull();
   });
 
-  it("keeps the month picker with the first event section only", async () => {
-    mockFeature = {
-      ...baseFeature,
-      showMonthPicker: true,
-      sections: [
-        eventSection("Today", 0, [{ id: "1" }]),
-        eventSection("Tomorrow", 1, [{ id: "2" }]),
-      ],
-    };
+  describe("month filter", () => {
+    it("shows the month picker button even when no events match", async () => {
+      const { getByLabelText } = await render(<HomeScreen />);
 
-    const { getAllByTestId } = await render(<HomeScreen />);
+      expect(getByLabelText("Choose month")).toBeTruthy();
+    });
 
-    expect(getAllByTestId("month-picker")).toHaveLength(1);
+    it("opens the month picker when the button is pressed", async () => {
+      const { getByLabelText } = await render(<HomeScreen />);
+
+      await fireEvent.press(getByLabelText("Choose month"));
+
+      expect(mockSetShowMonthPicker).toHaveBeenCalledWith(true);
+    });
+
+    it("renders a single month picker however many event sections there are", async () => {
+      mockFeature = {
+        ...baseFeature,
+        showMonthPicker: true,
+        sections: [
+          eventSection("Today", 0, [{ id: "1" }]),
+          eventSection("Tomorrow", 1, [{ id: "2" }]),
+        ],
+      };
+
+      const { getAllByTestId } = await render(<HomeScreen />);
+
+      expect(getAllByTestId("month-picker")).toHaveLength(1);
+    });
+
+    it("shows the month picker when no events match", async () => {
+      mockFeature = { ...baseFeature, showMonthPicker: true };
+
+      const { getAllByTestId } = await render(<HomeScreen />);
+
+      expect(getAllByTestId("month-picker")).toHaveLength(1);
+    });
+
+    it("hides the clear button while no month is selected", async () => {
+      const { queryByLabelText } = await render(<HomeScreen />);
+
+      expect(queryByLabelText("Clear month filter")).toBeNull();
+    });
+
+    it("shows the clear button, with the empty message, when the month has no events", async () => {
+      mockFeature = { ...baseFeature, isMonthFiltered: true };
+
+      const { getByLabelText, getByText } = await render(<HomeScreen />);
+
+      expect(getByLabelText("Clear month filter")).toBeTruthy();
+      expect(getByText("No events found.")).toBeTruthy();
+    });
+
+    it("clears the month filter when the clear button is pressed", async () => {
+      mockFeature = { ...baseFeature, isMonthFiltered: true };
+      const { getByLabelText } = await render(<HomeScreen />);
+
+      await fireEvent.press(getByLabelText("Clear month filter"));
+
+      expect(mockClearMonthFilter).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("scrolling to the top", () => {
