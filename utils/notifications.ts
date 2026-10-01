@@ -1,11 +1,7 @@
 import { atParishHour, now } from "@/domain/parishTime";
 import { scheduleNotification } from "@/notifications";
-import { calendarService } from "@/services/calendar";
 import { getFavourites } from "@/services/favourites";
-import {
-  isDailySaintNotificationsEnabled,
-  isFavouriteNotificationsEnabled,
-} from "@/services/settings";
+import { isFavouriteNotificationsEnabled } from "@/services/settings";
 import type { EventData } from "@/types/global";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
@@ -16,135 +12,10 @@ export const [calendarSettings, setCalendarSettings] = useState<{
   [key: string]: { enabled: boolean; daysBefore: number };
 }>({});
 
-export async function scheduleSaintNotificationsForNext7Days() {
-  if (!(await isDailySaintNotificationsEnabled())) {
-    console.log("Daily saint notifications are disabled.");
-    return;
-  }
-
-  for (let i = 0; i < 7; i++) {
-    // Midday on the i-th parish day from today; any instant in the day works
-    // for the saints lookup and for the day's dedupe key
-    const date = atParishHour(now(), 12, i);
-    const dateKey = date.toDateString();
-
-    const saints = await calendarService.getSaintsForDate(date);
-
-    if (saints.length === 0) continue;
-
-    const saintText = saints.join(", ");
-
-    const alreadyScheduled = await AsyncStorage.getItem(`notified-${dateKey}`);
-    console.log(
-      `[Day ${i}] ${date.toDateString()} - ${saintText} - Already scheduled: ${
-        alreadyScheduled ? "✅ Yes" : "❌ No"
-      }`,
-    );
-    if (alreadyScheduled) continue;
-
-    const notificationTime = atParishHour(date, 8); // 8AM each day
-
-    if (notificationTime < now()) {
-      console.log(`[${i}] ${dateKey} - Skipping, time is in the past`);
-      continue;
-    }
-
-    await scheduleNotification(
-      "Saint of the Day",
-      `${saintText}`,
-      notificationTime,
-    );
-
-    await AsyncStorage.setItem(`notified-${dateKey}`, "true");
-  }
-
-  const all = await Notifications.getAllScheduledNotificationsAsync();
-
-  console.log("Scheduled notifications:");
-  all.forEach((notif) => {
-    const title = notif.content.title;
-    const body = notif.content.body;
-    let date = "-";
-
-    // If trigger has a date/time
-    const trigger = notif.trigger;
-    if (trigger && "seconds" in trigger && trigger.seconds) {
-      date = new Date(Date.now() + trigger.seconds * 1000).toLocaleString();
-    } else if (
-      trigger &&
-      "hour" in trigger &&
-      "minute" in trigger &&
-      trigger.hour !== undefined &&
-      trigger.minute !== undefined
-    ) {
-      const now = new Date();
-      date = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        trigger.hour,
-        trigger.minute,
-      ).toLocaleString();
-    }
-
-    console.log(`- ${title} | ${body} | ${date}`);
-  });
-}
-
-export async function cancelAllSaintNotifications() {
-  const all = await Notifications.getAllScheduledNotificationsAsync();
-
-  /*
-  await scheduleNotification(
-    "Saint of the Day",
-    "Test Saint",
-    new Date(Date.now() + 1 * 60 * 1000) // 1 min from now
-  );
-
-  console.log("Scheduled notifications:");
-  all.forEach((notif) => {
-    const title = notif.content.title;
-    const body = notif.content.body;
-    let date = "-";
-
-    // If trigger has a date/time
-    if (notif.trigger?.seconds) {
-      date = new Date(
-        Date.now() + notif.trigger.seconds * 1000
-      ).toLocaleString();
-    } else if (
-      notif.trigger?.hour !== undefined &&
-      notif.trigger?.minute !== undefined
-    ) {
-      const now = new Date();
-      date = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        notif.trigger.hour,
-        notif.trigger.minute
-      ).toLocaleString();
-    }
-
-    console.log(`- ${title} | ${body} | ${date}`);
-  });
-  */
-
-  for (const notif of all) {
-    if (notif.content.title === "Saint of the Day") {
-      console.log(notif.content);
-      await Notifications.cancelScheduledNotificationAsync(notif.identifier);
-    }
-  }
-
-  // Remove all AsyncStorage keys related  to saint notifications
-  const keys = await AsyncStorage.getAllKeys();
-  const saintKeys = keys.filter((k) => k.startsWith("notified-"));
-  for (const key of saintKeys) {
-    await AsyncStorage.removeItem(key);
-    console.log(`Removed AsyncStorage key: ${key}`);
-  }
-}
+export {
+  cancelAllSaintNotifications,
+  scheduleSaintNotificationsForNext7Days,
+} from "@/services/notifications";
 
 export async function scheduleFavouriteNotifications() {
   if (!(await isFavouriteNotificationsEnabled())) {

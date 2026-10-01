@@ -3,7 +3,7 @@
 // against what it would actually get back. Use it from a test with:
 //
 //   jest.mock("expo-notifications", () =>
-//     require("@/test-utils/fakeExpoNotifications").createFakeExpoNotifications(),
+//     jest.requireActual("@/test-utils/fakeExpoNotifications").createFakeExpoNotifications(),
 //   );
 export const createFakeExpoNotifications = () => {
   const store = new Map<string, unknown>();
