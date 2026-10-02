@@ -1,5 +1,4 @@
 import { Platform } from "react-native";
-export const CALENDLY_URL = "https://calendly.com/inspectre-pi/30min";
 export const SQUARE_URL = "https://square.link/u/1x7oJTMQ";
 
 function getCalendarApiKey(): string {
@@ -54,6 +53,3 @@ export const PRESANCTIFIED_LITURGY_URL =
   "https://antiochianprodsa.blob.core.windows.net/liturgicalinstructions/Presanctified%20Liturgy%20Bilingual.pdf";
 export const AKATHIST_URL =
   "https://antiochianprodsa.blob.core.windows.net/liturgicalinstructions/Little%20Compline%20Akathist%20Bilingual%201-4.pdf";
-
-// Local storage keys
-export const DAILY_SAINTS_KEY = "dailySaints";
