@@ -31,6 +31,9 @@ export const useFastDay = () => {
   }, []);
 
   useEffect(() => {
+    // Fetch-on-mount sets state once the request settles. Reworking how the data
+    // hooks fetch is tracked separately, so the rule is silenced here for now.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchEvents();
   }, [fetchEvents]);
 
