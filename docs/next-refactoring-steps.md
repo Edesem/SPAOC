@@ -151,11 +151,16 @@ The same nine keys (`youth`, `weekly`, `church`, …) are defined in:
 
 On top of that, [constants/consts.tsx:19-53](../constants/consts.tsx) still holds dead copies of every calendar ID and URL. Adding a calendar, or building event filters (#18) or the settings page (#54), means editing all of these consistently.
 
-### 3.7 Navigation contracts are untyped and carry pre-formatted data
+### 3.7 Navigation contracts were untyped and carried pre-formatted data
 
-- `EventItem` pushes `{ ...item, start: formattedStart, end: formattedEnd }` ([EventItem.tsx:114-117](../components/EventItem.tsx)). [eventDetails.tsx:66-67](../app/eventDetails.tsx) reads the result as `useLocalSearchParams<EventData>()`, so `start` is typed as an ISO string but actually holds something like `"7:00 pm"`. The mapper even documents that fields stay `undefined` "because the details screen checks for null" ([googleCalendarMapper.ts:27-29](../services/calendar/googleCalendarMapper.ts)): the provider mapper is shaped around a screen.
-- The tab layout imports from an internal path, `expo-router/build/react-navigation/bottom-tabs` ([<(tabs)/_layout.tsx:7>](<../app/(tabs)/_layout.tsx>)), and bypasses Expo Router's `Tabs` and typed routes (`typedRoutes: true` in [app.json](../app.json)). `RootTabParamList` is declared inside `HomeScreen` with a `"Home"` tab, but the tab is called `"Events"` ([<index.tsx:59-62>](<../app/(tabs)/index.tsx>)).
-- [app/discarded/](../app/discarded) lives under `app/`, so Expo Router registers those files as real routes.
+Resolved in #91:
+
+- `EventItem` now pushes the raw event through `toEventDetailsParams` ([routeParams.ts](../utils/routeParams.ts)): ISO `start` and `end` plus an `allDay` flag, typed as `EventDetailsParams` ([routes.ts](../types/routes.ts)). `eventDetails` formats the times itself with `formatEventTimes` ([eventTimes.ts](../utils/eventTimes.ts)), the same helper `EventItem` uses for its row. The details screen still receives a copy of the event's fields rather than looking it up by id, because events have no store to look them up in.
+- `dailyReadings` and `pdfViewer` read `useLocalSearchParams<DailyReadingsParams | PdfViewerParams>()`. The Prayer push sites use `satisfies`, because `router.push` params are not checked on their own. That is how the missing `"thirdReading"` type surfaced.
+- The tab layout uses Expo Router's `Tabs` with one `Tabs.Screen` per file in `app/(tabs)/`, so the `expo-router/build/...` import is gone. Home types its navigation with `TabParamList`, keyed by the real tab routes (`index`, not `"Home"`).
+- `app/discarded/` moved to [discarded/](../discarded), outside the routes tree.
+
+What remains: route params are still strings, so `dailyReadings` still carries the full reading text through the URL, and the mapper still leaves fields `undefined` for the details screen ([googleCalendarMapper.ts:27-29](../services/calendar/googleCalendarMapper.ts)).
 
 ### 3.8 Home still has seams between rules and presentation
 
@@ -200,7 +205,7 @@ Each step is sized to be one epic of two to five small PRs, in the style used so
 ### Step A: Make the safety net honest
 
 **What:**
-- Configure Jest `collectCoverageFrom` for `app/`, `components/`, `hooks/`, `services/`, `utils/` and `api/` (excluding `app/discarded` and tests), so untested files show up at 0%.
+- Configure Jest `collectCoverageFrom` for `app/`, `components/`, `hooks/`, `services/`, `utils/` and `api/` (excluding tests), so untested files show up at 0%.
 - Make the typecheck result the same in CI and locally. Handle a missing calendar key explicitly (a clear configuration error in development) instead of passing `string | undefined`. Also stop the result depending on git-ignored generated files: either generate them in CI or declare the `EXPO_PUBLIC_*` variables in a checked-in `.d.ts`.
 - Rename tests that pin known defects so the issue number is visible, e.g. `it("pins #59: keys requests by UTC day", …)`.
 - Add an ESLint `no-restricted-imports` rule: nothing outside `app/` imports from `@/app/*`, and `@react-native-async-storage/async-storage` is only imported under `services/`. Scope it with overrides so the current violations are listed; don't block on them.
@@ -284,10 +289,10 @@ Zustand is already a dependency, so this adds no new library.
 ### Step I: Type the navigation contracts
 
 **What:**
-- Pass event details as a typed payload that holds the raw model (or an id plus a lookup). Format the dates in `eventDetails`, not in `EventItem`.
-- Correct the `dailyReadings` param type, or pass a reading reference instead of full HTML.
-- Replace the hand-built tab navigator with Expo Router's `Tabs`, which removes the `expo-router/build/...` internal import and brings the tabs under typed routes.
-- Move `app/discarded/` out of `app/`.
+- ✅ (#91) Pass event details as a typed payload that holds the raw model (or an id plus a lookup). Format the dates in `eventDetails`, not in `EventItem`.
+- ✅ (#91) Correct the `dailyReadings` param type. Passing a reading reference instead of full HTML is still open.
+- ✅ (#91) Replace the hand-built tab navigator with Expo Router's `Tabs`, which removes the `expo-router/build/...` internal import and brings the tabs under typed routes.
+- ✅ (#91) Move `app/discarded/` out of `app/`.
 
 **Why:** 3.7. Also, route params are currently the only contract between screens, and nothing checks them.
 
