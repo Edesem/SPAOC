@@ -19,17 +19,19 @@ This React Native application is called SPAOC. It is primarily a calendar applic
 ## Commands
 
 - `npm start` — Metro with the dev client (`expo start --dev-client`); there is no Expo Go support. `npm run ios` / `npm run android` build and run the native app (`ios/` and `android/` are git-ignored).
-- `npm run lint` — `expo lint` (ESLint 9 flat config).
+- `npm run lint` — `expo lint .` (ESLint 9 flat config, whole repo).
 - `npm run typecheck` — `tsc --noEmit` (strict mode).
 - `npm test` — Jest in **watch mode** (`--watchAll`). For a one-shot run use `npx jest --watchAll=false`.
-- Single test file: `npx jest --watchAll=false services/calendar/googleCalendarMapper.test.ts`; single test by name: add `-t "name"`.
+- Single test file: `npx jest --watchAll=false src/services/calendar/googleCalendarMapper.test.ts`; single test by name: add `-t "name"`.
 - `npm run coverage` — what CI runs; fails below 80% global line coverage. CI (`.github/workflows/ci.yml`) runs coverage, then lint, then typecheck, on Node 24.
 
 Local setup needs a git-ignored `.env` (copy `.env.example`) with `EXPO_PUBLIC_{IOS,ANDROID}_CAL_{PROD,DEV}_KEY` (Google Calendar API keys). `config/env.ts` is the only code that reads `EXPO_PUBLIC_*`; `services/calendar/index.ts` calls it at import time, so the app **throws at start-up** if the key for the current platform/build is missing. Jest never loads `.env`, so `jest.setup.ts` injects fixture keys and mocks AsyncStorage.
 
 ## Project Structure
 
-- `app/(tabs)` — tab screens; `app/*.tsx` — stack screens (`eventDetails`, `settings`, `dailyReadings`, `pdfViewer`). Every file under `app/` becomes a route (a test enforces nothing is parked there; unused screens go in `discarded/`).
+All source lives in `src/` (assets, docs, config files and `jest.setup.ts` stay at the repo root). Paths in the rest of this file are relative to `src/` unless they start with a root-level name.
+
+- `app/(tabs)` — tab screens; `app/*.tsx` — stack screens (`eventDetails`, `settings`, `dailyReadings`, `pdfViewer`). Expo Router finds `src/app` automatically. Every file under `app/` becomes a route (a test enforces nothing is parked there; delete unused screens, git history keeps them).
 - `components` — reusable UI components
 - `hooks` — custom hooks
 - `services` — API and external services
@@ -39,9 +41,9 @@ Local setup needs a git-ignored `.env` (copy `.env.example`) with `EXPO_PUBLIC_{
 - `types` — shared TypeScript types
 - `utils` — pure utility functions
 - `styles`, `constants` — colours/common styles and app constants
-- `assets` — images, fonts, etc.
+- `assets` (repo root) — images, fonts, etc.
 
-Imports use the `@/` alias for the repo root (e.g. `@/domain/parishTime`).
+Imports use the `@/` alias for `src/` (e.g. `@/domain/parishTime`) and `@assets/` for the root `assets/` folder (e.g. `require("@assets/images/orthodox/church.png")`). Both come from `tsconfig.json` `paths`; Expo's Metro and jest-expo read them, so there is no `babel.config.js` or `metro.config.js`.
 
 ## Architecture
 
@@ -53,12 +55,12 @@ Data flows one way: **screen → feature hook → data hook → service → prov
 - **Event calendars are defined in two places that must stay in sync by name:** `domain/calendarSources.ts` (name, colour, image — also drives the Settings screen order) and `services/calendar/googleCalendarConfig.ts` (Google calendar IDs). The `source` name on each event keys colours and per-calendar notification settings.
 - **Time:** the parish is on `Australia/Melbourne` regardless of device time zone. Use `now()` and the helpers in `domain/parishTime.ts` instead of `new Date()` for "what day is it" logic; tests pin the clock with `setNow`/`resetNow` rather than fake timers. A few legacy `new Date()` call sites remain — don't copy them.
 - **Notifications** are being split into three parts (see `docs/notification-planner.md`): a pure planner (`domain/notificationPlanner.ts`, must not import React/Expo/AsyncStorage or read the clock), a gateway over `expo-notifications` (`services/notifications/notificationGateway.ts`), and a not-yet-written reconcile step. Expo's own scheduled list is meant to be the only record of what is scheduled. Today the saint/favourite/calendar notification modules in `services/notifications` call the gateway directly, and the root layout installs the handler/listeners (`services/notifications/appNotifications.ts`) and tops up the 7-day saint schedule at startup.
-- `utils/eventBus.ts` (eventemitter3) is a leftover cross-screen broadcast channel; prefer a Zustand store for new shared state.
+- Prefer a Zustand store for new shared cross-screen state.
 
 ## Testing
 
-Tests are colocated (`*.test.ts[x]` beside the source, `components/__tests__`) plus screen/hook-level tests in the top-level `__tests__/`. Service tests mock at the lowest layer (e.g. `AntiochianLiturgicalService.network.test.ts` mocks only axios so the real client runs). Coverage is collected from `app`, `components`, `domain`, `hooks`, `services`, `utils`, `api`.
+Tests are colocated (`*.test.ts[x]` beside the source, `components/__tests__`) plus screen/hook-level tests in `src/__tests__/`. Service tests mock at the lowest layer (e.g. `AntiochianLiturgicalService.network.test.ts` mocks only axios so the real client runs). Coverage is collected from `src/{app,components,domain,hooks,services,utils,api,config}` (see `collectCoverageFrom` in `package.json`).
 
 ## Docs
 
-`docs/` holds an architecture snapshot, refactoring plan, and notification design, and `issue-drafts.md` the backlog drafts from that review. They were written at earlier commits (e.g. `utils/notifications.ts` is now a stub), so verify against the code before relying on them.
+`docs/` holds an architecture snapshot, refactoring plan, and notification design, and `issue-drafts.md` the backlog drafts from that review. They were written at earlier commits (before the move into `src/`, for one), so verify against the code before relying on them.
