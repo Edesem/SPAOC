@@ -1,12 +1,12 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import FavouritesScreen from "@/app/(tabs)/favourites";
+import FavouritesScreen from "./FavouritesScreen";
 
 // The screen is tested against a mocked favourites store. Storage format,
 // expiry boundaries and invalid stored data are covered by
-// services/favourites/favouritesRepository.test.ts, and the store's own
-// behaviour by services/favourites/favouritesStore.test.ts.
+// favourites/favouritesRepository.test.ts, and the store's own
+// behaviour by favourites/favouritesStore.test.ts.
 
 // TODO:
 // ⚠️ Test coverage gaps:
@@ -19,7 +19,7 @@ import FavouritesScreen from "@/app/(tabs)/favourites";
 
 const mockRemoveExpired = jest.fn();
 
-jest.mock("@/features/calendar/favourites", () => ({
+jest.mock("../favourites", () => ({
   useFavouritesStore: {
     getState: () => ({ removeExpired: mockRemoveExpired }),
   },
@@ -48,7 +48,7 @@ jest.mock("expo-router", () => {
   };
 });
 
-jest.mock("@/features/calendar/components/EventItem", () => {
+jest.mock("../components/EventItem", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
