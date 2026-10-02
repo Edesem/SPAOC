@@ -56,7 +56,7 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({ back: jest.fn() }),
 }));
 
-jest.mock("@/components/SettingPicker", () => {
+jest.mock("@/features/settings/components/SettingPicker", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
