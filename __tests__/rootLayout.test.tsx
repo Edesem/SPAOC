@@ -3,7 +3,7 @@ import {
   requestNotificationPermissions,
   setupNotificationHandler,
   setupNotificationListeners,
-} from "@/notifications";
+} from "@/services/notifications/appNotifications";
 import { scheduleSaintNotificationsForNext7Days } from "@/services/notifications";
 import { useFavouritesStore } from "@/services/favourites";
 import { useSettingsStore } from "@/services/settings";
@@ -19,7 +19,7 @@ jest.mock("expo-splash-screen", () => ({
 }));
 jest.mock("expo-status-bar", () => ({ StatusBar: () => null }));
 jest.mock("react-native-toast-message", () => () => null);
-jest.mock("@/notifications", () => ({
+jest.mock("@/services/notifications/appNotifications", () => ({
   setupNotificationHandler: jest.fn(),
   requestNotificationPermissions: jest.fn(),
   setupNotificationListeners: jest.fn(),
