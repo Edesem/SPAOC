@@ -1,5 +1,6 @@
 // PdfViewer.tsx
-import { useNavigation, useRoute } from "expo-router";
+import { PdfViewerParams } from "@/types/routes";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
@@ -8,8 +9,7 @@ import { WebView } from "react-native-webview";
 const USE_WEBVIEW = true; // Set to false when react-native-pdf is working again
 
 export default function PdfViewer() {
-  const route = useRoute();
-  const { url, title } = route.params as { url: string; title: string };
+  const { url, title } = useLocalSearchParams<PdfViewerParams>();
   const navigation = useNavigation();
 
   useEffect(() => {

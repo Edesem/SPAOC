@@ -7,6 +7,8 @@ import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
+import { formatEventTimes } from "@/utils/eventTimes";
+import { toEventDetailsParams } from "@/utils/routeParams";
 import { favouriteKey, useFavouritesStore } from "@/services/favourites";
 
 export const EventItem = ({
@@ -40,9 +42,7 @@ export const EventItem = ({
     }
   };
 
-  const isAllDayEvent = item.allDay;
   const eventStart = new Date(item.start);
-  const eventEnd = new Date(item.end);
   const formattedDate = eventStart.toLocaleDateString([], {
     weekday: "short",
     day: "2-digit",
@@ -50,16 +50,11 @@ export const EventItem = ({
     year: "numeric",
   });
 
-  const formattedStart = isAllDayEvent
-    ? "All day"
-    : eventStart.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-  const formattedEnd = isAllDayEvent
-    ? ""
-    : `to ${eventEnd.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
+  const { start: formattedStart, end: formattedEnd } = formatEventTimes(
+    item.start,
+    item.end,
+    item.allDay,
+  );
 
   const backgroundColor =
     colorScheme === "dark"
@@ -80,12 +75,7 @@ export const EventItem = ({
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
         router.push({
           pathname: "/eventDetails",
-          params: {
-            ...item,
-            allDay: undefined, // route params are strings; the screen shows the formatted times
-            start: formattedStart,
-            end: formattedEnd,
-          },
+          params: toEventDetailsParams(item),
         });
         onPress();
       }}

@@ -2,7 +2,9 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { getCalendarImage } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
-import { EventData } from "@/types/global";
+import { EventDetailsParams } from "@/types/routes";
+import { formatEventTimes } from "@/utils/eventTimes";
+import { parseEventDetailsParams } from "@/utils/routeParams";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -64,8 +66,13 @@ const renderDescription = (description: string | null, theme: any) => {
 
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
-  const { title, start, end, description, location, source } =
-    useLocalSearchParams<Omit<EventData, "allDay">>();
+  const { title, start, end, allDay, description, location, source } =
+    parseEventDetailsParams(useLocalSearchParams<EventDetailsParams>());
+  const { start: startLabel, end: endLabel } = formatEventTimes(
+    start,
+    end,
+    allDay,
+  );
 
   const styles = getStyles();
 
@@ -149,7 +156,7 @@ const EventDetailsScreen = () => {
             </Text>
             <View style={styles.divider} />
             <Text style={[styles.date, { color: theme.lessImportantText }]}>
-              🕒 {start} {end}
+              🕒 {startLabel} {endLabel}
             </Text>
             {location == null ? null : (
               <View
