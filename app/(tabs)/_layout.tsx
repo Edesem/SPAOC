@@ -1,21 +1,31 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/styles/Colours";
-import { DynamicColorIOS, Platform } from "react-native";
+import { ColorValue, DynamicColorIOS, Platform } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router";
-import { createBottomTabNavigator } from "expo-router/build/react-navigation/bottom-tabs";
+import { DarkTheme, DefaultTheme, Tabs, ThemeProvider } from "expo-router";
 import type { ComponentProps } from "react";
-import HomeScreen from ".";
-import AboutScreen from "./about";
-import FavouritesScreen from "./favourites";
-import HelpScreen from "./help";
-import PrayerScreen from "./prayer";
+
+type IconName = ComponentProps<typeof Ionicons>["name"];
+
+const tabIcon = (focusedName: IconName, name: IconName) => {
+  const TabIcon = ({
+    focused,
+    color,
+    size,
+  }: {
+    focused: boolean;
+    color: ColorValue;
+    size: number;
+  }) => (
+    <Ionicons name={focused ? focusedName : name} size={size} color={color} />
+  );
+
+  return TabIcon;
+};
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-
-  const Tab = createBottomTabNavigator();
 
   const tintColor =
     Platform.OS === "ios"
@@ -31,36 +41,49 @@ export default function TabLayout() {
 
   return (
     <ThemeProvider value={theme}>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
+      <Tabs
+        screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: tintColor,
           tabBarInactiveTintColor: "#888",
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName: ComponentProps<typeof Ionicons>["name"] =
-              "help-circle-outline";
-
-            if (route.name === "Events")
-              iconName = focused ? "calendar" : "calendar-outline";
-            else if (route.name === "Favourites")
-              iconName = focused ? "star" : "star-outline";
-            else if (route.name === "About")
-              iconName = focused ? "person" : "person-outline";
-            else if (route.name === "Prayer")
-              iconName = focused ? "book" : "book-outline";
-            else if (route.name === "Help")
-              iconName = focused ? "help-circle" : "help-circle-outline";
-
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-        })}
+        }}
       >
-        <Tab.Screen name="Events" component={HomeScreen} />
-        <Tab.Screen name="Favourites" component={FavouritesScreen} />
-        <Tab.Screen name="Prayer" component={PrayerScreen} />
-        <Tab.Screen name="About" component={AboutScreen} />
-        <Tab.Screen name="Help" component={HelpScreen} />
-      </Tab.Navigator>
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Events",
+            tabBarIcon: tabIcon("calendar", "calendar-outline"),
+          }}
+        />
+        <Tabs.Screen
+          name="favourites"
+          options={{
+            title: "Favourites",
+            tabBarIcon: tabIcon("star", "star-outline"),
+          }}
+        />
+        <Tabs.Screen
+          name="prayer"
+          options={{
+            title: "Prayer",
+            tabBarIcon: tabIcon("book", "book-outline"),
+          }}
+        />
+        <Tabs.Screen
+          name="about"
+          options={{
+            title: "About",
+            tabBarIcon: tabIcon("person", "person-outline"),
+          }}
+        />
+        <Tabs.Screen
+          name="help"
+          options={{
+            title: "Help",
+            tabBarIcon: tabIcon("help-circle", "help-circle-outline"),
+          }}
+        />
+      </Tabs>
     </ThemeProvider>
   );
 }
