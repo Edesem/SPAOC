@@ -11,7 +11,9 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "typecheck": "npx tsc --noEmit",
-    "coverage": "npm test -- --watchAll=false --runInBand --coverage --coverageThreshold='{\"global\":{\"lines\":80}}'"
+    "coverage": "npm test -- --watchAll=false --runInBand --coverage --coverageThreshold='{\"global\":{\"lines\":80}}'",
+    "build-ios": "eas build --platform ios --profile production --local",
+    "build-android": "eas build --platform android --profile production --local"
   },
   "jest": {
     "preset": "jest-expo",
