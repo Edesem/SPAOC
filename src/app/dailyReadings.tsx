@@ -11,7 +11,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import he from "he";
 import toTitleCase from "titlecase";
-import { Colours } from "@/styles/Colours";
+import { Colours } from "@/theme/colours";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import {

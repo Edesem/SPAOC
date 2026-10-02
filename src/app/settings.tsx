@@ -12,8 +12,8 @@ import {
   type ThemeChoice,
 } from "@/services/settings";
 import { getCalendarColour } from "@/domain/calendarSources";
-import { Colours } from "@/styles/Colours";
-import { fontSize } from "@/styles/CommonStyles";
+import { Colours } from "@/theme/colours";
+import { fontSize } from "@/theme/commonStyles";
 import {
   cancelAllFavouriteNotifications,
   cancelAllSaintNotifications,
