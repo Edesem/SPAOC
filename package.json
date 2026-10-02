@@ -31,7 +31,8 @@
       "src/config/**/*.{ts,tsx}",
       "src/lib/**/*.{ts,tsx}",
       "!**/*.test.{ts,tsx}",
-      "!**/*.d.ts"
+      "!**/*.d.ts",
+      "!**/constants.ts"
     ]
   },
   "dependencies": {

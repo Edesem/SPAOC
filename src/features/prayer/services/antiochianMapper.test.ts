@@ -1,7 +1,7 @@
 import type {
   LiturgicalDay as AntiochianDay,
   LiturgicalText,
-} from "@/api/AntiochianApi";
+} from "./AntiochianApi";
 import { mapLiturgicalDay, mapServices } from "./antiochianMapper";
 
 const day = (extra: Partial<AntiochianDay> = {}): AntiochianDay => ({

@@ -1,11 +1,11 @@
-import type { LiturgicalData } from "@/domain/liturgical";
-import { usePrayerFeature } from "@/hooks/usePrayerFeature";
+import type { LiturgicalData } from "../domain/liturgical";
+import { usePrayerFeature } from "./usePrayerFeature";
 import { installFakeAppState } from "@/test-utils/fakeAppState";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 const mockGetLiturgicalData = jest.fn();
 
-jest.mock("@/services/liturgical", () => ({
+jest.mock("../services", () => ({
   liturgicalService: {
     getLiturgicalData: (date?: Date) => mockGetLiturgicalData(date),
   },

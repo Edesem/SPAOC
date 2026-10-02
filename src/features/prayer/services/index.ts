@@ -1,4 +1,4 @@
-import antiochianClient from "@/api/AntiochianApi";
+import antiochianClient from "./AntiochianApi";
 import { AntiochianLiturgicalService } from "./AntiochianLiturgicalService";
 import type { LiturgicalDataService } from "./LiturgicalDataService";
 
