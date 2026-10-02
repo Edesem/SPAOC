@@ -8,6 +8,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/styles/Colours";
 import { formatEventTimes } from "@/utils/eventTimes";
+import { toEventDetailsParams } from "@/utils/routeParams";
 import { favouriteKey, useFavouritesStore } from "@/services/favourites";
 
 export const EventItem = ({
@@ -74,12 +75,7 @@ export const EventItem = ({
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
         router.push({
           pathname: "/eventDetails",
-          params: {
-            ...item,
-            allDay: undefined, // route params are strings; the screen shows the formatted times
-            start: formattedStart,
-            end: formattedEnd,
-          },
+          params: toEventDetailsParams(item),
         });
         onPress();
       }}
