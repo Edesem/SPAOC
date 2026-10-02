@@ -34,14 +34,6 @@ SplashScreen.setOptions({
 
 type Theme = typeof Colours.light;
 
-type MonthPickerProps = {
-  visible: boolean;
-  selectedDate: Date;
-  onOpen: () => void;
-  onClose: () => void;
-  onValueChange: (event: string, newDate: Date) => void;
-};
-
 const HomeListHeader = ({
   theme,
   todaysSaintsTitle,
@@ -99,91 +91,55 @@ const HomeListFooter = ({ theme }: { theme: Theme }) => (
 const SectionHeader = ({
   section,
   theme,
-  monthPicker,
 }: {
   section: HomeEventSection;
   theme: Theme;
-  monthPicker: MonthPickerProps;
-}) => {
-  const weekLabel = section.weekLabel ? (
-    <Text
-      style={[
-        styles.weekLabel,
-        { backgroundColor: theme.background, color: theme.moreImportantText },
-      ]}
-    >
-      {section.weekLabel}
-    </Text>
-  ) : null;
-
-  const title = (
+}) => (
+  <>
+    {section.weekLabel ? (
+      <Text
+        style={[
+          styles.weekLabel,
+          { backgroundColor: theme.background, color: theme.moreImportantText },
+        ]}
+      >
+        {section.weekLabel}
+      </Text>
+    ) : null}
     <Text style={[styles.sectionHeader, { color: theme.sectionDate }]}>
       {section.title}
     </Text>
-  );
+  </>
+);
 
-  // The month picker lives with the first event section.
-  if (section.sectionIndex !== 0) {
-    return (
-      <>
-        {weekLabel}
-        {title}
-      </>
-    );
-  }
-
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginHorizontal: 10,
-      }}
-    >
-      <View>
-        {weekLabel}
-        {title}
-      </View>
-
-      <Modal
-        transparent
-        visible={monthPicker.visible}
-        animationType="fade"
-        onRequestClose={monthPicker.onClose} // Android back button support
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.4)", // dim background
-          }}
-        >
-          <MonthPicker
-            onChange={monthPicker.onValueChange}
-            value={monthPicker.selectedDate}
-            minimumDate={new Date()}
-            locale="en"
-          />
-        </View>
-      </Modal>
-      <TouchableOpacity
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-          monthPicker.onOpen();
-        }}
-        style={{
-          margin: 10,
-          padding: 10,
-          alignItems: "center",
-        }}
-      >
-        <IconSymbol name="calendar" size={36} color={theme.lessImportantText} />
-      </TouchableOpacity>
+// Lives outside the SectionList so it stays reachable when a month has no events.
+const MonthPickerModal = ({
+  visible,
+  selectedDate,
+  onClose,
+  onValueChange,
+}: {
+  visible: boolean;
+  selectedDate: Date;
+  onClose: () => void;
+  onValueChange: (event: string, newDate: Date) => void;
+}) => (
+  <Modal
+    transparent
+    visible={visible}
+    animationType="fade"
+    onRequestClose={onClose} // Android back button support
+  >
+    <View style={styles.monthPickerBackdrop}>
+      <MonthPicker
+        onChange={onValueChange}
+        value={selectedDate}
+        minimumDate={new Date()}
+        locale="en"
+      />
     </View>
-  );
-};
+  </Modal>
+);
 
 export default function HomeScreen() {
   const navigation =
@@ -203,6 +159,8 @@ export default function HomeScreen() {
     refreshing,
     onRefresh,
     selectedDate,
+    isMonthFiltered,
+    clearMonthFilter,
     showMonthPicker,
     setShowMonthPicker,
     onValueChange,
@@ -271,6 +229,21 @@ export default function HomeScreen() {
                 <TouchableOpacity
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    setShowMonthPicker(true);
+                  }}
+                  style={{ padding: 10 }}
+                  accessibilityLabel="Choose month"
+                >
+                  <IconSymbol
+                    name="calendar"
+                    size={36}
+                    color={theme.lessImportantText}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     scrollToTop();
                   }}
                   style={{
@@ -289,6 +262,31 @@ export default function HomeScreen() {
                 </TouchableOpacity>
               </View>
 
+              <MonthPickerModal
+                visible={showMonthPicker}
+                selectedDate={selectedDate}
+                onClose={() => setShowMonthPicker(false)}
+                onValueChange={onValueChange}
+              />
+
+              {isMonthFiltered ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    clearMonthFilter();
+                  }}
+                  style={[
+                    styles.clearFilterButton,
+                    { backgroundColor: theme.primary },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Clear month filter"
+                >
+                  <MaterialIcons name="close" size={20} color="#fff" />
+                  <Text style={styles.clearFilterText}>Clear month filter</Text>
+                </TouchableOpacity>
+              ) : null}
+
               <SectionList
                 ref={sectionListRef}
                 sections={sections}
@@ -298,13 +296,6 @@ export default function HomeScreen() {
                   <SectionHeader
                     section={section as HomeEventSection}
                     theme={theme}
-                    monthPicker={{
-                      visible: showMonthPicker,
-                      selectedDate,
-                      onOpen: () => setShowMonthPicker(true),
-                      onClose: () => setShowMonthPicker(false),
-                      onValueChange,
-                    }}
                   />
                 )}
                 ListHeaderComponent={
@@ -415,5 +406,26 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 36,
+  },
+  monthPickerBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // dim background
+  },
+  clearFilterButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    marginVertical: 6,
+  },
+  clearFilterText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

@@ -61,6 +61,11 @@ export const useHomeFeature = () => {
     [selectedDate],
   );
 
+  const clearMonthFilter = useCallback(() => {
+    setSelectedMonth(null);
+    setSelectedDate(new Date());
+  }, []);
+
   const todaysSaintsTitle = getSaintsTitle(todaysSaints);
 
   return {
@@ -73,6 +78,8 @@ export const useHomeFeature = () => {
     refreshing,
     onRefresh,
     selectedDate,
+    isMonthFiltered: selectedMonth !== null,
+    clearMonthFilter,
     showMonthPicker,
     setShowMonthPicker,
     onValueChange,
