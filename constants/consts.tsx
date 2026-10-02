@@ -1,25 +1,4 @@
-import { Platform } from "react-native";
 export const SQUARE_URL = "https://square.link/u/1x7oJTMQ";
-
-function getCalendarApiKey(): string {
-  const key = Platform.OS === "ios"
-    ? __DEV__
-      ? process.env.EXPO_PUBLIC_IOS_CAL_DEV_KEY
-      : process.env.EXPO_PUBLIC_IOS_CAL_PROD_KEY
-    : __DEV__
-      ? process.env.EXPO_PUBLIC_ANDROID_CAL_DEV_KEY
-      : process.env.EXPO_PUBLIC_ANDROID_CAL_PROD_KEY;
-
-  if (!key) {
-    throw new Error(
-      "Missing calendar API key: set the EXPO_PUBLIC_*_CAL_*_KEY environment variable for this platform and build.",
-    );
-  }
-
-  return key;
-}
-
-export const API_KEY = getCalendarApiKey();
 
 export const BANK_NAME = "St Paul's Antiochian Orthodox Church";
 export const ACCOUNT_NO = "904 887";
