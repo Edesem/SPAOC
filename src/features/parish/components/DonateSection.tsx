@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 
-import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from "@/constants/consts";
+import { ACCOUNT_NO, BANK_NAME, BSB, SQUARE_URL } from "../constants";
 import { useFocusEffect } from "expo-router";
 
 export default function DonateSection({ theme, CommonStyles }: any) {

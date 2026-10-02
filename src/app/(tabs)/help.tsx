@@ -1,4 +1,4 @@
-import DonateSection from "@/components/DonateSection";
+import { DonateSection } from "@/features/parish";
 import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
