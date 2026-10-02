@@ -1,4 +1,4 @@
-import ReadingScreen from "@/app/dailyReadings";
+import ReadingScreen from "./DailyReadingsScreen";
 import { DailyReadingsParams } from "@/types/routes";
 import { render } from "@testing-library/react-native";
 import React from "react";

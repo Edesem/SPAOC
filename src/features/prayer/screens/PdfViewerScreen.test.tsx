@@ -1,4 +1,4 @@
-import PdfViewer from "@/app/pdfViewer";
+import PdfViewer from "./PdfViewerScreen";
 import { PdfViewerParams } from "@/types/routes";
 import { render } from "@testing-library/react-native";
 import React from "react";
