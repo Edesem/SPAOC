@@ -1,11 +1,11 @@
 import RootLayout from "@/app/_layout";
+import { useFavouritesStore } from "@/features/calendar";
 import {
   requestNotificationPermissions,
+  scheduleSaintNotificationsForNext7Days,
   setupNotificationHandler,
   setupNotificationListeners,
-} from "@/services/notifications/appNotifications";
-import { scheduleSaintNotificationsForNext7Days } from "@/services/notifications";
-import { useFavouritesStore } from "@/features/calendar";
+} from "@/features/notifications";
 import { useSettingsStore } from "@/services/settings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, render, waitFor } from "@testing-library/react-native";
@@ -19,12 +19,10 @@ jest.mock("expo-splash-screen", () => ({
 }));
 jest.mock("expo-status-bar", () => ({ StatusBar: () => null }));
 jest.mock("react-native-toast-message", () => () => null);
-jest.mock("@/services/notifications/appNotifications", () => ({
+jest.mock("@/features/notifications", () => ({
   setupNotificationHandler: jest.fn(),
   requestNotificationPermissions: jest.fn(),
   setupNotificationListeners: jest.fn(),
-}));
-jest.mock("@/services/notifications", () => ({
   scheduleSaintNotificationsForNext7Days: jest.fn(),
 }));
 jest.mock("@/components/ui/toastConfig", () => ({ toastConfig: () => ({}) }));

@@ -3,7 +3,7 @@ import {
   type NotificationKind,
   type PlannedNotification,
   type ScheduledNotification,
-} from "@/domain/notificationPlanner";
+} from "./notificationPlanner";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 

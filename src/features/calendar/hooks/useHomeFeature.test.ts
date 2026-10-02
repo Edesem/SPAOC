@@ -40,7 +40,7 @@ jest.mock("./useFastDay", () => ({
   useFastDay: () => mockFastDayState,
 }));
 
-jest.mock("@/services/notifications/appNotifications", () => ({
+jest.mock("@/features/notifications", () => ({
   requestNotificationPermissions: () => mockRequestNotificationPermissions(),
   setupNotificationListeners: () => mockSetupNotificationListeners(),
 }));

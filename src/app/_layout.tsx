@@ -11,10 +11,10 @@ import { useFavouritesStore } from '@/features/calendar';
 import { useSettingsStore } from '@/services/settings';
 import {
   requestNotificationPermissions,
+  scheduleSaintNotificationsForNext7Days,
   setupNotificationHandler,
   setupNotificationListeners,
-} from '@/services/notifications/appNotifications';
-import { scheduleSaintNotificationsForNext7Days } from '@/services/notifications';
+} from '@/features/notifications';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

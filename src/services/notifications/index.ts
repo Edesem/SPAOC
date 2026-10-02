@@ -1,4 +1,2 @@
-export * from "./notificationGateway";
-export * from "./saintNotifications";
-export * from "./favouriteNotifications";
-export * from "./calendarNotifications";
+// TODO(#93): remove together with utils/notifications.ts, the only importer.
+export * from "@/features/notifications";
