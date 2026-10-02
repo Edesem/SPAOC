@@ -25,7 +25,7 @@ This React Native application is called SPAOC. It is primarily a calendar applic
 - Single test file: `npx jest --watchAll=false services/calendar/googleCalendarMapper.test.ts`; single test by name: add `-t "name"`.
 - `npm run coverage` — what CI runs; fails below 80% global line coverage. CI (`.github/workflows/ci.yml`) runs coverage, then lint, then typecheck, on Node 24.
 
-Local setup needs a git-ignored `.env` with `EXPO_PUBLIC_{IOS,ANDROID}_CAL_{PROD,DEV}_KEY` (Google Calendar API keys). `constants/consts.tsx` **throws at import time** if the key for the current platform/build is missing. Jest never loads `.env`, so `jest.setup.ts` injects fixture keys and mocks AsyncStorage.
+Local setup needs a git-ignored `.env` (copy `.env.example`) with `EXPO_PUBLIC_{IOS,ANDROID}_CAL_{PROD,DEV}_KEY` (Google Calendar API keys). `config/env.ts` is the only code that reads `EXPO_PUBLIC_*`; `services/calendar/index.ts` calls it at import time, so the app **throws at start-up** if the key for the current platform/build is missing. Jest never loads `.env`, so `jest.setup.ts` injects fixture keys and mocks AsyncStorage.
 
 ## Project Structure
 
@@ -35,6 +35,7 @@ Local setup needs a git-ignored `.env` with `EXPO_PUBLIC_{IOS,ANDROID}_CAL_{PROD
 - `services` — API and external services
 - `domain` — pure business rules (no React, Expo, or AsyncStorage)
 - `api` — raw Antiochian.org HTTP client
+- `config` — environment variable access (`env.ts`)
 - `types` — shared TypeScript types
 - `utils` — pure utility functions
 - `styles`, `constants` — colours/common styles and app constants

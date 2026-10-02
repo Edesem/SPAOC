@@ -4,7 +4,7 @@ St Paul's Antiochian Orthodox Church (_SPAOC_) app is a calendar app.
 
 ## Setup
 
-Make sure to create a `.env` with the API keys.
+Make sure to create a `.env` with the API keys (`cp .env.example .env`, then fill in the values).
 
 API keys can be found from [here](https://console.cloud.google.com)
 
