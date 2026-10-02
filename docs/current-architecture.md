@@ -354,12 +354,12 @@ Relevant files:
 - [app/pdfViewer.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/pdfViewer.tsx)
 - [app/settings.tsx](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/settings.tsx)
 - [utils/notifications.ts](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/utils/notifications.ts)
-- [app/discarded/](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/discarded)
+- [discarded/](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/discarded)
 
 Evidence:
 - PDF viewing uses a temporary WebView workaround and contains large commented-out legacy code.
 - Settings includes many `false`-guarded sections that appear to be unfinished or previously disabled.
-- The repository includes a [app/discarded/](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/app/discarded) folder with screens that are not part of the current navigation flow.
+- The repository includes a [discarded/](/Users/edes/Developer/work/SPAOC.worktrees/add-readme-file/discarded) folder with screens that are not part of the current navigation flow.
 
 ## 7. Uncertainties
 
