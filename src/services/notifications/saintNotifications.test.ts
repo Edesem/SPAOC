@@ -1,4 +1,4 @@
-import { atParishHour, parishDayKey, setNow } from "@/domain/parishTime";
+import { atParishHour, parishDayKey, setNow } from "@/lib/parishTime";
 import { saveDailySaintNotificationsEnabled } from "@/services/settings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";

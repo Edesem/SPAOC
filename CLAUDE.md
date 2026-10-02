@@ -44,7 +44,7 @@ All source lives in `src/` (assets, docs, config files and `jest.setup.ts` stay 
 - `constants` — app constants (URLs, bank details)
 - `assets` (repo root) — images, fonts, etc.
 
-Imports use the `@/` alias for `src/` (e.g. `@/domain/parishTime`) and `@assets/` for the root `assets/` folder (e.g. `require("@assets/images/orthodox/church.png")`). Both come from `tsconfig.json` `paths`; Expo's Metro and jest-expo read them, so there is no `babel.config.js` or `metro.config.js`.
+Imports use the `@/` alias for `src/` (e.g. `@/lib/parishTime`) and `@assets/` for the root `assets/` folder (e.g. `require("@assets/images/orthodox/church.png")`). Both come from `tsconfig.json` `paths`; Expo's Metro and jest-expo read them, so there is no `babel.config.js` or `metro.config.js`.
 
 ## Architecture
 
@@ -54,7 +54,7 @@ Data flows one way: **screen → feature hook → data hook → service → prov
 - **Local persistence goes through repositories.** `services/favourites` and `services/settings` pair a repository (the only code that touches AsyncStorage, with private keys) with a Zustand store (in-memory state, `hydrate()` loads persisted values). `app/_layout.tsx` hydrates both at startup and holds the splash screen until settings are ready.
 - **Feature hooks orchestrate screens.** `useHomeFeature` / `usePrayerFeature` combine the data hooks (`useEvents`, `useDailySaint`, `useFastDay`) plus refresh/selection state, so screens only render. Pure helpers for them live in `utils/homeRules.ts` and `utils/dateUtils.ts`.
 - **Event calendars are defined in two places that must stay in sync by name:** `domain/calendarSources.ts` (name, colour, image — also drives the Settings screen order) and `services/calendar/googleCalendarConfig.ts` (Google calendar IDs). The `source` name on each event keys colours and per-calendar notification settings.
-- **Time:** the parish is on `Australia/Melbourne` regardless of device time zone. Use `now()` and the helpers in `domain/parishTime.ts` instead of `new Date()` for "what day is it" logic; tests pin the clock with `setNow`/`resetNow` rather than fake timers. A few legacy `new Date()` call sites remain — don't copy them.
+- **Time:** the parish is on `Australia/Melbourne` regardless of device time zone. Use `now()` and the helpers in `lib/parishTime.ts` instead of `new Date()` for "what day is it" logic; tests pin the clock with `setNow`/`resetNow` rather than fake timers. A few legacy `new Date()` call sites remain — don't copy them.
 - **Notifications** are being split into three parts (see `docs/notification-planner.md`): a pure planner (`domain/notificationPlanner.ts`, must not import React/Expo/AsyncStorage or read the clock), a gateway over `expo-notifications` (`services/notifications/notificationGateway.ts`), and a not-yet-written reconcile step. Expo's own scheduled list is meant to be the only record of what is scheduled. Today the saint/favourite/calendar notification modules in `services/notifications` call the gateway directly, and the root layout installs the handler/listeners (`services/notifications/appNotifications.ts`) and tops up the 7-day saint schedule at startup.
 - Prefer a Zustand store for new shared cross-screen state.
 

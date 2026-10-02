@@ -79,12 +79,12 @@ jest.mock("react-native-month-year-picker", () => {
   return () => React.createElement(View, { testID: "month-picker" });
 });
 
-jest.mock("@/components/RenderItem", () => {
+jest.mock("@/components/EventItem", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
   return {
-    renderItem: ({ item }: { item: { id: string } }) =>
+    EventItem: ({ item }: { item: { id: string } }) =>
       React.createElement(Text, null, `event ${item.id}`),
   };
 });

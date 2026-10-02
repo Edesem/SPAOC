@@ -1,4 +1,4 @@
-import { startOfParishDayFromKey } from "@/domain/parishTime";
+import { startOfParishDayFromKey } from "@/lib/parishTime";
 import type { CalendarEvent } from "./CalendarDataService";
 
 // Subset of a Google Calendar API v3 event resource that the app reads.

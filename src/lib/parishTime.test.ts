@@ -11,7 +11,7 @@ import {
   setNow,
   startOfParishDay,
   startOfParishDayFromKey,
-} from "@/domain/parishTime";
+} from "@/lib/parishTime";
 
 const iso = (date: Date) => date.toISOString();
 

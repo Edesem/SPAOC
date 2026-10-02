@@ -1,6 +1,6 @@
 import type { Antiochian } from "@/api/AntiochianApi";
 import type { LiturgicalData } from "@/domain/liturgical";
-import { now } from "@/domain/parishTime";
+import { now } from "@/lib/parishTime";
 import { mapLiturgicalDay, mapServices } from "./antiochianMapper";
 import type { LiturgicalDataService } from "./LiturgicalDataService";
 

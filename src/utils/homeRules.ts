@@ -1,4 +1,4 @@
-import { isSameParishMonth } from "@/domain/parishTime";
+import { isSameParishMonth } from "@/lib/parishTime";
 import { EventData } from "@/types/global";
 
 export type GroupedEventSection = {

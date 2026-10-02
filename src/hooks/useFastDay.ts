@@ -1,5 +1,5 @@
 import { classifyFastingEvent, type FastKind } from "@/domain/fasting";
-import { now } from "@/domain/parishTime";
+import { now } from "@/lib/parishTime";
 import { calendarService } from "@/services/calendar";
 import { useCallback, useEffect, useState } from "react";
 

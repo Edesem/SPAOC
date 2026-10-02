@@ -1,5 +1,5 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { Haptic } from "@/hooks/hapticPress";
+import { Haptic } from "@/lib/haptics";
 import { setStringAsync } from "expo-clipboard";
 import { useCallback, useState } from "react";
 import {

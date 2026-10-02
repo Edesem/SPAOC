@@ -3,7 +3,7 @@ import {
   groupEventsByDay,
   getStartOfWeek,
 } from "@/utils/dateUtils";
-import { resetNow, setNow } from "@/domain/parishTime";
+import { resetNow, setNow } from "@/lib/parishTime";
 
 describe("formatDateHeading", () => {
   beforeEach(() => {
