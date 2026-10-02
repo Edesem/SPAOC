@@ -46,6 +46,13 @@ All source lives in `src/` (assets, docs, config files and `jest.setup.ts` stay 
 
 Imports use the `@/` alias for `src/` (e.g. `@/lib/parishTime`) and `@assets/` for the root `assets/` folder (e.g. `require("@assets/images/orthodox/church.png")`). Both come from `tsconfig.json` `paths`; Expo's Metro and jest-expo read them, so there is no `babel.config.js` or `metro.config.js`.
 
+### Naming
+
+- Files that mainly export a component, class or interface are PascalCase (`EventItem.tsx`, `GoogleCalendarService.ts`, `CalendarDataService.ts`); everything else is camelCase (`parishTime.ts`, `homeRules.ts`, `useEvents.ts`, `colours.ts`).
+- Use `.tsx` only when the file contains JSX; otherwise `.ts`.
+- Australian spelling in identifiers and paths (`colours`, `favourites`), matching the existing `Colours` and `favourites*` names. `themedColors.ts` is the one exception: it backs the Expo template's `Colors` export.
+- Tests sit beside the code as `name.test.ts[x]`. Tests for route files cannot (everything under `app/` becomes a route), so they live in `src/__tests__/`.
+
 ## Architecture
 
 Data flows one way: **screen → feature hook → data hook → service → provider**.
