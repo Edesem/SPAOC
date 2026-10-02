@@ -1,4 +1,4 @@
-import { calendarNotificationKey } from "@/domain/notificationPlanner";
+import { calendarNotificationKey } from "./notificationPlanner";
 import { atParishHour, now } from "@/lib/parishTime";
 import type { EventData } from "@/features/calendar";
 import AsyncStorage from "@react-native-async-storage/async-storage";

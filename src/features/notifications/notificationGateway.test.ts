@@ -1,4 +1,4 @@
-import type { PlannedNotification } from "@/domain/notificationPlanner";
+import type { PlannedNotification } from "./notificationPlanner";
 import * as Notifications from "expo-notifications";
 
 import { cancel, listScheduled, schedule } from "./notificationGateway";

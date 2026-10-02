@@ -8,13 +8,13 @@ jest.mock("expo-notifications", () => ({
 // sees, so a side effect at import time is observable.
 const load = () => {
   let loaded!: {
-    notifications: typeof import("@/services/notifications/appNotifications");
+    notifications: typeof import("./appNotifications");
     expo: jest.Mocked<typeof import("expo-notifications")>;
   };
   jest.isolateModules(() => {
     loaded = {
       expo: require("expo-notifications"),
-      notifications: require("@/services/notifications/appNotifications"),
+      notifications: require("./appNotifications"),
     };
   });
   return loaded;

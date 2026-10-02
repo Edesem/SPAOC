@@ -11,7 +11,7 @@ import {
   type PlannedNotification,
   type SaintDay,
   type ScheduledNotification,
-} from "@/domain/notificationPlanner";
+} from "./notificationPlanner";
 import { atParishHour } from "@/lib/parishTime";
 import type { EventData } from "@/features/calendar";
 
