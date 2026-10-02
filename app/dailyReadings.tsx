@@ -14,21 +14,15 @@ import toTitleCase from "titlecase";
 import { Colours } from "@/styles/Colours";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
-import { useFocusEffect, useNavigation, useRoute } from "expo-router";
-import { RouteProp } from "expo-router/build/react-navigation";
-
-// Define the expected route params type
-type ReadingScreenRouteParams = {
-  type: "epistle" | "gospel";
-  reading: string;
-  title: string;
-};
+import {
+  useFocusEffect,
+  useLocalSearchParams,
+  useNavigation,
+} from "expo-router";
+import { DailyReadingsParams } from "@/types/routes";
 
 export default function ReadingScreen() {
-  const route =
-    useRoute<RouteProp<Record<string, ReadingScreenRouteParams>, string>>();
-  const { params } = route;
-  const { reading, title } = params;
+  const { reading, title } = useLocalSearchParams<DailyReadingsParams>();
   const navigation = useNavigation();
 
   const styles = getStyles();
