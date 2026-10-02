@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SettingsScreen from "@/app/settings";
+import SettingsScreen from "./SettingsScreen";
 import {
   getCalendarNotificationSettings,
   loadNotificationToggles,
@@ -56,7 +56,7 @@ jest.mock("expo-router", () => ({
   useRouter: () => ({ back: jest.fn() }),
 }));
 
-jest.mock("@/features/settings/components/SettingPicker", () => {
+jest.mock("../components/SettingPicker", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
