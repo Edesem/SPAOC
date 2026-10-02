@@ -6,6 +6,7 @@ import { Colours } from "@/styles/Colours";
 import { HomeEventSection } from "@/utils/homeRules";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { TabParamList } from "@/types/routes";
 import "expo-dev-client";
 import * as Haptics from "expo-haptics";
 import { router, useNavigation } from "expo-router";
@@ -143,7 +144,7 @@ const MonthPickerModal = ({
 
 export default function HomeScreen() {
   const navigation =
-    useNavigation<BottomTabNavigationProp<RootTabParamList, "Home">>();
+    useNavigation<BottomTabNavigationProp<TabParamList, "index">>();
   const sectionListRef = useRef<SectionList>(null);
 
   const colorScheme = useColorScheme();
@@ -165,12 +166,6 @@ export default function HomeScreen() {
     setShowMonthPicker,
     onValueChange,
   } = useHomeFeature();
-
-  // Your param list type (adjust to your app)
-  type RootTabParamList = {
-    Home: undefined;
-    // other tabs...
-  };
 
   // Scrolls past the header too, and works when there are no events.
   const scrollToTop = useCallback(() => {

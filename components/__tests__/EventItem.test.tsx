@@ -15,8 +15,9 @@ jest.mock("@/services/favourites/favouritesRepository", () => ({
   removeFavourite: jest.fn(),
 }));
 
+const mockPush = jest.fn();
 jest.mock("expo-router", () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: mockPush }),
 }));
 
 jest.mock("expo-haptics", () => ({
@@ -174,5 +175,31 @@ describe("EventItem time label", () => {
 
     expect(await findByText(/ to /)).toBeTruthy();
     expect(queryByText(/All day/)).toBeNull();
+  });
+});
+
+describe("EventItem navigation", () => {
+  it("opens the details screen with the raw event, not formatted times", async () => {
+    const onPress = jest.fn();
+    const { findByText } = await render(
+      <EventItem item={event} onPress={onPress} />,
+    );
+
+    await fireEvent.press(await findByText("Divine Liturgy"));
+
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: "/eventDetails",
+      params: {
+        id: "event-1",
+        title: "Divine Liturgy",
+        start: event.start,
+        end: event.end,
+        allDay: "false",
+        description: "",
+        location: "",
+        source: "church",
+      },
+    });
+    expect(onPress).toHaveBeenCalledTimes(1);
   });
 });

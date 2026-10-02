@@ -33,6 +33,7 @@ import { faWineGlass } from "@fortawesome/free-solid-svg-icons/faWineGlass";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
+import { DailyReadingsParams, PdfViewerParams } from "@/types/routes";
 import he from "he";
 import { useState } from "react";
 import {
@@ -304,7 +305,7 @@ export default function PrayerScreen(): JSX.Element {
                         type: "epistle",
                         reading: epistle.fullText,
                         title: epistle.title, // Added title
-                      },
+                      } satisfies DailyReadingsParams,
                     });
                   }}
                 >
@@ -368,7 +369,7 @@ export default function PrayerScreen(): JSX.Element {
                         type: "gospel",
                         reading: gospel.fullText,
                         title: gospel.title, // Added title
-                      },
+                      } satisfies DailyReadingsParams,
                     });
                   }}
                 >
@@ -432,7 +433,7 @@ export default function PrayerScreen(): JSX.Element {
                         type: "thirdReading",
                         reading: thirdReading.fullText, // Add full text for third reading
                         title: thirdReading.title, // Add title for third reading
-                      },
+                      } satisfies DailyReadingsParams,
                     });
                   }}
                 >
@@ -517,7 +518,7 @@ export default function PrayerScreen(): JSX.Element {
                                 params: {
                                   url: service.pdfUrl,
                                   title: service.title,
-                                },
+                                } satisfies PdfViewerParams,
                               });
                             },
                           },
@@ -561,7 +562,7 @@ export default function PrayerScreen(): JSX.Element {
                     params: {
                       url: prayer.url, // Add full text for third reading
                       title: prayer.title, // Add title for third reading
-                    },
+                    } satisfies PdfViewerParams,
                   });
                 }}
                 activeOpacity={0.6}
@@ -623,7 +624,7 @@ export default function PrayerScreen(): JSX.Element {
                             params: {
                               url: service.url, // Add full text for third reading
                               title: service.title, // Add title for third reading
-                            },
+                            } satisfies PdfViewerParams,
                           });
                         },
                       },
@@ -690,7 +691,7 @@ export default function PrayerScreen(): JSX.Element {
                             params: {
                               url: service.url, // Add full text for third reading
                               title: service.title, // Add title for third reading
-                            },
+                            } satisfies PdfViewerParams,
                           });
                         },
                       },
