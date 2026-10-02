@@ -301,7 +301,8 @@ Zustand is already a dependency, so this adds no new library.
 **What:**
 - Delete dead constants, the deprecated Antiochian exports, `index.js`, the unused template components and the unused dependencies.
 - Settle on one title-case helper and one HTML-entity decoder.
-- Fix the Help `switch` fall-through and the double encoding in `openInMaps`.
+- ✅ (#92) Fix the Help `switch` fall-through, so each email opens with its own message.
+- Fix the double encoding in `openInMaps`.
 - Move the Antiochian client credentials to configuration (the same approach as #50).
 - Update [current-architecture.md](current-architecture.md) at the end of each step. It is already stale in the places listed in 3.11.
 
