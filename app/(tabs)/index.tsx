@@ -52,7 +52,7 @@ const HomeListHeader = ({
     <View style={styles.imageContainer}>
       <Image
         testID="home-top-image"
-        source={require("../../assets/images/orthodox/CrossInSquareThick.png")}
+        source={require("@assets/images/orthodox/CrossInSquareThick.png")}
         style={[styles.topImage, { tintColor: theme.primary }]}
       />
     </View>
@@ -83,7 +83,7 @@ const HomeListFooter = ({ theme }: { theme: Theme }) => (
   <View style={styles.imageContainer}>
     <Image
       testID="home-bottom-image"
-      source={require("../../assets/images/orthodox/TwoBarCross.png")}
+      source={require("@assets/images/orthodox/TwoBarCross.png")}
       style={[styles.bottomImage, { tintColor: theme.primary }]}
     />
   </View>

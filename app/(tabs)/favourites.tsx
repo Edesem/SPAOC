@@ -72,7 +72,7 @@ export default function FavouritesScreen() {
           {/* Image */}
           <View style={styles.imageContainer}>
             <Image
-              source={require("../../assets/images/orthodox/Seraph.png")} // Adjust the path to your image
+              source={require("@assets/images/orthodox/Seraph.png")} // Adjust the path to your image
               style={[styles.bottomImage, { tintColor: theme.primary }]}
             />
           </View>

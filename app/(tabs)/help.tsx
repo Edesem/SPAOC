@@ -126,7 +126,7 @@ export default function HelpScreen() {
           {/* Image */}
           <View style={styles.imageContainer}>
             <Image
-              source={require("../../assets/images/orthodox/ht.png")}
+              source={require("@assets/images/orthodox/ht.png")}
               style={[styles.bottomImage, { tintColor: theme.primary }]}
             />
           </View>
