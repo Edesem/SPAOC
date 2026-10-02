@@ -67,7 +67,7 @@ Data flows one way: **screen → feature hook → data hook → service → prov
 
 ## Testing
 
-Tests are colocated (`*.test.ts[x]` beside the source, `components/__tests__`) plus screen/hook-level tests in `src/__tests__/`. Service tests mock at the lowest layer (e.g. `AntiochianLiturgicalService.network.test.ts` mocks only axios so the real client runs). Coverage is collected from `src/{app,components,domain,hooks,services,utils,api,config}` (see `collectCoverageFrom` in `package.json`).
+Tests are colocated (`*.test.ts[x]` beside the source, `components/__tests__`) plus screen/hook-level tests in `src/__tests__/`. Service tests mock at the lowest layer (e.g. `AntiochianLiturgicalService.network.test.ts` mocks only axios so the real client runs). Coverage is collected from `src/{app,components,domain,hooks,services,utils,api,config}` (see `collectCoverageFrom` in `package.json`), excluding `constants.ts` files, which are pure data. A new top-level folder under `src/` needs adding to that list or its code is not measured.
 
 ## Docs
 

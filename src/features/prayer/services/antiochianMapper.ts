@@ -1,13 +1,13 @@
 import type {
   LiturgicalDay as AntiochianDay,
   LiturgicalText as AntiochianText,
-} from "@/api/AntiochianApi";
+} from "./AntiochianApi";
 import type {
   LiturgicalDay,
   LiturgicalService,
   Reading,
   ReadingKind,
-} from "@/domain/liturgical";
+} from "../domain/liturgical";
 
 // The provider pads many fields with leading whitespace.
 const clean = (value: string | undefined | null): string =>

@@ -179,7 +179,7 @@ export class Antiochian {
 
 const antiochianInstance = new Antiochian();
 
-/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
+/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
 export const fetchAntiochian = async (date: Date = now()) => {
   await antiochianInstance.ensureAuthenticated();
 
@@ -191,13 +191,13 @@ export const fetchAntiochian = async (date: Date = now()) => {
   return { day, texts };
 };
 
-/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
+/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
 export const getReadingTeasers = (day: LiturgicalDay) =>
   antiochianInstance.getReadingTeasers(day);
-/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
+/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
 export const getReadingTexts = (day: LiturgicalDay) =>
   antiochianInstance.getReadingTexts(day);
-/** @deprecated Use `liturgicalService` from `@/services/liturgical`. */
+/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
 export const getFeastTitle = (day: LiturgicalDay) =>
   antiochianInstance.getFeastTitle(day);
 

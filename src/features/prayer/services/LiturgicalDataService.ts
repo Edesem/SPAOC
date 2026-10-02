@@ -1,4 +1,4 @@
-import type { LiturgicalData } from "@/domain/liturgical";
+import type { LiturgicalData } from "../domain/liturgical";
 
 // Screens read the app-owned shapes, not any provider's.
 export type {
@@ -7,7 +7,7 @@ export type {
   LiturgicalService,
   Reading,
   ReadingKind,
-} from "@/domain/liturgical";
+} from "../domain/liturgical";
 
 // Single entry point for liturgical data. Screens and hooks depend on this
 // interface rather than on a specific provider.

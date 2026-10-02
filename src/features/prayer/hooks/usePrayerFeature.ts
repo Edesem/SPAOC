@@ -1,6 +1,6 @@
 import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
-import type { LiturgicalData } from "@/services/liturgical";
-import { liturgicalService } from "@/services/liturgical";
+import type { LiturgicalData } from "../services";
+import { liturgicalService } from "../services";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // Background refresh only kicks in once the app has been away this long.

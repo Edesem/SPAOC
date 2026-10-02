@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Antiochian, type LiturgicalDay } from "@/api/AntiochianApi";
+import { Antiochian, type LiturgicalDay } from "./AntiochianApi";
 import { AntiochianLiturgicalService } from "./AntiochianLiturgicalService";
 
 // Only the HTTP layer is mocked: the real Antiochian client runs underneath

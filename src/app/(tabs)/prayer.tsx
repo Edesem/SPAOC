@@ -13,9 +13,9 @@ import {
   PRESANCTIFIED_LITURGY_URL,
   SMALL_COMPLINE_PRIEST_URL,
   SMALL_COMPLINE_URL,
-} from "@/constants/consts";
+  usePrayerFeature,
+} from "@/features/prayer";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { usePrayerFeature } from "@/hooks/usePrayerFeature";
 import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
 import { faBed } from "@fortawesome/free-solid-svg-icons/faBed";
