@@ -1,5 +1,5 @@
-import { FastKind, getMajorLabel, getMinorLabel } from "@/domain/fasting";
-import { useFastDay } from "@/hooks/useFastDay";
+import { FastKind, getMajorLabel, getMinorLabel } from "../domain/fasting";
+import { useFastDay } from "./useFastDay";
 import { resetNow, setNow } from "@/lib/parishTime";
 import { renderHook, waitFor } from "@testing-library/react-native";
 

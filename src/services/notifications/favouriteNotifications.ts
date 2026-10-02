@@ -1,7 +1,7 @@
 import { atParishHour, now } from "@/lib/parishTime";
-import { getFavourites } from "@/services/favourites";
+import { getFavourites } from "@/features/calendar";
 import { isFavouriteNotificationsEnabled } from "@/services/settings";
-import type { EventData } from "@/types/global";
+import type { EventData } from "@/features/calendar";
 
 import { cancel, listScheduled, schedule } from "./notificationGateway";
 

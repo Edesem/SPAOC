@@ -7,7 +7,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/theme/colours';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
-import { useFavouritesStore } from '@/services/favourites';
+import { useFavouritesStore } from '@/features/calendar';
 import { useSettingsStore } from '@/services/settings';
 import {
   requestNotificationPermissions,

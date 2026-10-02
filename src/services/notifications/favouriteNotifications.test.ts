@@ -1,7 +1,7 @@
 import { atParishHour, setNow } from "@/lib/parishTime";
-import { getFavourites } from "@/services/favourites";
+import { getFavourites } from "@/features/calendar";
 import { saveFavouriteNotificationsEnabled } from "@/services/settings";
-import type { EventData } from "@/types/global";
+import type { EventData } from "@/features/calendar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 
@@ -17,7 +17,7 @@ jest.mock("expo-notifications", () =>
     .createFakeExpoNotifications(),
 );
 
-jest.mock("@/services/favourites", () => ({ getFavourites: jest.fn() }));
+jest.mock("@/features/calendar", () => ({ getFavourites: jest.fn() }));
 
 const NOW = new Date("2098-12-31T18:00:00.000Z");
 

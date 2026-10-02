@@ -1,10 +1,10 @@
-import { EventItem } from "@/components/EventItem"; // <-- Import your component
+import { EventItem } from "@/features/calendar/components/EventItem"; // <-- Import your component
 import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
-import { useFavouritesStore } from "@/services/favourites";
-import { ItemProps } from "@/types/global"; // <-- adjust import if needed
+import { useFavouritesStore } from "@/features/calendar/favourites";
+import { ItemProps } from "@/features/calendar/types"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";

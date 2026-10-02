@@ -2,7 +2,7 @@ import {
   formatDateHeading,
   groupEventsByDay,
   getStartOfWeek,
-} from "@/utils/dateUtils";
+} from "./dateUtils";
 import { resetNow, setNow } from "@/lib/parishTime";
 
 describe("formatDateHeading", () => {

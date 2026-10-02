@@ -16,7 +16,7 @@ jest.mock("expo-notifications", () =>
 );
 
 const mockGetSaintsForDate = jest.fn<Promise<string[]>, [Date]>();
-jest.mock("@/services/calendar", () => ({
+jest.mock("@/features/calendar", () => ({
   calendarService: {
     getSaintsForDate: (date: Date) => mockGetSaintsForDate(date),
   },

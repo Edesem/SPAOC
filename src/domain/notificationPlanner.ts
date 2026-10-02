@@ -1,5 +1,5 @@
 import { APP_TIME_ZONE, atParishHour, parishDayKey } from "@/lib/parishTime";
-import type { EventData } from "@/types/global";
+import type { EventData } from "@/features/calendar";
 
 // Pure planning for local notifications: given what the app knows, which
 // notifications should exist? Nothing here touches React, Expo, AsyncStorage

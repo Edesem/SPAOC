@@ -31,7 +31,7 @@ const baseFeature = {
 let mockFeature: typeof baseFeature = baseFeature;
 let mockTabPressListener: (() => void) | undefined;
 
-jest.mock("@/hooks/useHomeFeature", () => ({
+jest.mock("@/features/calendar/hooks/useHomeFeature", () => ({
   useHomeFeature: () => mockFeature,
 }));
 
@@ -79,7 +79,7 @@ jest.mock("react-native-month-year-picker", () => {
   return () => React.createElement(View, { testID: "month-picker" });
 });
 
-jest.mock("@/components/EventItem", () => {
+jest.mock("@/features/calendar/components/EventItem", () => {
   const React = require("react");
   const { Text } = require("react-native");
 

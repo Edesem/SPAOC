@@ -1,14 +1,14 @@
-import { useEvents } from "@/hooks/useEvents";
-import { calendarService } from "@/services/calendar";
+import { useEvents } from "./useEvents";
+import { calendarService } from "../services";
 import { useSettingsStore } from "@/services/settings";
-import { groupEventsByDay } from "@/utils/dateUtils";
+import { groupEventsByDay } from "../domain/dateUtils";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
 
-jest.mock("@/services/calendar", () => ({
+jest.mock("../services", () => ({
   calendarService: { getParishEvents: jest.fn() },
 }));
 
-jest.mock("@/utils/dateUtils", () => ({
+jest.mock("../domain/dateUtils", () => ({
   groupEventsByDay: jest.fn((events: unknown[]) => [
     { title: "Day", data: events },
   ]),

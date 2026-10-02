@@ -1,4 +1,4 @@
-import type { EventData } from "@/types/global";
+import type { EventData } from "../types";
 
 // Provider events are normalized into the app's existing event shape so the
 // UI keeps receiving the same objects it did when hooks fetched directly.

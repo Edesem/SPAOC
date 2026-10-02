@@ -1,4 +1,4 @@
-import type { EventData } from "@/types/global";
+import type { EventData } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   addFavourite,

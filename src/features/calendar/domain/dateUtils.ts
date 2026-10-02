@@ -6,7 +6,7 @@ import {
   startOfParishDay,
 } from "@/lib/parishTime";
 import type { StartOfWeek } from "@/services/settings";
-import { EventData } from "@/types/global";
+import { EventData } from "../types";
 
 export const formatDateHeading = (date: Date) => {
   const timeZone = APP_TIME_ZONE;

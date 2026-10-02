@@ -1,5 +1,5 @@
 import React from "react";
-import { ItemProps } from "@/types/global";
+import { ItemProps } from "../types";
 import { useRouter } from "expo-router";
 import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -7,9 +7,9 @@ import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
-import { formatEventTimes } from "@/utils/eventTimes";
-import { toEventDetailsParams } from "@/utils/routeParams";
-import { favouriteKey, useFavouritesStore } from "@/services/favourites";
+import { formatEventTimes } from "../domain/eventTimes";
+import { toEventDetailsParams } from "../domain/routeParams";
+import { favouriteKey, useFavouritesStore } from "../favourites";
 
 export const EventItem = ({
   item,

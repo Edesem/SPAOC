@@ -1,10 +1,10 @@
-import { EventData } from "@/types/global";
+import { EventData } from "../types";
 import {
   addSectionIndexes,
   filterSectionsByMonth,
   getSaintsTitle,
   GroupedEventSection,
-} from "@/utils/homeRules";
+} from "./homeRules";
 
 const event = (id: string, start: string): EventData => ({
   id,

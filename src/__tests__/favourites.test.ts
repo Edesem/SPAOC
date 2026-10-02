@@ -19,7 +19,7 @@ import FavouritesScreen from "@/app/(tabs)/favourites";
 
 const mockRemoveExpired = jest.fn();
 
-jest.mock("@/services/favourites", () => ({
+jest.mock("@/features/calendar/favourites", () => ({
   useFavouritesStore: {
     getState: () => ({ removeExpired: mockRemoveExpired }),
   },
@@ -48,7 +48,7 @@ jest.mock("expo-router", () => {
   };
 });
 
-jest.mock("@/components/EventItem", () => {
+jest.mock("@/features/calendar/components/EventItem", () => {
   const React = require("react");
   const { Text } = require("react-native");
 

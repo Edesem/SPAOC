@@ -1,12 +1,12 @@
-import { EventItem } from "@/components/EventItem";
+import { EventItem } from "@/features/calendar/components/EventItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
-import { useHomeFeature } from "@/hooks/useHomeFeature";
+import { useHomeFeature } from "@/features/calendar/hooks/useHomeFeature";
 import { Colours } from "@/theme/colours";
-import { HomeEventSection } from "@/utils/homeRules";
+import { HomeEventSection } from "@/features/calendar/domain/homeRules";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { EventData } from "@/types/global";
+import { EventData } from "@/features/calendar/types";
 import { TabParamList } from "@/types/routes";
 import "expo-dev-client";
 import * as Haptics from "expo-haptics";

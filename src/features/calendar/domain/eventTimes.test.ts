@@ -1,4 +1,4 @@
-import { formatEventTimes } from "@/utils/eventTimes";
+import { formatEventTimes } from "./eventTimes";
 
 describe("formatEventTimes", () => {
   it("labels an all-day event 'All day' with no end", () => {

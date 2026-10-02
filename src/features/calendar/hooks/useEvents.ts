@@ -1,6 +1,6 @@
-import { calendarService, type CalendarEvent } from "@/services/calendar";
+import { calendarService, type CalendarEvent } from "../services";
 import { useSettingsStore } from "@/services/settings";
-import { groupEventsByDay } from "@/utils/dateUtils";
+import { groupEventsByDay } from "../domain/dateUtils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Compatibility wrapper over calendarService that keeps the hook's original

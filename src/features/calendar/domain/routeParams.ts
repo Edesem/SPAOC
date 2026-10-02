@@ -1,5 +1,5 @@
 import { EventDetailsParams } from "@/types/routes";
-import { EventData } from "@/types/global";
+import { EventData } from "../types";
 
 export const toEventDetailsParams = (event: EventData): EventDetailsParams => ({
   id: event.id,

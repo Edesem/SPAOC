@@ -1,4 +1,4 @@
-import { calendarService } from "@/services/calendar";
+import { calendarService } from "../services";
 import { useCallback, useEffect, useState } from "react";
 
 export const useDailySaint = () => {
