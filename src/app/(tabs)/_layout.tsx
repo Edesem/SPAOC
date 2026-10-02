@@ -1,5 +1,5 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colours } from "@/styles/Colours";
+import { Colours } from "@/theme/colours";
 import { ColorValue, DynamicColorIOS, Platform } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";

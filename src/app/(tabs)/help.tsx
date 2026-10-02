@@ -1,8 +1,8 @@
 import DonateSection from "@/components/DonateSection";
 import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colours } from "@/styles/Colours";
-import { getCommonStyles } from "@/styles/CommonStyles";
+import { Colours } from "@/theme/colours";
+import { getCommonStyles } from "@/theme/commonStyles";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Haptics from "expo-haptics";

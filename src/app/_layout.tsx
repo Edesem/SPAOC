@@ -4,7 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colours } from '@/styles/Colours';
+import { Colours } from '@/theme/colours';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
 import { useFavouritesStore } from '@/services/favourites';

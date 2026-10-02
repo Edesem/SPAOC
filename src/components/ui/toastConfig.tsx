@@ -1,7 +1,7 @@
 // toastConfig.ts
 import React from 'react';
 import { BaseToast, ErrorToast } from 'react-native-toast-message';
-import { Colours } from '@/styles/Colours'; // adjust this to your file path
+import { Colours } from '@/theme/colours'; // adjust this to your file path
 
 export const toastConfig = (colorScheme: 'light' | 'dark') => ({
   success: (props: any) => (

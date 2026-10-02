@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Colours } from "./Colours"; // Ensure the Colours object contains both light and dark themes
+import { Colours } from "./colours"; // Ensure the Colours object contains both light and dark themes
 
 // Function to get styles based on the current theme
 export const getCommonStyles = (theme: string) => {

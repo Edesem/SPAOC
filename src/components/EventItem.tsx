@@ -6,7 +6,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import { getCalendarColour } from "@/domain/calendarSources";
-import { Colours } from "@/styles/Colours";
+import { Colours } from "@/theme/colours";
 import { formatEventTimes } from "@/utils/eventTimes";
 import { toEventDetailsParams } from "@/utils/routeParams";
 import { favouriteKey, useFavouritesStore } from "@/services/favourites";

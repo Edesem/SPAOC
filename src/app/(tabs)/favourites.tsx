@@ -1,8 +1,8 @@
 import { EventItem } from "@/components/EventItem"; // <-- Import your component
 import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Colours } from "@/styles/Colours";
-import { getCommonStyles } from "@/styles/CommonStyles";
+import { Colours } from "@/theme/colours";
+import { getCommonStyles } from "@/theme/commonStyles";
 import { useFavouritesStore } from "@/services/favourites";
 import { ItemProps } from "@/types/global"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";

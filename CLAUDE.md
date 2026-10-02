@@ -40,7 +40,8 @@ All source lives in `src/` (assets, docs, config files and `jest.setup.ts` stay 
 - `config` — environment variable access (`env.ts`)
 - `types` — shared TypeScript types
 - `utils` — pure utility functions
-- `styles`, `constants` — colours/common styles and app constants
+- `theme` — `colours.ts` (the app palette, used everywhere), `themedColors.ts` (a separate template palette that only backs `ThemedText`/`ThemedView`) and `commonStyles.ts`
+- `constants` — app constants (URLs, bank details)
 - `assets` (repo root) — images, fonts, etc.
 
 Imports use the `@/` alias for `src/` (e.g. `@/domain/parishTime`) and `@assets/` for the root `assets/` folder (e.g. `require("@assets/images/orthodox/church.png")`). Both come from `tsconfig.json` `paths`; Expo's Metro and jest-expo read them, so there is no `babel.config.js` or `metro.config.js`.

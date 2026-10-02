@@ -16,8 +16,8 @@ import {
 } from "@/constants/consts";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { usePrayerFeature } from "@/hooks/usePrayerFeature";
-import { Colours } from "@/styles/Colours";
-import { fontSize, getCommonStyles } from "@/styles/CommonStyles";
+import { Colours } from "@/theme/colours";
+import { fontSize, getCommonStyles } from "@/theme/commonStyles";
 import { faBed } from "@fortawesome/free-solid-svg-icons/faBed";
 import { faBookOpen } from "@fortawesome/free-solid-svg-icons/faBookOpen";
 import { faBurn } from "@fortawesome/free-solid-svg-icons/faBurn";

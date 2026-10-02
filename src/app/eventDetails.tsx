@@ -1,7 +1,7 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { getCalendarImage } from "@/domain/calendarSources";
-import { Colours } from "@/styles/Colours";
+import { Colours } from "@/theme/colours";
 import { EventDetailsParams } from "@/types/routes";
 import { formatEventTimes } from "@/utils/eventTimes";
 import { parseEventDetailsParams } from "@/utils/routeParams";

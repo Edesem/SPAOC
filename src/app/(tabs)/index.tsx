@@ -2,7 +2,7 @@ import { renderItem } from "@/components/RenderItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useHomeFeature } from "@/hooks/useHomeFeature";
-import { Colours } from "@/styles/Colours";
+import { Colours } from "@/theme/colours";
 import { HomeEventSection } from "@/utils/homeRules";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
