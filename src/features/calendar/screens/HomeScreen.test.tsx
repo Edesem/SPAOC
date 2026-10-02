@@ -1,4 +1,4 @@
-import HomeScreen from "@/app/(tabs)/index";
+import HomeScreen from "./HomeScreen";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
 import { SectionList } from "react-native";
@@ -31,7 +31,7 @@ const baseFeature = {
 let mockFeature: typeof baseFeature = baseFeature;
 let mockTabPressListener: (() => void) | undefined;
 
-jest.mock("@/features/calendar/hooks/useHomeFeature", () => ({
+jest.mock("../hooks/useHomeFeature", () => ({
   useHomeFeature: () => mockFeature,
 }));
 
@@ -79,7 +79,7 @@ jest.mock("react-native-month-year-picker", () => {
   return () => React.createElement(View, { testID: "month-picker" });
 });
 
-jest.mock("@/features/calendar/components/EventItem", () => {
+jest.mock("../components/EventItem", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
