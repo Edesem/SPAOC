@@ -23,3 +23,12 @@ export type PdfViewerParams = {
   url: string;
   title: string;
 };
+
+// One entry per file in app/(tabs)/.
+export type TabParamList = {
+  index: undefined;
+  favourites: undefined;
+  prayer: undefined;
+  about: undefined;
+  help: undefined;
+};
