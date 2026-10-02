@@ -13,7 +13,7 @@ import {
   requestNotificationPermissions,
   setupNotificationHandler,
   setupNotificationListeners,
-} from '@/notifications';
+} from '@/services/notifications/appNotifications';
 import { scheduleSaintNotificationsForNext7Days } from '@/services/notifications';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
