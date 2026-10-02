@@ -4,12 +4,11 @@
   "version": "2.0.0",
   "scripts": {
     "start": "expo start --dev-client",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "lint": "expo lint",
+    "lint": "expo lint .",
     "typecheck": "npx tsc --noEmit",
     "coverage": "npm test -- --watchAll=false --runInBand --coverage --coverageThreshold='{\"global\":{\"lines\":80}}'",
     "build-ios": "eas build --platform ios --profile production --local",
@@ -21,15 +20,18 @@
       "<rootDir>/jest.setup.ts"
     ],
     "collectCoverageFrom": [
-      "app/**/*.{ts,tsx}",
-      "components/**/*.{ts,tsx}",
-      "domain/**/*.{ts,tsx}",
-      "hooks/**/*.{ts,tsx}",
-      "services/**/*.{ts,tsx}",
-      "utils/**/*.{ts,tsx}",
-      "api/**/*.{ts,tsx}",
+      "src/app/**/*.{ts,tsx}",
+      "src/components/**/*.{ts,tsx}",
+      "src/domain/**/*.{ts,tsx}",
+      "src/hooks/**/*.{ts,tsx}",
+      "src/services/**/*.{ts,tsx}",
+      "src/utils/**/*.{ts,tsx}",
+      "src/features/**/*.{ts,tsx}",
+      "src/config/**/*.{ts,tsx}",
+      "src/lib/**/*.{ts,tsx}",
       "!**/*.test.{ts,tsx}",
-      "!**/*.d.ts"
+      "!**/*.d.ts",
+      "!**/constants.ts"
     ]
   },
   "dependencies": {

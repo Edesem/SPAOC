@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# Yarn (the project uses npm)
+.yarn/
+
 # Expo
 .expo/
 dist/
