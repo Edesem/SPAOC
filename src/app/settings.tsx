@@ -1,4 +1,4 @@
-import SettingPicker from "@/components/SettingPicker";
+import SettingPicker from "@/features/settings/components/SettingPicker";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   getCalendarNotificationSettings,
