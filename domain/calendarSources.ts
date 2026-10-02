@@ -16,47 +16,47 @@ export const CALENDAR_SOURCES: readonly CalendarSource[] = [
   {
     name: "youth",
     colour: "#3F51B5",
-    image: require("../assets/images/orthodox/procession.png"),
+    image: require("@assets/images/orthodox/procession.png"),
   },
   {
     name: "church",
     colour: "#F6BF26",
-    image: require("../assets/images/orthodox/church.png"),
+    image: require("@assets/images/orthodox/church.png"),
   },
   {
     name: "family",
     colour: "#0B8043",
-    image: require("../assets/images/orthodox/village.png"),
+    image: require("@assets/images/orthodox/village.png"),
   },
   {
     name: "ladies",
     colour: "#9E69AF",
-    image: require("../assets/images/orthodox/Theotokos.png"),
+    image: require("@assets/images/orthodox/Theotokos.png"),
   },
   {
     name: "parish",
     colour: "#F4511E",
-    image: require("../assets/images/orthodox/parish.png"),
+    image: require("@assets/images/orthodox/parish.png"),
   },
   {
     name: "seniors",
     colour: "#7986CB",
-    image: require("../assets/images/orthodox/icon towel.png"),
+    image: require("@assets/images/orthodox/icon towel.png"),
   },
   {
     name: "weekly",
     colour: "#039BE5",
-    image: require("../assets/images/orthodox/icon corner.png"),
+    image: require("@assets/images/orthodox/icon corner.png"),
   },
   {
     name: "playgroup",
     colour: "#ae9cce",
-    image: require("../assets/images/orthodox/annunciation.png"),
+    image: require("@assets/images/orthodox/annunciation.png"),
   },
   {
     name: "fellowship",
     colour: "#489160",
-    image: require("../assets/images/orthodox/fellowship.png"),
+    image: require("@assets/images/orthodox/fellowship.png"),
   },
 ];
 
@@ -64,7 +64,7 @@ export const CALENDAR_SOURCES: readonly CalendarSource[] = [
 // fasting and saints calendars).
 export const DEFAULT_CALENDAR_SOURCE: Omit<CalendarSource, "name"> = {
   colour: "#000",
-  image: require("../assets/images/orthodox/church.png"),
+  image: require("@assets/images/orthodox/church.png"),
 };
 
 export const CALENDAR_SOURCE_NAMES: readonly string[] = CALENDAR_SOURCES.map(

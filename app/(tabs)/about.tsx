@@ -135,7 +135,7 @@ export default function AboutScreen() {
           {/* Image */}
           <View style={styles.imageContainer}>
             <Image
-              source={require("../../assets/images/orthodox/star2.png")} // Adjust the path to your image
+              source={require("@assets/images/orthodox/star2.png")} // Adjust the path to your image
               style={[styles.bottomImage, { tintColor: theme.primary }]}
             />
           </View>
