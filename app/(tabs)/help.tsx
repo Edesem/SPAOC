@@ -46,11 +46,14 @@ export default function HelpScreen() {
     switch (type) {
       case "Bug":
         message = "Please describe the issue you encountered below:";
+        break;
       case "Suggestion":
         message =
           "Thank you for using SPAOC! We’d love to hear your idea or improvement suggestion:";
+        break;
       case "Support":
         message = "Let us know how we can help:";
+        break;
       default:
         message = "Please write your message below:";
     }
