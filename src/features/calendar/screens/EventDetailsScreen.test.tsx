@@ -1,4 +1,4 @@
-import EventDetailsScreen from "@/app/eventDetails";
+import EventDetailsScreen from "./EventDetailsScreen";
 import { EventDetailsParams } from "@/types/routes";
 import { render } from "@testing-library/react-native";
 import React from "react";
