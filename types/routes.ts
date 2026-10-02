@@ -14,7 +14,7 @@ export type EventDetailsParams = {
 };
 
 export type DailyReadingsParams = {
-  type: "epistle" | "gospel";
+  type: "epistle" | "gospel" | "thirdReading";
   reading: string;
   title: string;
 };
