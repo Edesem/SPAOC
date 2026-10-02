@@ -1,4 +1,4 @@
-import HelpScreen from "@/app/(tabs)/help";
+import HelpScreen from "./HelpScreen";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Linking } from "react-native";
 
@@ -9,7 +9,7 @@ jest.mock("expo-haptics", () => ({
 jest.mock("expo-localization", () => ({
   getLocales: () => [{ languageTag: "en-GB" }],
 }));
-jest.mock("@/features/parish", () => ({ DonateSection: () => null }));
+jest.mock("../components/DonateSection", () => () => null);
 jest.mock("react-native-safe-area-context", () => {
   const { View } = require("react-native");
   return {
