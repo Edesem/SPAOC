@@ -9,7 +9,7 @@ jest.mock("expo-haptics", () => ({
 jest.mock("expo-localization", () => ({
   getLocales: () => [{ languageTag: "en-GB" }],
 }));
-jest.mock("@/components/DonateSection", () => () => null);
+jest.mock("@/features/parish", () => ({ DonateSection: () => null }));
 jest.mock("react-native-safe-area-context", () => {
   const { View } = require("react-native");
   return {
