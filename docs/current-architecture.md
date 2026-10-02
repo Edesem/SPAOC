@@ -1,5 +1,7 @@
 # Current architecture (observed)
 
+> **Note:** this is a snapshot of the code *before* the move into `src/` and `src/features/`. File links below point at the old locations. For the current layout, see [CLAUDE.md](../CLAUDE.md).
+
 This repository is not an AI/agent application. It is a cross-platform Expo/React Native app for St Paul’s parishioners. The codebase currently centers on screen components, custom hooks, a few utility modules, local persistence, and integrations with Google Calendar, the Antiochian liturgical API, Expo Notifications, and external URLs.
 
 ## 1. System overview
