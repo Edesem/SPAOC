@@ -1,4 +1,4 @@
-import { renderItem } from "@/components/RenderItem";
+import { EventItem } from "@/components/EventItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useHomeFeature } from "@/hooks/useHomeFeature";
@@ -6,6 +6,7 @@ import { Colours } from "@/theme/colours";
 import { HomeEventSection } from "@/utils/homeRules";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { EventData } from "@/types/global";
 import { TabParamList } from "@/types/routes";
 import "expo-dev-client";
 import * as Haptics from "expo-haptics";
@@ -34,6 +35,11 @@ SplashScreen.setOptions({
 });
 
 type Theme = typeof Colours.light;
+
+// EventItem opens the event details itself, so the list passes no handler.
+const renderItem = ({ item }: { item: EventData }) => (
+  <EventItem item={item} onPress={() => null} />
+);
 
 const HomeListHeader = ({
   theme,

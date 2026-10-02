@@ -28,6 +28,7 @@
       "src/utils/**/*.{ts,tsx}",
       "src/api/**/*.{ts,tsx}",
       "src/config/**/*.{ts,tsx}",
+      "src/lib/**/*.{ts,tsx}",
       "!**/*.test.{ts,tsx}",
       "!**/*.d.ts"
     ]

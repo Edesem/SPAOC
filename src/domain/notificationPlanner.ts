@@ -1,4 +1,4 @@
-import { APP_TIME_ZONE, atParishHour, parishDayKey } from "@/domain/parishTime";
+import { APP_TIME_ZONE, atParishHour, parishDayKey } from "@/lib/parishTime";
 import type { EventData } from "@/types/global";
 
 // Pure planning for local notifications: given what the app knows, which

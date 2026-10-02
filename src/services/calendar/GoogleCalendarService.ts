@@ -1,4 +1,4 @@
-import { endOfParishDay, startOfParishDay } from "@/domain/parishTime";
+import { endOfParishDay, startOfParishDay } from "@/lib/parishTime";
 import type {
   CalendarDataService,
   CalendarEvent,

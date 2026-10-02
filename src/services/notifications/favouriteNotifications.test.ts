@@ -1,4 +1,4 @@
-import { atParishHour, setNow } from "@/domain/parishTime";
+import { atParishHour, setNow } from "@/lib/parishTime";
 import { getFavourites } from "@/services/favourites";
 import { saveFavouriteNotificationsEnabled } from "@/services/settings";
 import type { EventData } from "@/types/global";

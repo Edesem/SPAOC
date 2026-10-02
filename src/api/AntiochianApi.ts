@@ -1,4 +1,4 @@
-import { now, parishDayKey, parishDaysBetween } from "@/domain/parishTime";
+import { now, parishDayKey, parishDaysBetween } from "@/lib/parishTime";
 import axios, { AxiosInstance } from "axios";
 
 const HOST = "www.antiochian.org";

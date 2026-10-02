@@ -1,5 +1,5 @@
 import { planSaintNotifications } from "@/domain/notificationPlanner";
-import { atParishHour, now } from "@/domain/parishTime";
+import { atParishHour, now } from "@/lib/parishTime";
 import { calendarService } from "@/services/calendar";
 import { isDailySaintNotificationsEnabled } from "@/services/settings";
 

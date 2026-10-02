@@ -4,7 +4,7 @@ import {
   now,
   parishDayKey,
   startOfParishDay,
-} from "@/domain/parishTime";
+} from "@/lib/parishTime";
 import type { StartOfWeek } from "@/services/settings";
 import { EventData } from "@/types/global";
 
