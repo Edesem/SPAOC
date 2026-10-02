@@ -1,4 +1,4 @@
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useColorScheme } from "./useColorScheme";
 import { useSettingsStore } from "@/services/settings";
 import { act, renderHook } from "@testing-library/react-native";
 import { useColorScheme as useSystemColorScheme } from "react-native";

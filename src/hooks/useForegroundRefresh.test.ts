@@ -1,4 +1,4 @@
-import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
+import { useForegroundRefresh } from "./useForegroundRefresh";
 import { renderHook } from "@testing-library/react-native";
 import { installFakeAppState } from "@/test-utils/fakeAppState";
 

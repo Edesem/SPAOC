@@ -1,7 +1,7 @@
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 
-import { ThemedText } from '../ThemedText';
+import { ThemedText } from './ThemedText';
 
 it(`renders correctly`, async () => {
   let tree: ReturnType<typeof renderer.create>;
