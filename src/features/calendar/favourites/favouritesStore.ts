@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import type { EventData } from "@/types/global";
+import type { EventData } from "../types";
 
 import {
   addFavourite,

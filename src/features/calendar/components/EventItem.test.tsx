@@ -1,16 +1,16 @@
 import React from "react";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
-import { EventItem } from "@/components/EventItem";
+import { EventItem } from "./EventItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFavouritesStore } from "@/services/favourites";
+import { useFavouritesStore } from "../favourites";
 import {
   addFavourite,
   removeFavourite,
-} from "@/services/favourites/favouritesRepository";
+} from "../favourites/favouritesRepository";
 
 // The store runs for real; only the repository's writes are observed.
-jest.mock("@/services/favourites/favouritesRepository", () => ({
-  ...jest.requireActual("@/services/favourites/favouritesRepository"),
+jest.mock("../favourites/favouritesRepository", () => ({
+  ...jest.requireActual("../favourites/favouritesRepository"),
   addFavourite: jest.fn(),
   removeFavourite: jest.fn(),
 }));

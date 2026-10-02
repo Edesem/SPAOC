@@ -13,7 +13,7 @@ import {
   type ScheduledNotification,
 } from "@/domain/notificationPlanner";
 import { atParishHour } from "@/lib/parishTime";
-import type { EventData } from "@/types/global";
+import type { EventData } from "@/features/calendar";
 
 const iso = (date: Date) => date.toISOString();
 

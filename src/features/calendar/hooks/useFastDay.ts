@@ -1,6 +1,6 @@
-import { classifyFastingEvent, type FastKind } from "@/domain/fasting";
+import { classifyFastingEvent, type FastKind } from "../domain/fasting";
 import { now } from "@/lib/parishTime";
-import { calendarService } from "@/services/calendar";
+import { calendarService } from "../services";
 import { useCallback, useEffect, useState } from "react";
 
 export const useFastDay = () => {

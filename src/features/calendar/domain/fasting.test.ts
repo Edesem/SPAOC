@@ -5,7 +5,7 @@ import {
   getMajorLabel,
   getMinorLabel,
   prioritizeFasts,
-} from "@/domain/fasting";
+} from "./fasting";
 
 describe("classifyFastingEvent", () => {
   it.each([

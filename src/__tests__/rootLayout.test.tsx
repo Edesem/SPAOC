@@ -5,7 +5,7 @@ import {
   setupNotificationListeners,
 } from "@/services/notifications/appNotifications";
 import { scheduleSaintNotificationsForNext7Days } from "@/services/notifications";
-import { useFavouritesStore } from "@/services/favourites";
+import { useFavouritesStore } from "@/features/calendar";
 import { useSettingsStore } from "@/services/settings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, render, waitFor } from "@testing-library/react-native";

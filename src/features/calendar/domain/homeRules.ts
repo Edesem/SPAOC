@@ -1,5 +1,5 @@
 import { isSameParishMonth } from "@/lib/parishTime";
-import { EventData } from "@/types/global";
+import { EventData } from "../types";
 
 export type GroupedEventSection = {
   title: string;

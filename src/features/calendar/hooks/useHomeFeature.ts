@@ -1,13 +1,13 @@
-import { getMajorLabel, getMinorLabel } from "@/domain/fasting";
-import { useDailySaint } from "@/hooks/useDailySaint";
-import { useEvents } from "@/hooks/useEvents";
-import { useFastDay } from "@/hooks/useFastDay";
+import { getMajorLabel, getMinorLabel } from "../domain/fasting";
+import { useDailySaint } from "./useDailySaint";
+import { useEvents } from "./useEvents";
+import { useFastDay } from "./useFastDay";
 import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
 import {
   addSectionIndexes,
   filterSectionsByMonth,
   getSaintsTitle,
-} from "@/utils/homeRules";
+} from "../domain/homeRules";
 import { useCallback, useMemo, useState } from "react";
 
 // Background refresh only kicks in once the app has been away this long.

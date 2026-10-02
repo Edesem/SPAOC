@@ -1,7 +1,7 @@
 import {
   parseEventDetailsParams,
   toEventDetailsParams,
-} from "@/utils/routeParams";
+} from "./routeParams";
 
 const event = {
   id: "event-1",

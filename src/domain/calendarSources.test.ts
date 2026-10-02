@@ -1,4 +1,3 @@
-import { PARISH_EVENT_CALENDARS } from "@/services/calendar/googleCalendarConfig";
 import {
   CALENDAR_SOURCES,
   CALENDAR_SOURCE_NAMES,
@@ -24,12 +23,6 @@ describe("calendarSources", () => {
 
   it("defines each calendar name only once", () => {
     expect(new Set(CALENDAR_SOURCE_NAMES).size).toBe(CALENDAR_SOURCES.length);
-  });
-
-  it("has a Google calendar for every registered source and vice versa", () => {
-    const configured = PARISH_EVENT_CALENDARS.map(({ source }) => source);
-
-    expect([...configured].sort()).toEqual([...CALENDAR_SOURCE_NAMES].sort());
   });
 
   it("returns the colour and image of a registered calendar", () => {

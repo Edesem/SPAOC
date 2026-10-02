@@ -1,5 +1,5 @@
-import { FastKind } from "@/domain/fasting";
-import { useHomeFeature } from "@/hooks/useHomeFeature";
+import { FastKind } from "../domain/fasting";
+import { useHomeFeature } from "./useHomeFeature";
 import { installFakeAppState } from "@/test-utils/fakeAppState";
 import { act, renderHook } from "@testing-library/react-native";
 
@@ -28,15 +28,15 @@ let mockFastDayState: {
   refetch: mockRefetchFast,
 };
 
-jest.mock("@/hooks/useDailySaint", () => ({
+jest.mock("./useDailySaint", () => ({
   useDailySaint: () => mockDailySaintState,
 }));
 
-jest.mock("@/hooks/useEvents", () => ({
+jest.mock("./useEvents", () => ({
   useEvents: () => mockEventsState,
 }));
 
-jest.mock("@/hooks/useFastDay", () => ({
+jest.mock("./useFastDay", () => ({
   useFastDay: () => mockFastDayState,
 }));
 
