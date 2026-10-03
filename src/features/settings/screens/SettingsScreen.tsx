@@ -17,7 +17,6 @@ import { fontSize } from "@/theme/commonStyles";
 import {
   cancelAllFavouriteNotifications,
   cancelAllSaintNotifications,
-  scheduleCategoryNotifications,
   scheduleFavouriteNotifications,
   scheduleSaintNotificationsForNext7Days,
 } from "@/features/notifications";
@@ -368,12 +367,9 @@ export default function SettingsScreen() {
                         <Switch
                           value={calendarSettings[calendar]?.enabled ?? false}
                           onValueChange={(value) => {
-                            scheduleCategoryNotifications(
-                              calendar,
-                              updateCalendarSetting(calendar, {
-                                enabled: value,
-                              }),
-                            );
+                            updateCalendarSetting(calendar, {
+                              enabled: value,
+                            });
                           }}
                           trackColor={{ false: "#767577", true: "#34c658" }}
                           thumbColor="#fff"
