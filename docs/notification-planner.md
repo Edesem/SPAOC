@@ -1,6 +1,6 @@
 # Notification planner
 
-Design for splitting [utils/notifications.ts](../utils/notifications.ts) (issue #84). #84 added the pure planner and documented the rest. #85 added the gateway and moved the existing saint, favourite and category scheduling onto it. #86 moved the app-lifecycle notification work to the root layout. Nothing calls the planner's `planNotifications` or `reconcileNotifications` yet: the saint code uses `planSaintNotifications` and the gateway directly.
+Design for splitting the old `utils/notifications.ts` (issue #84, deleted in #93). #84 added the pure planner and documented the rest. #85 added the gateway and moved the existing saint, favourite and category scheduling onto it. #86 moved the app-lifecycle notification work to the root layout. Nothing calls the planner's `planNotifications` or `reconcileNotifications` yet: the saint code uses `planSaintNotifications` and the gateway directly.
 
 ## What the app needs
 
@@ -165,7 +165,7 @@ Rules for the reconcile step:
 - [favouriteNotifications.ts](../services/notifications/favouriteNotifications.ts) keeps the existing timing and text, keys each notification `favourite:<event id>`, and cancels by kind. This fixes the title mismatch that made favourites impossible to cancel.
 - [calendarNotifications.ts](../services/notifications/calendarNotifications.ts) holds the old category scheduling, keyed `calendar:<calendar>:<event id>`. It is still not wired to anything.
 - No code reads or writes `notified-*` in AsyncStorage any more. Markers left on devices by older versions are harmless and are not cleaned up.
-- [utils/notifications.ts](../utils/notifications.ts) now only re-exports these, so the Settings screen and Home hook are unchanged.
+- `utils/notifications.ts` re-exported these at the time, so the Settings screen and Home hook were unchanged. #93 deleted it.
 
 ## What #86 changed
 
@@ -173,4 +173,4 @@ Rules for the reconcile step:
 - [notifications.tsx](../notifications.tsx) no longer sets the handler as an import side effect; `setupNotificationHandler()` does it when called.
 - [useHomeFeature.ts](../hooks/useHomeFeature.ts) keeps only the Home data and its background refresh.
 - What is scheduled is unchanged. The initial run is still `scheduleSaintNotificationsForNext7Days()`, not the planner's reconcile step, which is still unwritten.
-- Not fixed: [utils/notifications.ts](../utils/notifications.ts) calls `useState` at module level, which logs "Invalid hook call" when imported. The layout imports from `@/services/notifications` directly to stay clear of it.
+- `utils/notifications.ts` called `useState` at module level, which logged "Invalid hook call" when imported. #93 deleted it and the Settings screen now imports from `@/features/notifications`.
