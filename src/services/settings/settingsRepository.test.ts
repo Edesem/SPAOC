@@ -123,17 +123,17 @@ describe("settingsRepository", () => {
       expect(AsyncStorage.setItem).not.toHaveBeenCalled();
     });
 
-    it("pins #69: shows stored 'false' flags as off, keeping the existing defaulting behaviour", async () => {
+    it("keeps stored 'false' flags off and does not write them back (#69)", async () => {
       await AsyncStorage.setItem(DAILY_SAINTS, "false");
       await AsyncStorage.setItem(FAVOURITES, "false");
+      jest.clearAllMocks();
 
       expect(await loadNotificationToggles()).toEqual({
         dailySaints: false,
         favourites: false,
       });
-      // The daily saints flag has always been reset to "true" on load unless
-      // it was already "true"; the favourites flag is only defaulted when unset.
-      expect(await AsyncStorage.getItem(DAILY_SAINTS)).toBe("true");
+      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+      expect(await AsyncStorage.getItem(DAILY_SAINTS)).toBe("false");
       expect(await AsyncStorage.getItem(FAVOURITES)).toBe("false");
     });
   });
