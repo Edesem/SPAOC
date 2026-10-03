@@ -1,6 +1,6 @@
 # Notification planner
 
-Design for splitting the old `utils/notifications.ts` (issue #84, deleted in #93). #84 added the pure planner and documented the rest. #85 added the gateway and moved the existing saint, favourite and category scheduling onto it. #86 moved the app-lifecycle notification work to the root layout. Nothing calls the planner's `planNotifications` or `reconcileNotifications` yet: the saint code uses `planSaintNotifications` and the gateway directly.
+Design for splitting the old `utils/notifications.ts` (issue #84, deleted in #93). #84 added the pure planner and documented the rest. #85 added the gateway and moved the existing saint, favourite and category scheduling onto it. #86 moved the app-lifecycle notification work to the root layout. #129 wrote the reconcile step for saints (`syncNotifications.ts`); favourite and calendar notifications still schedule directly (#130).
 
 ## What the app needs
 
@@ -174,3 +174,12 @@ Rules for the reconcile step:
 - [useHomeFeature.ts](../hooks/useHomeFeature.ts) keeps only the Home data and its background refresh.
 - What is scheduled is unchanged. The initial run is still `scheduleSaintNotificationsForNext7Days()`, not the planner's reconcile step, which is still unwritten.
 - `utils/notifications.ts` called `useState` at module level, which logged "Invalid hook call" when imported. #93 deleted it and the Settings screen now imports from `@/features/notifications`.
+
+## What #129 changed
+
+- [syncNotifications.ts](../src/features/notifications/syncNotifications.ts) is the reconcile step, for saints only. It loads the next 7 days of saints, runs `planNotifications`, lists what Expo holds and applies `reconcileNotifications`, cancelling before scheduling. It never rejects.
+- Saints load through `calendarService.getSaintsForDateOrThrow`, which rejects on a failed request (`getSaintsForDate` still returns `[]`). If any day fails, `saint` is left out of `kinds` and the existing schedule is untouched. With saints switched off, `saint` is in `kinds` and nothing is loaded, so every saint notification is cancelled (including old ones with no key) without the network.
+- One run at a time: a call made during a run sets a flag, and the run goes round once more when it finishes, however many calls arrived.
+- It runs from the root layout once settings have hydrated (the store's defaults have saints on, so running earlier could schedule what the user switched off) and after the Settings saint toggle.
+- `saintNotifications.ts` (`scheduleSaintNotificationsForNext7Days`, `cancelAllSaintNotifications`) is deleted.
+- Not done: favourite and calendar kinds (#130), and running again on app foreground.
