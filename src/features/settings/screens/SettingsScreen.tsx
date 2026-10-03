@@ -1,13 +1,7 @@
 import SettingPicker from "../components/SettingPicker";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import {
-  getCalendarNotificationSettings,
-  loadNotificationToggles,
-  saveCalendarNotificationSettings,
-  saveDailySaintNotificationsEnabled,
-  saveFavouriteNotificationsEnabled,
   useSettingsStore,
-  type CalendarNotificationSettings,
   type StartOfWeek,
   type ThemeChoice,
 } from "@/services/settings";
@@ -23,7 +17,6 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
 import {
   Platform,
   ScrollView,
@@ -50,48 +43,24 @@ export default function SettingsScreen() {
   const themeChoice = useSettingsStore((state) => state.themeChoice);
   const setThemeChoice = useSettingsStore((state) => state.setThemeChoice);
 
-  const [dailySaintsEnabled, setDailySaintsEnabled] = useState(true);
-  const [favouriteNotificationsEnabled, setFavouriteNotificationsEnabled] =
-    useState(true);
-
-  const [calendarSettings, setCalendarSettings] =
-    useState<CalendarNotificationSettings>({});
-
-  useEffect(() => {
-    const loadNotifications = async () => {
-      const { dailySaints, favourites } = await loadNotificationToggles();
-      setDailySaintsEnabled(dailySaints);
-      setFavouriteNotificationsEnabled(favourites);
-    };
-    loadNotifications();
-  }, []);
-
-  useEffect(() => {
-    const loadCalendar = async () => {
-      try {
-        setCalendarSettings(await getCalendarNotificationSettings());
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    loadCalendar();
-  }, []);
-
-  const updateCalendarSetting = (
-    calendar: string,
-    updates: Partial<{ enabled: boolean; daysBefore: number }>,
-  ) => {
-    const updated = {
-      ...calendarSettings,
-      [calendar]: {
-        ...calendarSettings[calendar],
-        ...updates,
-      },
-    };
-    setCalendarSettings(updated);
-    saveCalendarNotificationSettings(updated);
-    return updated[calendar];
-  };
+  const dailySaintsEnabled = useSettingsStore(
+    (state) => state.dailySaintsEnabled,
+  );
+  const setDailySaintsEnabled = useSettingsStore(
+    (state) => state.setDailySaintsEnabled,
+  );
+  const favouriteNotificationsEnabled = useSettingsStore(
+    (state) => state.favouritesEnabled,
+  );
+  const setFavouriteNotificationsEnabled = useSettingsStore(
+    (state) => state.setFavouritesEnabled,
+  );
+  const calendarSettings = useSettingsStore(
+    (state) => state.calendarNotifications,
+  );
+  const setCalendarNotification = useSettingsStore(
+    (state) => state.setCalendarNotification,
+  );
 
   const dayOptions = [...Array(60).keys()].map((n) => ({
     label: `${n} day${n !== 1 ? "s" : ""}`,
@@ -185,8 +154,7 @@ export default function SettingsScreen() {
             <Switch
               value={dailySaintsEnabled}
               onValueChange={async (value) => {
-                setDailySaintsEnabled(value);
-                await saveDailySaintNotificationsEnabled(value);
+                await setDailySaintsEnabled(value);
                 if (value) {
                   scheduleSaintNotificationsForNext7Days();
                 } else {
@@ -211,9 +179,8 @@ export default function SettingsScreen() {
               </Text>
               <Switch
                 value={favouriteNotificationsEnabled}
-                onValueChange={(value) => {
-                  setFavouriteNotificationsEnabled(value);
-                  saveFavouriteNotificationsEnabled(value);
+                onValueChange={async (value) => {
+                  await setFavouriteNotificationsEnabled(value);
                   if (value) {
                     scheduleFavouriteNotifications();
                   } else {
@@ -315,7 +282,7 @@ export default function SettingsScreen() {
                           <RNPickerSelect
                             value={calendarSettings[calendar]?.daysBefore ?? 1}
                             onValueChange={(newVal) =>
-                              updateCalendarSetting(calendar, {
+                              setCalendarNotification(calendar, {
                                 daysBefore: newVal,
                               })
                             }
@@ -367,7 +334,7 @@ export default function SettingsScreen() {
                         <Switch
                           value={calendarSettings[calendar]?.enabled ?? false}
                           onValueChange={(value) => {
-                            updateCalendarSetting(calendar, {
+                            setCalendarNotification(calendar, {
                               enabled: value,
                             });
                           }}
