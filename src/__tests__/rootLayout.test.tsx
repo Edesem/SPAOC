@@ -2,9 +2,9 @@ import RootLayout from "@/app/_layout";
 import { useFavouritesStore } from "@/features/calendar";
 import {
   requestNotificationPermissions,
-  scheduleSaintNotificationsForNext7Days,
   setupNotificationHandler,
   setupNotificationListeners,
+  syncNotifications,
 } from "@/features/notifications";
 import { useSettingsStore } from "@/services/settings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,7 +23,7 @@ jest.mock("@/features/notifications", () => ({
   setupNotificationHandler: jest.fn(),
   requestNotificationPermissions: jest.fn(),
   setupNotificationListeners: jest.fn(),
-  scheduleSaintNotificationsForNext7Days: jest.fn(),
+  syncNotifications: jest.fn(),
 }));
 jest.mock("@/components/ui/toastConfig", () => ({ toastConfig: () => ({}) }));
 jest.mock("expo-router", () => {
@@ -52,6 +52,10 @@ describe("RootLayout", () => {
     useSettingsStore.setState(initialState, true);
     useFavouritesStore.setState(initialFavouritesState, true);
   });
+
+  // The hydrate spies replace a method on the shared initial state, so they
+  // must be undone or later tests would never finish hydrating
+  afterEach(() => jest.restoreAllMocks());
 
   it("hydrates the settings store before rendering the app", async () => {
     await AsyncStorage.setItem("START_OF_WEEK", "sunday");
@@ -117,10 +121,30 @@ describe("RootLayout", () => {
       expect(requestNotificationPermissions).toHaveBeenCalledTimes(1);
     });
 
-    it("schedules the saint notifications once at startup", async () => {
+    it("syncs notifications once at startup, after settings have loaded", async () => {
+      await AsyncStorage.setItem("dailySaintsNotificationsEnabled", "false");
+      let enabledWhenSynced: boolean | undefined;
+      (syncNotifications as jest.Mock).mockImplementation(() => {
+        enabledWhenSynced = useSettingsStore.getState().dailySaintsEnabled;
+      });
+
       await render(<RootLayout />);
 
-      expect(scheduleSaintNotificationsForNext7Days).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(syncNotifications).toHaveBeenCalledTimes(1));
+      expect(enabledWhenSynced).toBe(false);
+    });
+
+    it("does not sync notifications while settings are still loading", async () => {
+      jest
+        .spyOn(useSettingsStore.getState(), "hydrate")
+        .mockImplementation(() => new Promise<void>(() => {}));
+      useSettingsStore.setState({
+        hydrate: useSettingsStore.getState().hydrate,
+      });
+
+      await render(<RootLayout />);
+
+      expect(syncNotifications).not.toHaveBeenCalled();
     });
 
     it("adds the notification listeners and removes them on unmount", async () => {
