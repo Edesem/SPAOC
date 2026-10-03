@@ -8,7 +8,6 @@ const mockRefetchEvents = jest.fn();
 const mockRefetchFast = jest.fn();
 const mockRequestNotificationPermissions = jest.fn();
 const mockSetupNotificationListeners = jest.fn();
-const mockScheduleSaintNotificationsForNext7Days = jest.fn();
 
 let mockDailySaintState = {
   todaysSaints: ["St. Test"],
@@ -43,8 +42,6 @@ jest.mock("./useFastDay", () => ({
 jest.mock("@/features/notifications", () => ({
   requestNotificationPermissions: () => mockRequestNotificationPermissions(),
   setupNotificationListeners: () => mockSetupNotificationListeners(),
-  scheduleSaintNotificationsForNext7Days: () =>
-    mockScheduleSaintNotificationsForNext7Days(),
 }));
 
 describe("useHomeFeature", () => {
@@ -67,7 +64,6 @@ describe("useHomeFeature", () => {
 
     expect(mockRequestNotificationPermissions).not.toHaveBeenCalled();
     expect(mockSetupNotificationListeners).not.toHaveBeenCalled();
-    expect(mockScheduleSaintNotificationsForNext7Days).not.toHaveBeenCalled();
   });
 
   it("does not refetch events on mount or screen focus", async () => {
