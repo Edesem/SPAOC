@@ -20,7 +20,7 @@ import {
   scheduleCategoryNotifications,
   scheduleFavouriteNotifications,
   scheduleSaintNotificationsForNext7Days,
-} from "@/utils/notifications";
+} from "@/features/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
@@ -91,6 +91,7 @@ export default function SettingsScreen() {
     };
     setCalendarSettings(updated);
     saveCalendarNotificationSettings(updated);
+    return updated[calendar];
   };
 
   const dayOptions = [...Array(60).keys()].map((n) => ({
@@ -367,8 +368,12 @@ export default function SettingsScreen() {
                         <Switch
                           value={calendarSettings[calendar]?.enabled ?? false}
                           onValueChange={(value) => {
-                            updateCalendarSetting(calendar, { enabled: value });
-                            scheduleCategoryNotifications(calendar);
+                            scheduleCategoryNotifications(
+                              calendar,
+                              updateCalendarSetting(calendar, {
+                                enabled: value,
+                              }),
+                            );
                           }}
                           trackColor={{ false: "#767577", true: "#34c658" }}
                           thumbColor="#fff"

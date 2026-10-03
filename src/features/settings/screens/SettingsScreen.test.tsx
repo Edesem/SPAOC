@@ -12,7 +12,7 @@ import {
 import {
   cancelAllSaintNotifications,
   scheduleSaintNotificationsForNext7Days,
-} from "@/utils/notifications";
+} from "@/features/notifications";
 
 // The screen is tested against a mocked settings repository. Storage keys,
 // value formats and first-run defaults are covered by
@@ -31,7 +31,7 @@ jest.mock("@/services/settings/settingsRepository", () => ({
   saveThemeChoice: jest.fn(),
 }));
 
-jest.mock("@/utils/notifications", () => ({
+jest.mock("@/features/notifications", () => ({
   cancelAllFavouriteNotifications: jest.fn(),
   cancelAllSaintNotifications: jest.fn(),
   scheduleCategoryNotifications: jest.fn(),

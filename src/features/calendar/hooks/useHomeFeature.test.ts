@@ -43,9 +43,6 @@ jest.mock("./useFastDay", () => ({
 jest.mock("@/features/notifications", () => ({
   requestNotificationPermissions: () => mockRequestNotificationPermissions(),
   setupNotificationListeners: () => mockSetupNotificationListeners(),
-}));
-
-jest.mock("@/utils/notifications", () => ({
   scheduleSaintNotificationsForNext7Days: () =>
     mockScheduleSaintNotificationsForNext7Days(),
 }));
