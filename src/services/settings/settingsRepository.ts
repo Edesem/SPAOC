@@ -56,11 +56,11 @@ export async function saveThemeChoice(choice: ThemeChoice): Promise<void> {
 
 // Notification toggles
 
-// Notifications are only scheduled when a toggle has been explicitly stored
-// as enabled.
+// Both toggles are on unless explicitly stored as "false", so a fresh install
+// treats notifications exactly as the Settings switch shows them.
 export async function isDailySaintNotificationsEnabled(): Promise<boolean> {
   return (
-    (await AsyncStorage.getItem(DAILY_SAINTS_NOTIFICATIONS_KEY)) === "true"
+    (await AsyncStorage.getItem(DAILY_SAINTS_NOTIFICATIONS_KEY)) !== "false"
   );
 }
 
@@ -71,7 +71,7 @@ export async function saveDailySaintNotificationsEnabled(
 }
 
 export async function isFavouriteNotificationsEnabled(): Promise<boolean> {
-  return (await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_KEY)) === "true";
+  return (await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_KEY)) !== "false";
 }
 
 export async function saveFavouriteNotificationsEnabled(
