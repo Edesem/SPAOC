@@ -82,8 +82,8 @@ describe("settingsRepository", () => {
       saveFavouriteNotificationsEnabled,
     ],
   ])("%s notification flag", (_, key, isEnabled, save) => {
-    it("is enabled only when stored as 'true'", async () => {
-      expect(await isEnabled()).toBe(false);
+    it("is on unless stored as 'false', so unset matches what Settings shows", async () => {
+      expect(await isEnabled()).toBe(true);
 
       await AsyncStorage.setItem(key, "false");
       expect(await isEnabled()).toBe(false);
