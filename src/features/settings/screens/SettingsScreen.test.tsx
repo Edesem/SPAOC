@@ -8,10 +8,7 @@ import {
   saveStartOfWeek,
   useSettingsStore,
 } from "@/services/settings";
-import {
-  cancelAllSaintNotifications,
-  scheduleSaintNotificationsForNext7Days,
-} from "@/features/notifications";
+import { syncNotifications } from "@/features/notifications";
 
 // The screen is tested against a mocked settings repository. Storage keys,
 // value formats and first-run defaults are covered by
@@ -31,9 +28,8 @@ jest.mock("@/services/settings/settingsRepository", () => ({
 
 jest.mock("@/features/notifications", () => ({
   cancelAllFavouriteNotifications: jest.fn(),
-  cancelAllSaintNotifications: jest.fn(),
   scheduleFavouriteNotifications: jest.fn(),
-  scheduleSaintNotificationsForNext7Days: jest.fn(),
+  syncNotifications: jest.fn(),
 }));
 
 jest.mock("react-native-safe-area-context", () => {
@@ -104,7 +100,7 @@ describe("settings", () => {
     expect(getCalendarNotificationSettings).not.toHaveBeenCalled();
   });
 
-  it("saves the setting before scheduling saint notifications when the toggle is turned on", async () => {
+  it("saves the setting before syncing notifications when the toggle is turned on", async () => {
     useSettingsStore.setState({ dailySaintsEnabled: false });
     let finishSaving: () => void = () => {};
     (saveDailySaintNotificationsEnabled as jest.Mock).mockReturnValueOnce(
@@ -117,28 +113,25 @@ describe("settings", () => {
     expect(saveDailySaintNotificationsEnabled).toHaveBeenCalledWith(true);
     expect(useSettingsStore.getState().dailySaintsEnabled).toBe(true);
     await waitFor(() => expect(getByRole("switch").props.value).toBe(true));
-    expect(scheduleSaintNotificationsForNext7Days).not.toHaveBeenCalled();
+    expect(syncNotifications).not.toHaveBeenCalled();
 
     finishSaving();
     await waitFor(() => {
-      expect(scheduleSaintNotificationsForNext7Days).toHaveBeenCalled();
+      expect(syncNotifications).toHaveBeenCalledTimes(1);
     });
   });
 
-  it("saves and cancels saint notifications when the toggle is turned off", async () => {
-    const consoleLog = jest.spyOn(console, "log").mockImplementation();
+  it("saves the setting and syncs notifications when the toggle is turned off", async () => {
     const { getByRole } = await renderScreen();
     expect(getByRole("switch").props.value).toBe(true);
 
     fireEvent(getByRole("switch"), "valueChange", false);
 
     await waitFor(() => {
-      expect(cancelAllSaintNotifications).toHaveBeenCalled();
+      expect(syncNotifications).toHaveBeenCalledTimes(1);
     });
     expect(saveDailySaintNotificationsEnabled).toHaveBeenCalledWith(false);
     expect(useSettingsStore.getState().dailySaintsEnabled).toBe(false);
-    expect(scheduleSaintNotificationsForNext7Days).not.toHaveBeenCalled();
-    consoleLog.mockRestore();
   });
 
   it("shows the hydrated start of week and saves a new choice", async () => {
