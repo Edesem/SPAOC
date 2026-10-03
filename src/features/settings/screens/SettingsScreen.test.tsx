@@ -4,7 +4,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SettingsScreen from "./SettingsScreen";
 import {
   getCalendarNotificationSettings,
-  loadNotificationToggles,
   saveDailySaintNotificationsEnabled,
   saveStartOfWeek,
   useSettingsStore,
@@ -23,7 +22,6 @@ jest.mock("@/services/settings/settingsRepository", () => ({
   getCalendarNotificationSettings: jest.fn(),
   getStartOfWeek: jest.fn(),
   getThemeChoice: jest.fn(),
-  loadNotificationToggles: jest.fn(),
   saveCalendarNotificationSettings: jest.fn(),
   saveDailySaintNotificationsEnabled: jest.fn(),
   saveFavouriteNotificationsEnabled: jest.fn(),
@@ -88,49 +86,49 @@ const renderScreen = () => render(React.createElement(SettingsScreen));
 describe("settings", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useSettingsStore.setState({ startOfWeek: "monday", themeChoice: "auto" });
-    (getCalendarNotificationSettings as jest.Mock).mockResolvedValue({});
-    (loadNotificationToggles as jest.Mock).mockResolvedValue({
-      dailySaints: true,
-      favourites: true,
+    useSettingsStore.setState({
+      startOfWeek: "monday",
+      themeChoice: "auto",
+      dailySaintsEnabled: true,
+      favouritesEnabled: true,
+      calendarNotifications: {},
     });
   });
 
-  it("shows the notification toggle loaded from the repository", async () => {
-    (loadNotificationToggles as jest.Mock).mockResolvedValue({
-      dailySaints: false,
-      favourites: true,
-    });
+  it("shows the saint notification switch from the store without loading it again", async () => {
+    useSettingsStore.setState({ dailySaintsEnabled: false });
 
     const { getByRole } = await renderScreen();
 
-    await waitFor(() => {
-      expect(getByRole("switch").props.value).toBe(false);
-    });
-    expect(getCalendarNotificationSettings).toHaveBeenCalledTimes(1);
+    expect(getByRole("switch").props.value).toBe(false);
+    expect(getCalendarNotificationSettings).not.toHaveBeenCalled();
   });
 
-  it("saves and schedules saint notifications when the toggle is turned on", async () => {
-    (loadNotificationToggles as jest.Mock).mockResolvedValue({
-      dailySaints: false,
-      favourites: true,
-    });
+  it("saves the setting before scheduling saint notifications when the toggle is turned on", async () => {
+    useSettingsStore.setState({ dailySaintsEnabled: false });
+    let finishSaving: () => void = () => {};
+    (saveDailySaintNotificationsEnabled as jest.Mock).mockReturnValueOnce(
+      new Promise<void>((resolve) => (finishSaving = resolve)),
+    );
     const { getByRole } = await renderScreen();
-    await waitFor(() => expect(getByRole("switch").props.value).toBe(false));
 
     fireEvent(getByRole("switch"), "valueChange", true);
 
+    expect(saveDailySaintNotificationsEnabled).toHaveBeenCalledWith(true);
+    expect(useSettingsStore.getState().dailySaintsEnabled).toBe(true);
+    await waitFor(() => expect(getByRole("switch").props.value).toBe(true));
+    expect(scheduleSaintNotificationsForNext7Days).not.toHaveBeenCalled();
+
+    finishSaving();
     await waitFor(() => {
       expect(scheduleSaintNotificationsForNext7Days).toHaveBeenCalled();
     });
-    expect(saveDailySaintNotificationsEnabled).toHaveBeenCalledWith(true);
-    expect(getByRole("switch").props.value).toBe(true);
   });
 
   it("saves and cancels saint notifications when the toggle is turned off", async () => {
     const consoleLog = jest.spyOn(console, "log").mockImplementation();
     const { getByRole } = await renderScreen();
-    await waitFor(() => expect(getByRole("switch").props.value).toBe(true));
+    expect(getByRole("switch").props.value).toBe(true);
 
     fireEvent(getByRole("switch"), "valueChange", false);
 
@@ -138,6 +136,7 @@ describe("settings", () => {
       expect(cancelAllSaintNotifications).toHaveBeenCalled();
     });
     expect(saveDailySaintNotificationsEnabled).toHaveBeenCalledWith(false);
+    expect(useSettingsStore.getState().dailySaintsEnabled).toBe(false);
     expect(scheduleSaintNotificationsForNext7Days).not.toHaveBeenCalled();
     consoleLog.mockRestore();
   });
@@ -155,23 +154,8 @@ describe("settings", () => {
     expect(saveStartOfWeek).toHaveBeenCalledWith("monday");
   });
 
-  it("logs an error when calendar notification settings fail to load", async () => {
-    const consoleError = jest.spyOn(console, "error").mockImplementation();
-    const error = new SyntaxError("Unexpected token");
-    (getCalendarNotificationSettings as jest.Mock).mockRejectedValue(error);
-
-    await renderScreen();
-
-    await waitFor(() => {
-      expect(consoleError).toHaveBeenCalledWith(error);
-    });
-    consoleError.mockRestore();
-  });
-
   it("does not read or write settings storage directly", async () => {
     const { getByRole } = await renderScreen();
-    await waitFor(() => expect(loadNotificationToggles).toHaveBeenCalled());
-
     fireEvent(getByRole("switch"), "valueChange", true);
     await waitFor(() => {
       expect(saveDailySaintNotificationsEnabled).toHaveBeenCalled();
