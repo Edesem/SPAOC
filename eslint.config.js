@@ -111,21 +111,4 @@ module.exports = defineConfig([
       ],
     },
   },
-  {
-    // TODO(#93): re-exports a feature for utils/notifications.ts, the only
-    // importer. Remove together with that file.
-    files: ["src/services/notifications/index.ts"],
-    rules: {
-      "import/no-restricted-paths": "off",
-    },
-  },
-  {
-    // TODO(#93): utils/notifications.ts calls useState at module level. It is
-    // being deleted, so it is exempted here rather than edited. Remove this
-    // override together with the file.
-    files: ["src/utils/notifications.ts"],
-    rules: {
-      "react-hooks/rules-of-hooks": "off",
-    },
-  },
 ]);
