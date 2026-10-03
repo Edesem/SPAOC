@@ -10,9 +10,8 @@ import { Colours } from "@/theme/colours";
 import { fontSize } from "@/theme/commonStyles";
 import {
   cancelAllFavouriteNotifications,
-  cancelAllSaintNotifications,
   scheduleFavouriteNotifications,
-  scheduleSaintNotificationsForNext7Days,
+  syncNotifications,
 } from "@/features/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -155,13 +154,7 @@ export default function SettingsScreen() {
               value={dailySaintsEnabled}
               onValueChange={async (value) => {
                 await setDailySaintsEnabled(value);
-                if (value) {
-                  scheduleSaintNotificationsForNext7Days();
-                } else {
-                  // Optional: cancel existing notifications here
-                  console.log("cancel");
-                  cancelAllSaintNotifications(); // You’ll define this next
-                }
+                syncNotifications();
               }}
               trackColor={{ false: "#767577", true: "#34c658" }}
               thumbColor="#fff"
