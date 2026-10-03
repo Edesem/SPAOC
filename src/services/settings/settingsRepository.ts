@@ -80,29 +80,6 @@ export async function saveFavouriteNotificationsEnabled(
   await writeFlag(FAVOURITES_NOTIFICATIONS_KEY, enabled);
 }
 
-// Returns the toggle values the Settings screen shows (on unless stored as
-// "false") and writes the defaults the screen has always written on load:
-// the daily saints flag is stored as "true" whenever it is not already
-// "true", and the favourites flag is stored as "true" only when unset.
-export async function loadNotificationToggles(): Promise<{
-  dailySaints: boolean;
-  favourites: boolean;
-}> {
-  const dailySaints = await AsyncStorage.getItem(
-    DAILY_SAINTS_NOTIFICATIONS_KEY,
-  );
-  if (dailySaints === null)
-    await writeFlag(DAILY_SAINTS_NOTIFICATIONS_KEY, true);
-
-  const favourites = await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_KEY);
-  if (favourites === null) await writeFlag(FAVOURITES_NOTIFICATIONS_KEY, true);
-
-  return {
-    dailySaints: dailySaints !== "false",
-    favourites: favourites !== "false",
-  };
-}
-
 // Calendar notification settings
 
 // Returns the saved settings, or saves and returns a disabled, one-day-before

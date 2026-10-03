@@ -5,7 +5,6 @@ import {
   getThemeChoice,
   isDailySaintNotificationsEnabled,
   isFavouriteNotificationsEnabled,
-  loadNotificationToggles,
   saveCalendarNotificationSettings,
   saveDailySaintNotificationsEnabled,
   saveFavouriteNotificationsEnabled,
@@ -98,43 +97,6 @@ describe("settingsRepository", () => {
 
       await save(false);
       expect(await AsyncStorage.getItem(key)).toBe("false");
-    });
-  });
-
-  describe("loadNotificationToggles", () => {
-    it("shows both toggles on and stores 'true' defaults when nothing is stored", async () => {
-      expect(await loadNotificationToggles()).toEqual({
-        dailySaints: true,
-        favourites: true,
-      });
-      expect(await AsyncStorage.getItem(DAILY_SAINTS)).toBe("true");
-      expect(await AsyncStorage.getItem(FAVOURITES)).toBe("true");
-    });
-
-    it("does not write when both flags are already stored as 'true'", async () => {
-      await AsyncStorage.setItem(DAILY_SAINTS, "true");
-      await AsyncStorage.setItem(FAVOURITES, "true");
-      jest.clearAllMocks();
-
-      expect(await loadNotificationToggles()).toEqual({
-        dailySaints: true,
-        favourites: true,
-      });
-      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
-    });
-
-    it("keeps stored 'false' flags off and does not write them back (#69)", async () => {
-      await AsyncStorage.setItem(DAILY_SAINTS, "false");
-      await AsyncStorage.setItem(FAVOURITES, "false");
-      jest.clearAllMocks();
-
-      expect(await loadNotificationToggles()).toEqual({
-        dailySaints: false,
-        favourites: false,
-      });
-      expect(AsyncStorage.setItem).not.toHaveBeenCalled();
-      expect(await AsyncStorage.getItem(DAILY_SAINTS)).toBe("false");
-      expect(await AsyncStorage.getItem(FAVOURITES)).toBe("false");
     });
   });
 
