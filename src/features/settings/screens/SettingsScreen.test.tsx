@@ -34,7 +34,6 @@ jest.mock("@/services/settings/settingsRepository", () => ({
 jest.mock("@/features/notifications", () => ({
   cancelAllFavouriteNotifications: jest.fn(),
   cancelAllSaintNotifications: jest.fn(),
-  scheduleCategoryNotifications: jest.fn(),
   scheduleFavouriteNotifications: jest.fn(),
   scheduleSaintNotificationsForNext7Days: jest.fn(),
 }));
