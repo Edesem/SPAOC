@@ -91,7 +91,7 @@ export async function loadNotificationToggles(): Promise<{
   const dailySaints = await AsyncStorage.getItem(
     DAILY_SAINTS_NOTIFICATIONS_KEY,
   );
-  if (dailySaints !== "true")
+  if (dailySaints === null)
     await writeFlag(DAILY_SAINTS_NOTIFICATIONS_KEY, true);
 
   const favourites = await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_KEY);
