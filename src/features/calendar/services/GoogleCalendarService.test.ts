@@ -380,6 +380,40 @@ describe("GoogleCalendarService", () => {
       consoleErrorSpy.mockRestore();
     });
   });
+
+  describe("getSaintsForDateOrThrow", () => {
+    it("returns saint names, and an empty list for a day without saints", async () => {
+      fetchFn.mockResolvedValueOnce(
+        okResponse([
+          googleEvent("s1", "2026-08-13T00:00:00Z", { summary: "St Paul" }),
+        ]),
+      );
+      fetchFn.mockResolvedValueOnce(okResponse([]));
+
+      await expect(
+        service.getSaintsForDateOrThrow(new Date()),
+      ).resolves.toEqual(["St Paul"]);
+      await expect(
+        service.getSaintsForDateOrThrow(new Date()),
+      ).resolves.toEqual([]);
+    });
+
+    it("rejects when the network request fails", async () => {
+      fetchFn.mockRejectedValue(new Error("Network error"));
+
+      await expect(service.getSaintsForDateOrThrow(new Date())).rejects.toThrow(
+        "Network error",
+      );
+    });
+
+    it("rejects when the response is not ok", async () => {
+      fetchFn.mockResolvedValue(errorResponse(500));
+
+      await expect(service.getSaintsForDateOrThrow(new Date())).rejects.toThrow(
+        "HTTP error! Status: 500",
+      );
+    });
+  });
 });
 
 describe("GoogleCalendarService with the global fetch", () => {
