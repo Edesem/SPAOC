@@ -163,7 +163,7 @@ Rules for the reconcile step:
 - [notificationGateway.ts](../services/notifications/notificationGateway.ts) is the only code that calls Expo to schedule, list or cancel. `listScheduled` returns `key: null` for anything without usable stored data, and `kind: "saint"` for an old "Saint of the Day" notification.
 - [saintNotifications.ts](../services/notifications/saintNotifications.ts) plans the next 7 days with `planSaintNotifications` and schedules only the parish days Expo does not already hold. It does not cancel a saint that is no longer planned: `getSaintsForDate` returns `[]` on a failed fetch, so cancelling would drop the week. A saint notification with no key (scheduled before this change) is cancelled and replaced. `cancelAllSaintNotifications` cancels by kind.
 - [favouriteNotifications.ts](../services/notifications/favouriteNotifications.ts) keeps the existing timing and text, keys each notification `favourite:<event id>`, and cancels by kind. This fixes the title mismatch that made favourites impossible to cancel.
-- [calendarNotifications.ts](../services/notifications/calendarNotifications.ts) holds the old category scheduling, keyed `calendar:<calendar>:<event id>`. It is still not wired to anything.
+- The old category scheduling (`calendarNotifications.ts`) was deleted in #94. It read `events-<calendar>` keys that nothing ever wrote, so it never ran. The planner's calendar plan (`calendarNotificationKey`) is its replacement.
 - No code reads or writes `notified-*` in AsyncStorage any more. Markers left on devices by older versions are harmless and are not cleaned up.
 - `utils/notifications.ts` re-exported these at the time, so the Settings screen and Home hook were unchanged. #93 deleted it.
 
