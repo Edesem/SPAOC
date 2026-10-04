@@ -3,7 +3,7 @@ import { useSettingsStore } from "@/services/settings";
 import * as Notifications from "expo-notifications";
 
 import { listScheduled, schedule } from "./notificationGateway";
-import { syncNotifications } from "./syncNotifications";
+import { SAINT_DAYS_AHEAD, syncNotifications } from "./syncNotifications";
 
 jest.mock("expo-notifications", () =>
   jest
@@ -89,10 +89,10 @@ describe("syncNotifications", () => {
     ]);
   });
 
-  it("loads seven days of saints", async () => {
+  it("loads SAINT_DAYS_AHEAD days of saints", async () => {
     await syncNotifications();
 
-    expect(mockGetSaintsForDateOrThrow).toHaveBeenCalledTimes(7);
+    expect(mockGetSaintsForDateOrThrow).toHaveBeenCalledTimes(SAINT_DAYS_AHEAD);
   });
 
   it("does not schedule today once its 8am has passed", async () => {
