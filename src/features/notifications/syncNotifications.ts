@@ -10,7 +10,7 @@ import {
   type SaintDay,
 } from "./notificationPlanner";
 
-const SAINT_DAYS_AHEAD = 7;
+export const SAINT_DAYS_AHEAD = 7;
 
 // Rejects if any day cannot be loaded: a partial week would look like days with
 // no saints, and reconciling against it would cancel their notifications.
