@@ -83,18 +83,21 @@ export class GoogleCalendarService implements CalendarDataService {
     return items.map((item) => normalizeGoogleEvent(item, source));
   }
 
+  // Rejects on failure, so a failed request is not mistaken for a day with no
+  // saints. Use this where acting on "no saints" would do harm.
+  async getSaintsForDateOrThrow(date: Date): Promise<string[]> {
+    const items = await this.listEvents(this.saintsCalendar.calendarId, {
+      timeMin: startOfParishDay(date).toISOString(),
+      timeMax: endOfParishDay(date).toISOString(),
+    });
+
+    return items.map((item) => item.summary || "Unnamed Saint");
+  }
+
   // Returns an empty list on failure so callers can treat it as "no saints"
   async getSaintsForDate(date: Date): Promise<string[]> {
-    const dayStart = startOfParishDay(date);
-    const dayEnd = endOfParishDay(date);
-
     try {
-      const items = await this.listEvents(this.saintsCalendar.calendarId, {
-        timeMin: dayStart.toISOString(),
-        timeMax: dayEnd.toISOString(),
-      });
-
-      return items.map((item) => item.summary || "Unnamed Saint");
+      return await this.getSaintsForDateOrThrow(date);
     } catch (error) {
       console.error("Error fetching saints for", date.toDateString(), error);
       return [];

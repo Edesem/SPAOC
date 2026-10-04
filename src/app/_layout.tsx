@@ -11,9 +11,9 @@ import { useFavouritesStore } from '@/features/calendar';
 import { useSettingsStore } from '@/services/settings';
 import {
   requestNotificationPermissions,
-  scheduleSaintNotificationsForNext7Days,
   setupNotificationHandler,
   setupNotificationListeners,
+  syncNotifications,
 } from '@/features/notifications';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -42,16 +42,21 @@ export default function RootLayout() {
   }, []);
 
   // Notification infrastructure belongs to the app, not to a screen: install
-  // the handler, ask for permission, listen, and top up the saint schedule once
-  // here, so it all works whichever screen opens first.
+  // the handler, ask for permission and listen here, so it all works whichever
+  // screen opens first.
   useEffect(() => {
     setupNotificationHandler();
     requestNotificationPermissions();
-    const removeListeners = setupNotificationListeners();
-    scheduleSaintNotificationsForNext7Days();
-
-    return removeListeners;
+    return setupNotificationListeners();
   }, []);
+
+  // Bring the schedule up to date once settings have loaded. Before that the
+  // store only holds defaults, which could schedule what the user switched off.
+  useEffect(() => {
+    if (hydrated) {
+      syncNotifications();
+    }
+  }, [hydrated]);
 
   const ready = loaded && hydrated;
 
