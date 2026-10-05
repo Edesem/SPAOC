@@ -112,9 +112,6 @@ export class Antiochian {
 
     if (response.status !== 200) return null;
 
-    // Raw data
-    //console.log(`Raw response data for ${dt?.toDateString() || 'default'}:\n`, JSON.stringify(response.data, null, 2));
-
     const day: LiturgicalDay = response.data.liturgicalDay;
 
     if (!this.idAnchor) {

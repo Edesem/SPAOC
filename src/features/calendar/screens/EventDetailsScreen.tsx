@@ -105,7 +105,6 @@ const EventDetailsScreen = () => {
 
   const openInMaps = async () => {
     if (!location) return;
-    console.log(Platform.OS);
 
     const query = encodeURIComponent(location);
     const encodedQuery = encodeURIComponent(query);
