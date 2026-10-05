@@ -12,6 +12,33 @@ export type HomeEventSection = GroupedEventSection & { sectionIndex: number };
 export const getSaintsTitle = (todaysSaints: string[]): string =>
   todaysSaints.length > 1 ? "Today's Feasts" : "Today's Feast:";
 
+const LOAD_SOURCE_LABELS = {
+  events: "events",
+  saints: "today's feast",
+  fast: "the fast",
+} as const;
+
+// One non-blocking message for whichever Home sources failed to load, or null
+// when none did. Each value is that source's error, null if it loaded.
+export const getLoadErrorMessage = (
+  errors: Record<keyof typeof LOAD_SOURCE_LABELS, string | null>,
+): string | null => {
+  const failed = (
+    Object.keys(LOAD_SOURCE_LABELS) as (keyof typeof LOAD_SOURCE_LABELS)[]
+  )
+    .filter((source) => errors[source])
+    .map((source) => LOAD_SOURCE_LABELS[source]);
+
+  if (failed.length === 0) return null;
+
+  const list =
+    failed.length === 1
+      ? failed[0]
+      : `${failed.slice(0, -1).join(", ")} and ${failed[failed.length - 1]}`;
+
+  return `Couldn't load ${list}. Pull down to retry.`;
+};
+
 // Initial screen behaviour: with no month picked, every event section shows.
 export const filterSectionsByMonth = (
   groupedEvents: GroupedEventSection[],

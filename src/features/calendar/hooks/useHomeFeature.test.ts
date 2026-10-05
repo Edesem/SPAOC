@@ -10,21 +10,33 @@ const mockRefetchFast = jest.fn();
 const mockRequestNotificationPermissions = jest.fn();
 const mockSetupNotificationListeners = jest.fn();
 
-let mockDailySaintState = {
+let mockDailySaintState: {
+  todaysSaints: string[];
+  error: string | null;
+  refetchSaints: jest.Mock;
+} = {
   todaysSaints: ["St. Test"],
+  error: null,
   refetchSaints: mockRefetchSaints,
 };
-let mockEventsState: { groupedEvents: any[]; refetch: jest.Mock } = {
+let mockEventsState: {
+  groupedEvents: any[];
+  error: string | null;
+  refetch: jest.Mock;
+} = {
   groupedEvents: [],
+  error: null,
   refetch: mockRefetchEvents,
 };
 let mockFastDayState: {
   events: FastKind[];
   fastLoading: boolean;
+  error: string | null;
   refetch: jest.Mock;
 } = {
   events: [],
   fastLoading: false,
+  error: null,
   refetch: mockRefetchFast,
 };
 
@@ -50,12 +62,18 @@ describe("useHomeFeature", () => {
     jest.clearAllMocks();
     mockDailySaintState = {
       todaysSaints: ["St. Test"],
+      error: null,
       refetchSaints: mockRefetchSaints,
     };
-    mockEventsState = { groupedEvents: [], refetch: mockRefetchEvents };
+    mockEventsState = {
+      groupedEvents: [],
+      error: null,
+      refetch: mockRefetchEvents,
+    };
     mockFastDayState = {
       events: [],
       fastLoading: false,
+      error: null,
       refetch: mockRefetchFast,
     };
   });
@@ -105,6 +123,64 @@ describe("useHomeFeature", () => {
     expect(mockRefetchEvents).not.toHaveBeenCalled();
   });
 
+  describe("when a source fails to load", () => {
+    it("has no load error message when everything loads", async () => {
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.loadErrorMessage).toBeNull();
+    });
+
+    it("reports a failed events load", async () => {
+      mockEventsState = { ...mockEventsState, error: "Could not load events." };
+
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.loadErrorMessage).toBe(
+        "Couldn't load events. Pull down to retry.",
+      );
+    });
+
+    it("reports a failed saints load, not as a day without saints", async () => {
+      mockDailySaintState = {
+        ...mockDailySaintState,
+        todaysSaints: [],
+        error: "Could not load today's saints.",
+      };
+
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.loadErrorMessage).toBe(
+        "Couldn't load today's feast. Pull down to retry.",
+      );
+    });
+
+    it("reports a failed fast day load", async () => {
+      mockFastDayState = {
+        ...mockFastDayState,
+        error: "Could not load the fasting calendar.",
+      };
+
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.loadErrorMessage).toBe(
+        "Couldn't load the fast. Pull down to retry.",
+      );
+    });
+
+    it("keeps showing the events that did load", async () => {
+      mockEventsState = {
+        groupedEvents: [{ title: "Day", data: [{ id: "1" }] }],
+        error: null,
+        refetch: mockRefetchEvents,
+      };
+      mockFastDayState = { ...mockFastDayState, error: "x" };
+
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.sections).toHaveLength(1);
+    });
+  });
+
   it("titles the saint section for a single saint", async () => {
     const { result } = await renderHook(() => useHomeFeature());
 
@@ -114,6 +190,7 @@ describe("useHomeFeature", () => {
   it("titles the saint section for multiple saints", async () => {
     mockDailySaintState = {
       todaysSaints: ["St. A", "St. B"],
+      error: null,
       refetchSaints: mockRefetchSaints,
     };
 
@@ -133,6 +210,7 @@ describe("useHomeFeature", () => {
     mockFastDayState = {
       events: [FastKind.GreatLent, FastKind.StrictFast],
       fastLoading: false,
+      error: null,
       refetch: mockRefetchFast,
     };
 
@@ -160,6 +238,7 @@ describe("useHomeFeature", () => {
   it("returns only the event sections, with no placeholder sections", async () => {
     mockEventsState = {
       groupedEvents: [{ title: "Day", data: [{ id: "1" }] }],
+      error: null,
       refetch: mockRefetchEvents,
     };
 
@@ -178,6 +257,7 @@ describe("useHomeFeature", () => {
 
   it("filters events to the picked month and closes the picker", async () => {
     mockEventsState = {
+      error: null,
       groupedEvents: [
         {
           title: "Day",
@@ -215,6 +295,7 @@ describe("useHomeFeature", () => {
 
   describe("clearing the month filter", () => {
     const marchAndApril = () => ({
+      error: null,
       groupedEvents: [
         {
           title: "Day",
@@ -311,12 +392,18 @@ describe("useHomeFeature foreground refresh", () => {
     jest.clearAllMocks();
     mockDailySaintState = {
       todaysSaints: ["St. Test"],
+      error: null,
       refetchSaints: mockRefetchSaints,
     };
-    mockEventsState = { groupedEvents: [], refetch: mockRefetchEvents };
+    mockEventsState = {
+      groupedEvents: [],
+      error: null,
+      refetch: mockRefetchEvents,
+    };
     mockFastDayState = {
       events: [],
       fastLoading: false,
+      error: null,
       refetch: mockRefetchFast,
     };
     appState = installFakeAppState();

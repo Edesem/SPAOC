@@ -1,12 +1,12 @@
 import { resetNow, setNow } from "@/lib/parishTime";
 import { useDailySaint } from "./useDailySaint";
-import { renderHook, waitFor } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 const mockGetSaintsForDate = jest.fn();
 
 jest.mock("../services", () => ({
   calendarService: {
-    getSaintsForDate: (date: Date) => mockGetSaintsForDate(date),
+    getSaintsForDateOrThrow: (date: Date) => mockGetSaintsForDate(date),
   },
 }));
 
@@ -31,14 +31,46 @@ describe("useDailySaint", () => {
     expect(result.current.error).toBeNull();
   });
 
-  it("reports an error when there are no saints today", async () => {
+  it("shows no saints and no error on a day without saints", async () => {
     mockGetSaintsForDate.mockResolvedValue([]);
 
     const { result } = await renderHook(() => useDailySaint());
+    await waitFor(() => expect(mockGetSaintsForDate).toHaveBeenCalled());
+
+    expect(result.current.todaysSaints).toEqual([]);
+    expect(result.current.error).toBeNull();
+  });
+
+  it("reports an error when the saints request fails", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    mockGetSaintsForDate.mockRejectedValue(new Error("Network error"));
+
+    const { result } = await renderHook(() => useDailySaint());
     await waitFor(() =>
-      expect(result.current.error).toBe("No saints found for today."),
+      expect(result.current.error).toBe("Could not load today's saints."),
     );
 
     expect(result.current.todaysSaints).toEqual([]);
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("clears the error once a refetch succeeds", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    mockGetSaintsForDate.mockRejectedValueOnce(new Error("Network error"));
+    const { result } = await renderHook(() => useDailySaint());
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+
+    mockGetSaintsForDate.mockResolvedValue(["St. Test"]);
+    await act(async () => {
+      await result.current.refetchSaints();
+    });
+
+    expect(result.current.error).toBeNull();
+    expect(result.current.todaysSaints).toEqual(["St. Test"]);
+    consoleErrorSpy.mockRestore();
   });
 });

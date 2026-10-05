@@ -16,6 +16,7 @@ const baseFeature = {
   todaysSaints: ["St. Test", "St. Other"],
   todaysSaintsTitle: "Today's Feasts",
   fastLoading: false,
+  loadErrorMessage: null as string | null,
   majorFastLabel: "Great Lent",
   minorFastLabel: "Fast free day",
   sections: [] as any[],
@@ -121,6 +122,27 @@ describe("HomeScreen", () => {
     expect(getByText("St. Test\nSt. Other")).toBeTruthy();
     expect(getByText("Great Lent")).toBeTruthy();
     expect(getByText("Fast free day")).toBeTruthy();
+  });
+
+  it("shows no load error message when everything loads", async () => {
+    const { queryByRole } = await render(<HomeScreen />);
+
+    expect(queryByRole("alert")).toBeNull();
+  });
+
+  it("shows the load error message without hiding the rest of Home", async () => {
+    mockFeature = {
+      ...baseFeature,
+      loadErrorMessage: "Couldn't load events. Pull down to retry.",
+    };
+
+    const { getByRole, getByText } = await render(<HomeScreen />);
+
+    expect(getByRole("alert")).toHaveTextContent(
+      "Couldn't load events. Pull down to retry.",
+    );
+    expect(getByText("Today's Feasts")).toBeTruthy();
+    expect(getByText("Great Lent")).toBeTruthy();
   });
 
   it("shows the top and bottom images around the events", async () => {

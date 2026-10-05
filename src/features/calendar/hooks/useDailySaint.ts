@@ -6,15 +6,14 @@ export const useDailySaint = () => {
   const [todaysSaints, setTodaySaints] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  // A failed request sets an error; a day without saints does not.
   const fetchSaintsForToday = useCallback(async () => {
-    const saints = await calendarService.getSaintsForDate(now());
-
-    if (saints.length > 0) {
-      setTodaySaints(saints);
+    try {
+      setTodaySaints(await calendarService.getSaintsForDateOrThrow(now()));
       setError(null);
-    } else {
-      setTodaySaints([]);
-      setError("No saints found for today.");
+    } catch (error) {
+      console.error("Error fetching saints:", error);
+      setError("Could not load today's saints.");
     }
   }, []);
 
