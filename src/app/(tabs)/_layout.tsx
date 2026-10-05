@@ -1,31 +1,13 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
-import { ColorValue, DynamicColorIOS, Platform } from "react-native";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
+import { DynamicColorIOS, Platform } from "react-native";
 
-import { Ionicons } from "@expo/vector-icons";
-import { DarkTheme, DefaultTheme, Tabs, ThemeProvider } from "expo-router";
-import type { ComponentProps } from "react";
-
-type IconName = ComponentProps<typeof Ionicons>["name"];
-
-const tabIcon = (focusedName: IconName, name: IconName) => {
-  const TabIcon = ({
-    focused,
-    color,
-    size,
-  }: {
-    focused: boolean;
-    color: ColorValue;
-    size: number;
-  }) => (
-    <Ionicons name={focused ? focusedName : name} size={size} color={color} />
-  );
-
-  return TabIcon;
-};
+const INACTIVE_COLOUR = "#888";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const palette = colorScheme === "dark" ? Colours.dark : Colours.light;
 
   const tintColor =
     Platform.OS === "ios"
@@ -33,57 +15,55 @@ export default function TabLayout() {
           dark: Colours.dark.primary,
           light: Colours.light.primary,
         })
-      : colorScheme === "dark"
-        ? Colours.dark.primary
-        : Colours.light.primary;
-
-  const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
+      : palette.primary;
 
   return (
-    <ThemeProvider value={theme}>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarActiveTintColor: tintColor,
-          tabBarInactiveTintColor: "#888",
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Events",
-            tabBarIcon: tabIcon("calendar", "calendar-outline"),
-          }}
+    <NativeTabs
+      tintColor={tintColor}
+      iconColor={{ default: INACTIVE_COLOUR, selected: tintColor }}
+      labelStyle={{
+        default: { color: INACTIVE_COLOUR },
+        selected: { color: tintColor },
+      }}
+    >
+      <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "calendar", selected: "calendar" }}
+          md="event"
         />
-        <Tabs.Screen
-          name="favourites"
-          options={{
-            title: "Favourites",
-            tabBarIcon: tabIcon("star", "star-outline"),
-          }}
+        <NativeTabs.Trigger.Label>Events</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="favourites">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "star", selected: "star.fill" }}
+          md="star"
         />
-        <Tabs.Screen
-          name="prayer"
-          options={{
-            title: "Prayer",
-            tabBarIcon: tabIcon("book", "book-outline"),
-          }}
+        <NativeTabs.Trigger.Label>Favourites</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="prayer">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "book", selected: "book.fill" }}
+          md="menu_book"
         />
-        <Tabs.Screen
-          name="about"
-          options={{
-            title: "About",
-            tabBarIcon: tabIcon("person", "person-outline"),
-          }}
+        <NativeTabs.Trigger.Label>Prayer</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="about">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "person", selected: "person.fill" }}
+          md="person"
         />
-        <Tabs.Screen
-          name="help"
-          options={{
-            title: "Help",
-            tabBarIcon: tabIcon("help-circle", "help-circle-outline"),
+        <NativeTabs.Trigger.Label>About</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="help">
+        <NativeTabs.Trigger.Icon
+          sf={{
+            default: "questionmark.circle",
+            selected: "questionmark.circle.fill",
           }}
+          md="help"
         />
-      </Tabs>
-    </ThemeProvider>
+        <NativeTabs.Trigger.Label>Help</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
