@@ -1,3 +1,4 @@
+import { now as appNow } from "@/lib/parishTime";
 import type { EventData } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -44,7 +45,7 @@ export async function removeFavourite(event: EventData): Promise<void> {
 // Permanently drops favourites whose end time is not after `now` and returns
 // the ones that remain. Leaves storage untouched when there are no favourites.
 export async function removeExpiredFavourites(
-  now: Date = new Date(),
+  now: Date = appNow(),
 ): Promise<EventData[]> {
   const favourites = await getFavourites();
   if (favourites.length === 0) return [];
