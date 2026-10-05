@@ -3,6 +3,7 @@ import {
   groupEventsByDay,
   getStartOfWeek,
 } from "./dateUtils";
+import type { EventData } from "../types";
 import { resetNow, setNow } from "@/lib/parishTime";
 
 describe("formatDateHeading", () => {
@@ -130,7 +131,7 @@ describe("groupEventsByDay", () => {
   it("should group events correctly by day", () => {
     jest.setSystemTime(new Date("2026-08-13T08:00:00.000+10:00"));
 
-    const events = [
+    const events: EventData[] = [
       {
         id: "1",
         title: "Event 1",
@@ -139,7 +140,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
       {
         id: "2",
@@ -149,7 +150,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source2",
+        source: "church",
       },
       {
         id: "3",
@@ -159,7 +160,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
     ];
 
@@ -176,7 +177,7 @@ describe("groupEventsByDay", () => {
   it("should group events correctly by day with next week and later labels", () => {
     jest.setSystemTime(new Date("2026-08-13T08:00:00.000+10:00"));
 
-    const events = [
+    const events: EventData[] = [
       {
         id: "1",
         title: "Event 1",
@@ -185,7 +186,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
       {
         id: "2",
@@ -195,7 +196,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source2",
+        source: "church",
       },
       {
         id: "3",
@@ -205,7 +206,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
     ];
 
@@ -229,7 +230,7 @@ describe("groupEventsByDay", () => {
   it("should handle events before the current week correctly", () => {
     jest.setSystemTime(new Date("2026-08-13T08:00:00.000+10:00"));
 
-    const events = [
+    const events: EventData[] = [
       {
         id: "1",
         title: "Event 1",
@@ -238,7 +239,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
       {
         id: "2",
@@ -248,7 +249,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source2",
+        source: "church",
       },
     ];
 
@@ -268,7 +269,7 @@ describe("groupEventsByDay", () => {
   it("should sort dates into chronological order", () => {
     jest.setSystemTime(new Date("2026-08-13T08:00:00.000+10:00"));
 
-    const events = [
+    const events: EventData[] = [
       {
         id: "3",
         title: "Event 3",
@@ -277,7 +278,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
       {
         id: "2",
@@ -287,7 +288,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source2",
+        source: "church",
       },
       {
         id: "1",
@@ -297,7 +298,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
     ];
 
@@ -321,7 +322,7 @@ describe("groupEventsByDay", () => {
   it("handles next week boundaries correctly", () => {
     jest.setSystemTime(new Date("2026-08-13T08:00:00.000+10:00"));
 
-    const events = [
+    const events: EventData[] = [
       {
         id: "1",
         title: "Event 1",
@@ -330,7 +331,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
       {
         id: "2",
@@ -340,7 +341,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source2",
+        source: "church",
       },
       {
         id: "3",
@@ -350,7 +351,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
       {
         id: "4",
@@ -360,7 +361,7 @@ describe("groupEventsByDay", () => {
         allDay: false,
         description: "",
         location: "",
-        source: "source1",
+        source: "youth",
       },
     ];
 

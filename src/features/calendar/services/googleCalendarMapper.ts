@@ -1,4 +1,5 @@
 import { startOfParishDayFromKey } from "@/lib/parishTime";
+import type { EventSourceName } from "@/domain/calendarSources";
 import type { CalendarEvent } from "./CalendarDataService";
 
 // Subset of a Google Calendar API v3 event resource that the app reads.
@@ -45,7 +46,7 @@ const normalizeEnd = (event: GoogleCalendarEvent, allDay: boolean): string => {
 // checks for null.
 export const normalizeGoogleEvent = (
   event: GoogleCalendarEvent,
-  source: string,
+  source: EventSourceName,
 ): CalendarEvent => {
   const allDay = isAllDay(event);
   return {

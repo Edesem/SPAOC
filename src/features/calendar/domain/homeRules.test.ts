@@ -14,7 +14,7 @@ const event = (id: string, start: string): EventData => ({
   allDay: false,
   description: "",
   location: "",
-  source: "source",
+  source: "church",
 });
 
 describe("getSaintsTitle", () => {
