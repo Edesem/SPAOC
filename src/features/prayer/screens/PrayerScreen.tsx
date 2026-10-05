@@ -2,12 +2,12 @@ import { ThemedText } from "@/components/ThemedText";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { lentenServices, prayers, services } from "../catalogue";
 import { styles } from "../prayerStyles";
-import { openPdf, openServicePdf } from "../openServicePdf";
+import PdfListSection from "../components/PdfListSection";
+import { openServicePdf } from "../openServicePdf";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { DailyReadingsParams } from "@/types/routes";
@@ -420,160 +420,13 @@ export default function PrayerScreen(): JSX.Element {
             )}
           </View>
 
-          {/* Additional Prayers Section */}
-          <View
-            style={[
-              styles.contentSection,
-              { backgroundColor: theme.itemBackground },
-            ]}
-          >
-            <Text style={CommonStyles.sectionTitle}>Prayers</Text>
-            <View style={styles.divider} />
-
-            {prayers.map((prayer) => (
-              <TouchableOpacity
-                key={prayer.title}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  openPdf(router, { url: prayer.url, title: prayer.title });
-                }}
-                activeOpacity={0.6}
-              >
-                <View style={[styles.rowContainer]}>
-                  <FontAwesomeIcon
-                    icon={prayer.icon}
-                    size={35}
-                    color={theme.moreImportantText}
-                    style={styles.icon}
-                  />
-                  <View style={styles.textContainer}>
-                    <Text
-                      style={[
-                        styles.prayerTitle,
-                        { color: theme.moreImportantText },
-                      ]}
-                    >
-                      {prayer.title}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.prayerSubtitle,
-                        { color: theme.lessImportantText },
-                      ]}
-                    >
-                      {prayer.subtitle}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Additional Services Section */}
-          <View
-            style={[
-              styles.contentSection,
-              { backgroundColor: theme.itemBackground },
-            ]}
-          >
-            <Text style={CommonStyles.sectionTitle}>Services</Text>
-            <View style={styles.divider} />
-
-            {services.map((service) => (
-              <TouchableOpacity
-                key={service.title}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  openServicePdf(router, {
-                    url: service.url,
-                    title: service.title,
-                  });
-                }}
-                activeOpacity={0.6}
-              >
-                <View style={[styles.rowContainer]}>
-                  {/* Render the specific icon for each service */}
-                  <FontAwesomeIcon
-                    icon={service.icon}
-                    size={35}
-                    color={theme.moreImportantText}
-                    style={styles.icon}
-                  />
-                  <View style={styles.textContainer}>
-                    <Text
-                      style={[
-                        styles.prayerTitle,
-                        { color: theme.moreImportantText },
-                      ]}
-                    >
-                      {service.title}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.prayerSubtitle,
-                        { color: theme.lessImportantText },
-                      ]}
-                    >
-                      {service.subtitle}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Lenten Services Section */}
-          <View
-            style={[
-              styles.contentSection,
-              { backgroundColor: theme.itemBackground },
-            ]}
-          >
-            <Text style={CommonStyles.sectionTitle}>Lenten Services</Text>
-            <View style={styles.divider} />
-
-            {lentenServices.map((service) => (
-              <TouchableOpacity
-                key={service.title}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  openServicePdf(router, {
-                    url: service.url,
-                    title: service.title,
-                  });
-                }}
-                activeOpacity={0.6}
-              >
-                <View style={[styles.rowContainer]}>
-                  {/* Render the specific icon for each service */}
-                  <FontAwesomeIcon
-                    icon={service.icon}
-                    size={35}
-                    color={theme.moreImportantText}
-                    style={styles.icon}
-                  />
-                  <View style={styles.textContainer}>
-                    <Text
-                      style={[
-                        styles.prayerTitle,
-                        { color: theme.moreImportantText },
-                      ]}
-                    >
-                      {service.title}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.prayerSubtitle,
-                        { color: theme.lessImportantText },
-                      ]}
-                    >
-                      {service.subtitle}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <PdfListSection heading="Prayers" entries={prayers} />
+          <PdfListSection heading="Services" entries={services} silencePhone />
+          <PdfListSection
+            heading="Lenten Services"
+            entries={lentenServices}
+            silencePhone
+          />
 
           {/* Image */}
           <View style={styles.imageContainer}>
