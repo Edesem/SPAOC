@@ -73,6 +73,47 @@ describe("useEvents", () => {
     consoleErrorSpy.mockRestore();
   });
 
+  it("has no error when the events load", async () => {
+    getParishEvents.mockResolvedValue([event]);
+
+    const { result } = await renderHook(() => useEvents());
+
+    await waitFor(() => expect(result.current.events).toEqual([event]));
+    expect(result.current.error).toBeNull();
+  });
+
+  it("reports an error when the service fails", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    getParishEvents.mockRejectedValue(new Error("Network error"));
+
+    const { result } = await renderHook(() => useEvents());
+
+    await waitFor(() =>
+      expect(result.current.error).toBe("Could not load events."),
+    );
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("clears the error once a refetch succeeds", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    getParishEvents.mockRejectedValueOnce(new Error("Network error"));
+    const { result } = await renderHook(() => useEvents());
+    await waitFor(() => expect(result.current.error).not.toBeNull());
+
+    getParishEvents.mockResolvedValue([event]);
+    await act(async () => {
+      result.current.refetch();
+    });
+
+    await waitFor(() => expect(result.current.error).toBeNull());
+    expect(result.current.events).toEqual([event]);
+    consoleErrorSpy.mockRestore();
+  });
+
   it("regroups events when the start of week changes", async () => {
     getParishEvents.mockResolvedValue([event]);
     await renderHook(() => useEvents());
