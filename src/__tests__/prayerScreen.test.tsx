@@ -1,0 +1,595 @@
+import PrayerScreen from "@/app/(tabs)/prayer";
+import {
+  AKATHIST_URL,
+  CENSING_HOME_URL,
+  GREAT_COMPLINE_URL,
+  GREAT_VESPERS_URL,
+  MATINS_BILINGUAL_URL,
+  MATINS_URL,
+  MORNING_PRAYERS_URL,
+  PARAKLESIS_URL,
+  PREPARATION_FOR_COMMUNION_URL,
+  PRESANCTIFIED_LITURGY_URL,
+  SMALL_COMPLINE_PRIEST_URL,
+  SMALL_COMPLINE_URL,
+} from "@/features/prayer";
+import type { LiturgicalData, Reading } from "@/features/prayer/services";
+import type { DailyReadingsParams, PdfViewerParams } from "@/types/routes";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react-native";
+import React from "react";
+import { Alert } from "react-native";
+
+// The screen is tested against a fake usePrayerFeature, the same way
+// HomeScreen is tested against useHomeFeature. What the feature returns is
+// covered by usePrayerFeature.test.ts. The screen never reads the clock
+// itself (the date comes from the feature), so there is nothing to pin here.
+// This is a route file, so its test lives in src/__tests__/.
+
+const mockLoad = jest.fn();
+const mockRefresh = jest.fn();
+const mockPush = jest.fn();
+
+const baseFeature = {
+  selectedDate: new Date(2026, 2, 15, 12), // Sunday 15 March 2026, local time
+  loading: false,
+  refreshing: false,
+  error: null as Error | null,
+  data: null as LiturgicalData | null,
+  load: mockLoad,
+  refresh: mockRefresh,
+};
+
+let mockFeature: typeof baseFeature = baseFeature;
+let mockPickerProps: {
+  isVisible: boolean;
+  date: Date;
+  onConfirm: (date: Date) => void;
+  onCancel: () => void;
+};
+
+jest.mock("@/features/prayer/hooks/usePrayerFeature", () => ({
+  usePrayerFeature: () => mockFeature,
+}));
+
+jest.mock("expo-router", () => ({
+  useRouter: () => ({ push: mockPush }),
+}));
+
+jest.mock("expo-haptics", () => ({
+  impactAsync: jest.fn(),
+  ImpactFeedbackStyle: { Medium: "medium" },
+}));
+
+jest.mock("react-native-safe-area-context", () => {
+  const React = require("react");
+  const { View } = require("react-native");
+
+  const SafeArea = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(View, null, children);
+
+  return {
+    SafeAreaProvider: SafeArea,
+    SafeAreaView: SafeArea,
+    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+  };
+});
+
+// Renders nothing, but keeps the props so a test can see whether the picker is
+// open and answer it the way the native dialog would.
+jest.mock("react-native-modal-datetime-picker", () => (props: any) => {
+  mockPickerProps = props;
+  return null;
+});
+
+// The package ships untranspiled ESM, which Jest can't load.
+jest.mock("@fortawesome/react-native-fontawesome", () => ({
+  FontAwesomeIcon: () => null,
+}));
+
+// Gives the calendar button something to find and press.
+jest.mock("@/components/ui/IconSymbol", () => {
+  const { Text } = require("react-native");
+  return { IconSymbol: ({ name }: { name: string }) => <Text>{name}</Text> };
+});
+
+const reading = (
+  kind: Reading["kind"],
+  title: string,
+  overrides: Partial<Reading> = {},
+): Reading => ({
+  kind,
+  title,
+  teaser: `${title} teaser`,
+  fullText: `${title} full text`,
+  ...overrides,
+});
+
+const epistle = reading("epistle", "HEBREWS 11:24-26");
+const gospel = reading("gospel", "MARK 2:1-12");
+const thirdReading = reading("thirdReading", "GENESIS 1:1-13");
+
+const dataWith = (overrides: Partial<LiturgicalData> = {}): LiturgicalData => ({
+  day: { feastTitle: null, readings: [epistle, gospel] },
+  services: [],
+  ...overrides,
+});
+
+const section = (heading: string) => {
+  const parent = screen.getByText(heading).parent;
+  if (!parent) throw new Error(`No section for ${heading}`);
+  return within(parent);
+};
+
+// What the OK button on the "Silence Your Phone!" alert does.
+const confirmAlert = async () => {
+  const buttons = (Alert.alert as jest.Mock).mock.calls[0][2];
+  await act(async () => buttons[0].onPress());
+};
+
+describe("PrayerScreen", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFeature = baseFeature;
+    jest.spyOn(Alert, "alert").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe("header", () => {
+    it("shows the selected date", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Sunday, March 15, 2026")).toBeTruthy();
+    });
+
+    it("shows the feast title in title case", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: {
+            feastTitle: "THE SUNDAY OF ORTHODOXY",
+            readings: [epistle, gospel],
+          },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("The Sunday of Orthodoxy")).toBeTruthy();
+    });
+
+    it("shows no feast title when the day has none", async () => {
+      mockFeature = { ...baseFeature, data: dataWith() };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.queryByText("The Sunday of Orthodoxy")).toBeNull();
+    });
+  });
+
+  describe("loading", () => {
+    beforeEach(() => {
+      mockFeature = { ...baseFeature, loading: true };
+    });
+
+    it("shows loading messages for the readings and the daily texts", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Loading Readings...")).toBeTruthy();
+      expect(screen.getByText("Loading readings...")).toBeTruthy();
+      expect(screen.getByText("Loading prayers...")).toBeTruthy();
+    });
+
+    it("shows no reading cards or daily texts while loading", async () => {
+      mockFeature = {
+        ...mockFeature,
+        data: dataWith({
+          services: [{ title: "Daily Vespers", pdfUrl: "https://x/v.pdf" }],
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.queryByText("Hebrews 11:24-26")).toBeNull();
+      expect(screen.queryByText("Daily Vespers")).toBeNull();
+    });
+
+    it("still shows the fixed prayer lists", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Prayers")).toBeTruthy();
+      expect(screen.getByText("Morning Prayers")).toBeTruthy();
+    });
+  });
+
+  describe("daily texts", () => {
+    it("shows an error message when the load failed", async () => {
+      mockFeature = { ...baseFeature, error: new Error("offline") };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Error loading prayers")).toBeTruthy();
+      expect(
+        screen.queryByText("There are no liturgical texts today."),
+      ).toBeNull();
+    });
+
+    it("shows the empty message when the day has no services", async () => {
+      mockFeature = { ...baseFeature, data: dataWith({ services: [] }) };
+
+      await render(<PrayerScreen />);
+
+      expect(
+        screen.getByText("There are no liturgical texts today."),
+      ).toBeTruthy();
+      expect(screen.queryByText("Error loading prayers")).toBeNull();
+    });
+
+    it("shows the empty message when the provider listed no services", async () => {
+      mockFeature = { ...baseFeature, data: dataWith({ services: null }) };
+
+      await render(<PrayerScreen />);
+
+      expect(
+        screen.getByText("There are no liturgical texts today."),
+      ).toBeTruthy();
+    });
+
+    it("shows the empty message before any data has arrived", async () => {
+      await render(<PrayerScreen />);
+
+      expect(
+        screen.getByText("There are no liturgical texts today."),
+      ).toBeTruthy();
+    });
+
+    it("lists each of the day's services", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          services: [
+            { title: "Daily Vespers", pdfUrl: "https://x/vespers.pdf" },
+            { title: "Daily Matins", pdfUrl: "https://x/matins.pdf" },
+          ],
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Daily Vespers")).toBeTruthy();
+      expect(screen.getByText("Daily Matins")).toBeTruthy();
+      expect(
+        screen.queryByText("There are no liturgical texts today."),
+      ).toBeNull();
+    });
+
+    it("asks the user to silence their phone before opening a daily service", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          services: [{ title: "Daily Vespers", pdfUrl: "https://x/v.pdf" }],
+        }),
+      };
+      await render(<PrayerScreen />);
+
+      await fireEvent.press(screen.getByText("Daily Vespers"));
+
+      expect(Alert.alert).toHaveBeenCalledTimes(1);
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "Silence Your Phone!",
+        "Before opening this prayer, please ensure your phone is on silent.",
+        [expect.objectContaining({ text: "OK" })],
+      );
+      expect(mockPush).not.toHaveBeenCalled();
+    });
+
+    it("opens the daily service's PDF once the alert is confirmed", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          services: [{ title: "Daily Vespers", pdfUrl: "https://x/v.pdf" }],
+        }),
+      };
+      await render(<PrayerScreen />);
+      await fireEvent.press(screen.getByText("Daily Vespers"));
+
+      await confirmAlert();
+
+      expect(mockPush).toHaveBeenCalledTimes(1);
+      expect(mockPush).toHaveBeenCalledWith({
+        pathname: "/pdfViewer",
+        params: {
+          url: "https://x/v.pdf",
+          title: "Daily Vespers",
+        } satisfies PdfViewerParams,
+      });
+    });
+  });
+
+  describe("readings", () => {
+    beforeEach(() => {
+      mockFeature = { ...baseFeature, data: dataWith() };
+    });
+
+    it("shows the epistle and gospel cards with title-cased titles", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Hebrews 11:24-26")).toBeTruthy();
+      expect(screen.getByText("Mark 2:1-12")).toBeTruthy();
+      expect(screen.getByText("HEBREWS 11:24-26 teaser")).toBeTruthy();
+      expect(screen.getByText("MARK 2:1-12 teaser")).toBeTruthy();
+    });
+
+    it("decodes HTML entities in a teaser", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: {
+            feastTitle: null,
+            readings: [
+              reading("epistle", "HEBREWS 11:24-26", {
+                teaser: "Faith &amp; works &quot;together&quot;",
+              }),
+              gospel,
+            ],
+          },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText('Faith & works "together"')).toBeTruthy();
+    });
+
+    it("shows no third reading card when the day has only two readings", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.queryByText("Genesis 1:1-13")).toBeNull();
+    });
+
+    it("shows the third reading card when the day has one", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: {
+            feastTitle: null,
+            readings: [epistle, gospel, thirdReading],
+          },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Genesis 1:1-13")).toBeTruthy();
+      expect(screen.getByText("GENESIS 1:1-13 teaser")).toBeTruthy();
+    });
+
+    it("shows only the readings the day has", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({ day: { feastTitle: null, readings: [gospel] } }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.queryByText("Hebrews 11:24-26")).toBeNull();
+      expect(screen.getByText("Mark 2:1-12")).toBeTruthy();
+    });
+
+    it("shows no reading cards when the day is unknown", async () => {
+      mockFeature = { ...baseFeature, data: dataWith({ day: null }) };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.queryByText("Hebrews 11:24-26")).toBeNull();
+      expect(screen.queryByText("Mark 2:1-12")).toBeNull();
+    });
+
+    it.each<[DailyReadingsParams["type"], Reading]>([
+      ["epistle", epistle],
+      ["gospel", gospel],
+      ["thirdReading", thirdReading],
+    ])("opens the %s in the daily readings screen when tapped", async (type, r) => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: {
+            feastTitle: null,
+            readings: [epistle, gospel, thirdReading],
+          },
+        }),
+      };
+      await render(<PrayerScreen />);
+
+      await fireEvent.press(screen.getByText(r.teaser));
+
+      expect(mockPush).toHaveBeenCalledTimes(1);
+      expect(mockPush).toHaveBeenCalledWith({
+        pathname: "/dailyReadings",
+        params: {
+          type,
+          reading: r.fullText,
+          title: r.title,
+        } satisfies DailyReadingsParams,
+      });
+      expect(Alert.alert).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("fixed lists", () => {
+    const prayers = [
+      ["Morning Prayers", "A short prayer to start the day", MORNING_PRAYERS_URL],
+      [
+        "Small Compline",
+        "A prayer before sleep & Communion",
+        SMALL_COMPLINE_URL,
+      ],
+      [
+        "Holy Communion",
+        "Preparation & Thanksgiving",
+        PREPARATION_FOR_COMMUNION_URL,
+      ],
+      [
+        "Censing the Home",
+        "A prayer when you cense your home",
+        CENSING_HOME_URL,
+      ],
+    ];
+    const services = [
+      ["Great Vespers", "An evening sacrifice", GREAT_VESPERS_URL],
+      [
+        "Small Compline",
+        "When a Priest is serving",
+        SMALL_COMPLINE_PRIEST_URL,
+      ],
+      [
+        "Paraklesis",
+        "To the Theotokos, the Mother of Light",
+        PARAKLESIS_URL,
+      ],
+      ["Matins", "Morning Offering", MATINS_URL],
+      ["Matins - Bilingual", "English and Arabic Matins", MATINS_BILINGUAL_URL],
+    ];
+    const lentenServices = [
+      ["Great Compline", "A solemn Lenten evening prayer", GREAT_COMPLINE_URL],
+      [
+        "Presanctified Liturgy",
+        "A Lenten Eucharistic service",
+        PRESANCTIFIED_LITURGY_URL,
+      ],
+      [
+        "Akathist",
+        "A standing hymn of praise, to the Theotokos",
+        AKATHIST_URL,
+      ],
+    ];
+
+    describe.each([
+      ["Prayers", prayers, false],
+      ["Services", services, true],
+      ["Lenten Services", lentenServices, true],
+    ])("%s", (heading, rows, warnsToSilencePhone) => {
+      it("lists each entry with its subtitle", async () => {
+        await render(<PrayerScreen />);
+
+        for (const [title, subtitle] of rows) {
+          expect(section(heading).getByText(title)).toBeTruthy();
+          expect(section(heading).getByText(subtitle)).toBeTruthy();
+        }
+      });
+
+      it.each(rows)("opens %s in the PDF viewer", async (title, _s, url) => {
+        await render(<PrayerScreen />);
+
+        await fireEvent.press(section(heading).getByText(title));
+        if (warnsToSilencePhone) await confirmAlert();
+
+        expect(mockPush).toHaveBeenCalledTimes(1);
+        expect(mockPush).toHaveBeenCalledWith({
+          pathname: "/pdfViewer",
+          params: { url, title } satisfies PdfViewerParams,
+        });
+      });
+
+      it(
+        warnsToSilencePhone
+          ? "asks the user to silence their phone before opening anything"
+          : "opens straight away, with no alert",
+        async () => {
+          await render(<PrayerScreen />);
+
+          await fireEvent.press(section(heading).getByText(rows[0][0]));
+
+          if (warnsToSilencePhone) {
+            expect(Alert.alert).toHaveBeenCalledWith(
+              "Silence Your Phone!",
+              "Before opening this prayer, please ensure your phone is on silent.",
+              [expect.objectContaining({ text: "OK" })],
+            );
+            expect(mockPush).not.toHaveBeenCalled();
+          } else {
+            expect(Alert.alert).not.toHaveBeenCalled();
+            expect(mockPush).toHaveBeenCalledTimes(1);
+          }
+        },
+      );
+    });
+  });
+
+  describe("date picker", () => {
+    it("starts closed, showing the selected date", async () => {
+      await render(<PrayerScreen />);
+
+      expect(mockPickerProps.isVisible).toBe(false);
+      expect(mockPickerProps.date).toBe(baseFeature.selectedDate);
+    });
+
+    it("opens when the calendar button is pressed", async () => {
+      await render(<PrayerScreen />);
+
+      await fireEvent.press(screen.getByText("calendar"));
+
+      expect(mockPickerProps.isVisible).toBe(true);
+    });
+
+    it("closes without loading anything when cancelled", async () => {
+      await render(<PrayerScreen />);
+      await fireEvent.press(screen.getByText("calendar"));
+
+      await act(() => mockPickerProps.onCancel());
+
+      expect(mockPickerProps.isVisible).toBe(false);
+      expect(mockLoad).not.toHaveBeenCalled();
+    });
+
+    it("loads the chosen date and closes when confirmed", async () => {
+      const chosen = new Date(2026, 3, 12, 12);
+      await render(<PrayerScreen />);
+      await fireEvent.press(screen.getByText("calendar"));
+
+      await act(() => mockPickerProps.onConfirm(chosen));
+
+      expect(mockLoad).toHaveBeenCalledTimes(1);
+      expect(mockLoad).toHaveBeenCalledWith(chosen);
+      expect(mockPickerProps.isVisible).toBe(false);
+    });
+  });
+
+  describe("pull to refresh", () => {
+    // The RefreshControl element is a prop of the scroll view that wraps
+    // everything on the screen, so walk up from the title to find it.
+    const refreshControl = () => {
+      let node = screen.getByText("Prayer").parent;
+      while (node && !node.props.refreshControl) node = node.parent;
+      if (!node) throw new Error("No scroll view with a refresh control");
+      return node.props.refreshControl;
+    };
+
+    it.each([true, false])(
+      "passes refreshing=%s to the refresh control",
+      async (refreshing) => {
+        mockFeature = { ...baseFeature, refreshing };
+
+        await render(<PrayerScreen />);
+
+        expect(refreshControl().props.refreshing).toBe(refreshing);
+      },
+    );
+
+    it("refreshes when the user pulls down", async () => {
+      await render(<PrayerScreen />);
+
+      await act(async () => refreshControl().props.onRefresh());
+
+      expect(mockRefresh).toHaveBeenCalledTimes(1);
+    });
+  });
+});
