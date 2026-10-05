@@ -3,6 +3,7 @@ import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { EventItem } from "./EventItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFavouritesStore } from "../favourites";
+import type { EventData } from "../types";
 import {
   addFavourite,
   removeFavourite,
@@ -35,7 +36,7 @@ jest.mock("react-native-vector-icons/Ionicons", () => {
   return Icon;
 });
 
-const event = {
+const event: EventData = {
   id: "event-1",
   title: "Divine Liturgy",
   start: "2099-08-15T10:00:00.000Z",
@@ -44,7 +45,6 @@ const event = {
   description: "",
   location: "",
   source: "church",
-  data: [],
 };
 
 const renderItem = (
