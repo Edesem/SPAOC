@@ -25,7 +25,6 @@ describe("normalizeGoogleEvent", () => {
       description: "<b>Pizza</b>",
       location: "Church Hall",
       source: "youth",
-      data: [],
     });
   });
 

@@ -519,7 +519,6 @@ describe("GoogleCalendarService with the global fetch", () => {
         description: "Fast from <i>meat</i> and dairy",
         location: undefined,
         source: "fasting",
-        data: [],
       },
       {
         id: "a1b2c3",
@@ -530,7 +529,6 @@ describe("GoogleCalendarService with the global fetch", () => {
         description: undefined,
         location: "St Paul's Church",
         source: "fasting",
-        data: [],
       },
     ]);
   });

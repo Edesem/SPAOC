@@ -24,7 +24,6 @@ const event = {
   description: "",
   location: "",
   source: "youth",
-  data: [],
 };
 
 describe("useEvents", () => {

@@ -1,5 +1,4 @@
 type EventData = {
-    data: never[];
     id: string;
     title: string;
     start: string;

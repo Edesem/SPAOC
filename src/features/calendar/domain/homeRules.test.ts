@@ -15,7 +15,6 @@ const event = (id: string, start: string): EventData => ({
   description: "",
   location: "",
   source: "source",
-  data: [],
 });
 
 describe("getSaintsTitle", () => {
