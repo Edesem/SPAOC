@@ -21,8 +21,8 @@ This React Native application is called SPAOC. It is primarily a calendar applic
 - `npm start` — Metro with the dev client (`expo start --dev-client`); there is no Expo Go support. `npm run ios` / `npm run android` build and run the native app (`ios/` and `android/` are git-ignored).
 - `npm run lint` — `expo lint .` (ESLint 9 flat config, whole repo).
 - `npm run typecheck` — `tsc --noEmit` (strict mode).
-- `npm test` — Jest in **watch mode** (`--watchAll`). For a one-shot run use `npx jest --watchAll=false`.
-- Single test file: `npx jest --watchAll=false src/services/calendar/googleCalendarMapper.test.ts`; single test by name: add `-t "name"`.
+- `npm test` — Jest, one run, exits on its own (safe without a TTY). `npm run test:watch` is the old watch mode (`--watchAll`). `testTimeout` is 15s in the `jest` block of `package.json` because the first render in a screen test is slow on a cold CI runner.
+- Single test file: `npm test -- src/services/calendar/googleCalendarMapper.test.ts`; single test by name: add `-t "name"`.
 - `npm run coverage` — what CI runs; fails below 80% global line coverage. CI (`.github/workflows/ci.yml`) runs coverage, then lint, then typecheck, on Node 24.
 
 Local setup needs a git-ignored `.env` (copy `.env.example`) with `EXPO_PUBLIC_{IOS,ANDROID}_CAL_{PROD,DEV}_KEY` (Google Calendar API keys). `config/env.ts` is the only code that reads `EXPO_PUBLIC_*`; `services/calendar/index.ts` calls it at import time, so the app **throws at start-up** if the key for the current platform/build is missing. Jest never loads `.env`, so `jest.setup.ts` injects fixture keys and mocks AsyncStorage.

@@ -24,5 +24,5 @@ Source lives in `src/`: `app/` (Expo Router routes, thin), `features/` (`calenda
 ## Scripts
 
 - `npm start` — Metro for the dev client; `npm run ios` / `npm run android` build the native app.
-- `npx jest --watchAll=false` — tests once; `npm run coverage` — what CI runs (80% line threshold).
+- `npm test` — tests once; `npm run test:watch` — watch mode; `npm run coverage` — what CI runs (80% line threshold).
 - `npm run lint` and `npm run typecheck`.
