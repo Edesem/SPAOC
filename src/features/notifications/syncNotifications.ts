@@ -48,11 +48,9 @@ async function runOnce(): Promise<void> {
 
   const planned = planNotifications({
     saints,
-    favourites: [],
     events: [],
     settings: {
       dailySaintsEnabled: settings.dailySaintsEnabled,
-      favouritesEnabled: settings.favouritesEnabled,
       calendars: settings.calendarNotifications,
     },
     now: current,
