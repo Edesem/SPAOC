@@ -43,6 +43,7 @@ jest.mock("expo-router", () => {
 
   return {
     useFocusEffect: (callback: () => void) => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount, like a focus
       React.useEffect(callback, []);
     },
   };
