@@ -26,3 +26,7 @@ Source lives in `src/`: `app/` (Expo Router routes, thin), `features/` (`calenda
 - `npm start` — Metro for the dev client; `npm run ios` / `npm run android` build the native app.
 - `npm test` — tests once; `npm run test:watch` — watch mode; `npm run coverage` — what CI runs (80% line threshold).
 - `npm run lint` and `npm run typecheck`.
+
+## Docs
+
+[`docs/`](docs/) holds the design notes. [Notification planner](docs/notification-planner.md) explains how notifications are planned, scheduled and reconciled. [CLAUDE.md](CLAUDE.md) covers the architecture.

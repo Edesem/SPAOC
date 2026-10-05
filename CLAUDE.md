@@ -70,4 +70,4 @@ Tests are colocated (`*.test.ts[x]` beside the source), apart from tests of rout
 
 ## Docs
 
-`docs/` holds an architecture snapshot, refactoring plan, notification design, `issue-drafts.md` (the backlog drafts from that review) and `store/` (App Store screenshots). The older docs were written before the move into `src/` and feature folders, so their file links are stale: verify against the code before relying on them.
+`docs/` holds `notification-planner.md` (the notification design and what each issue changed) and `store/` (App Store screenshots). The earlier architecture snapshot, refactoring plans and issue drafts were deleted; this file is the architecture summary, and git history keeps the old documents. Add new docs with links relative to the file; `src/__tests__/docLinks.test.ts` fails if a link or a named `.md` file does not exist.
