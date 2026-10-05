@@ -1,4 +1,3 @@
-import PrayerScreen from "@/app/(tabs)/prayer";
 import {
   AKATHIST_URL,
   CENSING_HOME_URL,
@@ -12,8 +11,9 @@ import {
   PRESANCTIFIED_LITURGY_URL,
   SMALL_COMPLINE_PRIEST_URL,
   SMALL_COMPLINE_URL,
-} from "@/features/prayer";
-import type { LiturgicalData, Reading } from "@/features/prayer/services";
+} from "../constants";
+import type { LiturgicalData, Reading } from "../services";
+import PrayerScreen from "./PrayerScreen";
 import type { DailyReadingsParams, PdfViewerParams } from "@/types/routes";
 import {
   act,
@@ -29,7 +29,6 @@ import { Alert } from "react-native";
 // HomeScreen is tested against useHomeFeature. What the feature returns is
 // covered by usePrayerFeature.test.ts. The screen never reads the clock
 // itself (the date comes from the feature), so there is nothing to pin here.
-// This is a route file, so its test lives in src/__tests__/.
 
 const mockLoad = jest.fn();
 const mockRefresh = jest.fn();
