@@ -155,6 +155,18 @@ describe("GoogleCalendarService", () => {
       consoleErrorSpy.mockRestore();
     });
 
+    it("rejects when every calendar fails, so offline is not shown as no events", async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+      fetchFn.mockRejectedValue(new TypeError("Network request failed"));
+
+      await expect(service.getParishEvents(from)).rejects.toThrow(
+        "Network request failed",
+      );
+      consoleErrorSpy.mockRestore();
+    });
+
     it("treats a response without items as empty", async () => {
       fetchFn.mockResolvedValue(okResponse(undefined));
 
