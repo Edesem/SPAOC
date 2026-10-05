@@ -1,4 +1,5 @@
 import { FastKind } from "../domain/fasting";
+import { resetNow, setNow } from "@/lib/parishTime";
 import { useHomeFeature } from "./useHomeFeature";
 import { installFakeAppState } from "@/test-utils/fakeAppState";
 import { act, renderHook } from "@testing-library/react-native";
@@ -57,6 +58,38 @@ describe("useHomeFeature", () => {
       fastLoading: false,
       refetch: mockRefetchFast,
     };
+  });
+
+  describe("the app clock", () => {
+    afterEach(resetNow);
+
+    it("starts with today's date from the app clock", async () => {
+      const pinned = new Date("2026-09-25T22:15:00Z");
+      setNow(() => pinned);
+
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.selectedDate).toEqual(pinned);
+    });
+
+    it("returns to today on the app clock when the month filter is cleared", async () => {
+      setNow(() => new Date("2026-09-25T22:15:00Z"));
+      const { result } = await renderHook(() => useHomeFeature());
+      await act(async () => {
+        result.current.onValueChange(
+          "dateSetAction",
+          new Date("2026-03-15T12:00:00.000Z"),
+        );
+      });
+
+      const later = new Date("2026-09-26T22:15:00Z");
+      setNow(() => later);
+      await act(async () => {
+        result.current.clearMonthFilter();
+      });
+
+      expect(result.current.selectedDate).toEqual(later);
+    });
   });
 
   it("leaves notification setup to the root layout", async () => {

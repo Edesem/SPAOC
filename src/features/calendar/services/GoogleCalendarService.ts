@@ -1,4 +1,4 @@
-import { endOfParishDay, startOfParishDay } from "@/lib/parishTime";
+import { endOfParishDay, now, startOfParishDay } from "@/lib/parishTime";
 import type {
   CalendarDataService,
   CalendarEvent,
@@ -51,7 +51,7 @@ export class GoogleCalendarService implements CalendarDataService {
   }
 
   // A calendar that fails to load is logged and skipped so the rest still show
-  async getParishEvents(from: Date = new Date()): Promise<CalendarEvent[]> {
+  async getParishEvents(from: Date = now()): Promise<CalendarEvent[]> {
     const results = await Promise.all(
       this.parishCalendars.map(async ({ source, calendarId }) => {
         try {
@@ -73,7 +73,7 @@ export class GoogleCalendarService implements CalendarDataService {
     return results.flat().sort(byStartTime);
   }
 
-  async getFastingEvents(from: Date = new Date()): Promise<CalendarEvent[]> {
+  async getFastingEvents(from: Date = now()): Promise<CalendarEvent[]> {
     const { source, calendarId } = this.fastingCalendar;
     const items = await this.listEvents(calendarId, {
       timeMin: from.toISOString(),

@@ -1,3 +1,4 @@
+import { now } from "@/lib/parishTime";
 import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
 import type { LiturgicalData } from "../services";
 import { liturgicalService } from "../services";
@@ -14,7 +15,7 @@ const BACKGROUND_REFRESH_THRESHOLD_MS = 300 * 60 * 1000;
 // comes back as `data` with an empty `services` list, and the screen decides
 // how to word that.
 export const usePrayerFeature = () => {
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
+  const [selectedDate, setSelectedDate] = useState(now);
   const [data, setData] = useState<LiturgicalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

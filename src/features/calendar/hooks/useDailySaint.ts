@@ -1,3 +1,4 @@
+import { now } from "@/lib/parishTime";
 import { calendarService } from "../services";
 import { useCallback, useEffect, useState } from "react";
 
@@ -6,7 +7,7 @@ export const useDailySaint = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchSaintsForToday = useCallback(async () => {
-    const saints = await calendarService.getSaintsForDate(new Date());
+    const saints = await calendarService.getSaintsForDate(now());
 
     if (saints.length > 0) {
       setTodaySaints(saints);
