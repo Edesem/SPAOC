@@ -20,7 +20,6 @@ export default function PdfViewer() {
         color: "pink",
       },
     });
-    console.log("PDF URL:", url);
   }, [navigation, title, url]);
 
   if (USE_WEBVIEW) {
@@ -35,9 +34,6 @@ export default function PdfViewer() {
         <WebView
           source={{ uri: webViewUrl }}
           style={styles.pdf}
-          onError={(error) => {
-            console.log("WebView error:", error);
-          }}
         />
       </View>
     );
@@ -54,18 +50,6 @@ export default function PdfViewer() {
     <View style={styles.container}>
       <Pdf
         source={source}
-        onLoadComplete={(numberOfPages, filePath) => {
-          console.log(`Number of pages: ${numberOfPages}`);
-        }}
-        onPageChanged={(page, numberOfPages) => {
-          console.log(`Current page: ${page}`);
-        }}
-        onError={(error) => {
-          console.log(error);
-        }}
-        onPressLink={(uri) => {
-          console.log(`Link pressed: ${uri}`);
-        }}
         style={styles.pdf}
       />
     </View>

@@ -10,6 +10,7 @@ export const FastKind = {
   NativityFast: "nativityFast",
 } as const;
 
+// eslint-disable-next-line @typescript-eslint/no-redeclare -- a const and its union type share a name
 export type FastKind = (typeof FastKind)[keyof typeof FastKind];
 
 export interface Fast {
