@@ -1,7 +1,7 @@
 import { FastKind, getMajorLabel, getMinorLabel } from "../domain/fasting";
 import { useFastDay } from "./useFastDay";
 import { resetNow, setNow } from "@/lib/parishTime";
-import { renderHook, waitFor } from "@testing-library/react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
 
 const mockFetch = (items: unknown[] = []) => {
   globalThis.fetch = jest.fn().mockResolvedValue({
@@ -159,6 +159,43 @@ describe("useFastDay", () => {
 
     expect(result.current.events).toEqual([]);
 
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("has no error when the fasting calendar loads", async () => {
+    mockFetch([]);
+
+    const result = await renderFastDay();
+
+    expect(result.current.error).toBeNull();
+  });
+
+  it("reports an error when the fasting calendar fails to load", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    globalThis.fetch = jest.fn().mockRejectedValue(new Error("Network error"));
+
+    const result = await renderFastDay();
+
+    expect(result.current.error).toBe("Could not load the fasting calendar.");
+    consoleErrorSpy.mockRestore();
+  });
+
+  it("clears the error once a refetch succeeds", async () => {
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    globalThis.fetch = jest.fn().mockRejectedValue(new Error("Network error"));
+    const result = await renderFastDay();
+    expect(result.current.error).not.toBeNull();
+
+    mockFetch([]);
+    await act(async () => {
+      await result.current.refetch();
+    });
+
+    expect(result.current.error).toBeNull();
     consoleErrorSpy.mockRestore();
   });
 });

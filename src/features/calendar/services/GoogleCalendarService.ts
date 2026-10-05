@@ -1,8 +1,5 @@
 import { endOfParishDay, now, startOfParishDay } from "@/lib/parishTime";
-import type {
-  CalendarDataService,
-  CalendarEvent,
-} from "./CalendarDataService";
+import type { CalendarDataService, CalendarEvent } from "./CalendarDataService";
 import {
   FASTING_CALENDAR,
   GOOGLE_CALENDAR_API_BASE_URL,
@@ -50,8 +47,12 @@ export class GoogleCalendarService implements CalendarDataService {
     this.saintsCalendar = config.saintsCalendar ?? SAINTS_CALENDAR;
   }
 
-  // A calendar that fails to load is logged and skipped so the rest still show
+  // A calendar that fails to load is logged and skipped so the rest still show.
+  // If every calendar fails, the first error is thrown so it is not mistaken
+  // for there being no events.
   async getParishEvents(from: Date = now()): Promise<CalendarEvent[]> {
+    const failures: unknown[] = [];
+
     const results = await Promise.all(
       this.parishCalendars.map(async ({ source, calendarId }) => {
         try {
@@ -65,10 +66,18 @@ export class GoogleCalendarService implements CalendarDataService {
             .map((item) => normalizeGoogleEvent(item, source));
         } catch (error) {
           console.error(`Error fetching ${source}:`, error);
+          failures.push(error);
           return [];
         }
       }),
     );
+
+    if (
+      failures.length > 0 &&
+      failures.length === this.parishCalendars.length
+    ) {
+      throw failures[0];
+    }
 
     return results.flat().sort(byStartTime);
   }

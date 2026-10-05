@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 export const useFastDay = () => {
   const [events, setEvents] = useState<FastKind[]>([]);
   const [fastLoading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -23,8 +24,10 @@ export const useFastDay = () => {
       });
 
       setEvents(fastDay);
+      setError(null);
     } catch (error) {
       console.error("Error fetching events:", error);
+      setError("Could not load the fasting calendar.");
     } finally {
       setLoading(false);
     }
@@ -37,5 +40,5 @@ export const useFastDay = () => {
     fetchEvents();
   }, [fetchEvents]);
 
-  return { events, fastLoading, refetch: fetchEvents };
+  return { events, fastLoading, error, refetch: fetchEvents };
 };

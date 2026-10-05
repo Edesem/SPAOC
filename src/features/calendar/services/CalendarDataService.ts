@@ -7,7 +7,8 @@ export type CalendarEvent = EventData;
 // Single entry point for calendar data. Screens and hooks depend on this
 // interface rather than on a specific provider.
 export interface CalendarDataService {
-  // Upcoming public parish events from every event calendar, sorted by start
+  // Upcoming public parish events from every event calendar, sorted by start.
+  // A calendar that fails is skipped; rejects only if every calendar fails.
   getParishEvents(from?: Date): Promise<CalendarEvent[]>;
   // Upcoming entries from the fasting calendar, in start order
   getFastingEvents(from?: Date): Promise<CalendarEvent[]>;

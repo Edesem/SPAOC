@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 export const useEvents = () => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const startOfWeek = useSettingsStore((state) => state.startOfWeek); // "sunday" | "monday"
 
@@ -16,9 +17,13 @@ export const useEvents = () => {
 
     calendarService
       .getParishEvents()
-      .then(setEvents)
+      .then((fetched) => {
+        setEvents(fetched);
+        setError(null);
+      })
       .catch((error) => {
         console.error("Error fetching events:", error);
+        setError("Could not load events.");
       })
       .finally(() => {
         setLoading(false);
@@ -40,6 +45,7 @@ export const useEvents = () => {
     events,
     groupedEvents,
     loading,
+    error,
     refetch: fetchAllEvents,
   };
 };
