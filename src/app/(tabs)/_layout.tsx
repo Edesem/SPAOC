@@ -25,10 +25,6 @@ export default function TabLayout() {
         default: { color: INACTIVE_COLOUR },
         selected: { color: tintColor },
       }}
-      // iOS keeps the system blur; Android needs an explicit surface colour.
-      backgroundColor={
-        Platform.OS === "android" ? palette.itemBackground : undefined
-      }
     >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon
