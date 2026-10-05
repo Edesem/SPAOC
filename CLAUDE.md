@@ -31,7 +31,7 @@ Local setup needs a git-ignored `.env` (copy `.env.example`) with `EXPO_PUBLIC_{
 
 All source lives in `src/`. Assets, docs, config files and `jest.setup.ts` stay at the repo root. The dependency direction is **`app` → `features` → shared**, and ESLint enforces it (see below).
 
-- `app/` — routes only. `_layout.tsx` and `+not-found.tsx` are real; every other file is a one-line `export { default } from "@/features/<f>/screens/<X>Screen"`, except the Prayer tab (`(tabs)/prayer.tsx`, still the full 850-line screen: move it once it has tests). Expo Router finds `src/app` on its own. Every file under `app/` becomes a route (a test enforces nothing is parked there; delete unused screens, git history keeps them).
+- `app/` — routes only. `_layout.tsx` and `+not-found.tsx` are real; every other file is a one-line `export { default } from "@/features/<f>/screens/<X>Screen"`. Expo Router finds `src/app` on its own. Every file under `app/` becomes a route (a test enforces nothing is parked there; delete unused screens, git history keeps them).
 - `features/<name>/` — one folder per feature, with only the subfolders it needs (`screens`, `components`, `hooks`, `services`, `domain`, `constants.ts`) and an `index.ts` that is its public API:
   - `calendar` — events, favourites, fasting, saints. Google Calendar service, favourites repository/store, Home/Favourites/EventDetails screens, `EventData` type.
   - `prayer` — daily readings and service texts. Antiochian.org client and service, `usePrayerFeature`, PDF viewer and Daily Readings screens.
