@@ -1,7 +1,6 @@
 import {
   MAX_PLANNED_NOTIFICATIONS,
   planCalendarNotifications,
-  planFavouriteNotifications,
   planNotifications,
   planSaintNotifications,
   reconcileNotifications,
@@ -242,27 +241,17 @@ describe("planCalendarNotifications", () => {
   });
 });
 
-describe("planFavouriteNotifications", () => {
-  it("is not decided yet and plans nothing", () => {
-    const favourite = { id: "evt-1", title: "Feast" } as EventData;
-
-    expect(planFavouriteNotifications([favourite], NOW)).toEqual([]);
-  });
-});
-
 describe("planNotifications", () => {
   const saints = [saintDay(1, "Saint A")];
   const start = new Date("2026-10-10T09:30:00Z");
   const events = [event("youth", "e1", start)];
   const settings: NotificationSettings = {
     dailySaintsEnabled: true,
-    favouritesEnabled: true,
     calendars: { youth: on() },
   };
   const plan = (overrides: Partial<NotificationSettings> = {}) =>
     planNotifications({
       saints,
-      favourites: [],
       events,
       settings: { ...settings, ...overrides },
       now: NOW,
@@ -293,7 +282,6 @@ describe("planNotifications", () => {
 
     const planned = planNotifications({
       saints: [],
-      favourites: [],
       events: many,
       settings: { ...settings, dailySaintsEnabled: false },
       now: NOW,
