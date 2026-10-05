@@ -1,3 +1,4 @@
+import { now } from "@/lib/parishTime";
 import { getMajorLabel, getMinorLabel } from "../domain/fasting";
 import { useDailySaint } from "./useDailySaint";
 import { useEvents } from "./useEvents";
@@ -26,7 +27,7 @@ export const useHomeFeature = () => {
   } = useFastDay();
 
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(now);
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
 
@@ -63,7 +64,7 @@ export const useHomeFeature = () => {
 
   const clearMonthFilter = useCallback(() => {
     setSelectedMonth(null);
-    setSelectedDate(new Date());
+    setSelectedDate(now());
   }, []);
 
   const todaysSaintsTitle = getSaintsTitle(todaysSaints);

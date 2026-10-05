@@ -1,3 +1,4 @@
+import { resetNow, setNow } from "@/lib/parishTime";
 import HomeScreen from "./HomeScreen";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
@@ -76,7 +77,8 @@ jest.mock("react-native-month-year-picker", () => {
   const React = require("react");
   const { View } = require("react-native");
 
-  return () => React.createElement(View, { testID: "month-picker" });
+  return (props: object) =>
+    React.createElement(View, { ...props, testID: "month-picker" });
 });
 
 jest.mock("../components/EventItem", () => {
@@ -208,6 +210,20 @@ describe("HomeScreen", () => {
       const { getAllByTestId } = await render(<HomeScreen />);
 
       expect(getAllByTestId("month-picker")).toHaveLength(1);
+    });
+
+    it("stops the month picker at the app clock's today", async () => {
+      const pinned = new Date("2026-09-25T22:15:00Z");
+      setNow(() => pinned);
+      mockFeature = { ...baseFeature, showMonthPicker: true };
+
+      try {
+        const { getByTestId } = await render(<HomeScreen />);
+
+        expect(getByTestId("month-picker").props.minimumDate).toEqual(pinned);
+      } finally {
+        resetNow();
+      }
     });
 
     it("shows the month picker when no events match", async () => {

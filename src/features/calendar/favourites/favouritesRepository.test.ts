@@ -1,4 +1,5 @@
 import type { EventData } from "../types";
+import { resetNow, setNow } from "@/lib/parishTime";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   addFavourite,
@@ -124,6 +125,22 @@ describe("favouritesRepository", () => {
 
       expect(await removeExpiredFavourites(now)).toEqual([future]);
       expect(await storedJson()).toEqual({ future });
+    });
+
+    it("defaults to the app clock", async () => {
+      setNow(() => now);
+      const past = event("past", "2025-06-01T11:59:59.000Z");
+      const future = event("future", "2025-06-01T12:00:01.000Z");
+      await AsyncStorage.setItem(
+        "favourites",
+        JSON.stringify({ past, future }),
+      );
+
+      try {
+        expect(await removeExpiredFavourites()).toEqual([future]);
+      } finally {
+        resetNow();
+      }
     });
 
     it("does not write to storage when nothing is stored", async () => {

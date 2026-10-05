@@ -1,4 +1,5 @@
 import type { LiturgicalData } from "../domain/liturgical";
+import { resetNow, setNow } from "@/lib/parishTime";
 import { usePrayerFeature } from "./usePrayerFeature";
 import { installFakeAppState } from "@/test-utils/fakeAppState";
 import { act, renderHook, waitFor } from "@testing-library/react-native";
@@ -49,6 +50,21 @@ describe("usePrayerFeature", () => {
     expect(result.current.data).toEqual(dataFor("Today"));
     expect(result.current.error).toBeNull();
     expect(mockGetLiturgicalData).toHaveBeenCalledTimes(1);
+  });
+
+  it("selects today's date from the app clock", async () => {
+    const pinned = new Date("2026-09-25T22:15:00Z");
+    setNow(() => pinned);
+
+    try {
+      const { result } = await renderHook(() => usePrayerFeature());
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
+      expect(result.current.selectedDate).toEqual(pinned);
+      expect(mockGetLiturgicalData).toHaveBeenCalledWith(pinned);
+    } finally {
+      resetNow();
+    }
   });
 
   it("exposes the error and no data when the load fails", async () => {

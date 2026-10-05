@@ -21,7 +21,7 @@ This React Native application is called SPAOC. It is primarily a calendar applic
 - `npm start` — Metro with the dev client (`expo start --dev-client`); there is no Expo Go support. `npm run ios` / `npm run android` build and run the native app (`ios/` and `android/` are git-ignored).
 - `npm run lint` — `expo lint .` (ESLint 9 flat config, whole repo).
 - `npm run typecheck` — `tsc --noEmit` (strict mode).
-- `npm test` — Jest, one run, exits on its own (safe without a TTY). `npm run test:watch` is the old watch mode (`--watchAll`). `testTimeout` is 15s in the `jest` block of `package.json` because the first render in a screen test is slow on a cold CI runner.
+- `npm test` — Jest, one run, exits on its own (safe without a TTY). `npm run test:watch` is the old watch mode (`--watchAll`). `jest.global-setup.js` runs every test with the device zone set to `America/Los_Angeles`, so code that leaks the device zone fails instead of passing on a Melbourne machine. `testTimeout` is 15s in the `jest` block of `package.json` because the first render in a screen test is slow on a cold CI runner.
 - Single test file: `npm test -- src/services/calendar/googleCalendarMapper.test.ts`; single test by name: add `-t "name"`.
 - `npm run coverage` — what CI runs; fails below 80% global line coverage. CI (`.github/workflows/ci.yml`) runs coverage, then lint, then typecheck, on Node 24.
 

@@ -1,4 +1,8 @@
+import { APP_TIME_ZONE } from "@/lib/parishTime";
+
+// Parish time, to match the day each event is grouped under.
 const timeFormat: Intl.DateTimeFormatOptions = {
+  timeZone: APP_TIME_ZONE,
   hour: "2-digit",
   minute: "2-digit",
 };
