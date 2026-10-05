@@ -1,3 +1,5 @@
+import type { EventSourceName } from "@/domain/calendarSources";
+
 type EventData = {
     id: string;
     title: string;
@@ -6,7 +8,7 @@ type EventData = {
     allDay: boolean;
     description: string;
     location: string;
-    source: string;
+    source: EventSourceName;
 };
 
 type ItemProps = {

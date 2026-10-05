@@ -1,15 +1,24 @@
+import type {
+  CalendarSourceName,
+  EventSourceName,
+} from "@/domain/calendarSources";
+
 // Google Calendar IDs used by the app. Keys of PARISH_EVENT_CALENDARS become
 // the `source` on each event and drive colours and notification settings.
 
 export const GOOGLE_CALENDAR_API_BASE_URL =
   "https://www.googleapis.com/calendar/v3/calendars";
 
-export interface GoogleCalendarSource {
-  source: string;
+export interface GoogleCalendarSource<
+  S extends EventSourceName = EventSourceName,
+> {
+  source: S;
   calendarId: string;
 }
 
-export const PARISH_EVENT_CALENDARS: GoogleCalendarSource[] = [
+type ParishCalendarSource = GoogleCalendarSource<CalendarSourceName>;
+
+export const PARISH_EVENT_CALENDARS: ParishCalendarSource[] = [
   { source: "youth", calendarId: "stpaulsyouthcommittee@gmail.com" },
   {
     source: "weekly",

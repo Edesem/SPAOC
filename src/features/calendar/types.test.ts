@@ -18,4 +18,22 @@ describe("EventData", () => {
 
     expect(withData.id).toBe("abc");
   });
+
+  it("accepts the parish calendars plus the fasting and saints calendars", () => {
+    const sources: EventData["source"][] = [
+      "youth",
+      "church",
+      "fasting",
+      "saints",
+    ];
+
+    expect(sources).toHaveLength(4);
+  });
+
+  it("rejects a source name that is not a known calendar", () => {
+    // @ts-expect-error a typo is not a calendar
+    const typo: EventData = { ...base, source: "yuoth" };
+
+    expect(typo.source).toBe("yuoth");
+  });
 });

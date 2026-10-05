@@ -12,7 +12,7 @@ export interface CalendarSource {
 }
 
 // Order matters: it is the order calendars appear in the Settings screen.
-export const CALENDAR_SOURCES: readonly CalendarSource[] = [
+export const CALENDAR_SOURCES = [
   {
     name: "youth",
     colour: "#3F51B5",
@@ -58,7 +58,15 @@ export const CALENDAR_SOURCES: readonly CalendarSource[] = [
     colour: "#489160",
     image: require("@assets/images/orthodox/fellowship.png"),
   },
-];
+] as const satisfies readonly CalendarSource[];
+
+// The parish event calendar names, derived from the registry above so a typo
+// fails the typecheck.
+export type CalendarSourceName = (typeof CALENDAR_SOURCES)[number]["name"];
+
+// Every value an event's `source` can take: the registry plus the fasting and
+// saints calendars, which are not parish event calendars.
+export type EventSourceName = CalendarSourceName | "fasting" | "saints";
 
 // Used for events whose source is not in CALENDAR_SOURCES (for example the
 // fasting and saints calendars).
@@ -67,9 +75,8 @@ export const DEFAULT_CALENDAR_SOURCE: Omit<CalendarSource, "name"> = {
   image: require("@assets/images/orthodox/church.png"),
 };
 
-export const CALENDAR_SOURCE_NAMES: readonly string[] = CALENDAR_SOURCES.map(
-  (calendar) => calendar.name,
-);
+export const CALENDAR_SOURCE_NAMES: readonly CalendarSourceName[] =
+  CALENDAR_SOURCES.map((calendar) => calendar.name);
 
 const findCalendarSource = (name: string) =>
   CALENDAR_SOURCES.find((calendar) => calendar.name === name);
