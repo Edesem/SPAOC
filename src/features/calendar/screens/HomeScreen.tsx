@@ -44,18 +44,28 @@ const renderItem = ({ item }: { item: EventData }) => (
 
 const HomeListHeader = ({
   theme,
+  loadErrorMessage,
   todaysSaintsTitle,
   todaysSaints,
   majorFastLabel,
   minorFastLabel,
 }: {
   theme: Theme;
+  loadErrorMessage: string | null;
   todaysSaintsTitle: string;
   todaysSaints: string[];
   majorFastLabel: string | null;
   minorFastLabel: string;
 }) => (
   <>
+    {loadErrorMessage ? (
+      <Text
+        accessibilityRole="alert"
+        style={[styles.loadErrorMessage, { color: theme.detail }]}
+      >
+        {loadErrorMessage}
+      </Text>
+    ) : null}
     <View style={styles.imageContainer}>
       <Image
         testID="home-top-image"
@@ -161,6 +171,7 @@ export default function HomeScreen() {
     todaysSaints,
     todaysSaintsTitle,
     fastLoading,
+    loadErrorMessage,
     majorFastLabel,
     minorFastLabel,
     sections,
@@ -303,6 +314,7 @@ export default function HomeScreen() {
                 ListHeaderComponent={
                   <HomeListHeader
                     theme={theme}
+                    loadErrorMessage={loadErrorMessage}
                     todaysSaintsTitle={todaysSaintsTitle}
                     todaysSaints={todaysSaints}
                     majorFastLabel={majorFastLabel}
@@ -354,6 +366,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     marginTop: 20,
+  },
+  loadErrorMessage: {
+    textAlign: "center",
+    fontSize: 16,
+    paddingHorizontal: 15,
+    paddingTop: 10,
   },
   topImage: {
     width: 50,
