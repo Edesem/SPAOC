@@ -1,6 +1,7 @@
 import { ThemedText } from "@/components/ThemedText";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { lentenServices, prayers, services } from "../catalogue";
+import { openPdf, openServicePdf } from "../openServicePdf";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
@@ -8,12 +9,11 @@ import { fontSize, getCommonStyles } from "@/theme/commonStyles";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { DailyReadingsParams, PdfViewerParams } from "@/types/routes";
+import { DailyReadingsParams } from "@/types/routes";
 import he from "he";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Image,
   RefreshControl,
   ScrollView,
@@ -400,24 +400,10 @@ export default function PrayerScreen(): JSX.Element {
                     key={service.title}
                     onPress={() => {
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                      Alert.alert(
-                        "Silence Your Phone!",
-                        "Before opening this prayer, please ensure your phone is on silent.",
-                        [
-                          {
-                            text: "OK",
-                            onPress: () => {
-                              router.push({
-                                pathname: "/pdfViewer",
-                                params: {
-                                  url: service.pdfUrl,
-                                  title: service.title,
-                                } satisfies PdfViewerParams,
-                              });
-                            },
-                          },
-                        ],
-                      );
+                      openServicePdf(router, {
+                        url: service.pdfUrl,
+                        title: service.title,
+                      });
                     }}
                     activeOpacity={0.6}
                   >
@@ -451,13 +437,7 @@ export default function PrayerScreen(): JSX.Element {
                 key={prayer.title}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  router.push({
-                    pathname: "/pdfViewer",
-                    params: {
-                      url: prayer.url, // Add full text for third reading
-                      title: prayer.title, // Add title for third reading
-                    } satisfies PdfViewerParams,
-                  });
+                  openPdf(router, { url: prayer.url, title: prayer.title });
                 }}
                 activeOpacity={0.6}
               >
@@ -506,24 +486,10 @@ export default function PrayerScreen(): JSX.Element {
                 key={service.title}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  Alert.alert(
-                    "Silence Your Phone!",
-                    "Before opening this prayer, please ensure your phone is on silent.",
-                    [
-                      {
-                        text: "OK",
-                        onPress: () => {
-                          router.push({
-                            pathname: "/pdfViewer",
-                            params: {
-                              url: service.url, // Add full text for third reading
-                              title: service.title, // Add title for third reading
-                            } satisfies PdfViewerParams,
-                          });
-                        },
-                      },
-                    ],
-                  );
+                  openServicePdf(router, {
+                    url: service.url,
+                    title: service.title,
+                  });
                 }}
                 activeOpacity={0.6}
               >
@@ -573,24 +539,10 @@ export default function PrayerScreen(): JSX.Element {
                 key={service.title}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  Alert.alert(
-                    "Silence Your Phone!",
-                    "Before opening this prayer, please ensure your phone is on silent.",
-                    [
-                      {
-                        text: "OK",
-                        onPress: () => {
-                          router.push({
-                            pathname: "/pdfViewer",
-                            params: {
-                              url: service.url, // Add full text for third reading
-                              title: service.title, // Add title for third reading
-                            } satisfies PdfViewerParams,
-                          });
-                        },
-                      },
-                    ],
-                  );
+                  openServicePdf(router, {
+                    url: service.url,
+                    title: service.title,
+                  });
                 }}
                 activeOpacity={0.6}
               >
