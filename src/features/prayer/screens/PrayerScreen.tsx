@@ -3,6 +3,7 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { lentenServices, prayers, services } from "../catalogue";
 import { styles } from "../prayerStyles";
 import PdfListSection from "../components/PdfListSection";
+import ReadingCard from "../components/ReadingCard";
 import { openServicePdf } from "../openServicePdf";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -10,8 +11,6 @@ import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { DailyReadingsParams } from "@/types/routes";
-import he from "he";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -28,7 +27,6 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import toTitleCase from "titlecase";
 
 export default function PrayerScreen(): JSX.Element {
@@ -45,11 +43,6 @@ export default function PrayerScreen(): JSX.Element {
   const epistle = day?.readings.find((r) => r.kind === "epistle");
   const gospel = day?.readings.find((r) => r.kind === "gospel");
   const thirdReading = day?.readings.find((r) => r.kind === "thirdReading");
-
-  const chevronColor =
-    colorScheme === "dark"
-      ? Colours.dark.chevronColor
-      : Colours.light.chevronColor;
 
   const router = useRouter();
 
@@ -178,187 +171,19 @@ export default function PrayerScreen(): JSX.Element {
             </View>
           ) : (
             <>
-              {/* Epistle Navigation */}
               {epistle && (
-                <TouchableOpacity
-                  style={[
-                    styles.contentSection,
-                    {
-                      flex: 1,
-                      margin: 20,
-                      backgroundColor: theme.itemBackground,
-                    },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.push({
-                      pathname: "/dailyReadings",
-                      params: {
-                        type: "epistle",
-                        reading: epistle.fullText,
-                        title: epistle.title, // Added title
-                      } satisfies DailyReadingsParams,
-                    });
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={CommonStyles.sectionTitle}>
-                        {toTitleCase(epistle.title.toLowerCase())}
-                      </Text>
-                    </View>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={fontSize.icon}
-                      color={chevronColor}
-                      style={styles.chevronIcon}
-                    />
-                  </View>
-                  {!thirdReading ? (
-                    <View
-                      style={[
-                        styles.divider,
-                        { backgroundColor: "#2E86AB" },
-                        { height: 3 },
-                      ]}
-                    />
-                  ) : (
-                    <View style={styles.divider} />
-                  )}
-                  <Text
-                    style={[
-                      { color: theme.moreImportantText },
-                      { paddingBottom: 20 },
-                      { fontSize: fontSize.body },
-                    ]}
-                  >
-                    {he.decode(epistle.teaser)}
-                  </Text>
-                </TouchableOpacity>
+                <ReadingCard
+                  reading={epistle}
+                  accentColour={thirdReading ? undefined : "#2E86AB"}
+                />
               )}
-
-              {/* Gospel Navigation */}
               {gospel && (
-                <TouchableOpacity
-                  style={[
-                    styles.contentSection,
-                    {
-                      flex: 1,
-                      margin: 20,
-                      backgroundColor: theme.itemBackground,
-                    },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.push({
-                      pathname: "/dailyReadings",
-                      params: {
-                        type: "gospel",
-                        reading: gospel.fullText,
-                        title: gospel.title, // Added title
-                      } satisfies DailyReadingsParams,
-                    });
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={CommonStyles.sectionTitle}>
-                        {toTitleCase(gospel.title.toLowerCase())}
-                      </Text>
-                    </View>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={fontSize.icon}
-                      color={chevronColor}
-                      style={styles.chevronIcon}
-                    />
-                  </View>
-                  {!thirdReading ? (
-                    <View
-                      style={[
-                        styles.divider,
-                        { backgroundColor: "#D4AF37" },
-                        { height: 3 },
-                      ]}
-                    />
-                  ) : (
-                    <View style={styles.divider} />
-                  )}
-                  <Text
-                    style={[
-                      { color: theme.moreImportantText },
-                      { paddingBottom: 20 },
-                      { fontSize: fontSize.body },
-                    ]}
-                  >
-                    {he.decode(gospel.teaser)}
-                  </Text>
-                </TouchableOpacity>
+                <ReadingCard
+                  reading={gospel}
+                  accentColour={thirdReading ? undefined : "#D4AF37"}
+                />
               )}
-
-              {/* Third Reading Navigation */}
-              {thirdReading && (
-                <TouchableOpacity
-                  style={[
-                    styles.contentSection,
-                    {
-                      flex: 1,
-                      margin: 20,
-                      backgroundColor: theme.itemBackground,
-                    },
-                  ]}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.push({
-                      pathname: "/dailyReadings",
-                      params: {
-                        type: "thirdReading",
-                        reading: thirdReading.fullText, // Add full text for third reading
-                        title: thirdReading.title, // Add title for third reading
-                      } satisfies DailyReadingsParams,
-                    });
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={CommonStyles.sectionTitle}>
-                        {toTitleCase(thirdReading.title.toLowerCase())}
-                      </Text>
-                    </View>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={fontSize.icon}
-                      color={chevronColor}
-                      style={styles.chevronIcon}
-                    />
-                  </View>
-                  <View style={styles.divider} />
-                  <Text
-                    style={[
-                      { color: theme.moreImportantText },
-                      { paddingBottom: 20 },
-                      { fontSize: fontSize.body },
-                    ]}
-                  >
-                    {he.decode(thirdReading.teaser)}
-                  </Text>
-                </TouchableOpacity>
-              )}
+              {thirdReading && <ReadingCard reading={thirdReading} />}
             </>
           )}
 
