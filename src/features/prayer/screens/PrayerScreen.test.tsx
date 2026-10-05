@@ -35,7 +35,9 @@ const mockRefresh = jest.fn();
 const mockPush = jest.fn();
 
 const baseFeature = {
-  selectedDate: new Date(2026, 2, 15, 12), // Sunday 15 March 2026, local time
+  // 1pm Sunday 15 March 2026 in parish time, still Saturday evening in the
+  // Los Angeles device zone Jest runs in (jest.global-setup.js).
+  selectedDate: new Date("2026-03-15T02:00:00.000Z"),
   loading: false,
   refreshing: false,
   error: null as Error | null,
