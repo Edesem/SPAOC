@@ -17,4 +17,16 @@ describe("formatEventTimes", () => {
     expect(start).toMatch(/\d{1,2}:\d{2}/);
     expect(end).toMatch(/^to \d{1,2}:\d{2}/);
   });
+
+  // Jest runs as a device in Los Angeles (jest.global-setup.js), where this
+  // instant is the evening of 14 August.
+  it("shows times in parish time, not the device's time zone", () => {
+    expect(
+      formatEventTimes(
+        "2099-08-15T00:00:00.000Z",
+        "2099-08-15T02:30:00.000Z",
+        false,
+      ),
+    ).toEqual({ start: "10:00 AM", end: "to 12:30 PM" });
+  });
 });

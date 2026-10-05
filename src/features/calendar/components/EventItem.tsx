@@ -6,6 +6,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
 import { getCalendarColour } from "@/domain/calendarSources";
+import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { formatEventTimes } from "../domain/eventTimes";
 import { toEventDetailsParams } from "../domain/routeParams";
@@ -44,6 +45,7 @@ export const EventItem = ({
 
   const eventStart = new Date(item.start);
   const formattedDate = eventStart.toLocaleDateString([], {
+    timeZone: APP_TIME_ZONE,
     weekday: "short",
     day: "2-digit",
     month: "short",
