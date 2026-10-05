@@ -12,7 +12,6 @@ const event = {
   description: "Sunday service",
   location: "St Paul's",
   source: "church",
-  data: [],
 };
 
 describe("event details route params", () => {

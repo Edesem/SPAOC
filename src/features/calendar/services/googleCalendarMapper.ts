@@ -59,7 +59,6 @@ export const normalizeGoogleEvent = (
     description: event.description as string,
     location: event.location as string,
     source,
-    data: [],
   };
 };
 

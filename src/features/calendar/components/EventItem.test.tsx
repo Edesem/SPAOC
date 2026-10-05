@@ -44,7 +44,6 @@ const event = {
   description: "",
   location: "",
   source: "church",
-  data: [],
 };
 
 const renderItem = (

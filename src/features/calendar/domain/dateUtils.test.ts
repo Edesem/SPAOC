@@ -140,7 +140,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
       {
         id: "2",
@@ -151,7 +150,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source2",
-        data: [],
       },
       {
         id: "3",
@@ -162,7 +160,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
     ];
 
@@ -189,7 +186,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
       {
         id: "2",
@@ -200,7 +196,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source2",
-        data: [],
       },
       {
         id: "3",
@@ -211,7 +206,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
     ];
 
@@ -245,7 +239,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
       {
         id: "2",
@@ -256,7 +249,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source2",
-        data: [],
       },
     ];
 
@@ -286,7 +278,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
       {
         id: "2",
@@ -297,7 +288,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source2",
-        data: [],
       },
       {
         id: "1",
@@ -308,7 +298,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
     ];
 
@@ -342,7 +331,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
       {
         id: "2",
@@ -353,7 +341,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source2",
-        data: [],
       },
       {
         id: "3",
@@ -364,7 +351,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
       {
         id: "4",
@@ -375,7 +361,6 @@ describe("groupEventsByDay", () => {
         description: "",
         location: "",
         source: "source1",
-        data: [],
       },
     ];
 
