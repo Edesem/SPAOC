@@ -45,13 +45,11 @@ export type CalendarNotificationPreference = {
 
 export type NotificationSettings = {
   dailySaintsEnabled: boolean;
-  favouritesEnabled: boolean;
   calendars: Record<string, CalendarNotificationPreference>;
 };
 
 export type NotificationPlanInput = {
   saints: SaintDay[];
-  favourites: EventData[];
   // Upcoming parish events from every calendar; each carries its `source`
   events: EventData[];
   settings: NotificationSettings;
@@ -144,29 +142,17 @@ export const planCalendarNotifications = (
   return [...planned.values()].sort(byFireTime);
 };
 
-// TODO: sketch only. Which favourites notify, and how far ahead, is still a
-// product decision. When decided, the key should be `favourite:${event.id}`
-// so a notification can be cancelled by event rather than by matching titles.
-export const planFavouriteNotifications = (
-  _favourites: EventData[],
-  _now: Date,
-): PlannedNotification[] => [];
-
 // Everything that should be scheduled right now, soonest first and no more
 // than MAX_PLANNED_NOTIFICATIONS. A kind whose setting is off plans nothing, so
 // reconciling cancels any of that kind still scheduled.
 export const planNotifications = ({
   saints,
-  favourites,
   events,
   settings,
   now,
 }: NotificationPlanInput): PlannedNotification[] =>
   [
     ...(settings.dailySaintsEnabled ? planSaintNotifications(saints, now) : []),
-    ...(settings.favouritesEnabled
-      ? planFavouriteNotifications(favourites, now)
-      : []),
     ...planCalendarNotifications(events, settings.calendars, now),
   ]
     .sort(byFireTime)

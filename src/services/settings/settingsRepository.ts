@@ -10,7 +10,6 @@ import { CALENDAR_SOURCE_NAMES } from "@/domain/calendarSources";
 const START_OF_WEEK_KEY = "START_OF_WEEK";
 const THEME_KEY = "APP_THEME";
 const DAILY_SAINTS_NOTIFICATIONS_KEY = "dailySaintsNotificationsEnabled";
-const FAVOURITES_NOTIFICATIONS_KEY = "favouriteNotificationsEnabled";
 const CALENDAR_NOTIFICATIONS_KEY = "calendarNotificationSettings";
 
 export type StartOfWeek = "sunday" | "monday";
@@ -68,16 +67,6 @@ export async function saveDailySaintNotificationsEnabled(
   enabled: boolean,
 ): Promise<void> {
   await writeFlag(DAILY_SAINTS_NOTIFICATIONS_KEY, enabled);
-}
-
-export async function isFavouriteNotificationsEnabled(): Promise<boolean> {
-  return (await AsyncStorage.getItem(FAVOURITES_NOTIFICATIONS_KEY)) !== "false";
-}
-
-export async function saveFavouriteNotificationsEnabled(
-  enabled: boolean,
-): Promise<void> {
-  await writeFlag(FAVOURITES_NOTIFICATIONS_KEY, enabled);
 }
 
 // Calendar notification settings

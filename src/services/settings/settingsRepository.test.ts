@@ -4,16 +4,13 @@ import {
   getStartOfWeek,
   getThemeChoice,
   isDailySaintNotificationsEnabled,
-  isFavouriteNotificationsEnabled,
   saveCalendarNotificationSettings,
   saveDailySaintNotificationsEnabled,
-  saveFavouriteNotificationsEnabled,
   saveStartOfWeek,
   saveThemeChoice,
 } from "./settingsRepository";
 
 const DAILY_SAINTS = "dailySaintsNotificationsEnabled";
-const FAVOURITES = "favouriteNotificationsEnabled";
 const CALENDARS = "calendarNotificationSettings";
 
 describe("settingsRepository", () => {
@@ -67,20 +64,11 @@ describe("settingsRepository", () => {
     });
   });
 
-  describe.each([
-    [
-      "daily saints",
-      DAILY_SAINTS,
-      isDailySaintNotificationsEnabled,
-      saveDailySaintNotificationsEnabled,
-    ],
-    [
-      "favourites",
-      FAVOURITES,
-      isFavouriteNotificationsEnabled,
-      saveFavouriteNotificationsEnabled,
-    ],
-  ])("%s notification flag", (_, key, isEnabled, save) => {
+  describe("daily saints notification flag", () => {
+    const key = DAILY_SAINTS;
+    const isEnabled = isDailySaintNotificationsEnabled;
+    const save = saveDailySaintNotificationsEnabled;
+
     it("is on unless stored as 'false', so unset matches what Settings shows", async () => {
       expect(await isEnabled()).toBe(true);
 
