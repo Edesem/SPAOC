@@ -21,14 +21,11 @@ jest.mock("@/services/settings/settingsRepository", () => ({
   getThemeChoice: jest.fn(),
   saveCalendarNotificationSettings: jest.fn(),
   saveDailySaintNotificationsEnabled: jest.fn(),
-  saveFavouriteNotificationsEnabled: jest.fn(),
   saveStartOfWeek: jest.fn(),
   saveThemeChoice: jest.fn(),
 }));
 
 jest.mock("@/features/notifications", () => ({
-  cancelAllFavouriteNotifications: jest.fn(),
-  scheduleFavouriteNotifications: jest.fn(),
   syncNotifications: jest.fn(),
 }));
 
@@ -73,7 +70,6 @@ const SETTINGS_KEYS = [
   "START_OF_WEEK",
   "APP_THEME",
   "dailySaintsNotificationsEnabled",
-  "favouriteNotificationsEnabled",
   "calendarNotificationSettings",
 ];
 
@@ -86,7 +82,6 @@ describe("settings", () => {
       startOfWeek: "monday",
       themeChoice: "auto",
       dailySaintsEnabled: true,
-      favouritesEnabled: true,
       calendarNotifications: {},
     });
   });

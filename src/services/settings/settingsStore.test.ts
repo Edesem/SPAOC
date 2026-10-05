@@ -66,18 +66,17 @@ describe("settingsStore", () => {
     await expect(AsyncStorage.getItem("APP_THEME")).resolves.toBe("light");
   });
   describe("notification settings", () => {
-    it("defaults to saints and favourites on with no calendar settings", () => {
+    it("defaults to saints on with no calendar settings", () => {
       const state = useSettingsStore.getState();
 
       expect(state.dailySaintsEnabled).toBe(true);
-      expect(state.favouritesEnabled).toBe(true);
+      expect(state).not.toHaveProperty("favouritesEnabled");
       expect(state.calendarNotifications).toEqual({});
     });
 
     it("hydrates the persisted notification settings", async () => {
       const calendars = { youth: { enabled: true, daysBefore: 3 } };
       await AsyncStorage.setItem("dailySaintsNotificationsEnabled", "false");
-      await AsyncStorage.setItem("favouriteNotificationsEnabled", "false");
       await AsyncStorage.setItem(
         "calendarNotificationSettings",
         JSON.stringify(calendars),
@@ -87,7 +86,6 @@ describe("settingsStore", () => {
 
       const state = useSettingsStore.getState();
       expect(state.dailySaintsEnabled).toBe(false);
-      expect(state.favouritesEnabled).toBe(false);
       expect(state.calendarNotifications).toEqual(calendars);
     });
 
@@ -96,7 +94,6 @@ describe("settingsStore", () => {
 
       const state = useSettingsStore.getState();
       expect(state.dailySaintsEnabled).toBe(true);
-      expect(state.favouritesEnabled).toBe(true);
       expect(state.calendarNotifications.youth).toEqual({
         enabled: false,
         daysBefore: 1,
@@ -126,15 +123,6 @@ describe("settingsStore", () => {
       expect(useSettingsStore.getState().dailySaintsEnabled).toBe(false);
       await expect(
         AsyncStorage.getItem("dailySaintsNotificationsEnabled"),
-      ).resolves.toBe("false");
-    });
-
-    it("persists and updates the favourites switch", async () => {
-      await useSettingsStore.getState().setFavouritesEnabled(false);
-
-      expect(useSettingsStore.getState().favouritesEnabled).toBe(false);
-      await expect(
-        AsyncStorage.getItem("favouriteNotificationsEnabled"),
       ).resolves.toBe("false");
     });
 

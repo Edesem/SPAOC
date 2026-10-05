@@ -5,19 +5,13 @@ import {
   type StartOfWeek,
   type ThemeChoice,
 } from "@/services/settings";
-import { getCalendarColour } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
 import { fontSize } from "@/theme/commonStyles";
-import {
-  cancelAllFavouriteNotifications,
-  scheduleFavouriteNotifications,
-  syncNotifications,
-} from "@/features/notifications";
+import { syncNotifications } from "@/features/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import {
-  Platform,
   ScrollView,
   StyleSheet,
   Switch,
@@ -25,7 +19,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import RNPickerSelect from "react-native-picker-select";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const appVersion = Constants.expoConfig?.version ?? "Unknown";
@@ -48,23 +41,6 @@ export default function SettingsScreen() {
   const setDailySaintsEnabled = useSettingsStore(
     (state) => state.setDailySaintsEnabled,
   );
-  const favouriteNotificationsEnabled = useSettingsStore(
-    (state) => state.favouritesEnabled,
-  );
-  const setFavouriteNotificationsEnabled = useSettingsStore(
-    (state) => state.setFavouritesEnabled,
-  );
-  const calendarSettings = useSettingsStore(
-    (state) => state.calendarNotifications,
-  );
-  const setCalendarNotification = useSettingsStore(
-    (state) => state.setCalendarNotification,
-  );
-
-  const dayOptions = [...Array(60).keys()].map((n) => ({
-    label: `${n} day${n !== 1 ? "s" : ""}`,
-    value: n,
-  }));
 
   return (
     <SafeAreaProvider>
@@ -160,186 +136,6 @@ export default function SettingsScreen() {
               thumbColor="#fff"
             />
           </View>
-
-          {/* Favourites Notification toggle
-          
-          
-          COMMENTED OUT*/}
-          {false && (
-            <View style={styles.settingItem}>
-              <Text style={{ color: theme.moreImportantText }}>
-                Favourite Events
-              </Text>
-              <Switch
-                value={favouriteNotificationsEnabled}
-                onValueChange={async (value) => {
-                  await setFavouriteNotificationsEnabled(value);
-                  if (value) {
-                    scheduleFavouriteNotifications();
-                  } else {
-                    // Optional: cancel existing notifications here
-                    cancelAllFavouriteNotifications(); // You’ll define this next
-                  }
-                }}
-                trackColor={{ false: "#767577", true: "#34c658" }}
-                thumbColor="#fff"
-              />
-            </View>
-          )}
-
-          {/* Comment out code */}
-          {false &&
-            Object.keys(calendarSettings).map((calendar) => {
-              const colour = getCalendarColour(calendar);
-
-              return (
-                <View
-                  key={calendar}
-                  style={{
-                    borderRadius: 12,
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.15,
-                    shadowRadius: 4,
-                    elevation: 4, // Android shadow
-                    marginVertical: 8,
-                  }}
-                >
-                  <View
-                    style={{
-                      borderRadius: 12,
-                      overflow: "hidden", // keeps rounded corners for content
-                      backgroundColor: theme.itemBackground ?? "#fff",
-                      flexDirection: "row",
-                    }}
-                  >
-                    {/* Left color bar */}
-                    <View
-                      style={{
-                        width: 8,
-                        backgroundColor: colour,
-                        borderTopLeftRadius: 12,
-                        borderBottomLeftRadius: 12,
-                      }}
-                    />
-
-                    {/* Content + Switch */}
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: 4,
-                      }}
-                    >
-                      {/* Content */}
-                      <View style={{ flex: 1, padding: 14 }}>
-                        <Text
-                          style={[
-                            {
-                              fontSize: 16,
-                              fontWeight: "600",
-                              color: theme.moreImportantText,
-                              textTransform: "capitalize",
-                            },
-                          ]}
-                        >
-                          {calendar}
-                        </Text>
-                        <Text
-                          style={[
-                            {
-                              color: theme.lessImportantText ?? "#666",
-                              marginTop: 4,
-                            },
-                          ]}
-                        >
-                          Notify {calendarSettings[calendar]?.daysBefore ?? 1}{" "}
-                          day
-                          {calendarSettings[calendar]?.daysBefore !== 1
-                            ? "s"
-                            : ""}{" "}
-                          before
-                        </Text>
-
-                        <View
-                          style={{
-                            marginTop: 10,
-                            alignSelf: "flex-start",
-                            opacity: calendarSettings[calendar]?.enabled
-                              ? 1
-                              : 0.5,
-                          }}
-                        >
-                          <RNPickerSelect
-                            value={calendarSettings[calendar]?.daysBefore ?? 1}
-                            onValueChange={(newVal) =>
-                              setCalendarNotification(calendar, {
-                                daysBefore: newVal,
-                              })
-                            }
-                            items={dayOptions}
-                            placeholder={{}}
-                            useNativeAndroidPickerStyle={false} // important for alignment!
-                            darkTheme={pickerTheme}
-                            style={{
-                              inputIOSContainer: {
-                                backgroundColor: theme.primary,
-                                borderRadius: 8,
-                                height: 40,
-                                width: 110,
-                                justifyContent: "center",
-                                alignItems: "center",
-                              },
-                              inputIOS: {
-                                color: theme.itemBackground,
-                                textAlign: "center",
-                                fontWeight: "500",
-                                pointerEvents: "none",
-                              },
-                              inputAndroidContainer: {
-                                backgroundColor: theme.primary,
-                                borderRadius: 8,
-                                height: 40,
-                                width: 110,
-                                justifyContent: "center",
-                                alignItems: "center",
-                              },
-                              inputAndroid: {
-                                color: theme.itemBackground,
-                                textAlign: "center",
-                                fontWeight: "500",
-                                pointerEvents: "none",
-                              },
-                              iconContainer: {
-                                right: 10,
-                                top: Platform.OS === "android" ? 8 : 12,
-                              },
-                            }}
-                            disabled={!calendarSettings[calendar]?.enabled} // disable when not enabled
-                          />
-                        </View>
-                      </View>
-
-                      {/* Right Side: Switch */}
-                      <View>
-                        <Switch
-                          value={calendarSettings[calendar]?.enabled ?? false}
-                          onValueChange={(value) => {
-                            setCalendarNotification(calendar, {
-                              enabled: value,
-                            });
-                          }}
-                          trackColor={{ false: "#767577", true: "#34c658" }}
-                          thumbColor="#fff"
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              );
-            })}
 
           {/* App Info */}
           <View style={styles.section}>
