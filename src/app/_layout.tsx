@@ -70,7 +70,6 @@ export default function RootLayout() {
     return null;
   }
 
-  console.log("Theme selected:", colorScheme)
   const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
 
   return (

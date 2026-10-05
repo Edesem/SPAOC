@@ -85,29 +85,6 @@ describe("AntiochianApi", () => {
     });
   });
 
-  it("gets reading teasers", () => {
-    expect(antiochian.getReadingTeasers(liturgicalDay)).toEqual({
-      date: "Thursday, 13 August 2026",
-      reading1Title: "Romans 8:28-39",
-      reading1Teaser: "All things work together for good.",
-      reading2Title: "Matthew 14:22-34",
-      reading2Teaser: "Jesus walks on water.",
-      reading3Title: "",
-      reading3Teaser: "",
-    });
-  });
-
-  it("gets reading texts and feast title", () => {
-    expect(antiochian.getReadingTexts(liturgicalDay)).toEqual({
-      reading1FullText: "First reading",
-      reading2FullText: "Second reading",
-      reading3FullText: "",
-    });
-    expect(antiochian.getFeastTitle(liturgicalDay)).toEqual({
-      feastTitle: "Dormition Fast",
-    });
-  });
-
   it("caches liturgical days by date", async () => {
     client.idAnchor = [anchorDate, anchorId];
     client.axiosInstance.get.mockResolvedValue({

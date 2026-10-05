@@ -1,4 +1,4 @@
-import { now, parishDayKey, parishDaysBetween } from "@/lib/parishTime";
+import { parishDayKey, parishDaysBetween } from "@/lib/parishTime";
 import axios, { AxiosInstance } from "axios";
 
 const HOST = "www.antiochian.org";
@@ -25,26 +25,6 @@ export interface LiturgicalDay {
 export interface LiturgicalText {
   publicUrl: string;
   typeOfService: string;
-}
-
-export interface ReadingTeasers {
-  date: string;
-  reading1Title: string;
-  reading1Teaser: string;
-  reading2Title: string;
-  reading2Teaser: string;
-  reading3Title: string;
-  reading3Teaser: string;
-}
-
-export interface ReadingTexts {
-  reading1FullText?: string;
-  reading2FullText?: string;
-  reading3FullText?: string;
-}
-
-export interface FeastTitle {
-  feastTitle?: string;
 }
 
 export class Antiochian {
@@ -112,9 +92,6 @@ export class Antiochian {
 
     if (response.status !== 200) return null;
 
-    // Raw data
-    //console.log(`Raw response data for ${dt?.toDateString() || 'default'}:\n`, JSON.stringify(response.data, null, 2));
-
     const day: LiturgicalDay = response.data.liturgicalDay;
 
     if (!this.idAnchor) {
@@ -149,57 +126,9 @@ export class Antiochian {
     const texts = await this.getLiturgicalText(date);
     return { day, texts };
   }
-
-  public getReadingTeasers(day: LiturgicalDay): ReadingTeasers {
-    return {
-      date: day.calendarDateLong,
-      reading1Title: day.reading1Title.trimStart(),
-      reading1Teaser: day.reading1Teaser.trimStart(),
-      reading2Title: day.reading2Title.trimStart(),
-      reading2Teaser: day.reading2Teaser.trimStart(),
-      reading3Title: (day.reading3Title || "").trimStart(),
-      reading3Teaser: (day.reading3Teaser || "").trimStart(),
-    };
-  }
-
-  public getReadingTexts(day: LiturgicalDay): ReadingTexts {
-    return {
-      reading1FullText: day.reading1FullText?.trimStart(),
-      reading2FullText: day.reading2FullText?.trimStart(),
-      reading3FullText: day.reading3FullText?.trimStart(),
-    };
-  }
-
-  public getFeastTitle(day: LiturgicalDay): FeastTitle {
-    return {
-      feastTitle: day.feastDayTitle?.trimStart(),
-    };
-  }
 }
 
 const antiochianInstance = new Antiochian();
-
-/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
-export const fetchAntiochian = async (date: Date = now()) => {
-  await antiochianInstance.ensureAuthenticated();
-
-  const [day, texts] = await Promise.all([
-    antiochianInstance.getLiturgicalDay(date),
-    antiochianInstance.getLiturgicalText(date),
-  ]);
-
-  return { day, texts };
-};
-
-/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
-export const getReadingTeasers = (day: LiturgicalDay) =>
-  antiochianInstance.getReadingTeasers(day);
-/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
-export const getReadingTexts = (day: LiturgicalDay) =>
-  antiochianInstance.getReadingTexts(day);
-/** @deprecated Use `liturgicalService` from `@/features/prayer/services`. */
-export const getFeastTitle = (day: LiturgicalDay) =>
-  antiochianInstance.getFeastTitle(day);
 
 // low-level access instance
 export default antiochianInstance;
