@@ -7,6 +7,7 @@ import { useForegroundRefresh } from "@/hooks/useForegroundRefresh";
 import {
   addSectionIndexes,
   filterSectionsByMonth,
+  getLoadErrorMessage,
   getSaintsTitle,
 } from "../domain/homeRules";
 import { useCallback, useMemo, useState } from "react";
@@ -18,11 +19,16 @@ const BACKGROUND_REFRESH_THRESHOLD_MS = 300 * 60 * 1000;
 // day, plus their loading/refresh/error behaviour. The screen itself just
 // renders whatever this returns.
 export const useHomeFeature = () => {
-  const { todaysSaints, refetchSaints } = useDailySaint();
-  const { groupedEvents, refetch: refetchEvents } = useEvents();
+  const { todaysSaints, error: saintsError, refetchSaints } = useDailySaint();
+  const {
+    groupedEvents,
+    error: eventsError,
+    refetch: refetchEvents,
+  } = useEvents();
   const {
     events: fastEvents,
     fastLoading,
+    error: fastError,
     refetch: refetchFast,
   } = useFastDay();
 
@@ -69,10 +75,17 @@ export const useHomeFeature = () => {
 
   const todaysSaintsTitle = getSaintsTitle(todaysSaints);
 
+  const loadErrorMessage = getLoadErrorMessage({
+    events: eventsError,
+    saints: saintsError,
+    fast: fastError,
+  });
+
   return {
     todaysSaints,
     todaysSaintsTitle,
     fastLoading,
+    loadErrorMessage,
     majorFastLabel: getMajorLabel(fastEvents),
     minorFastLabel: getMinorLabel(fastEvents),
     sections,
