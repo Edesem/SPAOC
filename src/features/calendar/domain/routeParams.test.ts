@@ -2,8 +2,9 @@ import {
   parseEventDetailsParams,
   toEventDetailsParams,
 } from "./routeParams";
+import type { EventData } from "../types";
 
-const event = {
+const event: EventData = {
   id: "event-1",
   title: "Divine Liturgy",
   start: "2099-08-15T10:00:00.000Z",
@@ -12,7 +13,6 @@ const event = {
   description: "Sunday service",
   location: "St Paul's",
   source: "church",
-  data: [],
 };
 
 describe("event details route params", () => {
