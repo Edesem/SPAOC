@@ -54,6 +54,22 @@ const renderItem = (
 
 const initialState = useFavouritesStore.getState();
 
+describe("EventItem dates", () => {
+  // Jest runs as a device in Los Angeles (jest.global-setup.js), where this
+  // instant is still the evening of 14 August.
+  it("shows the event's date in parish time, not the device's time zone", async () => {
+    const { getByText } = await render(
+      <EventItem
+        item={{ ...event, start: "2099-08-15T00:00:00.000Z" }}
+        onPress={jest.fn()}
+        showFullDate
+      />,
+    );
+
+    expect(getByText("Sat, Aug 15, 2099")).toBeTruthy();
+  });
+});
+
 describe("EventItem favourites", () => {
   beforeEach(() => {
     jest.clearAllMocks();

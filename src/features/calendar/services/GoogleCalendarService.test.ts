@@ -1,3 +1,4 @@
+import { resetNow, setNow } from "@/lib/parishTime";
 import { GoogleCalendarService } from "./GoogleCalendarService";
 import type { GoogleCalendarEvent } from "./googleCalendarMapper";
 
@@ -52,6 +53,8 @@ describe("GoogleCalendarService", () => {
     service = createService(fetchFn);
   });
 
+  afterEach(resetNow);
+
   describe("getParishEvents", () => {
     const from = new Date("2026-08-13T00:00:00.000Z");
 
@@ -76,8 +79,8 @@ describe("GoogleCalendarService", () => {
       );
     });
 
-    it("defaults the window start to now", async () => {
-      jest.useFakeTimers().setSystemTime(new Date("2026-09-25T22:15:00Z"));
+    it("defaults the window start to the app clock", async () => {
+      setNow(() => new Date("2026-09-25T22:15:00Z"));
       fetchFn.mockResolvedValue(okResponse([]));
 
       await service.getParishEvents();
@@ -85,7 +88,6 @@ describe("GoogleCalendarService", () => {
       expect(requestedUrl(fetchFn).searchParams.get("timeMin")).toBe(
         "2026-09-25T22:15:00.000Z",
       );
-      jest.useRealTimers();
     });
 
     it("sorts across calendars by instant when offsets differ", async () => {
@@ -190,6 +192,17 @@ describe("GoogleCalendarService", () => {
           source: "fasting",
         }),
       ]);
+    });
+
+    it("defaults the window start to the app clock", async () => {
+      setNow(() => new Date("2026-09-25T22:15:00Z"));
+      fetchFn.mockResolvedValue(okResponse([]));
+
+      await service.getFastingEvents();
+
+      expect(requestedUrl(fetchFn).searchParams.get("timeMin")).toBe(
+        "2026-09-25T22:15:00.000Z",
+      );
     });
 
     it("propagates provider errors", async () => {

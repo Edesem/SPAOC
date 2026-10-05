@@ -2,6 +2,7 @@ import { EventItem } from "../components/EventItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useHomeFeature } from "../hooks/useHomeFeature";
+import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { HomeEventSection } from "../domain/homeRules";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -141,7 +142,7 @@ const MonthPickerModal = ({
       <MonthPicker
         onChange={onValueChange}
         value={selectedDate}
-        minimumDate={new Date()}
+        minimumDate={now()}
         locale="en"
       />
     </View>

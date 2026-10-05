@@ -7,6 +7,7 @@ import ReadingCard from "../components/ReadingCard";
 import { openServicePdf } from "../openServicePdf";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
 import * as Haptics from "expo-haptics";
@@ -123,6 +124,7 @@ export default function PrayerScreen(): JSX.Element {
               style={[styles.dateTitle, { color: theme.moreImportantText }]}
             >
               {selectedDate.toLocaleDateString(undefined, {
+                timeZone: APP_TIME_ZONE,
                 weekday: "long",
                 year: "numeric",
                 month: "long",
