@@ -1,6 +1,6 @@
 # Notification planner
 
-Design for splitting the old `utils/notifications.ts` (issue #84, deleted in #93). #84 added the pure planner and documented the rest. #85 added the gateway and moved the existing saint, favourite and category scheduling onto it. #86 moved the app-lifecycle notification work to the root layout. #129 wrote the reconcile step for saints (`syncNotifications.ts`); favourite and calendar notifications still schedule directly (#130).
+Design for splitting the old `utils/notifications.ts` (issue #84, deleted in #93). #84 added the pure planner and documented the rest. #85 added the gateway and moved the existing saint, favourite and category scheduling onto it. #86 moved the app-lifecycle notification work to the root layout. #129 wrote the reconcile step for saints (`syncNotifications.ts`); #130 decided against favourite and calendar notifications for now (see "What #130 changed").
 
 ## What the app needs
 
@@ -41,11 +41,10 @@ type PlannedNotification = {
 
 Keys:
 
-| Kind                 | Key                              | Example                 |
-| -------------------- | -------------------------------- | ----------------------- |
-| saint                | `saint:<parish day>`             | `saint:2026-09-30`      |
-| calendar             | `calendar:<calendar>:<event id>` | `calendar:youth:abc123` |
-| favourite (proposed) | `favourite:<event id>`           | `favourite:abc123`      |
+| Kind     | Key                              | Example                 |
+| -------- | -------------------------------- | ----------------------- |
+| saint    | `saint:<parish day>`             | `saint:2026-09-30`      |
+| calendar | `calendar:<calendar>:<event id>` | `calendar:youth:abc123` |
 
 Key rules:
 
@@ -74,7 +73,7 @@ Calendar notifications:
 - Title `<event title> coming up!`, body `Start time: 7:30 pm` in parish time, or `All day`.
 - Not planned if that time is before `now`, the start cannot be read, or the calendar is off or has no setting.
 
-Favourite notifications are a TODO. `planFavouriteNotifications` returns `[]` until the product scope is decided. The key above lets a favourite be cancelled by event. If favourites stay, decide whether an event that is both a favourite and on an enabled calendar gets one notification or two. If they are dropped, the stub and its toggle can go.
+Favourite notifications were dropped in #130 (see below). If they come back, key them `favourite:<event id>` so one can be cancelled by event, and decide whether an event that is both a favourite and on an enabled calendar gets one notification or two.
 
 ## Limit on scheduled notifications
 
@@ -183,3 +182,13 @@ Rules for the reconcile step:
 - It runs from the root layout once settings have hydrated (the store's defaults have saints on, so running earlier could schedule what the user switched off) and after the Settings saint toggle.
 - `saintNotifications.ts` (`scheduleSaintNotificationsForNext7Days`, `cancelAllSaintNotifications`) is deleted.
 - Not done: favourite and calendar kinds (#130), and running again on app foreground.
+
+## What #130 changed
+
+Decision: favourite and calendar notifications are not offered until the product wants them (option a of #130). Nothing was built on the planner for them.
+
+- Deleted `favouriteNotifications.ts` and its tests, and the stub `planFavouriteNotifications`. `NotificationPlanInput` lost `favourites` and `NotificationSettings` lost `favouritesEnabled`.
+- Removed the hidden favourites and per-calendar blocks from the Settings screen, and the favourites flag (`favouritesEnabled`, `setFavouritesEnabled`, and the repository's `isFavouriteNotificationsEnabled` and `saveFavouriteNotificationsEnabled`). The stored `favouriteNotificationsEnabled` value on a device is left alone and is never read.
+- `calendarNotifications.ts` was already gone (#94). No `AsyncStorage` import remains under `src/features/notifications/`.
+- Kept for later: `planCalendarNotifications` (tested, but nothing supplies events yet), the calendar notification settings in the store and repository (`syncNotifications` still passes them to the planner), and the `"favourite"` and `"calendar"` values of `NotificationKind`.
+- To bring either kind back: load its inputs in `syncNotifications`, add the kind to `kinds`, and unhide a Settings control. That ties in with #54, #13 and #16.
