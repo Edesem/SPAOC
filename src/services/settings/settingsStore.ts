@@ -5,10 +5,8 @@ import {
   getStartOfWeek,
   getThemeChoice,
   isDailySaintNotificationsEnabled,
-  isFavouriteNotificationsEnabled,
   saveCalendarNotificationSettings,
   saveDailySaintNotificationsEnabled,
-  saveFavouriteNotificationsEnabled,
   saveStartOfWeek,
   saveThemeChoice,
   type CalendarNotificationSetting,
@@ -25,7 +23,6 @@ interface SettingsState {
   startOfWeek: StartOfWeek;
   themeChoice: ThemeChoice;
   dailySaintsEnabled: boolean;
-  favouritesEnabled: boolean;
   calendarNotifications: CalendarNotificationSettings;
   hydrated: boolean;
   getStartOfWeek: () => StartOfWeek;
@@ -35,7 +32,6 @@ interface SettingsState {
   // the value is saved, so callers can await them before scheduling anything
   // that reads the saved value.
   setDailySaintsEnabled: (value: boolean) => Promise<void>;
-  setFavouritesEnabled: (value: boolean) => Promise<void>;
   setCalendarNotification: (
     calendar: string,
     setting: Partial<CalendarNotificationSetting>,
@@ -61,7 +57,6 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   startOfWeek: "monday",
   themeChoice: "auto",
   dailySaintsEnabled: true,
-  favouritesEnabled: true,
   calendarNotifications: {},
   hydrated: false,
 
@@ -77,10 +72,6 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   setDailySaintsEnabled: async (value) => {
     set({ dailySaintsEnabled: value });
     await saveDailySaintNotificationsEnabled(value);
-  },
-  setFavouritesEnabled: async (value) => {
-    set({ favouritesEnabled: value });
-    await saveFavouriteNotificationsEnabled(value);
   },
   setCalendarNotification: async (calendar, setting) => {
     const current = get().calendarNotifications;
@@ -98,20 +89,17 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
         startOfWeek,
         themeChoice,
         dailySaintsEnabled,
-        favouritesEnabled,
         calendarNotifications,
       ] = await Promise.all([
         getStartOfWeek(),
         getThemeChoice(),
         isDailySaintNotificationsEnabled(),
-        isFavouriteNotificationsEnabled(),
         loadCalendarNotifications(),
       ]);
       set({
         startOfWeek: startOfWeek ?? get().startOfWeek,
         themeChoice,
         dailySaintsEnabled,
-        favouritesEnabled,
         calendarNotifications:
           calendarNotifications ?? get().calendarNotifications,
       });
