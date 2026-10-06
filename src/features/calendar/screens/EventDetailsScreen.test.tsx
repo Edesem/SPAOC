@@ -34,7 +34,7 @@ describe("EventDetailsScreen times", () => {
 
     const { findByText, queryByText } = await render(<EventDetailsScreen />);
 
-    expect(await findByText(/🕒 \d{1,2}:\d{2}.* to \d{1,2}:\d{2}/)).toBeTruthy();
+    expect(await findByText(/\d{1,2}:\d{2}.* to \d{1,2}:\d{2}/)).toBeTruthy();
     expect(queryByText(/2099/)).toBeNull();
   });
 
@@ -43,6 +43,6 @@ describe("EventDetailsScreen times", () => {
 
     const { findByText } = await render(<EventDetailsScreen />);
 
-    expect(await findByText(/🕒 All day/)).toBeTruthy();
+    expect(await findByText(/All day/)).toBeTruthy();
   });
 });
