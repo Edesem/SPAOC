@@ -1,6 +1,7 @@
 import { EventItem } from "../components/EventItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { useHomeFeature } from "../hooks/useHomeFeature";
 import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
@@ -166,6 +167,7 @@ export default function HomeScreen() {
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+  const gutter = useReadableGutter();
 
   const {
     todaysSaints,
@@ -203,11 +205,14 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.background }]}
+        style={[
+          styles.container,
+          { backgroundColor: theme.background, paddingHorizontal: gutter },
+        ]}
       >
         {fastLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#4f4f5b" />
+            <ActivityIndicator size="large" color={theme.primary} />
           </View>
         ) : (
           <View style={styles.verticalBarContainer}>
@@ -216,7 +221,7 @@ export default function HomeScreen() {
             />
 
             <View style={styles.container}>
-              {/* Hamburger menu button + Scroll to Top */}
+              {/* Settings button on the left, month filter on the right */}
               <View
                 style={{
                   flexDirection: "row",
@@ -231,6 +236,8 @@ export default function HomeScreen() {
                     router.push("/settings");
                   }}
                   style={{ padding: 10 }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Settings"
                 >
                   <MaterialIcons
                     name="menu"
@@ -245,31 +252,12 @@ export default function HomeScreen() {
                     setShowMonthPicker(true);
                   }}
                   style={{ padding: 10 }}
+                  accessibilityRole="button"
                   accessibilityLabel="Choose month"
                 >
                   <IconSymbol
                     name="calendar"
                     size={36}
-                    color={theme.lessImportantText}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    scrollToTop();
-                  }}
-                  style={{
-                    padding: 10,
-                    borderRadius: 6,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  accessibilityLabel="Scroll to top"
-                >
-                  <MaterialIcons
-                    name="arrow-upward"
-                    style={styles.icon}
                     color={theme.lessImportantText}
                   />
                 </TouchableOpacity>
@@ -295,8 +283,16 @@ export default function HomeScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Clear month filter"
                 >
-                  <MaterialIcons name="close" size={20} color="#fff" />
-                  <Text style={styles.clearFilterText}>Clear month filter</Text>
+                  <MaterialIcons
+                    name="close"
+                    size={20}
+                    color={theme.onPrimary}
+                  />
+                  <Text
+                    style={[styles.clearFilterText, { color: theme.onPrimary }]}
+                  >
+                    Clear month filter
+                  </Text>
                 </TouchableOpacity>
               ) : null}
 
@@ -438,13 +434,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     gap: 6,
+    minHeight: 48,
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 20,
     marginVertical: 6,
   },
   clearFilterText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },

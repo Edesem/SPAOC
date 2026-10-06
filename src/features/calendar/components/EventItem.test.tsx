@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 import { EventItem } from "./EventItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFavouritesStore } from "../favourites";
@@ -53,6 +53,24 @@ const renderItem = (
 ) => render(<EventItem item={item} onPress={jest.fn()} {...props} />);
 
 const initialState = useFavouritesStore.getState();
+
+describe("EventItem calendar name", () => {
+  it("names the calendar beside the time, so colour isn't the only cue", async () => {
+    const { findByText } = await renderItem();
+
+    expect(await findByText(/^Church · .*08:00 PM/)).toBeTruthy();
+  });
+
+  it("leaves the name out for sources that aren't parish calendars", async () => {
+    const { findByText, queryByText } = await renderItem(
+      {},
+      { ...event, source: "fasting" },
+    );
+
+    expect(await findByText(/08:00 PM/)).toBeTruthy();
+    expect(queryByText(/·/)).toBeNull();
+  });
+});
 
 describe("EventItem dates", () => {
   // Jest runs as a device in Los Angeles (jest.global-setup.js), where this
@@ -217,5 +235,56 @@ describe("EventItem navigation", () => {
       },
     });
     expect(onPress).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("EventItem accessibility", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useFavouritesStore.setState(initialState, true);
+    (addFavourite as jest.Mock).mockResolvedValue(undefined);
+    (removeFavourite as jest.Mock).mockResolvedValue(undefined);
+  });
+
+  it("reads the row as one button naming the event and its calendar", async () => {
+    const { getByRole } = await renderItem();
+
+    const row = getByRole("button", {
+      name: /^Divine Liturgy, .*church calendar$/,
+    });
+    expect(row.props.accessibilityHint).toBe("Opens event details");
+  });
+
+  it("labels the star by what pressing it will do and exposes its state", async () => {
+    const { getByLabelText } = await renderItem();
+
+    expect(
+      getByLabelText("Add Divine Liturgy to favourites").props
+        .accessibilityState,
+    ).toEqual({ selected: false });
+
+    await act(async () => {
+      useFavouritesStore.setState({ favourites: { [event.id]: event } });
+    });
+
+    expect(
+      getByLabelText("Remove Divine Liturgy from favourites").props
+        .accessibilityState,
+    ).toEqual({ selected: true });
+  });
+
+  it("offers favouriting as a row action, since screen readers can't reach the nested star on iOS", async () => {
+    const { getByRole } = await renderItem();
+    const row = getByRole("button", { name: /^Divine Liturgy/ });
+
+    expect(row.props.accessibilityActions).toEqual([
+      { name: "toggleFavourite", label: "Add Divine Liturgy to favourites" },
+    ]);
+
+    await fireEvent(row, "accessibilityAction", {
+      nativeEvent: { actionName: "toggleFavourite" },
+    });
+
+    await waitFor(() => expect(addFavourite).toHaveBeenCalledWith(event));
   });
 });

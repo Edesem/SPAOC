@@ -223,6 +223,15 @@ describe("PrayerScreen", () => {
       ).toBeNull();
     });
 
+    it("offers a retry that reloads the selected day", async () => {
+      mockFeature = { ...baseFeature, error: new Error("offline") };
+
+      await render(<PrayerScreen />);
+      await fireEvent.press(screen.getByLabelText("Try loading prayers again"));
+
+      expect(mockLoad).toHaveBeenCalledWith(baseFeature.selectedDate);
+    });
+
     it("shows the empty message when the day has no services", async () => {
       mockFeature = { ...baseFeature, data: dataWith({ services: [] }) };
 

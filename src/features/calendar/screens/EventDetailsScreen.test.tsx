@@ -34,8 +34,32 @@ describe("EventDetailsScreen times", () => {
 
     const { findByText, queryByText } = await render(<EventDetailsScreen />);
 
-    expect(await findByText(/🕒 \d{1,2}:\d{2}.* to \d{1,2}:\d{2}/)).toBeTruthy();
-    expect(queryByText(/2099/)).toBeNull();
+    expect(await findByText(/\d{1,2}:\d{2}.* to \d{1,2}:\d{2}/)).toBeTruthy();
+    expect(queryByText(/T\d{2}:\d{2}/)).toBeNull();
+  });
+
+  it("shows the day the event is on, in parish time", async () => {
+    mockParams = params;
+
+    const { findByText } = await render(<EventDetailsScreen />);
+
+    expect(await findByText(/Saturday 15 August/)).toBeTruthy();
+  });
+
+  it("shows a link in the description as its site name", async () => {
+    mockParams = {
+      ...params,
+      description: "RSVP at https://www.stpaulchurch.com.au/rsvp?id=4.",
+    };
+
+    const { findByLabelText, queryByText } = await render(
+      <EventDetailsScreen />,
+    );
+
+    expect(
+      await findByLabelText("Open link to stpaulchurch.com.au"),
+    ).toBeTruthy();
+    expect(queryByText(/rsvp\?id=4/)).toBeNull();
   });
 
   it("shows 'All day' for an all-day event", async () => {
@@ -43,6 +67,6 @@ describe("EventDetailsScreen times", () => {
 
     const { findByText } = await render(<EventDetailsScreen />);
 
-    expect(await findByText(/🕒 All day/)).toBeTruthy();
+    expect(await findByText(/All day/)).toBeTruthy();
   });
 });

@@ -7,6 +7,7 @@ import ReadingCard from "../components/ReadingCard";
 import { openServicePdf } from "../openServicePdf";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
@@ -32,6 +33,7 @@ import toTitleCase from "titlecase";
 
 export default function PrayerScreen(): JSX.Element {
   const insets = useSafeAreaInsets();
+  const gutter = useReadableGutter();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -63,6 +65,7 @@ export default function PrayerScreen(): JSX.Element {
         <ScrollView
           contentContainerStyle={{
             paddingBottom: insets.bottom + 20,
+            paddingHorizontal: gutter,
           }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={refresh} />
@@ -101,6 +104,8 @@ export default function PrayerScreen(): JSX.Element {
                 padding: 5,
                 shadowColor: "black",
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Choose date"
             >
               <IconSymbol
                 name="calendar"
@@ -158,7 +163,9 @@ export default function PrayerScreen(): JSX.Element {
               ]}
             >
               <Text style={CommonStyles.sectionTitle}>Loading Readings...</Text>
-              <View style={styles.divider} />
+              <View
+                style={[styles.divider, { backgroundColor: theme.separator }]}
+              />
               <View style={styles.centered}>
                 <ActivityIndicator size="large" />
                 <Text
@@ -197,7 +204,9 @@ export default function PrayerScreen(): JSX.Element {
             ]}
           >
             <Text style={CommonStyles.sectionTitle}>Daily Variables</Text>
-            <View style={styles.divider} />
+            <View
+              style={[styles.divider, { backgroundColor: theme.separator }]}
+            />
 
             {loading ? (
               <View style={styles.centered}>
@@ -213,9 +222,29 @@ export default function PrayerScreen(): JSX.Element {
                 </Text>
               </View>
             ) : error ? (
-              <Text style={styles.errorText}>Error loading prayers</Text>
+              <View style={styles.errorBlock}>
+                <Text style={[styles.errorText, { color: theme.error }]}>
+                  Error loading prayers
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    load(selectedDate);
+                  }}
+                  style={[
+                    styles.retryButton,
+                    { backgroundColor: theme.primary },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Try loading prayers again"
+                >
+                  <Text style={[styles.retryText, { color: theme.onPrimary }]}>
+                    Try again
+                  </Text>
+                </TouchableOpacity>
+              </View>
             ) : !liturgicalServices?.length ? (
-              <Text style={styles.noTextsMessage}>
+              <Text style={[styles.noTextsMessage, { color: theme.detail }]}>
                 There are no liturgical texts today.
               </Text>
             ) : (
@@ -231,11 +260,12 @@ export default function PrayerScreen(): JSX.Element {
                       });
                     }}
                     activeOpacity={0.6}
+                    style={styles.serviceRow}
+                    accessibilityRole="button"
                   >
                     <Text
                       style={[
                         { color: theme.moreImportantText },
-                        { paddingBottom: 20 },
                         { fontSize: fontSize.body },
                       ]}
                     >

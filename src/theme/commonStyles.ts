@@ -30,7 +30,7 @@ export const getCommonStyles = (theme: string) => {
       elevation: 3,
     },
     buttonText: {
-      color: "#FFF",
+      color: currentTheme.onSecondary,
       fontSize: 16,
       fontWeight: "600",
     },

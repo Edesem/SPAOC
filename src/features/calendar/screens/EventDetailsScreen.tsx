@@ -1,9 +1,12 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { getCalendarImage } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
+import { fontSize } from "@/theme/commonStyles";
 import { EventDetailsParams } from "@/types/routes";
-import { formatEventTimes } from "../domain/eventTimes";
+import { splitDescription } from "../domain/descriptionLinks";
+import { formatEventDate, formatEventTimes } from "../domain/eventTimes";
 import { parseEventDetailsParams } from "../domain/routeParams";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
@@ -11,7 +14,6 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { decode } from "html-entities";
 import { useEffect } from "react";
 import {
-  Dimensions,
   Image,
   Linking,
   Platform,
@@ -19,12 +21,15 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
-const { width, height } = Dimensions.get("window");
+// The closing ornament is sized from the live window (so it follows rotation
+// and Split View) but capped so it doesn't balloon on a tablet.
+const MAX_IMAGE_SIZE = 480;
 
 const cleanDescription = (description: string): string => {
   const decoded = decode(description);
@@ -41,23 +46,21 @@ const renderDescription = (description: string | null, theme: any) => {
 
   const cleanedDescription = cleanDescription(description);
 
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-
-  const parts = cleanedDescription.split(urlRegex);
-
   return (
     <Text style={[styles.description, { color: theme.detail }]}>
-      {parts.map((part, index) =>
-        urlRegex.test(part) ? (
+      {splitDescription(cleanedDescription).map((part, index) =>
+        part.kind === "link" ? (
           <Text
             key={index}
             style={{ color: theme.primary, textDecorationLine: "underline" }}
-            onPress={() => Linking.openURL(part)}
+            accessibilityRole="link"
+            accessibilityLabel={`Open link to ${part.label}`}
+            onPress={() => Linking.openURL(part.url)}
           >
-            {part}
+            {part.label}
           </Text>
         ) : (
-          part
+          part.text
         ),
       )}
     </Text>
@@ -73,8 +76,14 @@ const EventDetailsScreen = () => {
     end,
     allDay,
   );
+  const dateLabel = formatEventDate(start, end, allDay);
 
   const styles = getStyles();
+
+  const gutter = useReadableGutter();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const imageWidth = Math.min(windowWidth - gutter * 2, MAX_IMAGE_SIZE);
+  const imageHeight = Math.min(windowHeight * 0.5, MAX_IMAGE_SIZE);
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -85,9 +94,6 @@ const EventDetailsScreen = () => {
     navigation.setOptions({
       title: "Event Details",
       headerBackTitle: "Back",
-      headerBackTitleStyle: {
-        color: "pink", // Set the color of the back button title (if any)
-      },
     });
   }, [navigation, title]);
 
@@ -143,6 +149,7 @@ const EventDetailsScreen = () => {
         <ScrollView
           contentContainerStyle={{
             padding: 20,
+            paddingHorizontal: 20 + gutter,
             paddingBottom: 0,
             backgroundColor: theme.background,
           }}
@@ -151,34 +158,69 @@ const EventDetailsScreen = () => {
             style={[styles.card, { backgroundColor: theme.itemBackground }]}
           >
             <Text style={[styles.title, { color: theme.moreImportantText }]}>
-              {title || "Event Title"}
+              {title || "Untitled event"}
             </Text>
-            <View style={styles.divider} />
-            <Text style={[styles.date, { color: theme.lessImportantText }]}>
-              🕒 {startLabel} {endLabel}
-            </Text>
-            {location == null ? null : (
+            <View
+              style={[styles.divider, { backgroundColor: theme.separator }]}
+            />
+            <View style={styles.metaRow}>
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 5,
-                }}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
               >
+                <IconSymbol
+                  name="calendar"
+                  size={20}
+                  color={theme.lessImportantText}
+                />
+              </View>
+              <Text style={[styles.date, { color: theme.lessImportantText }]}>
+                {dateLabel}
+              </Text>
+            </View>
+            <View style={[styles.metaRow, { marginTop: 5 }]}>
+              <View
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              >
+                <IconSymbol
+                  name="clock"
+                  size={20}
+                  color={theme.lessImportantText}
+                />
+              </View>
+              <Text style={[styles.date, { color: theme.lessImportantText }]}>
+                {startLabel} {endLabel}
+              </Text>
+            </View>
+            {location == null ? null : (
+              <View style={[styles.metaRow, { marginTop: 5 }]}>
+                <View
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                >
+                  <IconSymbol
+                    name="mappin"
+                    size={20}
+                    color={theme.lessImportantText}
+                  />
+                </View>
                 <Text
                   style={[
                     styles.detail,
-                    { color: theme.lessImportantText, flexShrink: 1 },
+                    { color: theme.lessImportantText, flex: 1 },
                   ]}
                 >
-                  📍{location}
+                  {location}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     copyLocation();
                   }}
-                  style={{ marginLeft: 10 }}
+                  style={styles.locationAction}
+                  accessibilityRole="button"
+                  accessibilityLabel="Copy address"
                 >
                   <IconSymbol
                     name="square.fill.on.square.fill"
@@ -191,7 +233,9 @@ const EventDetailsScreen = () => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     openInMaps();
                   }}
-                  style={{ marginLeft: 10 }}
+                  style={styles.locationAction}
+                  accessibilityRole="button"
+                  accessibilityLabel="Open in maps"
                 >
                   <IconSymbol
                     name="map.fill"
@@ -212,7 +256,14 @@ const EventDetailsScreen = () => {
           <View style={styles.imageContainer}>
             <Image
               source={image} // Adjust the path to your local image
-              style={[styles.bottomImage, { tintColor: theme.primary }]}
+              style={[
+                styles.bottomImage,
+                {
+                  width: imageWidth,
+                  height: imageHeight,
+                  tintColor: theme.primary,
+                },
+              ]}
             />
           </View>
         </ScrollView>
@@ -223,13 +274,7 @@ const EventDetailsScreen = () => {
 
 const getStyles = () =>
   StyleSheet.create({
-    container: {
-      flexGrow: 1,
-      padding: 20,
-      backgroundColor: "#F4F4F4",
-    },
     card: {
-      backgroundColor: "#FFFFFF",
       borderRadius: 12,
       padding: 20,
       shadowColor: "#000",
@@ -241,44 +286,44 @@ const getStyles = () =>
     title: {
       fontSize: 24,
       fontWeight: "700",
-      color: "#333",
       marginBottom: 8,
     },
     divider: {
       height: 1,
-      backgroundColor: "#E0E0E0",
       marginVertical: 10,
+    },
+    metaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
     },
     date: {
       fontSize: 16,
-      color: "#555",
       marginVertical: 4,
     },
     detail: {
       fontSize: 16,
-      color: "#555",
       marginVertical: 4,
     },
     description: {
-      fontSize: 14,
+      fontSize: fontSize.body,
       marginTop: 15,
-      lineHeight: 20,
+      lineHeight: 24,
+    },
+    // 48 covers iOS's 44pt and Android's 48dp minimum targets.
+    locationAction: {
+      minWidth: 48,
+      minHeight: 48,
+      alignItems: "center",
+      justifyContent: "center",
     },
     bottomImage: {
-      width: width, // 80% of the screen width
-      height: height * 0.5, // 40% of the screen height
       resizeMode: "contain", // Ensure the image doesn't stretch
-      tintColor: "#0a4068",
       marginBottom: 50,
     },
     imageContainer: {
       alignItems: "center",
       marginTop: 5,
-    },
-    customBack: {
-      fontSize: 18,
-      color: "#0a4068",
-      marginLeft: 10,
     },
   });
 

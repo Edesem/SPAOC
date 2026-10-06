@@ -290,15 +290,6 @@ describe("HomeScreen", () => {
       return scrollTo;
     };
 
-    it("scrolls to the very top when the button is pressed, even with no events", async () => {
-      const scrollTo = spyOnScrollTo();
-      const { getByLabelText } = await render(<HomeScreen />);
-
-      await fireEvent.press(getByLabelText("Scroll to top"));
-
-      expect(scrollTo).toHaveBeenCalledWith({ y: 0, animated: true });
-    });
-
     it("scrolls to the very top when the Home tab is pressed", async () => {
       const scrollTo = spyOnScrollTo();
       await render(<HomeScreen />);

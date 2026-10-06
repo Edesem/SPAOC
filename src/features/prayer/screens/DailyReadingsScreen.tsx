@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { SafeAreaView } from "react-native-safe-area-context";
 import he from "he";
 import toTitleCase from "titlecase";
@@ -34,17 +35,16 @@ export default function ReadingScreen() {
     navigation.setOptions({
       title: "Daily Readings",
       headerBackTitle: "Back",
-      headerBackTitleStyle: {
-        color: "pink", // Set the color of the back button title (if any)
-      },
     });
   }, [navigation, title]);
+
+  const gutter = useReadableGutter();
 
   const [copied, setCopied] = useState(false);
 
   const handleCopyAll = async () => {
     await Clipboard.setStringAsync(
-      he.decode(reading) + "\n\n" + "- " + toTitleCase(title.toLowerCase())
+      he.decode(reading) + "\n\n" + "- " + toTitleCase(title.toLowerCase()),
     );
     setCopied(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -54,7 +54,7 @@ export default function ReadingScreen() {
   useFocusEffect(
     useCallback(() => {
       setCopied(false); // Reset copied state when the screen is focused
-    }, [])
+    }, []),
   );
 
   return (
@@ -64,7 +64,10 @@ export default function ReadingScreen() {
     >
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.scrollContainer,
+          { paddingHorizontal: 20 + gutter },
+        ]}
       >
         <Text style={[styles.title, { color: colors.moreImportantText }]}>
           {toTitleCase(title.toLowerCase())}
@@ -92,12 +95,11 @@ export default function ReadingScreen() {
 
       <TouchableOpacity
         onPress={handleCopyAll}
-        style={[
-          styles.copyButton,
-          { backgroundColor: colors.primary || "#007AFF" },
-        ]}
+        style={[styles.copyButton, { backgroundColor: colors.primary }]}
       >
-        <Text style={styles.copyButtonText}>{copied ? "Copied!" : "Copy"}</Text>
+        <Text style={[styles.copyButtonText, { color: colors.onPrimary }]}>
+          {copied ? "Copied!" : "Copy"}
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -108,7 +110,6 @@ const getStyles = () =>
       flex: 1,
     },
     scrollContainer: {
-      paddingHorizontal: 20,
       paddingBottom: 40,
       paddingTop: 10, // Small top padding to avoid text sticking to the top
     },
@@ -131,13 +132,14 @@ const getStyles = () =>
     },
     copyButton: {
       borderRadius: 10,
+      minHeight: 48,
+      justifyContent: "center",
       paddingVertical: 10,
       paddingHorizontal: 20,
       alignSelf: "center",
       marginVertical: 10,
     },
     copyButtonText: {
-      color: "white",
       fontWeight: "600",
       fontSize: 16,
     },
