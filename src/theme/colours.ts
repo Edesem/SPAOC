@@ -10,12 +10,18 @@ export const Colours = {
     background: '#F7F6F7',    
     detail: '#555',
     moreImportantText: '#333',
-    lessImportantText: '#777',
+    lessImportantText: '#666',  // 5.3:1 on background, 5.7:1 on cards
     sectionDate: '#5d5d5d',
     itemBackground: '#FFFFFF',
     donateButton: '#de333f',
-    chevronColor: '#BBB',
-
+    chevronColor: '#8C8C8C',    // 3:1 against cards, so the empty star reads as a control
+    onPrimary: '#FFFFFF',       // text and icons on a primary fill
+    onSecondary: '#121212',     // bronze is too light for white text
+    onDonate: '#FFFFFF',
+    error: '#B3261E',
+    tabInactive: '#6B6B6B',
+    favourite: '#B07D00',       // the filled star; #FFD700 is 1.4:1 on white
+    separator: '#D0D0D0',
   },
   dark: {
     primary: '#a88646',      // A darker shade of blue for better contrast
@@ -28,5 +34,12 @@ export const Colours = {
     itemBackground: '#272727',
     donateButton: '#b51a25',
     chevronColor: '#777',
+    onPrimary: '#121212',       // primary is bronze in dark; white on it is 3.4:1
+    onSecondary: '#121212',
+    onDonate: '#FFFFFF',
+    error: '#F2766B',
+    tabInactive: '#888',
+    favourite: '#FFD700',
+    separator: '#4A4A4A',
   },
 };
