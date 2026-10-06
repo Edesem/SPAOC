@@ -35,9 +35,6 @@ export default function ReadingScreen() {
     navigation.setOptions({
       title: "Daily Readings",
       headerBackTitle: "Back",
-      headerBackTitleStyle: {
-        color: "pink", // Set the color of the back button title (if any)
-      },
     });
   }, [navigation, title]);
 
@@ -47,7 +44,7 @@ export default function ReadingScreen() {
 
   const handleCopyAll = async () => {
     await Clipboard.setStringAsync(
-      he.decode(reading) + "\n\n" + "- " + toTitleCase(title.toLowerCase())
+      he.decode(reading) + "\n\n" + "- " + toTitleCase(title.toLowerCase()),
     );
     setCopied(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -57,7 +54,7 @@ export default function ReadingScreen() {
   useFocusEffect(
     useCallback(() => {
       setCopied(false); // Reset copied state when the screen is focused
-    }, [])
+    }, []),
   );
 
   return (
@@ -98,10 +95,7 @@ export default function ReadingScreen() {
 
       <TouchableOpacity
         onPress={handleCopyAll}
-        style={[
-          styles.copyButton,
-          { backgroundColor: colors.primary || "#007AFF" },
-        ]}
+        style={[styles.copyButton, { backgroundColor: colors.primary }]}
       >
         <Text style={[styles.copyButtonText, { color: colors.onPrimary }]}>
           {copied ? "Copied!" : "Copy"}

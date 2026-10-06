@@ -16,9 +16,6 @@ export default function PdfViewer() {
     navigation.setOptions({
       title: `${title}`,
       headerBackTitle: "Back",
-      headerBackTitleStyle: {
-        color: "pink",
-      },
     });
   }, [navigation, title, url]);
 
