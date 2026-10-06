@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-06T00:25:48.850827+00:00",
+  "generatedAt": "2026-10-06T00:58:31.108023+00:00",
   "title": "Design System: SPAOC",
   "extensions": {
     "colorMeta": {
@@ -9,14 +9,14 @@
         "displayName": "Vestment Navy",
         "canonical": "oklch(36% 0.087 247)",
         "tonalRamp": [
-          "#000b24",
-          "#012846",
-          "#214b6f",
-          "#3f6d96",
-          "#6091bd",
-          "#88b6e1",
-          "#aad6ff",
-          "#caf4ff"
+          "#000c1f",
+          "#002847",
+          "#184b74",
+          "#3c6d98",
+          "#5f91be",
+          "#83b7e6",
+          "#add6fc",
+          "#e2f1ff"
         ]
       },
       "altar-bronze": {
@@ -24,14 +24,14 @@
         "displayName": "Altar Bronze",
         "canonical": "oklch(64% 0.092 82)",
         "tonalRamp": [
-          "#190600",
-          "#382100",
-          "#5d4202",
-          "#826326",
-          "#a88749",
-          "#ccac73",
-          "#ebcd97",
-          "#ffeab7"
+          "#140800",
+          "#342300",
+          "#5d4205",
+          "#846320",
+          "#a88646",
+          "#cfab6b",
+          "#edcc91",
+          "#ffeccb"
         ]
       },
       "parchment-grey": {
@@ -40,13 +40,13 @@
         "canonical": "oklch(97% 0.002 326)",
         "tonalRamp": [
           "#0b0b0b",
-          "#272627",
-          "#484748",
-          "#696869",
-          "#8d8c8d",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
           "#b1b1b1",
-          "#d1d0d1",
-          "#efeeef"
+          "#d1d1d1",
+          "#eeeeee"
         ]
       },
       "card-white": {
@@ -142,7 +142,7 @@
       "ink-quiet": {
         "role": "neutral",
         "displayName": "Ink Quiet",
-        "canonical": "oklch(57% 0.000 90)",
+        "canonical": "oklch(51% 0.000 90)",
         "tonalRamp": [
           "#0b0b0b",
           "#262626",
@@ -157,7 +157,7 @@
       "chevron-grey": {
         "role": "neutral",
         "displayName": "Chevron Grey",
-        "canonical": "oklch(79% 0.000 90)",
+        "canonical": "oklch(64% 0.000 90)",
         "tonalRamp": [
           "#0b0b0b",
           "#262626",
@@ -247,6 +247,21 @@
       "tab-inactive": {
         "role": "neutral",
         "displayName": "Tab Inactive",
+        "canonical": "oklch(53% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "tab-inactive-night": {
+        "role": "neutral",
+        "displayName": "Tab Inactive Night",
         "canonical": "oklch(63% 0.000 90)",
         "tonalRamp": [
           "#0b0b0b",
@@ -259,19 +274,94 @@
           "#eeeeee"
         ]
       },
+      "separator": {
+        "role": "neutral",
+        "displayName": "Separator",
+        "canonical": "oklch(86% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "separator-night": {
+        "role": "neutral",
+        "displayName": "Separator Night",
+        "canonical": "oklch(41% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "ink-on-bronze": {
+        "role": "neutral",
+        "displayName": "Ink on Bronze",
+        "canonical": "oklch(18% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "error": {
+        "role": "secondary",
+        "displayName": "Error",
+        "canonical": "oklch(50% 0.178 29)",
+        "tonalRamp": [
+          "#220000",
+          "#500001",
+          "#8c0001",
+          "#ba2d24",
+          "#e45749",
+          "#ff8b7c",
+          "#febfb6",
+          "#ffe9e5"
+        ]
+      },
+      "error-night": {
+        "role": "secondary",
+        "displayName": "Error (night)",
+        "canonical": "oklch(71% 0.155 27)",
+        "tonalRamp": [
+          "#220000",
+          "#500003",
+          "#880c11",
+          "#b13b34",
+          "#da6157",
+          "#fb8e82",
+          "#febfb7",
+          "#ffe9e6"
+        ]
+      },
       "donate-red": {
         "role": "secondary",
         "displayName": "Donate Red",
         "canonical": "oklch(59% 0.206 23)",
         "tonalRamp": [
-          "#340000",
-          "#600000",
-          "#91000f",
-          "#c01b2e",
-          "#ed494f",
-          "#ff7978",
-          "#ff9e9b",
-          "#ffc0bb"
+          "#220000",
+          "#500009",
+          "#880b1c",
+          "#c40a29",
+          "#ef454d",
+          "#ff8a86",
+          "#febfbb",
+          "#ffe8e7"
         ]
       },
       "donate-red-night": {
@@ -279,29 +369,44 @@
         "displayName": "Donate Red (night)",
         "canonical": "oklch(50% 0.187 25)",
         "tonalRamp": [
-          "#310000",
-          "#5b0000",
-          "#8b0012",
-          "#ba2c30",
-          "#e65351",
-          "#ff8079",
-          "#ffa59c",
-          "#ffc6bc"
+          "#220000",
+          "#4f0107",
+          "#8a0013",
+          "#bd252c",
+          "#e8514f",
+          "#fe8b84",
+          "#fdbfba",
+          "#ffe9e6"
         ]
       },
       "favourite-gold": {
         "role": "secondary",
         "displayName": "Favourite Gold",
+        "canonical": "oklch(62% 0.129 80)",
+        "tonalRamp": [
+          "#150800",
+          "#362200",
+          "#5f4200",
+          "#88610b",
+          "#b5820e",
+          "#dca744",
+          "#fac872",
+          "#feeccf"
+        ]
+      },
+      "favourite-gold-night": {
+        "role": "secondary",
+        "displayName": "Favourite Gold (night)",
         "canonical": "oklch(89% 0.182 95)",
         "tonalRamp": [
-          "#1c0300",
-          "#3d1f00",
-          "#634200",
-          "#886400",
-          "#ae8800",
-          "#d2ae00",
-          "#f0cf46",
-          "#ffee74"
+          "#110a00",
+          "#2f2600",
+          "#554700",
+          "#7b680f",
+          "#a48b14",
+          "#ceaf26",
+          "#f3cf2c",
+          "#ffefb1"
         ]
       },
       "cal-youth": {
@@ -309,14 +414,14 @@
         "displayName": "Calendar: youth",
         "canonical": "oklch(48% 0.159 271)",
         "tonalRamp": [
-          "#05003b",
-          "#141963",
-          "#2f3d92",
-          "#4b5fbf",
-          "#6b83e9",
-          "#90aaff",
-          "#b1cbff",
-          "#d0eaff"
+          "#050038",
+          "#13106f",
+          "#2c399b",
+          "#4a5ec3",
+          "#6a83ec",
+          "#96acfd",
+          "#c1cffd",
+          "#e8eeff"
         ]
       },
       "cal-church": {
@@ -324,14 +429,14 @@
         "displayName": "Calendar: church",
         "canonical": "oklch(83% 0.162 86)",
         "tonalRamp": [
-          "#1f0100",
-          "#411b00",
-          "#693d00",
-          "#8f5f00",
-          "#b68300",
-          "#daa924",
-          "#f8ca5c",
-          "#ffe985"
+          "#140900",
+          "#322400",
+          "#5a4406",
+          "#836405",
+          "#af8502",
+          "#dba918",
+          "#fcc94d",
+          "#feedc6"
         ]
       },
       "cal-family": {
@@ -339,14 +444,14 @@
         "displayName": "Calendar: family",
         "canonical": "oklch(53% 0.133 153)",
         "tonalRamp": [
-          "#001400",
-          "#003407",
-          "#005926",
-          "#167d43",
-          "#42a265",
-          "#71c78c",
-          "#96e7ad",
-          "#b8ffcd"
+          "#001102",
+          "#003014",
+          "#08562c",
+          "#057e41",
+          "#3fa363",
+          "#67c987",
+          "#90e8aa",
+          "#c7ffd5"
         ]
       },
       "cal-ladies": {
@@ -355,13 +460,13 @@
         "canonical": "oklch(60% 0.118 318)",
         "tonalRamp": [
           "#190022",
-          "#391244",
-          "#5e336c",
-          "#835293",
-          "#a975ba",
-          "#cd9bde",
-          "#ecbdfc",
-          "#ffdbff"
+          "#3c0a49",
+          "#612f70",
+          "#855195",
+          "#aa74bb",
+          "#d099e2",
+          "#edbcfd",
+          "#f9e7ff"
         ]
       },
       "cal-parish": {
@@ -369,14 +474,14 @@
         "displayName": "Calendar: parish",
         "canonical": "oklch(65% 0.208 36)",
         "tonalRamp": [
-          "#340000",
-          "#600000",
-          "#910000",
-          "#c02300",
-          "#ed4f1d",
-          "#ff7e55",
-          "#ffa37c",
-          "#ffc59f"
+          "#220000",
+          "#4b0c00",
+          "#802102",
+          "#b43810",
+          "#ef4c16",
+          "#fe8d6e",
+          "#fdc1b0",
+          "#ffe9e3"
         ]
       },
       "cal-seniors": {
@@ -384,14 +489,14 @@
         "displayName": "Calendar: seniors",
         "canonical": "oklch(64% 0.105 275)",
         "tonalRamp": [
-          "#06042a",
-          "#1c204e",
-          "#3a4279",
-          "#5863a2",
-          "#7a87ca",
-          "#9fadee",
-          "#c0cdff",
-          "#deebff"
+          "#06032d",
+          "#1a1e56",
+          "#38417f",
+          "#5863a5",
+          "#7a87cc",
+          "#9dacf4",
+          "#c4cefe",
+          "#eaeefe"
         ]
       },
       "cal-weekly": {
@@ -399,14 +504,14 @@
         "displayName": "Calendar: weekly",
         "canonical": "oklch(66% 0.152 241)",
         "tonalRamp": [
-          "#000734",
-          "#00285b",
-          "#004c88",
-          "#0070b3",
-          "#0095dd",
-          "#53bbff",
-          "#7ddcff",
-          "#a2f9ff"
+          "#000d1d",
+          "#002943",
+          "#024d74",
+          "#1470a4",
+          "#1a95d9",
+          "#59bbfc",
+          "#a6d8fd",
+          "#e0f1ff"
         ]
       },
       "cal-playgroup": {
@@ -414,14 +519,14 @@
         "displayName": "Calendar: playgroup",
         "canonical": "oklch(73% 0.074 301)",
         "tonalRamp": [
-          "#0f051e",
-          "#2c1f3f",
-          "#4e3f65",
-          "#705f8b",
-          "#9382b2",
-          "#b8a8d5",
-          "#d8c8f4",
-          "#f5e6ff"
+          "#10041f",
+          "#2d1d43",
+          "#4f3e69",
+          "#705f8d",
+          "#9482b2",
+          "#b9a7d9",
+          "#d8c7f7",
+          "#f1ebff"
         ]
       },
       "cal-fellowship": {
@@ -429,14 +534,14 @@
         "displayName": "Calendar: fellowship",
         "canonical": "oklch(60% 0.105 153)",
         "tonalRamp": [
-          "#001300",
-          "#003110",
-          "#13552e",
-          "#34794c",
-          "#579e6e",
-          "#81c394",
-          "#a4e2b5",
-          "#c5ffd4"
+          "#001102",
+          "#003015",
+          "#00572a",
+          "#307a4a",
+          "#569f6d",
+          "#7bc591",
+          "#a0e4b3",
+          "#c8fed6"
         ]
       },
       "cal-default": {
@@ -503,15 +608,15 @@
       "kind": "card",
       "refersTo": "event-row",
       "description": "A day's event: calendar bar, time, title, favourite star and chevron.",
-      "html": "<div class=\"ds-event\"><div class=\"ds-event-bar\"></div><div class=\"ds-event-body\"><div class=\"ds-event-time\">6:00 PM – 7:30 PM</div><div class=\"ds-event-title\">Youth Night</div></div><div class=\"ds-event-actions\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#BBBBBB\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1L3.2 9.4l6.1-.8z\"/></svg><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#BBBBBB\" aria-hidden=\"true\"><path d=\"M8.6 16.6 13.2 12 8.6 7.4 10 6l6 6-6 6z\"/></svg></div></div>",
-      "css": ".ds-event{display:flex;align-items:center;background:#fff;border-radius:8px;padding:20px;margin:2px 16px;box-shadow:0 2px 4px rgba(0,0,0,.2);font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-event-bar{width:8px;align-self:stretch;margin-right:10px;background:#3F51B5;border-radius:8px 1px 8px 1px}.ds-event-body{flex:1}.ds-event-time{font-size:14px;color:#777;margin-bottom:2px}.ds-event-title{font-size:18px;color:#333}.ds-event-actions{display:flex;align-items:center;gap:12px}.ds-event:hover{background:#faf9fa}.ds-event:focus-visible{outline:2px solid #0a4068;outline-offset:2px}"
+      "html": "<div class=\"ds-event\"><div class=\"ds-event-bar\"></div><div class=\"ds-event-body\"><div class=\"ds-event-time\">6:00 PM – 7:30 PM</div><div class=\"ds-event-title\">Youth Night</div></div><div class=\"ds-event-actions\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#8C8C8C\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1L3.2 9.4l6.1-.8z\"/></svg><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#8C8C8C\" aria-hidden=\"true\"><path d=\"M8.6 16.6 13.2 12 8.6 7.4 10 6l6 6-6 6z\"/></svg></div></div>",
+      "css": ".ds-event{display:flex;align-items:center;background:#fff;border-radius:8px;padding:20px;margin:2px 16px;box-shadow:0 2px 4px rgba(0,0,0,.2);font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-event-bar{width:8px;align-self:stretch;margin-right:10px;background:#3F51B5;border-radius:8px 1px 8px 1px}.ds-event-body{flex:1}.ds-event-time{font-size:14px;color:#666;margin-bottom:2px}.ds-event-title{font-size:18px;color:#333}.ds-event-actions{display:flex;align-items:center;gap:12px}.ds-event:hover{background:#faf9fa}.ds-event:focus-visible{outline:2px solid #0a4068;outline-offset:2px}"
     },
     {
       "name": "Reading Card",
       "kind": "card",
       "refersTo": "reading-card",
       "description": "Daily reading title and teaser; tapping opens the full text.",
-      "html": "<div class=\"ds-reading\"><div class=\"ds-reading-head\"><h3 class=\"ds-reading-title\">Epistle</h3><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#BBBBBB\" aria-hidden=\"true\"><path d=\"M8.6 16.6 13.2 12 8.6 7.4 10 6l6 6-6 6z\"/></svg></div><div class=\"ds-reading-divider\"></div><p class=\"ds-reading-teaser\">Brethren, I make known to you the gospel I preached to you…</p></div>",
+      "html": "<div class=\"ds-reading\"><div class=\"ds-reading-head\"><h3 class=\"ds-reading-title\">Epistle</h3><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#8C8C8C\" aria-hidden=\"true\"><path d=\"M8.6 16.6 13.2 12 8.6 7.4 10 6l6 6-6 6z\"/></svg></div><div class=\"ds-reading-divider\"></div><p class=\"ds-reading-teaser\">Brethren, I make known to you the gospel I preached to you…</p></div>",
       "css": ".ds-reading{background:#fff;border-radius:10px;padding:20px;margin:20px;box-shadow:0 3px 4px rgba(0,0,0,.1);font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-reading-head{display:flex;justify-content:space-between;align-items:flex-start}.ds-reading-title{margin:0 0 15px;font-size:24px;font-weight:600;color:#333}.ds-reading-divider{height:3px;background:#a88646;margin:10px 0}.ds-reading-teaser{margin:0;font-size:16px;line-height:24px;color:#333}.ds-reading:hover{background:#faf9fa}"
     },
     {
@@ -520,7 +625,7 @@
       "refersTo": "button-primary",
       "description": "Bronze action button, centred at 80% width.",
       "html": "<button class=\"ds-btn-primary\">Save</button>",
-      "css": ".ds-btn-primary{width:80%;display:block;margin:0 auto;padding:15px 0;background:#a88646;color:#fff;border:0;border-radius:10px;font:600 16px -apple-system,Roboto,system-ui,sans-serif;box-shadow:0 2px 3px rgba(0,0,0,.1);cursor:pointer}.ds-btn-primary:hover{background:#97773d}.ds-btn-primary:focus-visible{outline:2px solid #0a4068;outline-offset:2px}.ds-btn-primary:active{transform:scale(.99)}"
+      "css": ".ds-btn-primary{width:80%;display:block;margin:0 auto;padding:15px 0;background:#a88646;color:#121212;border:0;border-radius:10px;font:600 16px -apple-system,Roboto,system-ui,sans-serif;box-shadow:0 2px 3px rgba(0,0,0,.1);cursor:pointer}.ds-btn-primary:hover{background:#b8975a}.ds-btn-primary:focus-visible{outline:2px solid #0a4068;outline-offset:2px}.ds-btn-primary:active{transform:scale(.99)}"
     },
     {
       "name": "Donate Button",
@@ -552,7 +657,7 @@
       "refersTo": "",
       "description": "Native bottom tabs; selected uses the lead accent, others #888.",
       "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-tab-on\" href=\"#\">Events</a><a class=\"ds-tab\" href=\"#\">Favourites</a><a class=\"ds-tab\" href=\"#\">Prayer</a><a class=\"ds-tab\" href=\"#\">About</a><a class=\"ds-tab\" href=\"#\">Help</a></nav>",
-      "css": ".ds-tabs{display:flex;justify-content:space-around;padding:10px 0;background:#F7F6F7;border-top:1px solid #e0e0e0;font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-tab{font-size:11px;color:#888;text-decoration:none;padding:6px 8px}.ds-tab-on{color:#0a4068;font-weight:600}.ds-tab:hover{color:#0a4068}.ds-tab:focus-visible{outline:2px solid #0a4068}"
+      "css": ".ds-tabs{display:flex;justify-content:space-around;padding:10px 0;background:#F7F6F7;border-top:1px solid #e0e0e0;font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-tab{font-size:11px;color:#6b6b6b;text-decoration:none;padding:6px 8px}.ds-tab-on{color:#0a4068;font-weight:600}.ds-tab:hover{color:#0a4068}.ds-tab:focus-visible{outline:2px solid #0a4068}"
     },
     {
       "name": "Toast",
@@ -606,6 +711,7 @@
       }
     ],
     "dos": [
+      "**Do** check text and icon pairs for contrast (4.5:1 text, 3:1 icons and controls) in both schemes whenever a token changes.",
       "**Do** take colours from `theme/colours.ts` (`Colours.light` / `Colours.dark`) and calendar colours from `getCalendarColour`; both schemes get the same screen design.",
       "**Do** keep reading text at 16px or larger and let it scale with the system text size.",
       "**Do** give every tappable control at least a 44pt target (padding or `hitSlop`).",
