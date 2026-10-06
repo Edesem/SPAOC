@@ -77,6 +77,7 @@ export default function DonateSection({ theme, CommonStyles }: any) {
         <TouchableOpacity
           style={[styles.squareButton, { backgroundColor: theme.donateButton }]}
           onPress={handleSquarePayment}
+          accessibilityRole="link"
         >
           <Text style={styles.squareButtonText}>Donate via Square</Text>
         </TouchableOpacity>
@@ -112,6 +113,8 @@ export default function DonateSection({ theme, CommonStyles }: any) {
               <TouchableOpacity
                 onPress={() => handleCopyDetails(value, label)}
                 style={{ padding: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel={`Copy ${label}`}
               >
                 <IconSymbol
                   name="square.fill.on.square.fill"
@@ -125,6 +128,7 @@ export default function DonateSection({ theme, CommonStyles }: any) {
           <TouchableOpacity
             style={[styles.copyAllButton, { backgroundColor: theme.primary }]}
             onPress={handleCopyAllDetails}
+            accessibilityRole="button"
           >
             <Text style={styles.copyButtonText}>
               {copied ? "Copied!" : "Copy All"}
