@@ -1,8 +1,10 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 import { EventItem } from "./EventItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFavouritesStore } from "../favourites";
+import { getCalendarColour } from "@/domain/calendarSources";
 import type { EventData } from "../types";
 import {
   addFavourite,
@@ -47,12 +49,23 @@ const event: EventData = {
   source: "church",
 };
 
-const renderItem = (
-  props: { onUnfavourite?: () => void } = {},
-  item = event,
-) => render(<EventItem item={item} onPress={jest.fn()} {...props} />);
+const renderItem = (props: { onUnfavourite?: () => void } = {}, item = event) =>
+  render(<EventItem item={item} onPress={jest.fn()} {...props} />);
 
 const initialState = useFavouritesStore.getState();
+
+describe("EventItem calendar marker", () => {
+  it("marks the row with a diamond in the calendar's colour", async () => {
+    const { getByTestId } = await renderItem();
+
+    const style = StyleSheet.flatten(
+      getByTestId("calendar-marker", { includeHiddenElements: true }).props
+        .style,
+    );
+    expect(style.backgroundColor).toBe(getCalendarColour("church"));
+    expect(style.transform).toEqual([{ rotate: "45deg" }]);
+  });
+});
 
 describe("EventItem calendar name", () => {
   it("names the calendar beside the time, so colour isn't the only cue", async () => {
