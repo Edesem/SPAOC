@@ -1,3 +1,4 @@
+import CalendarLegend from "../components/CalendarLegend";
 import SettingPicker from "../components/SettingPicker";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -95,6 +96,8 @@ export default function SettingsScreen() {
               thumbColor="#fff"
             />
           </View>
+
+          <CalendarLegend theme={theme} />
 
           {/* App Info */}
           <View style={styles.section}>

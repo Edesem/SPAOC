@@ -234,7 +234,7 @@ Native bottom tabs (`NativeTabs`): SF Symbols on iOS and Material icons on Andro
 Light: white background, left accent border in Vestment Navy, 15px text in Ink. Dark: `#272727` background, bronze border, Bone text. Errors use a red left border. Used for transient confirmations such as "Account Number copied" (1.5s).
 
 ### Settings
-A title in the lead accent colour, then `SettingPicker` rows and native `Switch` controls (per-calendar notification settings follow the calendar registry order). Theme choice is Auto, Light or Dark.
+A title in the lead accent colour, then `SettingPicker` rows (18px labels) and a native `Switch` for the saint-of-the-day notification. Below them, `CalendarLegend` lists every calendar in registry order, each with a swatch shaped like the event bar and its name. Theme follows the system setting; there is no in-app theme choice.
 
 ## Do's and Don'ts
 
