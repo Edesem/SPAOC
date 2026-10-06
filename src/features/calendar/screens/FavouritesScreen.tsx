@@ -48,7 +48,11 @@ export default function FavouritesScreen() {
           </View>
 
           {favourites.length === 0 ? (
-            <Text style={{ textAlign: "center", color: "gray", marginTop: 20 }}>
+            <Text style={{
+                textAlign: "center",
+                color: theme.detail,
+                marginTop: 20,
+              }}>
               No favourites yet.
             </Text>
           ) : (
