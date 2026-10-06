@@ -207,7 +207,7 @@ export default function HomeScreen() {
       >
         {fastLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#4f4f5b" />
+            <ActivityIndicator size="large" color={theme.primary} />
           </View>
         ) : (
           <View style={styles.verticalBarContainer}>
@@ -299,8 +299,10 @@ export default function HomeScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Clear month filter"
                 >
-                  <MaterialIcons name="close" size={20} color="#fff" />
-                  <Text style={styles.clearFilterText}>Clear month filter</Text>
+                  <MaterialIcons name="close" size={20} color={theme.onPrimary} />
+                  <Text style={[styles.clearFilterText, { color: theme.onPrimary }]}>
+                    Clear month filter
+                  </Text>
                 </TouchableOpacity>
               ) : null}
 
@@ -448,7 +450,6 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   clearFilterText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
