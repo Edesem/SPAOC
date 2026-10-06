@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { SafeAreaView } from "react-native-safe-area-context";
 import he from "he";
 import toTitleCase from "titlecase";
@@ -40,6 +41,8 @@ export default function ReadingScreen() {
     });
   }, [navigation, title]);
 
+  const gutter = useReadableGutter();
+
   const [copied, setCopied] = useState(false);
 
   const handleCopyAll = async () => {
@@ -64,7 +67,10 @@ export default function ReadingScreen() {
     >
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.scrollContainer,
+          { paddingHorizontal: 20 + gutter },
+        ]}
       >
         <Text style={[styles.title, { color: colors.moreImportantText }]}>
           {toTitleCase(title.toLowerCase())}
@@ -110,7 +116,6 @@ const getStyles = () =>
       flex: 1,
     },
     scrollContainer: {
-      paddingHorizontal: 20,
       paddingBottom: 40,
       paddingTop: 10, // Small top padding to avoid text sticking to the top
     },
@@ -133,6 +138,8 @@ const getStyles = () =>
     },
     copyButton: {
       borderRadius: 10,
+      minHeight: 48,
+      justifyContent: "center",
       paddingVertical: 10,
       paddingHorizontal: 20,
       alignSelf: "center",
