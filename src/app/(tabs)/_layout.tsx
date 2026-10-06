@@ -3,11 +3,18 @@ import { Colours } from "@/theme/colours";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { DynamicColorIOS, Platform } from "react-native";
 
-const INACTIVE_COLOUR = "#888";
-
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const palette = colorScheme === "dark" ? Colours.dark : Colours.light;
+
+  // Dark text on the light tab bar and light text on the dark one, like the tint.
+  const inactiveColour =
+    Platform.OS === "ios"
+      ? DynamicColorIOS({
+          dark: Colours.dark.tabInactive,
+          light: Colours.light.tabInactive,
+        })
+      : palette.tabInactive;
 
   const tintColor =
     Platform.OS === "ios"
@@ -20,9 +27,9 @@ export default function TabLayout() {
   return (
     <NativeTabs
       tintColor={tintColor}
-      iconColor={{ default: INACTIVE_COLOUR, selected: tintColor }}
+      iconColor={{ default: inactiveColour, selected: tintColor }}
       labelStyle={{
-        default: { color: INACTIVE_COLOUR },
+        default: { color: inactiveColour },
         selected: { color: tintColor },
       }}
     >
