@@ -153,7 +153,9 @@ const EventDetailsScreen = () => {
             <Text style={[styles.title, { color: theme.moreImportantText }]}>
               {title || "Event Title"}
             </Text>
-            <View style={styles.divider} />
+            <View
+              style={[styles.divider, { backgroundColor: theme.separator }]}
+            />
             <Text style={[styles.date, { color: theme.lessImportantText }]}>
               🕒 {startLabel} {endLabel}
             </Text>
@@ -229,13 +231,7 @@ const EventDetailsScreen = () => {
 
 const getStyles = () =>
   StyleSheet.create({
-    container: {
-      flexGrow: 1,
-      padding: 20,
-      backgroundColor: "#F4F4F4",
-    },
     card: {
-      backgroundColor: "#FFFFFF",
       borderRadius: 12,
       padding: 20,
       shadowColor: "#000",
@@ -247,22 +243,18 @@ const getStyles = () =>
     title: {
       fontSize: 24,
       fontWeight: "700",
-      color: "#333",
       marginBottom: 8,
     },
     divider: {
       height: 1,
-      backgroundColor: "#E0E0E0",
       marginVertical: 10,
     },
     date: {
       fontSize: 16,
-      color: "#555",
       marginVertical: 4,
     },
     detail: {
       fontSize: 16,
-      color: "#555",
       marginVertical: 4,
     },
     description: {
@@ -274,17 +266,11 @@ const getStyles = () =>
       width: width, // 80% of the screen width
       height: height * 0.5, // 40% of the screen height
       resizeMode: "contain", // Ensure the image doesn't stretch
-      tintColor: "#0a4068",
       marginBottom: 50,
     },
     imageContainer: {
       alignItems: "center",
       marginTop: 5,
-    },
-    customBack: {
-      fontSize: 18,
-      color: "#0a4068",
-      marginLeft: 10,
     },
   });
 
