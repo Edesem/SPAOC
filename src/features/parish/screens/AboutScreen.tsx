@@ -168,7 +168,11 @@ function LinkButton({
   ].includes(icon);
 
   return (
-    <TouchableOpacity style={styles.linkButton} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.linkButton}
+      onPress={onPress}
+      accessibilityRole="link"
+    >
       {fontAwesomeIcon ? (
         <FontAwesome5 name={icon} size={24} color={color} />
       ) : (

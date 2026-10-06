@@ -152,7 +152,11 @@ function LinkItem({
   const styles = getStyles();
 
   return (
-    <TouchableOpacity style={styles.linkItem} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.linkItem}
+      onPress={onPress}
+      accessibilityRole="link"
+    >
       <MaterialIcons name={icon as any} size={24} color={color} />
       <Text style={[styles.linkLabel, { color }]}>{label}</Text>
     </TouchableOpacity>
