@@ -221,7 +221,7 @@ export default function HomeScreen() {
             />
 
             <View style={styles.container}>
-              {/* Hamburger menu button + Scroll to Top */}
+              {/* Settings button on the left, month filter on the right */}
               <View
                 style={{
                   flexDirection: "row",
@@ -258,27 +258,6 @@ export default function HomeScreen() {
                   <IconSymbol
                     name="calendar"
                     size={36}
-                    color={theme.lessImportantText}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    scrollToTop();
-                  }}
-                  style={{
-                    padding: 10,
-                    borderRadius: 6,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Scroll to top"
-                >
-                  <MaterialIcons
-                    name="arrow-upward"
-                    style={styles.icon}
                     color={theme.lessImportantText}
                   />
                 </TouchableOpacity>
