@@ -1,0 +1,247 @@
+---
+name: SPAOC
+description: St Paul's Antiochian Orthodox Church parish calendar app. A plain, sturdy week-at-a-glance in vestment navy and altar bronze.
+colors:
+  vestment-navy: "#0a4068"
+  altar-bronze: "#a88646"
+  parchment-grey: "#F7F6F7"
+  card-white: "#FFFFFF"
+  night-ground: "#121212"
+  night-card: "#272727"
+  ink: "#333333"
+  ink-detail: "#555555"
+  ink-date: "#5d5d5d"
+  ink-quiet: "#777777"
+  chevron-grey: "#BBBBBB"
+  bone: "#E1E1E1"
+  bone-detail: "#BBBBBB"
+  bone-quiet: "#B0B0B0"
+  bone-date: "#999999"
+  chevron-night: "#777777"
+  tab-inactive: "#888888"
+  donate-red: "#de333f"
+  donate-red-night: "#b51a25"
+  favourite-gold: "#FFD700"
+  cal-youth: "#3F51B5"
+  cal-church: "#F6BF26"
+  cal-family: "#0B8043"
+  cal-ladies: "#9E69AF"
+  cal-parish: "#F4511E"
+  cal-seniors: "#7986CB"
+  cal-weekly: "#039BE5"
+  cal-playgroup: "#ae9cce"
+  cal-fellowship: "#489160"
+  cal-default: "#000000"
+typography:
+  headline:
+    fontFamily: "System"
+    fontSize: "24px"
+    fontWeight: 700
+    lineHeight: "normal"
+  section-title:
+    fontFamily: "System"
+    fontSize: "24px"
+    fontWeight: 600
+    lineHeight: "normal"
+  title:
+    fontFamily: "System"
+    fontSize: "18px"
+    fontWeight: 400
+    lineHeight: "normal"
+  body:
+    fontFamily: "System"
+    fontSize: "16px"
+    fontWeight: 400
+    lineHeight: "24px"
+  label:
+    fontFamily: "System"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: "normal"
+rounded:
+  xs: "6px"
+  sm: "8px"
+  md: "10px"
+  lg: "12px"
+  pill: "20px"
+spacing:
+  xs: "4px"
+  sm: "10px"
+  md: "16px"
+  lg: "20px"
+  xl: "30px"
+components:
+  event-row:
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.ink}"
+    typography: "{typography.title}"
+    rounded: "{rounded.sm}"
+    padding: "20px"
+  event-row-night:
+    backgroundColor: "{colors.night-card}"
+    textColor: "{colors.bone}"
+  reading-card:
+    backgroundColor: "{colors.card-white}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body}"
+    rounded: "{rounded.md}"
+    padding: "20px"
+  button-primary:
+    backgroundColor: "{colors.altar-bronze}"
+    textColor: "{colors.card-white}"
+    typography: "{typography.body}"
+    rounded: "{rounded.md}"
+    padding: "15px 0"
+  button-donate:
+    backgroundColor: "{colors.donate-red}"
+    textColor: "{colors.card-white}"
+    typography: "{typography.body}"
+    rounded: "{rounded.md}"
+    padding: "15px 0"
+  button-donate-night:
+    backgroundColor: "{colors.donate-red-night}"
+  link-row:
+    backgroundColor: "transparent"
+    textColor: "{colors.vestment-navy}"
+    typography: "{typography.body}"
+    rounded: "{rounded.lg}"
+    padding: "10px 16px"
+---
+
+# Design System: SPAOC
+
+## Overview
+
+**Creative North Star: "The Parish Noticeboard"**
+
+SPAOC reads like the noticeboard in the church hall: what is on this week, laid out so anyone can find it in a glance. Content sits on plain white cards over a soft grey ground, each event tagged by a coloured bar that carries its calendar's identity. Navy and bronze do the chrome work; everything else is neutral, so the calendar colours are the loudest thing on screen.
+
+The system is plain and sturdy. Type is the platform's own, sized generously for older eyes; cards are rounded and lightly lifted; targets are large; navigation is the OS's native tab bar. There is little ornament. The one decorative motif is the eight-pointed star illustration, tinted in the primary colour, which closes the About screen and marks the parish's own voice. Per-calendar Orthodox icon images appear on event detail screens.
+
+Light and dark are both first-class. Dark mode swaps navy for bronze as the lead accent, since navy loses contrast on near-black.
+
+**Key Characteristics:**
+- White cards on a soft grey ground in light mode; `#272727` cards on `#121212` in dark.
+- Calendar colour is expressed as a vertical bar, never as a card fill.
+- One lead accent per scheme (navy light, bronze dark); bronze is the secondary in light.
+- System font only, with 16px as the floor for reading text.
+- Native tab bar and platform haptics; no custom shell.
+
+## Colors
+
+A reverent navy and bronze pair on neutral greys, with ten calendar colours that come from the parish's Google Calendars.
+
+### Primary
+- **Vestment Navy** (#0a4068): Lead accent in light mode: tab tint, link rows and icons, the About star, toast accent border, and the "Clear month filter" pill. Rare in dark mode, where bronze takes over.
+- **Altar Bronze** (#a88646): Lead accent in dark mode (tab tint, links). Secondary in light mode: the Home screen's vertical rail and the primary button fill.
+
+### Secondary
+- **Donate Red** (#de333f, #b51a25 at night): Used only for the Donate via Square button. It is the only red in the chrome, which is why it stands out.
+- **Favourite Gold** (#FFD700): The filled favourite star.
+
+### Neutral
+- **Parchment Grey** (#F7F6F7): Screen background in light mode.
+- **Card White** (#FFFFFF): Cards, rows, sheets and toast background in light mode.
+- **Night Ground** (#121212): Screen background in dark mode, matching the dark splash.
+- **Night Card** (#272727): Cards and rows in dark mode.
+- **Ink** (#333333): Primary text on light. **Ink Detail** (#555555), **Ink Date** (#5d5d5d) and **Ink Quiet** (#777777) step down for secondary copy, section dates and times.
+- **Bone** (#E1E1E1): Primary text on dark. **Bone Detail** (#BBBBBB), **Bone Quiet** (#B0B0B0) and **Bone Date** (#999999) step down.
+- **Chevron Grey** (#BBBBBB light, #777777 dark) and **Tab Inactive** (#888888): Chevrons, unselected tabs, and other quiet affordances.
+
+### Calendar colours
+Each calendar has a fixed colour used for its event bar and its Settings entry. They follow the Google Calendar palette and stay identical in light and dark.
+- **youth** (#3F51B5), **church** (#F6BF26), **family** (#0B8043), **ladies** (#9E69AF), **parish** (#F4511E), **seniors** (#7986CB), **weekly** (#039BE5), **playgroup** (#ae9cce), **fellowship** (#489160). Events from other sources (fasting, saints) fall back to black (#000000).
+
+### Named Rules
+**The Calendar Colour Rule.** A calendar's colour identifies its events and nothing else. It appears as the 8px bar on a row, never as a button, a text colour or a card fill.
+
+**The One Lead Accent Rule.** Each scheme has one lead accent for interactive chrome: navy in light, bronze in dark. Do not use both as competing actions on the same screen.
+
+**The One Red Rule.** Donate Red is reserved for giving. Errors and destructive actions do not borrow it.
+
+## Typography
+
+**Display / Body / Label Font:** the system font (San Francisco on iOS, Roboto on Android). No custom fonts are loaded.
+
+**Character:** Familiar and legible. Weight and size, not typeface, build hierarchy: bold for the day's headline, regular for list content.
+
+### Hierarchy
+- **Headline** (700, 24px): The saint of the day, the fasting rule heading, week labels and the day heading on the prayer screen; the screen title is centred and 24px/700.
+- **Section Title** (600, 24px): Card titles such as "Support Us Online" and reading titles.
+- **Title** (400, 18px): Event titles, day section headers, and primary list copy.
+- **Body** (400, 16px, 24px line height): Reading teasers, link labels, buttons and descriptions. 16px is the floor for anything a parishioner must read.
+- **Label** (400, 14px): Event times and secondary metadata only.
+
+### Named Rules
+**The 16px Floor Rule.** Content a parishioner has to read is 16px or larger. 14px is for a time or a caption beside a larger title.
+
+**The Italic Aside Rule.** Italics are reserved for the subtitle under a screen title and for scripture quotes (the Donate verse); they are never used for emphasis in lists.
+
+## Layout
+
+A single-column, full-width list on a phone, inside safe-area insets. Screens use 20px horizontal padding (About, Settings) or 16px margins on event rows. Vertical rhythm is loose: 2px between event rows (so a day reads as one group), 16px between link buttons, 30px between major About sections, 20px around cards.
+
+The Home screen carries a 7px bronze vertical rail down the left edge; the week label, saint of the day, fasting rule and day-grouped events follow. Section headers are 18px and sit at 15px left inset.
+
+Navigation is a native bottom tab bar with five tabs (Events, Favourites, Prayer, About, Help). Settings opens from a menu icon at the top of Home as a full-screen route with no stack header. Detail routes (event details, readings, PDF) use the stack header.
+
+Spacing scale in use: 4, 10, 16, 20, 30. Small touch targets are padded to at least 44pt using `hitSlop` (the favourite star pads 4 + hit slop 10).
+
+## Elevation & Depth
+
+Hybrid: tonal layering carries most separation (white card on grey ground; `#272727` on `#121212`), with a soft ambient shadow lifting cards slightly. Shadows are never coloured and never reach structural weight.
+
+### Shadow Vocabulary
+- **Row lift** (`shadow-color #000, offset 0×2, opacity 0.2, radius 4`; Android elevation 2): Event rows.
+- **Card lift** (`#000, offset 0×3, opacity 0.1, radius 4`; elevation 5): Reading cards, Donate sections, prayer content sections.
+- **Button lift** (`#000, offset 0×2, opacity 0.1, radius 3`; elevation 3): The primary button in common styles.
+
+### Named Rules
+**The Soft Lift Rule.** Shadow opacity stays at or below 0.2 and radius at or below 4. A card is lifted, never floating.
+
+## Shapes
+
+Gently rounded and consistent. Cards and buttons use 8–10px corners; link rows 12px; the "Clear month filter" pill 20px. The event bar is a signature shape: 8px wide with an asymmetric corner (8px top-left and bottom-right, 1px on the other two), so it reads as a coloured tab on the card edge. Dividers are 1px (`#E0E0E0`), or 3px in a calendar colour when a reading card carries an accent.
+
+Images are line illustrations (the star, the Orthodox icons), tinted in the lead accent colour on the About and event detail screens and set with `resizeMode: contain`, never cropped.
+
+## Components
+
+### Event Row
+Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px vertical margin, 16px horizontal margin. A left 8px calendar-colour bar, then date (when shown, 16px/500), time (14px, quiet), and title (18px). A 24px favourite star (outline in chevron grey, filled in Favourite Gold) and a chevron sit at the right. Tapping the row gives a rigid haptic and opens details; tapping the star gives a medium haptic.
+
+### Reading Card
+White card, 10px corners, 20px padding, card lift. 24px/600 title with a chevron at the right, then a 1px divider (3px in an accent colour when one is supplied), then a 16px teaser in the primary text colour.
+
+### Buttons
+- **Primary** (Altar Bronze fill, white 16px/600 text, 10px corners, 15px vertical padding, 80% width, centred, button lift).
+- **Donate** (Donate Red fill, white 16px/600 text, 10px corners, 15px vertical padding, full card width), one per screen.
+- **Link row** (no fill, navy or bronze text and icon, 16px/500 label, 24px icon, 12px gap, 12px corners, 10×16px padding) for the About screen's outbound links.
+- Haptics: every press fires one (medium for actions, rigid for navigation into a detail).
+
+### Navigation
+Native bottom tabs (`NativeTabs`): SF Symbols on iOS and Material icons on Android, with filled variants when selected. Selected tint is the lead accent; unselected is Tab Inactive (#888). Labels are the platform default size.
+
+### Toast
+Light: white background, left accent border in Vestment Navy, 15px text in Ink. Dark: `#272727` background, bronze border, Bone text. Errors use a red left border. Used for transient confirmations such as "Account Number copied" (1.5s).
+
+### Settings
+A title in the lead accent colour, then `SettingPicker` rows and native `Switch` controls (per-calendar notification settings follow the calendar registry order). Theme choice is Auto, Light or Dark.
+
+## Do's and Don'ts
+
+### Do:
+- **Do** take colours from `theme/colours.ts` (`Colours.light` / `Colours.dark`) and calendar colours from `getCalendarColour`; both schemes get the same screen design.
+- **Do** keep reading text at 16px or larger and let it scale with the system text size.
+- **Do** give every tappable control at least a 44pt target (padding or `hitSlop`).
+- **Do** use the 8px asymmetric calendar bar to mark which calendar an event belongs to.
+- **Do** use native controls (tab bar, switches, pickers, haptics) and platform icons.
+- **Do** keep the logo and app icon art as supplied (binding per PRODUCT.md).
+
+### Don't:
+- **Don't** use a calendar colour as button fill, text or card background.
+- **Don't** use Donate Red for anything other than giving.
+- **Don't** add a second lead accent to a screen, or hard-code hex values in a screen when a theme token exists.
+- **Don't** add custom typefaces or heavy ornament; the star and Orthodox icon illustrations are the only decoration.
+- **Don't** raise shadow opacity above 0.2 or radius above 4.
+- **Don't** build dark mode as an invert; it has its own surfaces (`#121212`, `#272727`) and swaps the lead accent to bronze.
