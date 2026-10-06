@@ -283,8 +283,14 @@ export default function HomeScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Clear month filter"
                 >
-                  <MaterialIcons name="close" size={20} color={theme.onPrimary} />
-                  <Text style={[styles.clearFilterText, { color: theme.onPrimary }]}>
+                  <MaterialIcons
+                    name="close"
+                    size={20}
+                    color={theme.onPrimary}
+                  />
+                  <Text
+                    style={[styles.clearFilterText, { color: theme.onPrimary }]}
+                  >
                     Clear month filter
                   </Text>
                 </TouchableOpacity>
