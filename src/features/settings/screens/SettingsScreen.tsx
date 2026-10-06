@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: "italic",
     textAlign: "center",
-    marginTop: 500,
-    marginBottom: 60,
+    marginTop: 40,
+    marginBottom: 40,
   },
 });
