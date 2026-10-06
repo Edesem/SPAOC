@@ -7,6 +7,7 @@ import ReadingCard from "../components/ReadingCard";
 import { openServicePdf } from "../openServicePdf";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
@@ -32,6 +33,7 @@ import toTitleCase from "titlecase";
 
 export default function PrayerScreen(): JSX.Element {
   const insets = useSafeAreaInsets();
+  const gutter = useReadableGutter();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -63,6 +65,7 @@ export default function PrayerScreen(): JSX.Element {
         <ScrollView
           contentContainerStyle={{
             paddingBottom: insets.bottom + 20,
+            paddingHorizontal: gutter,
           }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={refresh} />
