@@ -160,7 +160,9 @@ export default function PrayerScreen(): JSX.Element {
               ]}
             >
               <Text style={CommonStyles.sectionTitle}>Loading Readings...</Text>
-              <View style={styles.divider} />
+              <View
+                style={[styles.divider, { backgroundColor: theme.separator }]}
+              />
               <View style={styles.centered}>
                 <ActivityIndicator size="large" />
                 <Text
@@ -199,7 +201,9 @@ export default function PrayerScreen(): JSX.Element {
             ]}
           >
             <Text style={CommonStyles.sectionTitle}>Daily Variables</Text>
-            <View style={styles.divider} />
+            <View
+              style={[styles.divider, { backgroundColor: theme.separator }]}
+            />
 
             {loading ? (
               <View style={styles.centered}>
@@ -215,9 +219,11 @@ export default function PrayerScreen(): JSX.Element {
                 </Text>
               </View>
             ) : error ? (
-              <Text style={styles.errorText}>Error loading prayers</Text>
+              <Text style={[styles.errorText, { color: theme.error }]}>
+                Error loading prayers
+              </Text>
             ) : !liturgicalServices?.length ? (
-              <Text style={styles.noTextsMessage}>
+              <Text style={[styles.noTextsMessage, { color: theme.detail }]}>
                 There are no liturgical texts today.
               </Text>
             ) : (
