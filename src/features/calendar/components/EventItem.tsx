@@ -71,6 +71,21 @@ export const EventItem = ({
 
   const sourceColor = getCalendarColour(item.source);
 
+  // VoiceOver and TalkBack read the whole row as one button, and an iOS
+  // screen reader can't reach the star nested inside it, so the star is also
+  // offered as a custom action on the row.
+  const favouriteLabel = isFavourite
+    ? `Remove ${item.title} from favourites`
+    : `Add ${item.title} to favourites`;
+  const rowLabel = [
+    item.title,
+    showFullDate ? formattedDate : undefined,
+    `${formattedStart} ${formattedEnd}`.trim(),
+    `${item.source} calendar`,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -82,6 +97,18 @@ export const EventItem = ({
         onPress();
       }}
       style={[styles.item, { backgroundColor }]}
+      accessibilityRole="button"
+      accessibilityLabel={rowLabel}
+      accessibilityHint="Opens event details"
+      accessibilityValue={isFavourite ? { text: "Favourite" } : undefined}
+      accessibilityActions={[
+        { name: "toggleFavourite", label: favouriteLabel },
+      ]}
+      onAccessibilityAction={(event) => {
+        if (event.nativeEvent.actionName === "toggleFavourite") {
+          toggleFavourite();
+        }
+      }}
     >
       <View style={styles.leftBarContainer}>
         <View style={[styles.leftBar, { backgroundColor: sourceColor }]} />
@@ -104,6 +131,9 @@ export const EventItem = ({
               onPress={toggleFavourite}
               style={styles.favouriteButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityRole="button"
+              accessibilityLabel={favouriteLabel}
+              accessibilityState={{ selected: isFavourite }}
             >
               <Icon
                 name={isFavourite ? "star" : "star-outline"}
@@ -188,5 +218,5 @@ const getStyles = () =>
     },
     icon: {
       fontSize: 36,
-    }
+    },
   });
