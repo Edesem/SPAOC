@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -25,6 +26,7 @@ import FontAwesome5, {
 
 export default function AboutScreen() {
   const insets = useSafeAreaInsets();
+  const gutter = useReadableGutter();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -45,7 +47,7 @@ export default function AboutScreen() {
         <ScrollView
           contentContainerStyle={{
             paddingBottom: insets.bottom + 20,
-            paddingHorizontal: 20,
+            paddingHorizontal: 20 + gutter,
           }}
         >
           {/* Header */}
