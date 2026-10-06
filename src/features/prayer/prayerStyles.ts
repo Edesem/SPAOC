@@ -30,6 +30,26 @@ export const styles = StyleSheet.create({
   errorText: {
     textAlign: "center",
   },
+  errorBlock: {
+    alignItems: "center",
+  },
+  retryButton: {
+    minHeight: 48,
+    justifyContent: "center",
+    borderRadius: 10,
+    paddingHorizontal: 24,
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  retryText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  // A 48pt row, so a tap on a service title is easy to land.
+  serviceRow: {
+    minHeight: 48,
+    justifyContent: "center",
+  },
   serviceContainer: {
     marginBottom: 10,
   },

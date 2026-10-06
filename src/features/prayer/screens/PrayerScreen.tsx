@@ -222,9 +222,27 @@ export default function PrayerScreen(): JSX.Element {
                 </Text>
               </View>
             ) : error ? (
-              <Text style={[styles.errorText, { color: theme.error }]}>
-                Error loading prayers
-              </Text>
+              <View style={styles.errorBlock}>
+                <Text style={[styles.errorText, { color: theme.error }]}>
+                  Error loading prayers
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    load(selectedDate);
+                  }}
+                  style={[
+                    styles.retryButton,
+                    { backgroundColor: theme.primary },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Try loading prayers again"
+                >
+                  <Text style={[styles.retryText, { color: theme.onPrimary }]}>
+                    Try again
+                  </Text>
+                </TouchableOpacity>
+              </View>
             ) : !liturgicalServices?.length ? (
               <Text style={[styles.noTextsMessage, { color: theme.detail }]}>
                 There are no liturgical texts today.
@@ -242,11 +260,12 @@ export default function PrayerScreen(): JSX.Element {
                       });
                     }}
                     activeOpacity={0.6}
+                    style={styles.serviceRow}
+                    accessibilityRole="button"
                   >
                     <Text
                       style={[
                         { color: theme.moreImportantText },
-                        { paddingBottom: 20 },
                         { fontSize: fontSize.body },
                       ]}
                     >
