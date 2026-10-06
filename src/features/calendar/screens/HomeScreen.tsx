@@ -1,6 +1,7 @@
 import { EventItem } from "../components/EventItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { useHomeFeature } from "../hooks/useHomeFeature";
 import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
@@ -166,6 +167,7 @@ export default function HomeScreen() {
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+  const gutter = useReadableGutter();
 
   const {
     todaysSaints,
@@ -203,7 +205,10 @@ export default function HomeScreen() {
   return (
     <SafeAreaProvider>
       <SafeAreaView
-        style={[styles.container, { backgroundColor: theme.background }]}
+        style={[
+          styles.container,
+          { backgroundColor: theme.background, paddingHorizontal: gutter },
+        ]}
       >
         {fastLoading ? (
           <View style={styles.loadingContainer}>
@@ -444,6 +449,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     gap: 6,
+    minHeight: 48,
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 20,
