@@ -93,9 +93,6 @@ const EventDetailsScreen = () => {
     navigation.setOptions({
       title: "Event Details",
       headerBackTitle: "Back",
-      headerBackTitleStyle: {
-        color: "pink", // Set the color of the back button title (if any)
-      },
     });
   }, [navigation, title]);
 
@@ -165,24 +162,40 @@ const EventDetailsScreen = () => {
             <View
               style={[styles.divider, { backgroundColor: theme.separator }]}
             />
-            <Text style={[styles.date, { color: theme.lessImportantText }]}>
-              🕒 {startLabel} {endLabel}
-            </Text>
-            {location == null ? null : (
+            <View style={styles.metaRow}>
               <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 5,
-                }}
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
               >
+                <IconSymbol
+                  name="clock"
+                  size={20}
+                  color={theme.lessImportantText}
+                />
+              </View>
+              <Text style={[styles.date, { color: theme.lessImportantText }]}>
+                {startLabel} {endLabel}
+              </Text>
+            </View>
+            {location == null ? null : (
+              <View style={[styles.metaRow, { marginTop: 5 }]}>
+                <View
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                >
+                  <IconSymbol
+                    name="mappin"
+                    size={20}
+                    color={theme.lessImportantText}
+                  />
+                </View>
                 <Text
                   style={[
                     styles.detail,
-                    { color: theme.lessImportantText, flexShrink: 1 },
+                    { color: theme.lessImportantText, flex: 1 },
                   ]}
                 >
-                  📍{location}
+                  {location}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -262,6 +275,11 @@ const getStyles = () =>
     divider: {
       height: 1,
       marginVertical: 10,
+    },
+    metaRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
     },
     date: {
       fontSize: 16,
