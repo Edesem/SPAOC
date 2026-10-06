@@ -161,7 +161,7 @@ Each calendar has a fixed colour used for its event bar and its Settings entry. 
 - **youth** (#5C6BC0), **church** (#B8860B), **family** (#0E8D4D), **ladies** (#9E69AF), **parish** (#F4511E), **seniors** (#7986CB), **weekly** (#039BE5), **playgroup** (#9575CD), **fellowship** (#489160). Events from other sources (fasting, saints) fall back to black (#000000).
 
 ### Named Rules
-**The Calendar Colour Rule.** A calendar's colour identifies its events and nothing else. It appears as the 8px bar on a row, never as a button, a text colour or a card fill.
+**The Calendar Colour Rule.** A calendar's colour identifies its events and nothing else. It appears as the 8px bar on a row and as the matching swatch in the Settings legend, always beside the calendar's name, never as a button, a text colour or a card fill.
 
 **The One Lead Accent Rule.** Each scheme has one lead accent for interactive chrome: navy in light, bronze in dark. Do not use both as competing actions on the same screen.
 
@@ -216,7 +216,7 @@ Images are line illustrations (the star, the Orthodox icons), tinted in the lead
 ## Components
 
 ### Event Row
-Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px vertical margin, 16px horizontal margin. A left 8px calendar-colour bar, then date (when shown, 16px/500), time (14px, quiet), and title (18px). A 24px favourite star (outline in chevron grey, filled in Favourite Gold) and a chevron sit at the right. Tapping the row gives a rigid haptic and opens details; tapping the star gives a medium haptic.
+Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px vertical margin, 16px horizontal margin. A left 8px calendar-colour bar, then date (when shown, 16px/500), the calendar's name and time on one line (14px, quiet, e.g. "Church · 8:00 PM to 10:00 PM"), and title (18px). A 24px favourite star (outline in chevron grey, filled in Favourite Gold) and a chevron sit at the right. Tapping the row gives a rigid haptic and opens details; tapping the star gives a medium haptic.
 
 ### Reading Card
 White card, 10px corners, 20px padding, card lift. 24px/600 title with a chevron at the right, then a 1px divider (3px in an accent colour when one is supplied), then a 16px teaser in the primary text colour.
