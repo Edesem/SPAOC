@@ -5,6 +5,7 @@ import {
   DEFAULT_CALENDAR_SOURCE,
   getCalendarColour,
   getCalendarImage,
+  getCalendarLabel,
 } from "./calendarSources";
 
 const luminance = (hex: string): number => {
@@ -41,6 +42,15 @@ describe("calendarSources", () => {
   it("returns the colour and image of a registered calendar", () => {
     expect(getCalendarColour("youth")).toBe("#5C6BC0");
     expect(getCalendarImage("youth")).toBe(CALENDAR_SOURCES[0].image);
+  });
+
+  it("labels a registered calendar by its capitalised name", () => {
+    expect(getCalendarLabel("church")).toBe("Church");
+  });
+
+  it("has no label for sources that aren't parish event calendars", () => {
+    expect(getCalendarLabel("fasting")).toBeUndefined();
+    expect(getCalendarLabel("unknown")).toBeUndefined();
   });
 
   it("falls back to the default colour and image for unknown sources", () => {

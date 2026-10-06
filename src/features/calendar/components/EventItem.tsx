@@ -5,7 +5,7 @@ import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
-import { getCalendarColour } from "@/domain/calendarSources";
+import { getCalendarColour, getCalendarLabel } from "@/domain/calendarSources";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { formatEventTimes } from "../domain/eventTimes";
@@ -65,6 +65,7 @@ export const EventItem = ({
   const chevronColor = theme.chevronColor;
 
   const sourceColor = getCalendarColour(item.source);
+  const calendarLabel = getCalendarLabel(item.source);
 
   // VoiceOver and TalkBack read the whole row as one button, and an iOS
   // screen reader can't reach the star nested inside it, so the star is also
@@ -115,6 +116,7 @@ export const EventItem = ({
               </Text>
             )}
             <Text style={[styles.itemTime, { color: timeColor }]}>
+              {calendarLabel ? `${calendarLabel} · ` : ""}
               {formattedStart} {formattedEnd}
             </Text>
             <Text style={[styles.itemTitle, { color: textColor }]}>
