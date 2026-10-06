@@ -101,6 +101,8 @@ export default function PrayerScreen(): JSX.Element {
                 padding: 5,
                 shadowColor: "black",
               }}
+              accessibilityRole="button"
+              accessibilityLabel="Choose date"
             >
               <IconSymbol
                 name="calendar"
