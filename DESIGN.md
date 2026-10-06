@@ -209,7 +209,7 @@ Hybrid: tonal layering carries most separation (white card on grey ground; `#272
 
 ## Shapes
 
-Gently rounded and consistent. Cards and buttons use 8–10px corners; link rows 12px; the "Clear month filter" pill 20px. The calendar marker is a signature shape: a square stood on its point, a 14px diamond in the calendar's colour, drawn by the shared `CalendarMarker` component so event rows and the Settings legend always match. Dividers are 1px (`#E0E0E0`), or 3px in a calendar colour when a reading card carries an accent.
+Gently rounded and consistent. Cards and buttons use 8–10px corners; link rows 12px; the "Clear month filter" pill 20px. The calendar marker is a signature shape: a tall, narrow diamond in the calendar's colour (22px point to point, 0.6 as wide), drawn by the shared `CalendarMarker` component so event rows and the Settings legend always match. Dividers are 1px (`#E0E0E0`), or 3px in a calendar colour when a reading card carries an accent.
 
 Images are line illustrations (the star, the Orthodox icons), tinted in the lead accent colour on the About and event detail screens and set with `resizeMode: contain`, never cropped.
 
