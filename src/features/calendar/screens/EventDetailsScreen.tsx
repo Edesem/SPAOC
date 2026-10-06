@@ -1,5 +1,6 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { getCalendarImage } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
 import { EventDetailsParams } from "@/types/routes";
@@ -11,7 +12,6 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { decode } from "html-entities";
 import { useEffect } from "react";
 import {
-  Dimensions,
   Image,
   Linking,
   Platform,
@@ -19,12 +19,15 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
-const { width, height } = Dimensions.get("window");
+// The closing ornament is sized from the live window (so it follows rotation
+// and Split View) but capped so it doesn't balloon on a tablet.
+const MAX_IMAGE_SIZE = 480;
 
 const cleanDescription = (description: string): string => {
   const decoded = decode(description);
@@ -75,6 +78,11 @@ const EventDetailsScreen = () => {
   );
 
   const styles = getStyles();
+
+  const gutter = useReadableGutter();
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const imageWidth = Math.min(windowWidth - gutter * 2, MAX_IMAGE_SIZE);
+  const imageHeight = Math.min(windowHeight * 0.5, MAX_IMAGE_SIZE);
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -143,6 +151,7 @@ const EventDetailsScreen = () => {
         <ScrollView
           contentContainerStyle={{
             padding: 20,
+            paddingHorizontal: 20 + gutter,
             paddingBottom: 0,
             backgroundColor: theme.background,
           }}
@@ -180,8 +189,7 @@ const EventDetailsScreen = () => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     copyLocation();
                   }}
-                  style={{ marginLeft: 10 }}
-                  hitSlop={{ top: 10, bottom: 10, left: 5, right: 5 }}
+                  style={styles.locationAction}
                   accessibilityRole="button"
                   accessibilityLabel="Copy address"
                 >
@@ -196,8 +204,7 @@ const EventDetailsScreen = () => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                     openInMaps();
                   }}
-                  style={{ marginLeft: 10 }}
-                  hitSlop={{ top: 10, bottom: 10, left: 5, right: 5 }}
+                  style={styles.locationAction}
                   accessibilityRole="button"
                   accessibilityLabel="Open in maps"
                 >
@@ -220,7 +227,14 @@ const EventDetailsScreen = () => {
           <View style={styles.imageContainer}>
             <Image
               source={image} // Adjust the path to your local image
-              style={[styles.bottomImage, { tintColor: theme.primary }]}
+              style={[
+                styles.bottomImage,
+                {
+                  width: imageWidth,
+                  height: imageHeight,
+                  tintColor: theme.primary,
+                },
+              ]}
             />
           </View>
         </ScrollView>
@@ -262,9 +276,14 @@ const getStyles = () =>
       marginTop: 15,
       lineHeight: 20,
     },
+    // 48 covers iOS's 44pt and Android's 48dp minimum targets.
+    locationAction: {
+      minWidth: 48,
+      minHeight: 48,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     bottomImage: {
-      width: width, // 80% of the screen width
-      height: height * 0.5, // 40% of the screen height
       resizeMode: "contain", // Ensure the image doesn't stretch
       marginBottom: 50,
     },
