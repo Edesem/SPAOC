@@ -45,6 +45,7 @@ export default function PdfListSection({
             open(router, { url: entry.url, title: entry.title });
           }}
           activeOpacity={0.6}
+          accessibilityRole="button"
         >
           <View style={styles.rowContainer}>
             <FontAwesomeIcon
