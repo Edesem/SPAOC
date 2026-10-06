@@ -1,17 +1,16 @@
-import React from "react";
-import { ItemProps } from "../types";
-import { useRouter } from "expo-router";
-import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import * as Haptics from "expo-haptics";
-import Icon from "react-native-vector-icons/Ionicons";
 import CalendarMarker from "@/components/CalendarMarker";
 import { getCalendarColour, getCalendarLabel } from "@/domain/calendarSources";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
+import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/Ionicons";
 import { formatEventTimes } from "../domain/eventTimes";
 import { toEventDetailsParams } from "../domain/routeParams";
 import { favouriteKey, useFavouritesStore } from "../favourites";
+import { ItemProps } from "../types";
 
 export const EventItem = ({
   item,
@@ -157,7 +156,8 @@ export const EventItem = ({
 const getStyles = () =>
   StyleSheet.create({
     item: {
-      padding: 20,
+      paddingHorizontal: 18,
+      paddingVertical: 12,
       marginVertical: 2,
       marginHorizontal: 16,
       borderRadius: 8,
@@ -176,7 +176,7 @@ const getStyles = () =>
       flex: 1,
     },
     marker: {
-      marginRight: 10,
+      marginRight: 18,
     },
     itemContent: {
       flexDirection: "row",
