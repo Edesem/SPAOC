@@ -4,7 +4,8 @@ import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { getCalendarImage } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
 import { EventDetailsParams } from "@/types/routes";
-import { formatEventTimes } from "../domain/eventTimes";
+import { splitDescription } from "../domain/descriptionLinks";
+import { formatEventDate, formatEventTimes } from "../domain/eventTimes";
 import { parseEventDetailsParams } from "../domain/routeParams";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
@@ -44,23 +45,21 @@ const renderDescription = (description: string | null, theme: any) => {
 
   const cleanedDescription = cleanDescription(description);
 
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-
-  const parts = cleanedDescription.split(urlRegex);
-
   return (
     <Text style={[styles.description, { color: theme.detail }]}>
-      {parts.map((part, index) =>
-        urlRegex.test(part) ? (
+      {splitDescription(cleanedDescription).map((part, index) =>
+        part.kind === "link" ? (
           <Text
             key={index}
             style={{ color: theme.primary, textDecorationLine: "underline" }}
-            onPress={() => Linking.openURL(part)}
+            accessibilityRole="link"
+            accessibilityLabel={`Open link to ${part.label}`}
+            onPress={() => Linking.openURL(part.url)}
           >
-            {part}
+            {part.label}
           </Text>
         ) : (
-          part
+          part.text
         ),
       )}
     </Text>
@@ -76,6 +75,7 @@ const EventDetailsScreen = () => {
     end,
     allDay,
   );
+  const dateLabel = formatEventDate(start, end, allDay);
 
   const styles = getStyles();
 
@@ -157,12 +157,27 @@ const EventDetailsScreen = () => {
             style={[styles.card, { backgroundColor: theme.itemBackground }]}
           >
             <Text style={[styles.title, { color: theme.moreImportantText }]}>
-              {title || "Event Title"}
+              {title || "Untitled event"}
             </Text>
             <View
               style={[styles.divider, { backgroundColor: theme.separator }]}
             />
             <View style={styles.metaRow}>
+              <View
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+              >
+                <IconSymbol
+                  name="calendar"
+                  size={20}
+                  color={theme.lessImportantText}
+                />
+              </View>
+              <Text style={[styles.date, { color: theme.lessImportantText }]}>
+                {dateLabel}
+              </Text>
+            </View>
+            <View style={[styles.metaRow, { marginTop: 5 }]}>
               <View
                 accessibilityElementsHidden
                 importantForAccessibility="no-hide-descendants"
