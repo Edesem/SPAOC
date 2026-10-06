@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { getCalendarImage } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
+import { fontSize } from "@/theme/commonStyles";
 import { EventDetailsParams } from "@/types/routes";
 import { splitDescription } from "../domain/descriptionLinks";
 import { formatEventDate, formatEventTimes } from "../domain/eventTimes";
@@ -305,9 +306,9 @@ const getStyles = () =>
       marginVertical: 4,
     },
     description: {
-      fontSize: 14,
+      fontSize: fontSize.body,
       marginTop: 15,
-      lineHeight: 20,
+      lineHeight: 24,
     },
     // 48 covers iOS's 44pt and Android's 48dp minimum targets.
     locationAction: {
