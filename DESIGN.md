@@ -11,17 +11,24 @@ colors:
   ink: "#333333"
   ink-detail: "#555555"
   ink-date: "#5d5d5d"
-  ink-quiet: "#777777"
-  chevron-grey: "#BBBBBB"
+  ink-quiet: "#666666"
+  chevron-grey: "#8C8C8C"
   bone: "#E1E1E1"
   bone-detail: "#BBBBBB"
   bone-quiet: "#B0B0B0"
   bone-date: "#999999"
   chevron-night: "#777777"
-  tab-inactive: "#888888"
+  tab-inactive: "#6B6B6B"
+  tab-inactive-night: "#888888"
+  separator: "#D0D0D0"
+  separator-night: "#4A4A4A"
+  ink-on-bronze: "#121212"
+  error: "#B3261E"
+  error-night: "#F2766B"
   donate-red: "#de333f"
   donate-red-night: "#b51a25"
-  favourite-gold: "#FFD700"
+  favourite-gold: "#B07D00"
+  favourite-gold-night: "#FFD700"
   cal-youth: "#3F51B5"
   cal-church: "#F6BF26"
   cal-family: "#0B8043"
@@ -88,7 +95,7 @@ components:
     padding: "20px"
   button-primary:
     backgroundColor: "{colors.altar-bronze}"
-    textColor: "{colors.card-white}"
+    textColor: "{colors.ink-on-bronze}"
     typography: "{typography.body}"
     rounded: "{rounded.md}"
     padding: "15px 0"
@@ -133,20 +140,21 @@ A reverent navy and bronze pair on neutral greys, with ten calendar colours that
 
 ### Primary
 - **Vestment Navy** (#0a4068): Lead accent in light mode: tab tint, link rows and icons, the About star, toast accent border, and the "Clear month filter" pill. Rare in dark mode, where bronze takes over.
-- **Altar Bronze** (#a88646): Lead accent in dark mode (tab tint, links). Secondary in light mode: the Home screen's vertical rail and the primary button fill.
+- **Altar Bronze** (#a88646): Lead accent in dark mode (tab tint, links, filled buttons). Secondary in light mode: the Home screen's vertical rail. Text and icons on a bronze fill are Ink on Bronze (#121212, 5.5:1); white on bronze is 3.4:1 and is not used.
 
 ### Secondary
 - **Donate Red** (#de333f, #b51a25 at night): Used only for the Donate via Square button. It is the only red in the chrome, which is why it stands out.
-- **Favourite Gold** (#FFD700): The filled favourite star.
+- **Favourite Gold** (#B07D00 on light, #FFD700 at night): The filled favourite star. Light mode uses a deeper gold because #FFD700 is 1.4:1 on white.
+- **Error** (#B3261E light, #F2766B night): Error text and the error toast border.
 
 ### Neutral
 - **Parchment Grey** (#F7F6F7): Screen background in light mode.
 - **Card White** (#FFFFFF): Cards, rows, sheets and toast background in light mode.
 - **Night Ground** (#121212): Screen background in dark mode, matching the dark splash.
 - **Night Card** (#272727): Cards and rows in dark mode.
-- **Ink** (#333333): Primary text on light. **Ink Detail** (#555555), **Ink Date** (#5d5d5d) and **Ink Quiet** (#777777) step down for secondary copy, section dates and times.
+- **Ink** (#333333): Primary text on light. **Ink Detail** (#555555), **Ink Date** (#5d5d5d) and **Ink Quiet** (#666666, 5.3:1 on the background) step down for secondary copy, section dates and times.
 - **Bone** (#E1E1E1): Primary text on dark. **Bone Detail** (#BBBBBB), **Bone Quiet** (#B0B0B0) and **Bone Date** (#999999) step down.
-- **Chevron Grey** (#BBBBBB light, #777777 dark) and **Tab Inactive** (#888888): Chevrons, unselected tabs, and other quiet affordances.
+- **Chevron Grey** (#8C8C8C light, #777777 dark): Chevrons and the empty favourite star, 3:1 or better on cards. **Tab Inactive** (#6B6B6B light, #888888 dark): unselected tabs. **Separator** (#D0D0D0 light, #4A4A4A dark): dividers inside cards.
 
 ### Calendar colours
 Each calendar has a fixed colour used for its event bar and its Settings entry. They follow the Google Calendar palette and stay identical in light and dark.
@@ -214,13 +222,13 @@ Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px ve
 White card, 10px corners, 20px padding, card lift. 24px/600 title with a chevron at the right, then a 1px divider (3px in an accent colour when one is supplied), then a 16px teaser in the primary text colour.
 
 ### Buttons
-- **Primary** (Altar Bronze fill, white 16px/600 text, 10px corners, 15px vertical padding, 80% width, centred, button lift).
+- **Primary** (Altar Bronze fill, Ink on Bronze 16px/600 text, 10px corners, 15px vertical padding, 80% width, centred, button lift).
 - **Donate** (Donate Red fill, white 16px/600 text, 10px corners, 15px vertical padding, full card width), one per screen.
 - **Link row** (no fill, navy or bronze text and icon, 16px/500 label, 24px icon, 12px gap, 12px corners, 10×16px padding) for the About screen's outbound links.
 - Haptics: every press fires one (medium for actions, rigid for navigation into a detail).
 
 ### Navigation
-Native bottom tabs (`NativeTabs`): SF Symbols on iOS and Material icons on Android, with filled variants when selected. Selected tint is the lead accent; unselected is Tab Inactive (#888). Labels are the platform default size.
+Native bottom tabs (`NativeTabs`): SF Symbols on iOS and Material icons on Android, with filled variants when selected. Selected tint is the lead accent; unselected is Tab Inactive (#6B6B6B light, #888888 dark). Labels are the platform default size.
 
 ### Toast
 Light: white background, left accent border in Vestment Navy, 15px text in Ink. Dark: `#272727` background, bronze border, Bone text. Errors use a red left border. Used for transient confirmations such as "Account Number copied" (1.5s).
@@ -231,6 +239,7 @@ A title in the lead accent colour, then `SettingPicker` rows and native `Switch`
 ## Do's and Don'ts
 
 ### Do:
+- **Do** check text and icon pairs for contrast (4.5:1 text, 3:1 icons and controls) in both schemes whenever a token changes.
 - **Do** take colours from `theme/colours.ts` (`Colours.light` / `Colours.dark`) and calendar colours from `getCalendarColour`; both schemes get the same screen design.
 - **Do** keep reading text at 16px or larger and let it scale with the system text size.
 - **Do** give every tappable control at least a 44pt target (padding or `hitSlop`).
