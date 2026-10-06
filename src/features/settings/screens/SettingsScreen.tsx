@@ -50,6 +50,8 @@ export default function SettingsScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Back"
           >
             <MaterialIcons name="arrow-back" size={28} color={theme.primary} />
           </TouchableOpacity>
@@ -132,6 +134,7 @@ export default function SettingsScreen() {
                 await setDailySaintsEnabled(value);
                 syncNotifications();
               }}
+              accessibilityLabel="Notification for Saint of the day"
               trackColor={{ false: "#767577", true: "#34c658" }}
               thumbColor="#fff"
             />

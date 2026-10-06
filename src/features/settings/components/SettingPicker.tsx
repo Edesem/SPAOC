@@ -28,6 +28,11 @@ const SettingPicker: React.FC<SettingPickerProps> = ({
       style={styles.settingItem}
       activeOpacity={0.7}
       onPress={() => pickerRef.current?.togglePicker()}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityValue={{
+        text: items.find((item) => item.value === value)?.label,
+      }}
     >
       <Text style={{ color: theme.moreImportantText }}>{label}</Text>
       <RNPickerSelect
