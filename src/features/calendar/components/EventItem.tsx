@@ -5,6 +5,7 @@ import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
+import CalendarMarker from "@/components/CalendarMarker";
 import { getCalendarColour, getCalendarLabel } from "@/domain/calendarSources";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
@@ -106,8 +107,10 @@ export const EventItem = ({
         }
       }}
     >
-      <View style={styles.leftBarContainer}>
-        <View style={[styles.leftBar, { backgroundColor: sourceColor }]} />
+      <View style={styles.contentRow}>
+        <View style={styles.marker}>
+          <CalendarMarker colour={sourceColor} />
+        </View>
         <View style={styles.itemContent}>
           <View style={styles.textContainer}>
             {showFullDate && (
@@ -167,18 +170,13 @@ const getStyles = () =>
       alignItems: "center",
       justifyContent: "space-between",
     },
-    leftBar: {
-      width: 8,
-      borderTopLeftRadius: 8,
-      borderBottomRightRadius: 8,
-      borderTopRightRadius: 1,
-      borderBottomLeftRadius: 1,
-      marginRight: 10,
-    },
-    leftBarContainer: {
+    contentRow: {
       flexDirection: "row",
-      alignItems: "stretch",
+      alignItems: "center",
       flex: 1,
+    },
+    marker: {
+      marginRight: 10,
     },
     itemContent: {
       flexDirection: "row",
