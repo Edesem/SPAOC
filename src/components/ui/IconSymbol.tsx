@@ -13,6 +13,9 @@ const MAPPING = {
   "paperplane.fill": "send",
   "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
+  calendar: "calendar-month",
+  "square.fill.on.square.fill": "content-copy",
+  "map.fill": "map",
 } as Partial<
   Record<
     Extract<import("expo-symbols").SymbolViewProps["name"], string>,
