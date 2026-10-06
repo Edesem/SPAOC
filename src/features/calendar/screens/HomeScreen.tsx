@@ -1,15 +1,11 @@
-import { EventItem } from "../components/EventItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useReadableGutter } from "@/hooks/useReadableGutter";
-import { useHomeFeature } from "../hooks/useHomeFeature";
 import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
-import { HomeEventSection } from "../domain/homeRules";
+import { TabParamList } from "@/types/routes";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { EventData } from "../types";
-import { TabParamList } from "@/types/routes";
 import "expo-dev-client";
 import * as Haptics from "expo-haptics";
 import { router, useNavigation } from "expo-router";
@@ -28,6 +24,10 @@ import {
 } from "react-native";
 import MonthPicker from "react-native-month-year-picker";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { EventItem } from "../components/EventItem";
+import { HomeEventSection } from "../domain/homeRules";
+import { useHomeFeature } from "../hooks/useHomeFeature";
+import { EventData } from "../types";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -70,7 +70,7 @@ const HomeListHeader = ({
     <View style={styles.imageContainer}>
       <Image
         testID="home-top-image"
-        source={require("@assets/images/orthodox/CrossInSquareThick.png")}
+        source={require("@assets/images/orthodox/CrossAndDots.png")}
         style={[styles.topImage, { tintColor: theme.primary }]}
       />
     </View>
