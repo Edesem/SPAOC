@@ -1,6 +1,7 @@
 import DonateSection from "../components/DonateSection";
 import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -25,6 +26,7 @@ import {
 
 export default function HelpScreen() {
   const insets = useSafeAreaInsets();
+  const gutter = useReadableGutter();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -78,7 +80,7 @@ export default function HelpScreen() {
         <ScrollView
           contentContainerStyle={{
             paddingBottom: insets.bottom + 20,
-            paddingHorizontal: 20,
+            paddingHorizontal: 20 + gutter,
           }}
         >
           {/* Header */}
@@ -152,7 +154,11 @@ function LinkItem({
   const styles = getStyles();
 
   return (
-    <TouchableOpacity style={styles.linkItem} onPress={onPress}>
+    <TouchableOpacity
+      style={styles.linkItem}
+      onPress={onPress}
+      accessibilityRole="link"
+    >
       <MaterialIcons name={icon as any} size={24} color={color} />
       <Text style={[styles.linkLabel, { color }]}>{label}</Text>
     </TouchableOpacity>

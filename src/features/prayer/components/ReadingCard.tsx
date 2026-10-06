@@ -39,6 +39,7 @@ export default function ReadingCard({
           backgroundColor: theme.itemBackground,
         },
       ]}
+      accessibilityRole="button"
       onPress={() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         router.push({
@@ -74,7 +75,7 @@ export default function ReadingCard({
         style={
           accentColour
             ? [styles.divider, { backgroundColor: accentColour }, { height: 3 }]
-            : styles.divider
+            : [styles.divider, { backgroundColor: theme.separator }]
         }
       />
       <Text

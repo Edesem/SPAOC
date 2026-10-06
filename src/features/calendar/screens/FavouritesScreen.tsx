@@ -1,6 +1,7 @@
 import { EventItem } from "../components/EventItem"; // <-- Import your component
 import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { useFavouritesStore } from "../favourites";
@@ -34,10 +35,12 @@ export default function FavouritesScreen() {
     }, []),
   );
 
+  const gutter = useReadableGutter();
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={CommonStyles.container}>
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: gutter }}>
           <View style={styles.header}>
             <ThemedText type="title" style={CommonStyles.title}>
               Favourites
@@ -48,7 +51,11 @@ export default function FavouritesScreen() {
           </View>
 
           {favourites.length === 0 ? (
-            <Text style={{ textAlign: "center", color: "gray", marginTop: 20 }}>
+            <Text style={{
+                textAlign: "center",
+                color: theme.detail,
+                marginTop: 20,
+              }}>
               No favourites yet.
             </Text>
           ) : (

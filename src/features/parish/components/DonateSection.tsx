@@ -77,8 +77,11 @@ export default function DonateSection({ theme, CommonStyles }: any) {
         <TouchableOpacity
           style={[styles.squareButton, { backgroundColor: theme.donateButton }]}
           onPress={handleSquarePayment}
+          accessibilityRole="link"
         >
-          <Text style={styles.squareButtonText}>Donate via Square</Text>
+          <Text style={[styles.squareButtonText, { color: theme.onDonate }]}>
+            Donate via Square
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -112,6 +115,8 @@ export default function DonateSection({ theme, CommonStyles }: any) {
               <TouchableOpacity
                 onPress={() => handleCopyDetails(value, label)}
                 style={{ padding: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel={`Copy ${label}`}
               >
                 <IconSymbol
                   name="square.fill.on.square.fill"
@@ -125,8 +130,9 @@ export default function DonateSection({ theme, CommonStyles }: any) {
           <TouchableOpacity
             style={[styles.copyAllButton, { backgroundColor: theme.primary }]}
             onPress={handleCopyAllDetails}
+            accessibilityRole="button"
           >
-            <Text style={styles.copyButtonText}>
+            <Text style={[styles.copyButtonText, { color: theme.onPrimary }]}>
               {copied ? "Copied!" : "Copy All"}
             </Text>
           </TouchableOpacity>
@@ -153,7 +159,6 @@ const getStyles = () =>
     bibleVerse: {
       fontSize: 16,
       fontStyle: "italic",
-      color: "grey",
       marginTop: 10,
       marginHorizontal: 26,
       textAlign: "center",
@@ -174,7 +179,6 @@ const getStyles = () =>
       alignItems: "center",
     },
     squareButtonText: {
-      color: "white",
       fontSize: 16,
       fontWeight: "600",
     },
@@ -210,7 +214,6 @@ const getStyles = () =>
       flex: 1,
     },
     copyButtonText: {
-      color: "white",
       fontSize: 16,
       fontWeight: "600",
     },

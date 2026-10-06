@@ -1,10 +1,8 @@
+import CalendarLegend from "../components/CalendarLegend";
 import SettingPicker from "../components/SettingPicker";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import {
-  useSettingsStore,
-  type StartOfWeek,
-  type ThemeChoice,
-} from "@/services/settings";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
+import { useSettingsStore, type StartOfWeek } from "@/services/settings";
 import { Colours } from "@/theme/colours";
 import { fontSize } from "@/theme/commonStyles";
 import { syncNotifications } from "@/features/notifications";
@@ -32,8 +30,6 @@ export default function SettingsScreen() {
 
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
-  const themeChoice = useSettingsStore((state) => state.themeChoice);
-  const setThemeChoice = useSettingsStore((state) => state.setThemeChoice);
 
   const dailySaintsEnabled = useSettingsStore(
     (state) => state.dailySaintsEnabled,
@@ -42,37 +38,26 @@ export default function SettingsScreen() {
     (state) => state.setDailySaintsEnabled,
   );
 
+  const gutter = useReadableGutter();
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-        <ScrollView style={styles.container}>
+        <ScrollView
+          style={[styles.container, { paddingHorizontal: 20 + gutter }]}
+        >
           {/* Back Button */}
           <TouchableOpacity
             onPress={() => router.back()}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Back"
           >
             <MaterialIcons name="arrow-back" size={28} color={theme.primary} />
           </TouchableOpacity>
 
           {/* Settings Header */}
           <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
-
-          {/* Theme Selection */}
-          {false && (
-            <SettingPicker
-              label="Theme"
-              value={themeChoice}
-              onValueChange={(val) => setThemeChoice(val as ThemeChoice)}
-              items={[
-                { label: "Light", value: "light" },
-                { label: "Dark", value: "dark" },
-                { label: "Auto", value: "auto" },
-              ]}
-              theme={theme}
-              pickerTheme={pickerTheme}
-              styles={styles}
-            />
-          )}
 
           {/* Start of Week */}
           <SettingPicker
@@ -88,42 +73,16 @@ export default function SettingsScreen() {
             styles={styles}
           />
 
-          {/*
-          <View style={styles.settingItem}>
-            <Text style={[{ color: theme.moreImportantText }]}>Timezone</Text>
-            <RNPickerSelect
-              onValueChange={(value: string) => setTimezone(value)}
-              value={timezone}
-              items={[
-                { label: 'UTC', value: 'UTC' },
-                { label: 'GMT', value: 'GMT' },
-                { label: 'EST', value: 'EST' },
-                { label: 'PST', value: 'PST' },
-                { label: 'CST', value: 'CST' },
-              ]}
-              style={{ inputIOSContainer: { pointerEvents: "none" } }}
-              darkTheme={pickerTheme}
-
-            />
-          </View>
-        */}
-
-          {false && (
-            <View style={styles.settingItem}>
-              <Text
-                style={[
-                  { color: theme.moreImportantText },
-                  { fontSize: fontSize.subtitle, fontWeight: 600 },
-                ]}
-              >
-                Notification Settings
-              </Text>
-            </View>
-          )}
-
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
-            <Text style={{ color: theme.moreImportantText }}>
+            <Text
+              style={{
+                color: theme.moreImportantText,
+                fontSize: fontSize.subtitle,
+                flex: 1,
+                paddingRight: 12,
+              }}
+            >
               Notification for Saint of the day
             </Text>
             <Switch
@@ -132,10 +91,13 @@ export default function SettingsScreen() {
                 await setDailySaintsEnabled(value);
                 syncNotifications();
               }}
+              accessibilityLabel="Notification for Saint of the day"
               trackColor={{ false: "#767577", true: "#34c658" }}
               thumbColor="#fff"
             />
           </View>
+
+          <CalendarLegend theme={theme} />
 
           {/* App Info */}
           <View style={styles.section}>
@@ -154,8 +116,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  // The 28pt arrow sits in a 48pt box (44pt iOS / 48dp Android minimum).
   backButton: {
-    marginBottom: 20,
+    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 48,
+    height: 48,
+    marginLeft: -10,
+    marginBottom: 12,
   },
   title: {
     marginBottom: 20,
@@ -176,7 +145,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: "italic",
     textAlign: "center",
-    marginTop: 500,
-    marginBottom: 60,
+    marginTop: 40,
+    marginBottom: 40,
   },
 });

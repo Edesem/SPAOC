@@ -28,24 +28,36 @@ export const styles = StyleSheet.create({
     height: 150,
   },
   errorText: {
-    color: "red",
     textAlign: "center",
+  },
+  errorBlock: {
+    alignItems: "center",
+  },
+  retryButton: {
+    minHeight: 48,
+    justifyContent: "center",
+    borderRadius: 10,
+    paddingHorizontal: 24,
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  retryText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  // A 48pt row, so a tap on a service title is easy to land.
+  serviceRow: {
+    minHeight: 48,
+    justifyContent: "center",
   },
   serviceContainer: {
     marginBottom: 10,
-  },
-  linkText: {
-    color: "blue",
-    fontSize: 16,
-    fontWeight: "bold",
-    textDecorationLine: "underline",
   },
   prayerTitle: {
     fontSize: 18,
   },
   prayerSubtitle: {
     fontSize: 14,
-    color: "#666",
     fontStyle: "italic",
     paddingBottom: 20,
   },
@@ -69,7 +81,6 @@ export const styles = StyleSheet.create({
   noTextsMessage: {
     textAlign: "center",
     fontSize: 16,
-    color: "#666",
     fontStyle: "italic",
     marginVertical: 10,
   },

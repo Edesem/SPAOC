@@ -2,7 +2,7 @@
 import { PdfViewerParams } from "@/types/routes";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { WebView } from "react-native-webview";
 
 // TODO: Temporary WebView solution - switch back to react-native-pdf when fixed
@@ -16,9 +16,6 @@ export default function PdfViewer() {
     navigation.setOptions({
       title: `${title}`,
       headerBackTitle: "Back",
-      headerBackTitleStyle: {
-        color: "pink",
-      },
     });
   }, [navigation, title, url]);
 
@@ -31,10 +28,7 @@ export default function PdfViewer() {
 
     return (
       <View style={styles.container}>
-        <WebView
-          source={{ uri: webViewUrl }}
-          style={styles.pdf}
-        />
+        <WebView source={{ uri: webViewUrl }} style={styles.pdf} />
       </View>
     );
   }
@@ -67,7 +61,6 @@ const styles = StyleSheet.create({
   },
   pdf: {
     flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    alignSelf: "stretch",
   },
 });

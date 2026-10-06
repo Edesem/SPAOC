@@ -1,0 +1,731 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-06T00:58:31.108023+00:00",
+  "title": "Design System: SPAOC",
+  "extensions": {
+    "colorMeta": {
+      "vestment-navy": {
+        "role": "primary",
+        "displayName": "Vestment Navy",
+        "canonical": "oklch(36% 0.087 247)",
+        "tonalRamp": [
+          "#000c1f",
+          "#002847",
+          "#184b74",
+          "#3c6d98",
+          "#5f91be",
+          "#83b7e6",
+          "#add6fc",
+          "#e2f1ff"
+        ]
+      },
+      "altar-bronze": {
+        "role": "primary",
+        "displayName": "Altar Bronze",
+        "canonical": "oklch(64% 0.092 82)",
+        "tonalRamp": [
+          "#140800",
+          "#342300",
+          "#5d4205",
+          "#846320",
+          "#a88646",
+          "#cfab6b",
+          "#edcc91",
+          "#ffeccb"
+        ]
+      },
+      "parchment-grey": {
+        "role": "neutral",
+        "displayName": "Parchment Grey",
+        "canonical": "oklch(97% 0.002 326)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "card-white": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "oklch(100% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "night-ground": {
+        "role": "neutral",
+        "displayName": "Night Ground",
+        "canonical": "oklch(18% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "night-card": {
+        "role": "neutral",
+        "displayName": "Night Card",
+        "canonical": "oklch(27% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(32% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "ink-detail": {
+        "role": "neutral",
+        "displayName": "Ink Detail",
+        "canonical": "oklch(45% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "ink-date": {
+        "role": "neutral",
+        "displayName": "Ink Date",
+        "canonical": "oklch(48% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "ink-quiet": {
+        "role": "neutral",
+        "displayName": "Ink Quiet",
+        "canonical": "oklch(51% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "chevron-grey": {
+        "role": "neutral",
+        "displayName": "Chevron Grey",
+        "canonical": "oklch(64% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "bone": {
+        "role": "neutral",
+        "displayName": "Bone",
+        "canonical": "oklch(91% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "bone-detail": {
+        "role": "neutral",
+        "displayName": "Bone Detail",
+        "canonical": "oklch(79% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "bone-quiet": {
+        "role": "neutral",
+        "displayName": "Bone Quiet",
+        "canonical": "oklch(76% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "bone-date": {
+        "role": "neutral",
+        "displayName": "Bone Date",
+        "canonical": "oklch(68% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "chevron-night": {
+        "role": "neutral",
+        "displayName": "Chevron Night",
+        "canonical": "oklch(57% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "tab-inactive": {
+        "role": "neutral",
+        "displayName": "Tab Inactive",
+        "canonical": "oklch(53% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "tab-inactive-night": {
+        "role": "neutral",
+        "displayName": "Tab Inactive Night",
+        "canonical": "oklch(63% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "separator": {
+        "role": "neutral",
+        "displayName": "Separator",
+        "canonical": "oklch(86% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "separator-night": {
+        "role": "neutral",
+        "displayName": "Separator Night",
+        "canonical": "oklch(41% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "ink-on-bronze": {
+        "role": "neutral",
+        "displayName": "Ink on Bronze",
+        "canonical": "oklch(18% 0.000 90)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      },
+      "error": {
+        "role": "secondary",
+        "displayName": "Error",
+        "canonical": "oklch(50% 0.178 29)",
+        "tonalRamp": [
+          "#220000",
+          "#500001",
+          "#8c0001",
+          "#ba2d24",
+          "#e45749",
+          "#ff8b7c",
+          "#febfb6",
+          "#ffe9e5"
+        ]
+      },
+      "error-night": {
+        "role": "secondary",
+        "displayName": "Error (night)",
+        "canonical": "oklch(71% 0.155 27)",
+        "tonalRamp": [
+          "#220000",
+          "#500003",
+          "#880c11",
+          "#b13b34",
+          "#da6157",
+          "#fb8e82",
+          "#febfb7",
+          "#ffe9e6"
+        ]
+      },
+      "donate-red": {
+        "role": "secondary",
+        "displayName": "Donate Red",
+        "canonical": "oklch(59% 0.206 23)",
+        "tonalRamp": [
+          "#220000",
+          "#500009",
+          "#880b1c",
+          "#c40a29",
+          "#ef454d",
+          "#ff8a86",
+          "#febfbb",
+          "#ffe8e7"
+        ]
+      },
+      "donate-red-night": {
+        "role": "secondary",
+        "displayName": "Donate Red (night)",
+        "canonical": "oklch(50% 0.187 25)",
+        "tonalRamp": [
+          "#220000",
+          "#4f0107",
+          "#8a0013",
+          "#bd252c",
+          "#e8514f",
+          "#fe8b84",
+          "#fdbfba",
+          "#ffe9e6"
+        ]
+      },
+      "favourite-gold": {
+        "role": "secondary",
+        "displayName": "Favourite Gold",
+        "canonical": "oklch(62% 0.129 80)",
+        "tonalRamp": [
+          "#150800",
+          "#362200",
+          "#5f4200",
+          "#88610b",
+          "#b5820e",
+          "#dca744",
+          "#fac872",
+          "#feeccf"
+        ]
+      },
+      "favourite-gold-night": {
+        "role": "secondary",
+        "displayName": "Favourite Gold (night)",
+        "canonical": "oklch(89% 0.182 95)",
+        "tonalRamp": [
+          "#110a00",
+          "#2f2600",
+          "#554700",
+          "#7b680f",
+          "#a48b14",
+          "#ceaf26",
+          "#f3cf2c",
+          "#ffefb1"
+        ]
+      },
+      "cal-youth": {
+        "role": "tertiary",
+        "displayName": "Calendar: youth",
+        "canonical": "oklch(48% 0.159 271)",
+        "tonalRamp": [
+          "#050038",
+          "#13106f",
+          "#2c399b",
+          "#4a5ec3",
+          "#6a83ec",
+          "#96acfd",
+          "#c1cffd",
+          "#e8eeff"
+        ]
+      },
+      "cal-church": {
+        "role": "tertiary",
+        "displayName": "Calendar: church",
+        "canonical": "oklch(83% 0.162 86)",
+        "tonalRamp": [
+          "#140900",
+          "#322400",
+          "#5a4406",
+          "#836405",
+          "#af8502",
+          "#dba918",
+          "#fcc94d",
+          "#feedc6"
+        ]
+      },
+      "cal-family": {
+        "role": "tertiary",
+        "displayName": "Calendar: family",
+        "canonical": "oklch(53% 0.133 153)",
+        "tonalRamp": [
+          "#001102",
+          "#003014",
+          "#08562c",
+          "#057e41",
+          "#3fa363",
+          "#67c987",
+          "#90e8aa",
+          "#c7ffd5"
+        ]
+      },
+      "cal-ladies": {
+        "role": "tertiary",
+        "displayName": "Calendar: ladies",
+        "canonical": "oklch(60% 0.118 318)",
+        "tonalRamp": [
+          "#190022",
+          "#3c0a49",
+          "#612f70",
+          "#855195",
+          "#aa74bb",
+          "#d099e2",
+          "#edbcfd",
+          "#f9e7ff"
+        ]
+      },
+      "cal-parish": {
+        "role": "tertiary",
+        "displayName": "Calendar: parish",
+        "canonical": "oklch(65% 0.208 36)",
+        "tonalRamp": [
+          "#220000",
+          "#4b0c00",
+          "#802102",
+          "#b43810",
+          "#ef4c16",
+          "#fe8d6e",
+          "#fdc1b0",
+          "#ffe9e3"
+        ]
+      },
+      "cal-seniors": {
+        "role": "tertiary",
+        "displayName": "Calendar: seniors",
+        "canonical": "oklch(64% 0.105 275)",
+        "tonalRamp": [
+          "#06032d",
+          "#1a1e56",
+          "#38417f",
+          "#5863a5",
+          "#7a87cc",
+          "#9dacf4",
+          "#c4cefe",
+          "#eaeefe"
+        ]
+      },
+      "cal-weekly": {
+        "role": "tertiary",
+        "displayName": "Calendar: weekly",
+        "canonical": "oklch(66% 0.152 241)",
+        "tonalRamp": [
+          "#000d1d",
+          "#002943",
+          "#024d74",
+          "#1470a4",
+          "#1a95d9",
+          "#59bbfc",
+          "#a6d8fd",
+          "#e0f1ff"
+        ]
+      },
+      "cal-playgroup": {
+        "role": "tertiary",
+        "displayName": "Calendar: playgroup",
+        "canonical": "oklch(73% 0.074 301)",
+        "tonalRamp": [
+          "#10041f",
+          "#2d1d43",
+          "#4f3e69",
+          "#705f8d",
+          "#9482b2",
+          "#b9a7d9",
+          "#d8c7f7",
+          "#f1ebff"
+        ]
+      },
+      "cal-fellowship": {
+        "role": "tertiary",
+        "displayName": "Calendar: fellowship",
+        "canonical": "oklch(60% 0.105 153)",
+        "tonalRamp": [
+          "#001102",
+          "#003015",
+          "#00572a",
+          "#307a4a",
+          "#569f6d",
+          "#7bc591",
+          "#a0e4b3",
+          "#c8fed6"
+        ]
+      },
+      "cal-default": {
+        "role": "tertiary",
+        "displayName": "Calendar: default",
+        "canonical": "oklch(0% 0.000 0)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#262626",
+          "#484848",
+          "#696969",
+          "#8c8c8c",
+          "#b1b1b1",
+          "#d1d1d1",
+          "#eeeeee"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Saint of the day, fasting heading, week labels, screen titles."
+      },
+      "section-title": {
+        "displayName": "Section Title",
+        "purpose": "Card and reading titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Event titles and day headers."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text, buttons, link labels. 16px floor."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Event times and captions only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "row-lift",
+        "value": "0 2px 4px rgba(0,0,0,0.2)",
+        "purpose": "Event rows."
+      },
+      {
+        "name": "card-lift",
+        "value": "0 3px 4px rgba(0,0,0,0.1)",
+        "purpose": "Reading cards, donate sections, prayer content."
+      },
+      {
+        "name": "button-lift",
+        "value": "0 2px 3px rgba(0,0,0,0.1)",
+        "purpose": "Primary button."
+      }
+    ],
+    "motion": [],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Event Row",
+      "kind": "card",
+      "refersTo": "event-row",
+      "description": "A day's event: calendar bar, time, title, favourite star and chevron.",
+      "html": "<div class=\"ds-event\"><div class=\"ds-event-bar\"></div><div class=\"ds-event-body\"><div class=\"ds-event-time\">6:00 PM – 7:30 PM</div><div class=\"ds-event-title\">Youth Night</div></div><div class=\"ds-event-actions\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#8C8C8C\" stroke-width=\"1.6\" aria-hidden=\"true\"><path d=\"m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1L3.2 9.4l6.1-.8z\"/></svg><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#8C8C8C\" aria-hidden=\"true\"><path d=\"M8.6 16.6 13.2 12 8.6 7.4 10 6l6 6-6 6z\"/></svg></div></div>",
+      "css": ".ds-event{display:flex;align-items:center;background:#fff;border-radius:8px;padding:20px;margin:2px 16px;box-shadow:0 2px 4px rgba(0,0,0,.2);font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-event-bar{width:8px;align-self:stretch;margin-right:10px;background:#3F51B5;border-radius:8px 1px 8px 1px}.ds-event-body{flex:1}.ds-event-time{font-size:14px;color:#666;margin-bottom:2px}.ds-event-title{font-size:18px;color:#333}.ds-event-actions{display:flex;align-items:center;gap:12px}.ds-event:hover{background:#faf9fa}.ds-event:focus-visible{outline:2px solid #0a4068;outline-offset:2px}"
+    },
+    {
+      "name": "Reading Card",
+      "kind": "card",
+      "refersTo": "reading-card",
+      "description": "Daily reading title and teaser; tapping opens the full text.",
+      "html": "<div class=\"ds-reading\"><div class=\"ds-reading-head\"><h3 class=\"ds-reading-title\">Epistle</h3><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#8C8C8C\" aria-hidden=\"true\"><path d=\"M8.6 16.6 13.2 12 8.6 7.4 10 6l6 6-6 6z\"/></svg></div><div class=\"ds-reading-divider\"></div><p class=\"ds-reading-teaser\">Brethren, I make known to you the gospel I preached to you…</p></div>",
+      "css": ".ds-reading{background:#fff;border-radius:10px;padding:20px;margin:20px;box-shadow:0 3px 4px rgba(0,0,0,.1);font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-reading-head{display:flex;justify-content:space-between;align-items:flex-start}.ds-reading-title{margin:0 0 15px;font-size:24px;font-weight:600;color:#333}.ds-reading-divider{height:3px;background:#a88646;margin:10px 0}.ds-reading-teaser{margin:0;font-size:16px;line-height:24px;color:#333}.ds-reading:hover{background:#faf9fa}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Bronze action button, centred at 80% width.",
+      "html": "<button class=\"ds-btn-primary\">Save</button>",
+      "css": ".ds-btn-primary{width:80%;display:block;margin:0 auto;padding:15px 0;background:#a88646;color:#121212;border:0;border-radius:10px;font:600 16px -apple-system,Roboto,system-ui,sans-serif;box-shadow:0 2px 3px rgba(0,0,0,.1);cursor:pointer}.ds-btn-primary:hover{background:#b8975a}.ds-btn-primary:focus-visible{outline:2px solid #0a4068;outline-offset:2px}.ds-btn-primary:active{transform:scale(.99)}"
+    },
+    {
+      "name": "Donate Button",
+      "kind": "button",
+      "refersTo": "button-donate",
+      "description": "The only red in the chrome; used for giving.",
+      "html": "<button class=\"ds-btn-donate\">Donate via Square</button>",
+      "css": ".ds-btn-donate{width:100%;padding:15px 0;background:#de333f;color:#fff;border:0;border-radius:10px;font:600 16px -apple-system,Roboto,system-ui,sans-serif;cursor:pointer}.ds-btn-donate:hover{background:#c92c37}.ds-btn-donate:focus-visible{outline:2px solid #0a4068;outline-offset:2px}"
+    },
+    {
+      "name": "Link Row",
+      "kind": "button",
+      "refersTo": "link-row",
+      "description": "About-screen outbound link: icon and label in the lead accent.",
+      "html": "<a class=\"ds-link\" href=\"#\"><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"#0a4068\" aria-hidden=\"true\"><path d=\"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 9h-3a15.7 15.7 0 0 0-1.4-6A8 8 0 0 1 18.9 11ZM12 4c.8 1 1.6 3 1.9 7h-3.8c.3-4 1.100-6 1.900-7ZM4.1 13h3a15.700 15.700 0 0 0 1.400 6A8 8 0 0 1 4.100 13Zm3-2h-3a8 8 0 0 1 4.400-6 15.700 15.700 0 0 0-1.400 6ZM12 20c-.8-1-1.600-3-1.900-7h3.800c-.3 4-1.100 6-1.900 7Zm2.500-1a15.700 15.700 0 0 0 1.400-6h3a8 8 0 0 1-4.400 6Z\"/></svg><span>Visit our Website</span></a>",
+      "css": ".ds-link{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:12px;color:#0a4068;text-decoration:none;font:500 16px -apple-system,Roboto,system-ui,sans-serif}.ds-link:hover{background:rgba(10,64,104,.06)}.ds-link:focus-visible{outline:2px solid #0a4068;outline-offset:2px}"
+    },
+    {
+      "name": "Clear Filter Pill",
+      "kind": "chip",
+      "refersTo": "clear-filter",
+      "description": "Navy pill shown when the month filter is active.",
+      "html": "<button class=\"ds-pill\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"#fff\" aria-hidden=\"true\"><path d=\"M19 6.400 17.600 5 12 10.600 6.400 5 5 6.400 10.600 12 5 17.600 6.400 19 12 13.400 17.600 19 19 17.600 13.400 12z\"/></svg>Clear month filter</button>",
+      "css": ".ds-pill{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border:0;border-radius:20px;background:#0a4068;color:#fff;font:700 16px -apple-system,Roboto,system-ui,sans-serif;cursor:pointer}.ds-pill:hover{background:#08334f}.ds-pill:focus-visible{outline:2px solid #a88646;outline-offset:2px}"
+    },
+    {
+      "name": "Tab Bar",
+      "kind": "nav",
+      "refersTo": "",
+      "description": "Native bottom tabs; selected uses the lead accent, others #888.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-tab-on\" href=\"#\">Events</a><a class=\"ds-tab\" href=\"#\">Favourites</a><a class=\"ds-tab\" href=\"#\">Prayer</a><a class=\"ds-tab\" href=\"#\">About</a><a class=\"ds-tab\" href=\"#\">Help</a></nav>",
+      "css": ".ds-tabs{display:flex;justify-content:space-around;padding:10px 0;background:#F7F6F7;border-top:1px solid #e0e0e0;font-family:-apple-system,Roboto,system-ui,sans-serif}.ds-tab{font-size:11px;color:#6b6b6b;text-decoration:none;padding:6px 8px}.ds-tab-on{color:#0a4068;font-weight:600}.ds-tab:hover{color:#0a4068}.ds-tab:focus-visible{outline:2px solid #0a4068}"
+    },
+    {
+      "name": "Toast",
+      "kind": "custom",
+      "refersTo": "",
+      "description": "Transient confirmation with a left accent border.",
+      "html": "<div class=\"ds-toast\">Account Number copied</div>",
+      "css": ".ds-toast{background:#fff;border-left:5px solid #0a4068;border-radius:6px;padding:14px 15px;font:15px -apple-system,Roboto,system-ui,sans-serif;color:#333;box-shadow:0 2px 6px rgba(0,0,0,.15)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Parish Noticeboard",
+    "overview": "SPAOC reads like the noticeboard in the church hall: what is on this week, laid out so anyone can find it in a glance. Content sits on plain white cards over a soft grey ground, each event tagged by a coloured bar that carries its calendar's identity. Navy and bronze do the chrome work; everything else is neutral, so the calendar colours are the loudest thing on screen.\n\nThe system is plain and sturdy. Type is the platform's own, sized generously for older eyes; cards are rounded and lightly lifted; targets are large; navigation is the OS's native tab bar. There is little ornament. The one decorative motif is the eight-pointed star illustration, tinted in the primary colour, which closes the About screen and marks the parish's own voice. Per-calendar Orthodox icon images appear on event detail screens.\n\nLight and dark are both first-class. Dark mode swaps navy for bronze as the lead accent, since navy loses contrast on near-black.",
+    "keyCharacteristics": [
+      "White cards on a soft grey ground in light mode; `#272727` cards on `#121212` in dark.",
+      "Calendar colour is expressed as a vertical bar, never as a card fill.",
+      "One lead accent per scheme (navy light, bronze dark); bronze is the secondary in light.",
+      "System font only, with 16px as the floor for reading text.",
+      "Native tab bar and platform haptics; no custom shell."
+    ],
+    "rules": [
+      {
+        "name": "The Calendar Colour Rule",
+        "body": "A calendar's colour identifies its events and nothing else. It appears as the 8px bar on a row, never as a button, a text colour or a card fill.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Lead Accent Rule",
+        "body": "Each scheme has one lead accent for interactive chrome: navy in light, bronze in dark. Do not use both as competing actions on the same screen.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Red Rule",
+        "body": "Donate Red is reserved for giving. Errors and destructive actions do not borrow it.",
+        "section": "colors"
+      },
+      {
+        "name": "The 16px Floor Rule",
+        "body": "Content a parishioner has to read is 16px or larger. 14px is for a time or a caption beside a larger title.",
+        "section": "typography"
+      },
+      {
+        "name": "The Italic Aside Rule",
+        "body": "Italics are reserved for the subtitle under a screen title and for scripture quotes (the Donate verse); they are never used for emphasis in lists.",
+        "section": "typography"
+      },
+      {
+        "name": "The Soft Lift Rule",
+        "body": "Shadow opacity stays at or below 0.2 and radius at or below 4. A card is lifted, never floating.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** check text and icon pairs for contrast (4.5:1 text, 3:1 icons and controls) in both schemes whenever a token changes.",
+      "**Do** take colours from `theme/colours.ts` (`Colours.light` / `Colours.dark`) and calendar colours from `getCalendarColour`; both schemes get the same screen design.",
+      "**Do** keep reading text at 16px or larger and let it scale with the system text size.",
+      "**Do** give every tappable control at least a 44pt target (padding or `hitSlop`).",
+      "**Do** use the 8px asymmetric calendar bar to mark which calendar an event belongs to.",
+      "**Do** use native controls (tab bar, switches, pickers, haptics) and platform icons.",
+      "**Do** keep the logo and app icon art as supplied (binding per PRODUCT.md)."
+    ],
+    "donts": [
+      "**Don't** use a calendar colour as button fill, text or card background.",
+      "**Don't** use Donate Red for anything other than giving.",
+      "**Don't** add a second lead accent to a screen, or hard-code hex values in a screen when a theme token exists.",
+      "**Don't** add custom typefaces or heavy ornament; the star and Orthodox icon illustrations are the only decoration.",
+      "**Don't** raise shadow opacity above 0.2 or radius above 4.",
+      "**Don't** build dark mode as an invert; it has its own surfaces (`#121212`, `#272727`) and swaps the lead accent to bronze."
+    ]
+  }
+}

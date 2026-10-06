@@ -5,7 +5,7 @@ import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import * as Haptics from "expo-haptics";
 import Icon from "react-native-vector-icons/Ionicons";
-import { getCalendarColour } from "@/domain/calendarSources";
+import { getCalendarColour, getCalendarLabel } from "@/domain/calendarSources";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { formatEventTimes } from "../domain/eventTimes";
@@ -58,18 +58,29 @@ export const EventItem = ({
     item.allDay,
   );
 
-  const backgroundColor =
-    colorScheme === "dark"
-      ? Colours.dark.itemBackground
-      : Colours.light.itemBackground;
-  const textColor = colorScheme === "dark" ? "#FFF" : "#333";
-  const timeColor = colorScheme === "dark" ? "#BBB" : "#777";
-  const chevronColor =
-    colorScheme === "dark"
-      ? Colours.dark.chevronColor
-      : Colours.light.chevronColor;
+  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+  const backgroundColor = theme.itemBackground;
+  const textColor = theme.moreImportantText;
+  const timeColor = theme.lessImportantText;
+  const chevronColor = theme.chevronColor;
 
   const sourceColor = getCalendarColour(item.source);
+  const calendarLabel = getCalendarLabel(item.source);
+
+  // VoiceOver and TalkBack read the whole row as one button, and an iOS
+  // screen reader can't reach the star nested inside it, so the star is also
+  // offered as a custom action on the row.
+  const favouriteLabel = isFavourite
+    ? `Remove ${item.title} from favourites`
+    : `Add ${item.title} to favourites`;
+  const rowLabel = [
+    item.title,
+    showFullDate ? formattedDate : undefined,
+    `${formattedStart} ${formattedEnd}`.trim(),
+    `${item.source} calendar`,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <TouchableOpacity
@@ -82,6 +93,18 @@ export const EventItem = ({
         onPress();
       }}
       style={[styles.item, { backgroundColor }]}
+      accessibilityRole="button"
+      accessibilityLabel={rowLabel}
+      accessibilityHint="Opens event details"
+      accessibilityValue={isFavourite ? { text: "Favourite" } : undefined}
+      accessibilityActions={[
+        { name: "toggleFavourite", label: favouriteLabel },
+      ]}
+      onAccessibilityAction={(event) => {
+        if (event.nativeEvent.actionName === "toggleFavourite") {
+          toggleFavourite();
+        }
+      }}
     >
       <View style={styles.leftBarContainer}>
         <View style={[styles.leftBar, { backgroundColor: sourceColor }]} />
@@ -93,6 +116,7 @@ export const EventItem = ({
               </Text>
             )}
             <Text style={[styles.itemTime, { color: timeColor }]}>
+              {calendarLabel ? `${calendarLabel} · ` : ""}
               {formattedStart} {formattedEnd}
             </Text>
             <Text style={[styles.itemTitle, { color: textColor }]}>
@@ -104,11 +128,14 @@ export const EventItem = ({
               onPress={toggleFavourite}
               style={styles.favouriteButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityRole="button"
+              accessibilityLabel={favouriteLabel}
+              accessibilityState={{ selected: isFavourite }}
             >
               <Icon
                 name={isFavourite ? "star" : "star-outline"}
                 size={24}
-                color={isFavourite ? "#FFD700" : chevronColor}
+                color={isFavourite ? theme.favourite : chevronColor}
               />
             </TouchableOpacity>
 
@@ -188,5 +215,5 @@ const getStyles = () =>
     },
     icon: {
       fontSize: 36,
-    }
+    },
   });

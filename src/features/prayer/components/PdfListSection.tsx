@@ -35,7 +35,9 @@ export default function PdfListSection({
       style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}
     >
       <Text style={CommonStyles.sectionTitle}>{heading}</Text>
-      <View style={styles.divider} />
+      <View
+        style={[styles.divider, { backgroundColor: theme.separator }]}
+      />
 
       {entries.map((entry) => (
         <TouchableOpacity
@@ -45,6 +47,7 @@ export default function PdfListSection({
             open(router, { url: entry.url, title: entry.title });
           }}
           activeOpacity={0.6}
+          accessibilityRole="button"
         >
           <View style={styles.rowContainer}>
             <FontAwesomeIcon
