@@ -1,5 +1,5 @@
 import React from "react";
-import { fireEvent, render, waitFor } from "@testing-library/react-native";
+import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 import { EventItem } from "./EventItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFavouritesStore } from "../favourites";
@@ -217,5 +217,56 @@ describe("EventItem navigation", () => {
       },
     });
     expect(onPress).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("EventItem accessibility", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useFavouritesStore.setState(initialState, true);
+    (addFavourite as jest.Mock).mockResolvedValue(undefined);
+    (removeFavourite as jest.Mock).mockResolvedValue(undefined);
+  });
+
+  it("reads the row as one button naming the event and its calendar", async () => {
+    const { getByRole } = await renderItem();
+
+    const row = getByRole("button", {
+      name: /^Divine Liturgy, .*church calendar$/,
+    });
+    expect(row.props.accessibilityHint).toBe("Opens event details");
+  });
+
+  it("labels the star by what pressing it will do and exposes its state", async () => {
+    const { getByLabelText } = await renderItem();
+
+    expect(
+      getByLabelText("Add Divine Liturgy to favourites").props
+        .accessibilityState,
+    ).toEqual({ selected: false });
+
+    await act(async () => {
+      useFavouritesStore.setState({ favourites: { [event.id]: event } });
+    });
+
+    expect(
+      getByLabelText("Remove Divine Liturgy from favourites").props
+        .accessibilityState,
+    ).toEqual({ selected: true });
+  });
+
+  it("offers favouriting as a row action, since screen readers can't reach the nested star on iOS", async () => {
+    const { getByRole } = await renderItem();
+    const row = getByRole("button", { name: /^Divine Liturgy/ });
+
+    expect(row.props.accessibilityActions).toEqual([
+      { name: "toggleFavourite", label: "Add Divine Liturgy to favourites" },
+    ]);
+
+    await fireEvent(row, "accessibilityAction", {
+      nativeEvent: { actionName: "toggleFavourite" },
+    });
+
+    await waitFor(() => expect(addFavourite).toHaveBeenCalledWith(event));
   });
 });
