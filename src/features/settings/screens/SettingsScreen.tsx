@@ -1,11 +1,7 @@
 import SettingPicker from "../components/SettingPicker";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
-import {
-  useSettingsStore,
-  type StartOfWeek,
-  type ThemeChoice,
-} from "@/services/settings";
+import { useSettingsStore, type StartOfWeek } from "@/services/settings";
 import { Colours } from "@/theme/colours";
 import { fontSize } from "@/theme/commonStyles";
 import { syncNotifications } from "@/features/notifications";
@@ -33,8 +29,6 @@ export default function SettingsScreen() {
 
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
-  const themeChoice = useSettingsStore((state) => state.themeChoice);
-  const setThemeChoice = useSettingsStore((state) => state.setThemeChoice);
 
   const dailySaintsEnabled = useSettingsStore(
     (state) => state.dailySaintsEnabled,
@@ -64,23 +58,6 @@ export default function SettingsScreen() {
           {/* Settings Header */}
           <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
 
-          {/* Theme Selection */}
-          {false && (
-            <SettingPicker
-              label="Theme"
-              value={themeChoice}
-              onValueChange={(val) => setThemeChoice(val as ThemeChoice)}
-              items={[
-                { label: "Light", value: "light" },
-                { label: "Dark", value: "dark" },
-                { label: "Auto", value: "auto" },
-              ]}
-              theme={theme}
-              pickerTheme={pickerTheme}
-              styles={styles}
-            />
-          )}
-
           {/* Start of Week */}
           <SettingPicker
             label="Start of the Week"
@@ -94,39 +71,6 @@ export default function SettingsScreen() {
             pickerTheme={pickerTheme}
             styles={styles}
           />
-
-          {/*
-          <View style={styles.settingItem}>
-            <Text style={[{ color: theme.moreImportantText }]}>Timezone</Text>
-            <RNPickerSelect
-              onValueChange={(value: string) => setTimezone(value)}
-              value={timezone}
-              items={[
-                { label: 'UTC', value: 'UTC' },
-                { label: 'GMT', value: 'GMT' },
-                { label: 'EST', value: 'EST' },
-                { label: 'PST', value: 'PST' },
-                { label: 'CST', value: 'CST' },
-              ]}
-              style={{ inputIOSContainer: { pointerEvents: "none" } }}
-              darkTheme={pickerTheme}
-
-            />
-          </View>
-        */}
-
-          {false && (
-            <View style={styles.settingItem}>
-              <Text
-                style={[
-                  { color: theme.moreImportantText },
-                  { fontSize: fontSize.subtitle, fontWeight: 600 },
-                ]}
-              >
-                Notification Settings
-              </Text>
-            </View>
-          )}
 
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
