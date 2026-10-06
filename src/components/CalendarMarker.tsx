@@ -16,7 +16,7 @@ type CalendarMarkerProps = {
 const CalendarMarker = ({
   colour,
   height = 22,
-  aspect = 0.6,
+  aspect = 0.8,
 }: CalendarMarkerProps) => {
   // The diamond is a square turned onto its point, then squeezed sideways. Its
   // points reach `height` across, which is the square's diagonal.
