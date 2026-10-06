@@ -16,14 +16,32 @@ describe("CalendarMarker", () => {
 
     expect(style.backgroundColor).toBe("#B8860B");
     expect(style.width).toBe(style.height);
-    expect(style.transform).toEqual([{ rotate: "45deg" }]);
+    expect(style.transform).toContainEqual({ rotate: "45deg" });
   });
 
-  it("sizes the square from the size prop", async () => {
-    const style = await shapeStyle({ colour: "#000000", size: 20 });
+  it("is squeezed sideways, so it is taller than it is wide", async () => {
+    const { getByTestId } = await render(
+      <CalendarMarker colour="#000000" height={20} aspect={0.5} />,
+    );
 
-    expect(style.width).toBe(20);
-    expect(style.height).toBe(20);
+    const shape = StyleSheet.flatten(
+      getByTestId("calendar-marker", HIDDEN).props.style,
+    );
+    const box = StyleSheet.flatten(
+      getByTestId("calendar-marker", HIDDEN).parent?.props.style,
+    );
+    expect(shape.transform).toContainEqual({ scaleX: 0.5 });
+    expect(box.height).toBe(20);
+    expect(box.width).toBe(10);
+  });
+
+  it("is lanky by default", async () => {
+    const { getByTestId } = await render(<CalendarMarker colour="#000000" />);
+
+    const box = StyleSheet.flatten(
+      getByTestId("calendar-marker", HIDDEN).parent?.props.style,
+    );
+    expect(box.width).toBeLessThan(box.height);
   });
 
   it("is hidden from screen readers, since a name always sits beside it", async () => {

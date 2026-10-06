@@ -63,7 +63,7 @@ describe("EventItem calendar marker", () => {
         .style,
     );
     expect(style.backgroundColor).toBe(getCalendarColour("church"));
-    expect(style.transform).toEqual([{ rotate: "45deg" }]);
+    expect(style.transform).toContainEqual({ rotate: "45deg" });
   });
 });
 
