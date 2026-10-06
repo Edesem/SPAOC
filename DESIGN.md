@@ -121,7 +121,7 @@ components:
 
 **Creative North Star: "The Parish Noticeboard"**
 
-SPAOC reads like the noticeboard in the church hall: what is on this week, laid out so anyone can find it in a glance. Content sits on plain white cards over a soft grey ground, each event tagged by a coloured bar that carries its calendar's identity. Navy and bronze do the chrome work; everything else is neutral, so the calendar colours are the loudest thing on screen.
+SPAOC reads like the noticeboard in the church hall: what is on this week, laid out so anyone can find it in a glance. Content sits on plain white cards over a soft grey ground, each event tagged by a coloured diamond that carries its calendar's identity. Navy and bronze do the chrome work; everything else is neutral, so the calendar colours are the loudest thing on screen.
 
 The system is plain and sturdy. Type is the platform's own, sized generously for older eyes; cards are rounded and lightly lifted; targets are large; navigation is the OS's native tab bar. There is little ornament. The one decorative motif is the eight-pointed star illustration, tinted in the primary colour, which closes the About screen and marks the parish's own voice. Per-calendar Orthodox icon images appear on event detail screens.
 
@@ -129,7 +129,7 @@ Light and dark are both first-class. Dark mode swaps navy for bronze as the lead
 
 **Key Characteristics:**
 - White cards on a soft grey ground in light mode; `#272727` cards on `#121212` in dark.
-- Calendar colour is expressed as a vertical bar, never as a card fill.
+- Calendar colour is expressed as a diamond marker, never as a card fill.
 - One lead accent per scheme (navy light, bronze dark); bronze is the secondary in light.
 - System font only, with 16px as the floor for reading text.
 - Native tab bar and platform haptics; no custom shell.
@@ -157,11 +157,11 @@ A reverent navy and bronze pair on neutral greys, with ten calendar colours that
 - **Chevron Grey** (#8C8C8C light, #777777 dark): Chevrons and the empty favourite star, 3:1 or better on cards. **Tab Inactive** (#6B6B6B light, #888888 dark): unselected tabs. **Separator** (#D0D0D0 light, #4A4A4A dark): dividers inside cards.
 
 ### Calendar colours
-Each calendar has a fixed colour used for its event bar and its Settings entry. They start from the Google Calendar palette, darkened where needed so each keeps 3:1 against both card surfaces (white and #272727), and stay identical in light and dark.
+Each calendar has a fixed colour used for its event marker and its Settings entry. They start from the Google Calendar palette, darkened where needed so each keeps 3:1 against both card surfaces (white and #272727), and stay identical in light and dark.
 - **youth** (#5C6BC0), **church** (#B8860B), **family** (#0E8D4D), **ladies** (#9E69AF), **parish** (#F4511E), **seniors** (#7986CB), **weekly** (#039BE5), **playgroup** (#9575CD), **fellowship** (#489160). Events from other sources (fasting, saints) fall back to black (#000000).
 
 ### Named Rules
-**The Calendar Colour Rule.** A calendar's colour identifies its events and nothing else. It appears as the 8px bar on a row and as the matching swatch in the Settings legend, always beside the calendar's name, never as a button, a text colour or a card fill.
+**The Calendar Colour Rule.** A calendar's colour identifies its events and nothing else. It appears as the `CalendarMarker` diamond on a row and in the Settings legend, always beside the calendar's name, never as a button, a text colour or a card fill.
 
 **The One Lead Accent Rule.** Each scheme has one lead accent for interactive chrome: navy in light, bronze in dark. Do not use both as competing actions on the same screen.
 
@@ -209,14 +209,14 @@ Hybrid: tonal layering carries most separation (white card on grey ground; `#272
 
 ## Shapes
 
-Gently rounded and consistent. Cards and buttons use 8–10px corners; link rows 12px; the "Clear month filter" pill 20px. The event bar is a signature shape: 8px wide with an asymmetric corner (8px top-left and bottom-right, 1px on the other two), so it reads as a coloured tab on the card edge. Dividers are 1px (`#E0E0E0`), or 3px in a calendar colour when a reading card carries an accent.
+Gently rounded and consistent. Cards and buttons use 8–10px corners; link rows 12px; the "Clear month filter" pill 20px. The calendar marker is a signature shape: a square stood on its point, a 14px diamond in the calendar's colour, drawn by the shared `CalendarMarker` component so event rows and the Settings legend always match. Dividers are 1px (`#E0E0E0`), or 3px in a calendar colour when a reading card carries an accent.
 
 Images are line illustrations (the star, the Orthodox icons), tinted in the lead accent colour on the About and event detail screens and set with `resizeMode: contain`, never cropped.
 
 ## Components
 
 ### Event Row
-Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px vertical margin, 16px horizontal margin. A left 8px calendar-colour bar, then date (when shown, 16px/500), the calendar's name and time on one line (14px, quiet, e.g. "Church · 8:00 PM to 10:00 PM"), and title (18px). A 24px favourite star (outline in chevron grey, filled in Favourite Gold) and a chevron sit at the right. Tapping the row gives a rigid haptic and opens details; tapping the star gives a medium haptic.
+Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px vertical margin, 16px horizontal margin. A left calendar marker (the diamond), then date (when shown, 16px/500), the calendar's name and time on one line (14px, quiet, e.g. "Church · 8:00 PM to 10:00 PM"), and title (18px). A 24px favourite star (outline in chevron grey, filled in Favourite Gold) and a chevron sit at the right. Tapping the row gives a rigid haptic and opens details; tapping the star gives a medium haptic.
 
 ### Reading Card
 White card, 10px corners, 20px padding, card lift. 24px/600 title with a chevron at the right, then a 1px divider (3px in an accent colour when one is supplied), then a 16px teaser in the primary text colour.
@@ -234,7 +234,7 @@ Native bottom tabs (`NativeTabs`): SF Symbols on iOS and Material icons on Andro
 Light: white background, left accent border in Vestment Navy, 15px text in Ink. Dark: `#272727` background, bronze border, Bone text. Errors use a red left border. Used for transient confirmations such as "Account Number copied" (1.5s).
 
 ### Settings
-A title in the lead accent colour, then `SettingPicker` rows (18px labels) and a native `Switch` for the saint-of-the-day notification. Below them, `CalendarLegend` lists every calendar in registry order, each with a swatch shaped like the event bar and its name. Theme follows the system setting; there is no in-app theme choice.
+A title in the lead accent colour, then `SettingPicker` rows (18px labels) and a native `Switch` for the saint-of-the-day notification. Below them, `CalendarLegend` lists every calendar in registry order, each with the `CalendarMarker` diamond and its name. Theme follows the system setting; there is no in-app theme choice.
 
 ## Do's and Don'ts
 
@@ -243,7 +243,7 @@ A title in the lead accent colour, then `SettingPicker` rows (18px labels) and a
 - **Do** take colours from `theme/colours.ts` (`Colours.light` / `Colours.dark`) and calendar colours from `getCalendarColour`; both schemes get the same screen design.
 - **Do** keep reading text at 16px or larger and let it scale with the system text size.
 - **Do** give every tappable control at least a 44pt target (padding or `hitSlop`).
-- **Do** use the 8px asymmetric calendar bar to mark which calendar an event belongs to.
+- **Do** use the `CalendarMarker` diamond, and nothing else, to mark which calendar an event belongs to.
 - **Do** use native controls (tab bar, switches, pickers, haptics) and platform icons.
 - **Do** keep the logo and app icon art as supplied (binding per PRODUCT.md).
 
