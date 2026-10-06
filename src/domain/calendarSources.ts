@@ -86,5 +86,12 @@ const findCalendarSource = (name: string) =>
 export const getCalendarColour = (name: string): string =>
   findCalendarSource(name)?.colour ?? DEFAULT_CALENDAR_SOURCE.colour;
 
+// The calendar's name as a person reads it ("Church"), or undefined for sources
+// that aren't parish event calendars (fasting, saints).
+export const getCalendarLabel = (name: string): string | undefined =>
+  findCalendarSource(name)
+    ? name.charAt(0).toUpperCase() + name.slice(1)
+    : undefined;
+
 export const getCalendarImage = (name: string): ImageSourcePropType =>
   findCalendarSource(name)?.image ?? DEFAULT_CALENDAR_SOURCE.image;

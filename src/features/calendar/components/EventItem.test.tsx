@@ -54,6 +54,24 @@ const renderItem = (
 
 const initialState = useFavouritesStore.getState();
 
+describe("EventItem calendar name", () => {
+  it("names the calendar beside the time, so colour isn't the only cue", async () => {
+    const { findByText } = await renderItem();
+
+    expect(await findByText(/^Church · .*08:00 PM/)).toBeTruthy();
+  });
+
+  it("leaves the name out for sources that aren't parish calendars", async () => {
+    const { findByText, queryByText } = await renderItem(
+      {},
+      { ...event, source: "fasting" },
+    );
+
+    expect(await findByText(/08:00 PM/)).toBeTruthy();
+    expect(queryByText(/·/)).toBeNull();
+  });
+});
+
 describe("EventItem dates", () => {
   // Jest runs as a device in Los Angeles (jest.global-setup.js), where this
   // instant is still the evening of 14 August.
