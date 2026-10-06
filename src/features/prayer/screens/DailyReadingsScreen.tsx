@@ -97,7 +97,9 @@ export default function ReadingScreen() {
           { backgroundColor: colors.primary || "#007AFF" },
         ]}
       >
-        <Text style={styles.copyButtonText}>{copied ? "Copied!" : "Copy"}</Text>
+        <Text style={[styles.copyButtonText, { color: colors.onPrimary }]}>
+          {copied ? "Copied!" : "Copy"}
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -137,7 +139,6 @@ const getStyles = () =>
       marginVertical: 10,
     },
     copyButtonText: {
-      color: "white",
       fontWeight: "600",
       fontSize: 16,
     },
