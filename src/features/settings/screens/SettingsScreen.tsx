@@ -1,5 +1,6 @@
 import SettingPicker from "../components/SettingPicker";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useReadableGutter } from "@/hooks/useReadableGutter";
 import {
   useSettingsStore,
   type StartOfWeek,
@@ -42,10 +43,14 @@ export default function SettingsScreen() {
     (state) => state.setDailySaintsEnabled,
   );
 
+  const gutter = useReadableGutter();
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-        <ScrollView style={styles.container}>
+        <ScrollView
+          style={[styles.container, { paddingHorizontal: 20 + gutter }]}
+        >
           {/* Back Button */}
           <TouchableOpacity
             onPress={() => router.back()}
@@ -157,8 +162,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  // The 28pt arrow sits in a 48pt box (44pt iOS / 48dp Android minimum).
   backButton: {
-    marginBottom: 20,
+    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 48,
+    height: 48,
+    marginLeft: -10,
+    marginBottom: 12,
   },
   title: {
     marginBottom: 20,
