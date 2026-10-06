@@ -28,24 +28,16 @@ export const styles = StyleSheet.create({
     height: 150,
   },
   errorText: {
-    color: "red",
     textAlign: "center",
   },
   serviceContainer: {
     marginBottom: 10,
-  },
-  linkText: {
-    color: "blue",
-    fontSize: 16,
-    fontWeight: "bold",
-    textDecorationLine: "underline",
   },
   prayerTitle: {
     fontSize: 18,
   },
   prayerSubtitle: {
     fontSize: 14,
-    color: "#666",
     fontStyle: "italic",
     paddingBottom: 20,
   },
@@ -69,7 +61,6 @@ export const styles = StyleSheet.create({
   noTextsMessage: {
     textAlign: "center",
     fontSize: 16,
-    color: "#666",
     fontStyle: "italic",
     marginVertical: 10,
   },
