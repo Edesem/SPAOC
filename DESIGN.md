@@ -29,14 +29,14 @@ colors:
   donate-red-night: "#b51a25"
   favourite-gold: "#B07D00"
   favourite-gold-night: "#FFD700"
-  cal-youth: "#3F51B5"
-  cal-church: "#F6BF26"
-  cal-family: "#0B8043"
+  cal-youth: "#5C6BC0"
+  cal-church: "#B8860B"
+  cal-family: "#0E8D4D"
   cal-ladies: "#9E69AF"
   cal-parish: "#F4511E"
   cal-seniors: "#7986CB"
   cal-weekly: "#039BE5"
-  cal-playgroup: "#ae9cce"
+  cal-playgroup: "#9575CD"
   cal-fellowship: "#489160"
   cal-default: "#000000"
 typography:
@@ -157,8 +157,8 @@ A reverent navy and bronze pair on neutral greys, with ten calendar colours that
 - **Chevron Grey** (#8C8C8C light, #777777 dark): Chevrons and the empty favourite star, 3:1 or better on cards. **Tab Inactive** (#6B6B6B light, #888888 dark): unselected tabs. **Separator** (#D0D0D0 light, #4A4A4A dark): dividers inside cards.
 
 ### Calendar colours
-Each calendar has a fixed colour used for its event bar and its Settings entry. They follow the Google Calendar palette and stay identical in light and dark.
-- **youth** (#3F51B5), **church** (#F6BF26), **family** (#0B8043), **ladies** (#9E69AF), **parish** (#F4511E), **seniors** (#7986CB), **weekly** (#039BE5), **playgroup** (#ae9cce), **fellowship** (#489160). Events from other sources (fasting, saints) fall back to black (#000000).
+Each calendar has a fixed colour used for its event bar and its Settings entry. They start from the Google Calendar palette, darkened where needed so each keeps 3:1 against both card surfaces (white and #272727), and stay identical in light and dark.
+- **youth** (#5C6BC0), **church** (#B8860B), **family** (#0E8D4D), **ladies** (#9E69AF), **parish** (#F4511E), **seniors** (#7986CB), **weekly** (#039BE5), **playgroup** (#9575CD), **fellowship** (#489160). Events from other sources (fasting, saints) fall back to black (#000000).
 
 ### Named Rules
 **The Calendar Colour Rule.** A calendar's colour identifies its events and nothing else. It appears as the 8px bar on a row, never as a button, a text colour or a card fill.

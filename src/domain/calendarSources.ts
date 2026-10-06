@@ -12,20 +12,22 @@ export interface CalendarSource {
 }
 
 // Order matters: it is the order calendars appear in the Settings screen.
+// Each colour is the bar on an event row, so it keeps at least 3:1 against both
+// card surfaces (white and #272727); calendarSources.test.ts checks it.
 export const CALENDAR_SOURCES = [
   {
     name: "youth",
-    colour: "#3F51B5",
+    colour: "#5C6BC0",
     image: require("@assets/images/orthodox/procession.png"),
   },
   {
     name: "church",
-    colour: "#F6BF26",
+    colour: "#B8860B",
     image: require("@assets/images/orthodox/church.png"),
   },
   {
     name: "family",
-    colour: "#0B8043",
+    colour: "#0E8D4D",
     image: require("@assets/images/orthodox/village.png"),
   },
   {
@@ -50,7 +52,7 @@ export const CALENDAR_SOURCES = [
   },
   {
     name: "playgroup",
-    colour: "#ae9cce",
+    colour: "#9575CD",
     image: require("@assets/images/orthodox/annunciation.png"),
   },
   {
