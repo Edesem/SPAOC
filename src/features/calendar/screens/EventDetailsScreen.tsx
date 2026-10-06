@@ -179,6 +179,9 @@ const EventDetailsScreen = () => {
                     copyLocation();
                   }}
                   style={{ marginLeft: 10 }}
+                  hitSlop={{ top: 10, bottom: 10, left: 5, right: 5 }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Copy address"
                 >
                   <IconSymbol
                     name="square.fill.on.square.fill"
@@ -192,6 +195,9 @@ const EventDetailsScreen = () => {
                     openInMaps();
                   }}
                   style={{ marginLeft: 10 }}
+                  hitSlop={{ top: 10, bottom: 10, left: 5, right: 5 }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Open in maps"
                 >
                   <IconSymbol
                     name="map.fill"
