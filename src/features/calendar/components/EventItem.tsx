@@ -58,16 +58,11 @@ export const EventItem = ({
     item.allDay,
   );
 
-  const backgroundColor =
-    colorScheme === "dark"
-      ? Colours.dark.itemBackground
-      : Colours.light.itemBackground;
-  const textColor = colorScheme === "dark" ? "#FFF" : "#333";
-  const timeColor = colorScheme === "dark" ? "#BBB" : "#777";
-  const chevronColor =
-    colorScheme === "dark"
-      ? Colours.dark.chevronColor
-      : Colours.light.chevronColor;
+  const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+  const backgroundColor = theme.itemBackground;
+  const textColor = theme.moreImportantText;
+  const timeColor = theme.lessImportantText;
+  const chevronColor = theme.chevronColor;
 
   const sourceColor = getCalendarColour(item.source);
 
@@ -138,7 +133,7 @@ export const EventItem = ({
               <Icon
                 name={isFavourite ? "star" : "star-outline"}
                 size={24}
-                color={isFavourite ? "#FFD700" : chevronColor}
+                color={isFavourite ? theme.favourite : chevronColor}
               />
             </TouchableOpacity>
 
