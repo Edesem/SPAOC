@@ -231,6 +231,8 @@ export default function HomeScreen() {
                     router.push("/settings");
                   }}
                   style={{ padding: 10 }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Settings"
                 >
                   <MaterialIcons
                     name="menu"
@@ -245,6 +247,7 @@ export default function HomeScreen() {
                     setShowMonthPicker(true);
                   }}
                   style={{ padding: 10 }}
+                  accessibilityRole="button"
                   accessibilityLabel="Choose month"
                 >
                   <IconSymbol
@@ -265,6 +268,7 @@ export default function HomeScreen() {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
+                  accessibilityRole="button"
                   accessibilityLabel="Scroll to top"
                 >
                   <MaterialIcons
