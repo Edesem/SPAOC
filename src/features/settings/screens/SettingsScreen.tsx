@@ -130,7 +130,14 @@ export default function SettingsScreen() {
 
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
-            <Text style={{ color: theme.moreImportantText }}>
+            <Text
+              style={{
+                color: theme.moreImportantText,
+                fontSize: fontSize.subtitle,
+                flex: 1,
+                paddingRight: 12,
+              }}
+            >
               Notification for Saint of the day
             </Text>
             <Switch
