@@ -1,6 +1,7 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
@@ -34,7 +35,9 @@ export default function PdfListSection({
     <View
       style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}
     >
-      <Text style={CommonStyles.sectionTitle}>{heading}</Text>
+      <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
+        {heading}
+      </Text>
       <View
         style={[styles.divider, { backgroundColor: theme.separator }]}
       />

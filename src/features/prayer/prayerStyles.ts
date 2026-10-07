@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
+import { typography } from "@/theme/typography";
 
 export const styles = StyleSheet.create({
   header: {
     alignItems: "center",
   },
   subtitle: {
-    fontSize: 16,
-    fontStyle: "italic",
+    ...typography.aside,
     marginTop: 10,
     marginHorizontal: 26,
     textAlign: "center",
@@ -28,6 +28,7 @@ export const styles = StyleSheet.create({
     height: 150,
   },
   errorText: {
+    ...typography.body,
     textAlign: "center",
   },
   errorBlock: {
@@ -42,8 +43,7 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   retryText: {
-    fontSize: 16,
-    fontWeight: "600",
+    ...typography.button,
   },
   // A 48pt row, so a tap on a service title is easy to land.
   serviceRow: {
@@ -54,11 +54,11 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   prayerTitle: {
-    fontSize: 18,
+    ...typography.title,
   },
   prayerSubtitle: {
+    ...typography.aside,
     fontSize: 14,
-    fontStyle: "italic",
     paddingBottom: 20,
   },
   divider: {
@@ -79,9 +79,8 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   noTextsMessage: {
+    ...typography.aside,
     textAlign: "center",
-    fontSize: 16,
-    fontStyle: "italic",
     marginVertical: 10,
   },
   bottomImage: {
@@ -101,8 +100,7 @@ export const styles = StyleSheet.create({
     marginTop: 8, // Space between text and chevron
   },
   dateTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
+    ...typography.displayTitle,
   },
   headerRow: {
     flexDirection: "row",

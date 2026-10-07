@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { fontFamily } from "@/theme/typography";
 import type { Reading } from "../services";
 import ReadingCard from "./ReadingCard";
 
@@ -62,5 +63,18 @@ describe("ReadingCard", () => {
     await render(<ReadingCard reading={gospel} />);
 
     expect(screen.getByTestId("reading-divider")).toHaveStyle({ height: 1 });
+  });
+
+  it("sets the title and teaser in the serif, the liturgical voice", async () => {
+    await render(<ReadingCard reading={gospel} />);
+
+    expect(screen.getByText("Mark 2:1-12")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(screen.getByText("Faith & works")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "400",
+    });
   });
 });

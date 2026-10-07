@@ -11,6 +11,7 @@ import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -162,7 +163,9 @@ export default function PrayerScreen(): JSX.Element {
                 },
               ]}
             >
-              <Text style={CommonStyles.sectionTitle}>Loading Readings...</Text>
+              <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
+                Loading Readings...
+              </Text>
               <View
                 style={[styles.divider, { backgroundColor: theme.separator }]}
               />
@@ -203,7 +206,9 @@ export default function PrayerScreen(): JSX.Element {
               { backgroundColor: theme.itemBackground },
             ]}
           >
-            <Text style={CommonStyles.sectionTitle}>Daily Variables</Text>
+            <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
+              Daily Variables
+            </Text>
             <View
               style={[styles.divider, { backgroundColor: theme.separator }]}
             />
@@ -215,7 +220,7 @@ export default function PrayerScreen(): JSX.Element {
                   style={[
                     { color: theme.moreImportantText },
                     { paddingBottom: 20 },
-                    { fontSize: fontSize.body },
+                    typography.body,
                   ]}
                 >
                   Loading prayers...
@@ -266,7 +271,7 @@ export default function PrayerScreen(): JSX.Element {
                     <Text
                       style={[
                         { color: theme.moreImportantText },
-                        { fontSize: fontSize.body },
+                        typography.body,
                       ]}
                     >
                       {service.title}
