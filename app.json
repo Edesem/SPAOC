@@ -53,7 +53,7 @@
               "node_modules/@expo-google-fonts/alegreya-sans/400Regular_Italic/AlegreyaSans_400Regular_Italic.ttf",
               "node_modules/@expo-google-fonts/alegreya-sans/500Medium/AlegreyaSans_500Medium.ttf",
               "node_modules/@expo-google-fonts/alegreya-sans/700Bold/AlegreyaSans_700Bold.ttf",
-              "node_modules/@expo-google-fonts/alegreya-sc/700Bold_Italic/AlegreyaSC_700Bold_Italic.ttf"
+              "node_modules/@expo-google-fonts/alegreya-sc/700Bold/AlegreyaSC_700Bold.ttf"
             ]
           },
           "android": {
@@ -107,9 +107,9 @@
                 "fontFamily": "Alegreya SC",
                 "fontDefinitions": [
                   {
-                    "path": "node_modules/@expo-google-fonts/alegreya-sc/700Bold_Italic/AlegreyaSC_700Bold_Italic.ttf",
+                    "path": "node_modules/@expo-google-fonts/alegreya-sc/700Bold/AlegreyaSC_700Bold.ttf",
                     "weight": 700,
-                    "style": "italic"
+                    "style": "normal"
                   }
                 ]
               }

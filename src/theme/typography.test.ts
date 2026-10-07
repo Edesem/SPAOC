@@ -80,13 +80,21 @@ describe("typography", () => {
     },
   );
 
+  it("sets the eyebrow upright, in the bold small capitals", () => {
+    expect(typography.eyebrow).toMatchObject({
+      fontFamily: fontFamily.smallCaps,
+      fontWeight: "700",
+    });
+    expect(typography.eyebrow.fontStyle).toBeUndefined();
+  });
+
   // The one table to edit when tuning sizes on a device.
   it("sets each token at its size", () => {
     expect(
       Object.fromEntries(tokens.map(([name, token]) => [name, token.fontSize])),
     ).toEqual({
       displayTitle: 25,
-      eyebrow: 15,
+      eyebrow: 18,
       readingTitle: 25,
       liturgicalTitle: 19,
       reading: 19,

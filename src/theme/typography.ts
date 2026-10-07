@@ -72,8 +72,8 @@ export const fontFaces: FontFace[] = [
   {
     family: fontFamily.smallCaps,
     weight: "700",
-    style: "italic",
-    file: `${SMALL_CAPS_DIR}/700Bold_Italic/AlegreyaSC_700Bold_Italic.ttf`,
+    style: "normal",
+    file: `${SMALL_CAPS_DIR}/700Bold/AlegreyaSC_700Bold.ttf`,
   },
 ];
 
@@ -126,9 +126,8 @@ export const typography: Record<TypographyToken, TextStyle> = {
   // A small heading that sits above a larger name.
   eyebrow: {
     fontFamily: fontFamily.smallCaps,
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: "700",
-    fontStyle: "italic",
   },
 
   // Noticeboard voice
