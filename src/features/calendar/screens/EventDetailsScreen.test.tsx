@@ -1,4 +1,5 @@
 import EventDetailsScreen from "./EventDetailsScreen";
+import { fontFamily } from "@/theme/typography";
 import { EventDetailsParams } from "@/types/routes";
 import { render } from "@testing-library/react-native";
 import React from "react";
@@ -27,6 +28,25 @@ const params: EventDetailsParams = {
   allDay: "false",
   source: "church",
 };
+
+describe("EventDetailsScreen typography", () => {
+  it("sets the title in the sans headline and the description in the sans body", async () => {
+    mockParams = { ...params, description: "Bring a dish to share." };
+
+    const { findByText } = await render(<EventDetailsScreen />);
+
+    expect(await findByText("Divine Liturgy")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 24,
+      fontWeight: "700",
+    });
+    expect(await findByText("Bring a dish to share.")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 16,
+      lineHeight: 24,
+    });
+  });
+});
 
 describe("EventDetailsScreen times", () => {
   it("formats the raw start and end times itself", async () => {

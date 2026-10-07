@@ -3,6 +3,7 @@ import { getCalendarColour, getCalendarLabel } from "@/domain/calendarSources";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
+import { typography } from "@/theme/typography";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -188,16 +189,15 @@ const getStyles = () =>
       flex: 1,
     },
     itemDate: {
-      fontSize: 16,
-      fontWeight: "500",
+      ...typography.bodyStrong,
       marginBottom: 2,
     },
     itemTime: {
-      fontSize: 14,
+      ...typography.label,
       marginBottom: 2,
     },
     itemTitle: {
-      fontSize: 18,
+      ...typography.title,
     },
     chevronIcon: {
       marginLeft: 8,

@@ -1,4 +1,5 @@
 import { resetNow, setNow } from "@/lib/parishTime";
+import { fontFamily } from "@/theme/typography";
 import HomeScreen from "./HomeScreen";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
@@ -122,6 +123,50 @@ describe("HomeScreen", () => {
     expect(getByText("St. Test\nSt. Other")).toBeTruthy();
     expect(getByText("Great Lent")).toBeTruthy();
     expect(getByText("Fast free day")).toBeTruthy();
+  });
+
+  it("sets the saint and fasting headings in the serif, the liturgical voice", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }])],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
+    expect(getByText("Today's Feasts")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(getByText("Great Lent")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(getByText("St. Test\nSt. Other")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontSize: 18,
+    });
+    expect(getByText("Fast free day")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontSize: 18,
+    });
+  });
+
+  it("sets the week label and day headers in the sans, the noticeboard voice", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }], "This week")],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
+    expect(getByText("This week")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontWeight: "700",
+    });
+    expect(getByText("Today")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 18,
+    });
   });
 
   it("shows no load error message when everything loads", async () => {

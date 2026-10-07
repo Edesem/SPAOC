@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig t
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
+import { typography } from "@/theme/typography";
 import { TabParamList } from "@/types/routes";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
@@ -359,13 +360,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   emptyMessage: {
+    ...typography.title,
     textAlign: "center",
-    fontSize: 18,
     marginTop: 20,
   },
   loadErrorMessage: {
+    ...typography.body,
     textAlign: "center",
-    fontSize: 16,
     paddingHorizontal: 15,
     paddingTop: 10,
   },
@@ -389,36 +390,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   saintOfTheDayTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
+    ...typography.displayTitle,
     marginBottom: 10,
   },
   saintOfTheDay: {
-    fontSize: 18,
+    ...typography.liturgicalTitle,
     marginBottom: 20,
     textAlign: "center",
   },
   MajorFastText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    ...typography.displayTitle,
     marginBottom: 10,
     textAlign: "center",
   },
   minorFastText: {
-    fontSize: 18,
+    ...typography.liturgicalTitle,
     textAlign: "center",
   },
   weekLabel: {
+    ...typography.headline,
     marginLeft: 20,
     marginTop: 15,
-    fontSize: 24,
-    fontWeight: "bold",
   },
   sectionHeader: {
+    ...typography.title,
     marginLeft: 15,
     marginTop: 10,
     padding: 5,
-    fontSize: 18,
   },
   icon: {
     fontSize: 36,
@@ -441,7 +439,6 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   clearFilterText: {
-    fontSize: 16,
-    fontWeight: "bold",
+    ...typography.button,
   },
 });

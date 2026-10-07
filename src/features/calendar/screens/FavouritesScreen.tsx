@@ -4,6 +4,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import { useFavouritesStore } from "../favourites";
 import { ItemProps } from "../types"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";
@@ -51,11 +52,12 @@ export default function FavouritesScreen() {
           </View>
 
           {favourites.length === 0 ? (
-            <Text style={{
-                textAlign: "center",
-                color: theme.detail,
-                marginTop: 20,
-              }}>
+            <Text
+              style={[
+                typography.body,
+                { textAlign: "center", color: theme.detail, marginTop: 20 },
+              ]}
+            >
               No favourites yet.
             </Text>
           ) : (
@@ -96,8 +98,8 @@ const getStyles = () =>
       marginBottom: 30,
     },
     subtitle: {
+      ...typography.aside,
       fontSize: 18,
-      fontStyle: "italic",
       marginTop: 10,
       marginHorizontal: 26,
       textAlign: "center",

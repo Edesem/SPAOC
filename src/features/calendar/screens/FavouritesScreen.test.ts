@@ -1,6 +1,7 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fontFamily } from "@/theme/typography";
 import FavouritesScreen from "./FavouritesScreen";
 
 // The screen is tested against a mocked favourites store. Storage format,
@@ -120,6 +121,20 @@ describe("favourites", () => {
     });
 
     expect(getByText("No favourites yet.")).toBeTruthy();
+  });
+
+  it("sets the empty state in the sans rather than the system font", async () => {
+    (mockRemoveExpired).mockResolvedValue([]);
+
+    const { getByText } = await render(React.createElement(FavouritesScreen));
+
+    await waitFor(() => {
+      expect(mockRemoveExpired).toHaveBeenCalled();
+    });
+
+    expect(getByText("No favourites yet.")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+    });
   });
 
   it("unfavouriting removes the item from the displayed list", async () => {
