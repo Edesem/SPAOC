@@ -4,7 +4,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { useSettingsStore, type StartOfWeek } from "@/services/settings";
 import { Colours } from "@/theme/colours";
-import { fontSize } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import { syncNotifications } from "@/features/notifications";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
@@ -76,12 +76,14 @@ export default function SettingsScreen() {
           {/* Daily Saint Notification toggle */}
           <View style={styles.settingItem}>
             <Text
-              style={{
-                color: theme.moreImportantText,
-                fontSize: fontSize.subtitle,
-                flex: 1,
-                paddingRight: 12,
-              }}
+              style={[
+                typography.title,
+                {
+                  color: theme.moreImportantText,
+                  flex: 1,
+                  paddingRight: 12,
+                },
+              ]}
             >
               Notification for Saint of the day
             </Text>
@@ -127,9 +129,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
+    ...typography.displayTitle,
     marginBottom: 20,
-    fontSize: fontSize.title,
-    fontWeight: 700,
     textAlign: "center",
   },
   settingItem: {
@@ -142,8 +143,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   versionText: {
+    ...typography.aside,
     fontSize: 14,
-    fontStyle: "italic",
     textAlign: "center",
     marginTop: 40,
     marginBottom: 40,

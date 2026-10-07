@@ -9,6 +9,7 @@ import {
   useSettingsStore,
 } from "@/services/settings";
 import { syncNotifications } from "@/features/notifications";
+import { fontFamily } from "@/theme/typography";
 
 // The screen is tested against a mocked settings repository. Storage keys,
 // value formats and first-run defaults are covered by
@@ -83,6 +84,19 @@ describe("settings", () => {
       themeChoice: "auto",
       dailySaintsEnabled: true,
       calendarNotifications: {},
+    });
+  });
+
+  it("sets the title in the serif and the saint notification label in the sans", async () => {
+    const { getByText } = await renderScreen();
+
+    expect(getByText("Settings")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(getByText("Notification for Saint of the day")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 18,
     });
   });
 
