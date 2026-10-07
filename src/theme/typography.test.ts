@@ -39,6 +39,7 @@ describe("typography", () => {
         "bodyStrong",
         "button",
         "displayTitle",
+        "eyebrow",
         "headline",
         "label",
         "liturgicalTitle",
@@ -52,8 +53,10 @@ describe("typography", () => {
     );
   });
 
-  it.each(tokens)("%s uses one of the two Alegreya families", (_name, token) => {
-    expect([fontFamily.serif, fontFamily.sans]).toContain(token.fontFamily);
+  it.each(tokens)("%s uses one of the Alegreya families", (_name, token) => {
+    expect([fontFamily.serif, fontFamily.sans, fontFamily.smallCaps]).toContain(
+      token.fontFamily,
+    );
   });
 
   it.each(tokens)(
@@ -83,6 +86,7 @@ describe("typography", () => {
       Object.fromEntries(tokens.map(([name, token]) => [name, token.fontSize])),
     ).toEqual({
       displayTitle: 25,
+      eyebrow: 15,
       readingTitle: 25,
       liturgicalTitle: 19,
       reading: 19,
@@ -99,8 +103,11 @@ describe("typography", () => {
     });
   });
 
-  it("bundles the seven faces and no Alegreya Sans 600, which does not exist", () => {
-    expect(fontFaces).toHaveLength(7);
+  it("bundles the eight faces and no Alegreya Sans 600, which does not exist", () => {
+    expect(fontFaces).toHaveLength(8);
+    expect(
+      fontFaces.filter((face) => face.family === fontFamily.smallCaps),
+    ).toHaveLength(1);
     expect(
       fontFaces.filter((face) => face.family === fontFamily.sans),
     ).toHaveLength(4);
