@@ -184,7 +184,7 @@ describe("useHomeFeature", () => {
   it("titles the saint section for a single saint", async () => {
     const { result } = await renderHook(() => useHomeFeature());
 
-    expect(result.current.todaysSaintsTitle).toBe("Today's Feast:");
+    expect(result.current.todaysSaintsTitle).toBe("Today we Commemorate:");
   });
 
   it("titles the saint section for multiple saints", async () => {
@@ -196,7 +196,7 @@ describe("useHomeFeature", () => {
 
     const { result } = await renderHook(() => useHomeFeature());
 
-    expect(result.current.todaysSaintsTitle).toBe("Today's Feasts");
+    expect(result.current.todaysSaintsTitle).toBe("Today we Commemorate");
   });
 
   it("falls back to 'No Fast' when there are no fasting events", async () => {

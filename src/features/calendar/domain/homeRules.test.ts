@@ -20,15 +20,15 @@ const event = (id: string, start: string): EventData => ({
 
 describe("getSaintsTitle", () => {
   it("uses the singular title for one saint", () => {
-    expect(getSaintsTitle(["St. Test"])).toBe("Today's Feast:");
+    expect(getSaintsTitle(["St. Test"])).toBe("Today we Commemorate:");
   });
 
   it("uses the plural title for multiple saints", () => {
-    expect(getSaintsTitle(["St. A", "St. B"])).toBe("Today's Feasts");
+    expect(getSaintsTitle(["St. A", "St. B"])).toBe("Today we Commemorate");
   });
 
   it("uses the singular title when there are no saints", () => {
-    expect(getSaintsTitle([])).toBe("Today's Feast:");
+    expect(getSaintsTitle([])).toBe("Today we Commemorate:");
   });
 });
 
