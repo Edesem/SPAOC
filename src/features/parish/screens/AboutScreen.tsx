@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import type { ComponentProps } from "react";
@@ -200,9 +201,7 @@ const getStyles = () =>
       marginBottom: 10,
     },
     subtitle: {
-      fontSize: 16,
-
-      fontStyle: "italic",
+      ...typography.aside,
       marginTop: 10,
       textAlign: "center",
       lineHeight: 22,
@@ -220,8 +219,7 @@ const getStyles = () =>
       backgroundColor: "transparent",
     },
     linkLabel: {
-      fontSize: 16,
-      fontWeight: "500",
+      ...typography.bodyStrong,
     },
     imageContainer: {
       alignItems: "center",
