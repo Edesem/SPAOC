@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import he from "he";
 import toTitleCase from "titlecase";
 import { Colours } from "@/theme/colours";
+import { typography } from "@/theme/typography";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import {
@@ -114,8 +115,7 @@ const getStyles = () =>
       paddingTop: 10, // Small top padding to avoid text sticking to the top
     },
     title: {
-      fontSize: 24,
-      fontWeight: "bold",
+      ...typography.displayTitle,
       textAlign: "center",
       marginBottom: 10,
     },
@@ -126,8 +126,7 @@ const getStyles = () =>
       alignSelf: "center",
     },
     text: {
-      fontSize: 18,
-      lineHeight: 26,
+      ...typography.reading,
       textAlign: "justify",
     },
     copyButton: {
@@ -140,7 +139,6 @@ const getStyles = () =>
       marginVertical: 10,
     },
     copyButtonText: {
-      fontWeight: "600",
-      fontSize: 16,
+      ...typography.button,
     },
   });

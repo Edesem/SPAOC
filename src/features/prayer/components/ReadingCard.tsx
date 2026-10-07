@@ -1,6 +1,7 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
 import { fontSize, getCommonStyles } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import type { DailyReadingsParams } from "@/types/routes";
 import he from "he";
 import * as Haptics from "expo-haptics";
@@ -59,7 +60,7 @@ export default function ReadingCard({
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text style={CommonStyles.sectionTitle}>
+          <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
             {toTitleCase(reading.title.toLowerCase())}
           </Text>
         </View>
@@ -82,7 +83,7 @@ export default function ReadingCard({
         style={[
           { color: theme.moreImportantText },
           { paddingBottom: 20 },
-          { fontSize: fontSize.body },
+          typography.readingTeaser,
         ]}
       >
         {he.decode(reading.teaser)}
