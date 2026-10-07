@@ -1,6 +1,7 @@
 import CalendarMarker from "@/components/CalendarMarker";
 import { CALENDAR_SOURCES, getCalendarLabel } from "@/domain/calendarSources";
 import { fontSize } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import { StyleSheet, Text, View } from "react-native";
 
 type CalendarLegendProps = {
@@ -36,12 +37,11 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   heading: {
+    ...typography.button,
     fontSize: fontSize.subtitle,
-    fontWeight: "600",
   },
   hint: {
-    fontSize: fontSize.body,
-    lineHeight: 24,
+    ...typography.body,
     marginTop: 4,
     marginBottom: 8,
   },
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   name: {
-    fontSize: fontSize.subtitle,
+    ...typography.title,
     flex: 1,
   },
 });

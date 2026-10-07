@@ -3,6 +3,7 @@ import {
   CALENDAR_SOURCE_NAMES,
 } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
+import { fontFamily } from "@/theme/typography";
 import { render } from "@testing-library/react-native";
 import { StyleSheet } from "react-native";
 import CalendarLegend from "./CalendarLegend";
@@ -30,6 +31,24 @@ describe("CalendarLegend", () => {
     expect(colours).toEqual(
       CALENDAR_SOURCES.map((calendar) => calendar.colour),
     );
+  });
+
+  it("sets the heading, hint and names in the sans", async () => {
+    const { getByText } = await render(<CalendarLegend theme={Colours.light} />);
+
+    expect(getByText("Calendars")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 18,
+      fontWeight: "700",
+    });
+    expect(getByText(/coloured diamond beside each event/)).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 16,
+    });
+    expect(getByText("Church")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 18,
+    });
   });
 
   it("has a heading that explains the colours", async () => {
