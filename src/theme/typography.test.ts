@@ -1,0 +1,124 @@
+import * as fs from "fs";
+import * as path from "path";
+import appConfig from "../../app.json";
+import { fontFaces, fontFamily, typography } from "./typography";
+
+const ROOT = path.resolve(__dirname, "../..");
+
+const tokens = Object.entries(typography);
+const sansTokens = tokens.filter(
+  ([, token]) => token.fontFamily === fontFamily.sans,
+);
+
+type FontPluginConfig = {
+  ios: { fonts: string[] };
+  android: {
+    fonts: {
+      fontFamily: string;
+      fontDefinitions: { path: string; weight: number; style?: string }[];
+    }[];
+  };
+};
+
+function fontPluginConfig(): FontPluginConfig {
+  const entry = appConfig.expo.plugins.find(
+    (plugin) => Array.isArray(plugin) && plugin[0] === "expo-font",
+  );
+  if (!Array.isArray(entry)) {
+    throw new Error("app.json does not configure the expo-font plugin");
+  }
+  return entry[1] as unknown as FontPluginConfig;
+}
+
+describe("typography", () => {
+  it("defines the named tokens the screens use", () => {
+    expect(Object.keys(typography).sort()).toEqual(
+      [
+        "aside",
+        "body",
+        "bodyStrong",
+        "button",
+        "displayTitle",
+        "headline",
+        "label",
+        "liturgicalTitle",
+        "quote",
+        "reading",
+        "readingTeaser",
+        "readingTitle",
+        "sectionTitle",
+        "title",
+      ].sort(),
+    );
+  });
+
+  it.each(tokens)("%s uses one of the two Alegreya families", (_name, token) => {
+    expect([fontFamily.serif, fontFamily.sans]).toContain(token.fontFamily);
+  });
+
+  it.each(tokens)(
+    "%s asks for a face that is bundled with the app",
+    (_name, token) => {
+      const bundled = fontFaces.some(
+        (face) =>
+          face.family === token.fontFamily &&
+          face.weight === token.fontWeight &&
+          face.style === (token.fontStyle ?? "normal"),
+      );
+
+      expect(bundled).toBe(true);
+    },
+  );
+
+  it.each(sansTokens)(
+    "%s keeps lining figures so times and dates stay level",
+    (_name, token) => {
+      expect(token.fontVariant).toContain("lining-nums");
+    },
+  );
+
+  it("bundles the seven faces and no Alegreya Sans 600, which does not exist", () => {
+    expect(fontFaces).toHaveLength(7);
+    expect(
+      fontFaces.filter((face) => face.family === fontFamily.sans),
+    ).toHaveLength(4);
+    expect(fontFaces.some((face) => face.weight === "600")).toBe(false);
+  });
+
+  describe("expo-font plugin in app.json", () => {
+    it("links every bundled face on iOS", () => {
+      const configured = fontPluginConfig().ios.fonts;
+
+      expect([...configured].sort()).toEqual(
+        fontFaces.map((face) => face.file).sort(),
+      );
+    });
+
+    it("registers every bundled face on Android with its weight and style", () => {
+      const configured = fontPluginConfig().android.fonts.flatMap((family) =>
+        family.fontDefinitions.map((definition) => ({
+          family: family.fontFamily,
+          weight: String(definition.weight),
+          style: definition.style ?? "normal",
+          file: definition.path,
+        })),
+      );
+      const bundled = fontFaces.map(({ family, weight, style, file }) => ({
+        family,
+        weight,
+        style,
+        file,
+      }));
+      const byFile = (a: { file: string }, b: { file: string }) =>
+        a.file.localeCompare(b.file);
+
+      expect([...configured].sort(byFile)).toEqual([...bundled].sort(byFile));
+    });
+
+    it("points at font files that exist", () => {
+      for (const face of fontFaces) {
+        expect(fs.existsSync(path.join(ROOT, face.file))).toBe(true);
+      }
+    });
+  });
+});
