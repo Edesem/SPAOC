@@ -77,6 +77,28 @@ describe("typography", () => {
     },
   );
 
+  // The one table to edit when tuning sizes on a device.
+  it("sets each token at its size", () => {
+    expect(
+      Object.fromEntries(tokens.map(([name, token]) => [name, token.fontSize])),
+    ).toEqual({
+      displayTitle: 25,
+      readingTitle: 25,
+      liturgicalTitle: 19,
+      reading: 19,
+      readingTeaser: 17,
+      quote: 17,
+      headline: 25,
+      sectionTitle: 25,
+      title: 19,
+      body: 17,
+      bodyStrong: 17,
+      button: 17,
+      label: 15,
+      aside: 17,
+    });
+  });
+
   it("bundles the seven faces and no Alegreya Sans 600, which does not exist", () => {
     expect(fontFaces).toHaveLength(7);
     expect(

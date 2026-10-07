@@ -206,7 +206,7 @@ const getStyles = () =>
     },
     copyValueText: {
       ...typography.button,
-      fontSize: 18,
+      fontSize: typography.title.fontSize,
       paddingHorizontal: 10,
     },
     copyButtonContainer: {

@@ -37,12 +37,12 @@ describe("EventDetailsScreen typography", () => {
 
     expect(await findByText("Divine Liturgy")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 24,
+      fontSize: 25,
       fontWeight: "700",
     });
     expect(await findByText("Bring a dish to share.")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 16,
+      fontSize: 17,
       lineHeight: 24,
     });
   });

@@ -42,73 +42,73 @@ colors:
 typography:
   display-title:
     fontFamily: "Alegreya"
-    fontSize: "24px"
+    fontSize: "25px"
     fontWeight: 700
     lineHeight: "normal"
   reading-title:
     fontFamily: "Alegreya"
-    fontSize: "24px"
+    fontSize: "25px"
     fontWeight: 700
     lineHeight: "normal"
   liturgical-title:
     fontFamily: "Alegreya"
-    fontSize: "18px"
+    fontSize: "19px"
     fontWeight: 400
     lineHeight: "normal"
   reading:
     fontFamily: "Alegreya"
-    fontSize: "18px"
+    fontSize: "19px"
     fontWeight: 400
     lineHeight: "26px"
   reading-teaser:
     fontFamily: "Alegreya"
-    fontSize: "16px"
+    fontSize: "17px"
     fontWeight: 400
     lineHeight: "24px"
   quote:
     fontFamily: "Alegreya"
-    fontSize: "16px"
+    fontSize: "17px"
     fontWeight: 400
     fontStyle: "italic"
     lineHeight: "normal"
   headline:
     fontFamily: "Alegreya Sans"
-    fontSize: "24px"
+    fontSize: "25px"
     fontWeight: 700
     lineHeight: "normal"
   section-title:
     fontFamily: "Alegreya Sans"
-    fontSize: "24px"
+    fontSize: "25px"
     fontWeight: 700
     lineHeight: "normal"
   title:
     fontFamily: "Alegreya Sans"
-    fontSize: "18px"
+    fontSize: "19px"
     fontWeight: 400
     lineHeight: "normal"
   body:
     fontFamily: "Alegreya Sans"
-    fontSize: "16px"
+    fontSize: "17px"
     fontWeight: 400
     lineHeight: "24px"
   body-strong:
     fontFamily: "Alegreya Sans"
-    fontSize: "16px"
+    fontSize: "17px"
     fontWeight: 500
     lineHeight: "normal"
   button:
     fontFamily: "Alegreya Sans"
-    fontSize: "16px"
+    fontSize: "17px"
     fontWeight: 700
     lineHeight: "normal"
   label:
     fontFamily: "Alegreya Sans"
-    fontSize: "14px"
+    fontSize: "15px"
     fontWeight: 400
     lineHeight: "normal"
   aside:
     fontFamily: "Alegreya Sans"
-    fontSize: "16px"
+    fontSize: "17px"
     fontWeight: 400
     fontStyle: "italic"
     lineHeight: "normal"
@@ -178,7 +178,7 @@ Light and dark are both first-class. Dark mode swaps navy for bronze as the lead
 - White cards on a soft grey ground in light mode; `#272727` cards on `#121212` in dark.
 - Calendar colour is expressed as a diamond marker, never as a card fill.
 - One lead accent per scheme (navy light, bronze dark); bronze is the secondary in light.
-- Alegreya (serif) for liturgical text and Alegreya Sans for the interface, with 16px as the floor for reading text.
+- Alegreya (serif) for liturgical text and Alegreya Sans for the interface, with 17px as the floor for reading text.
 - Native tab bar and platform haptics; no custom shell.
 
 ## Colors
@@ -222,22 +222,22 @@ Each calendar has a fixed colour used for its event marker and its Settings entr
 
 ### Hierarchy
 Serif (Alegreya), the liturgical voice:
-- **Display Title** (700, 24px): Screen titles, the saint of the day heading, the fasting rule heading and the day heading on the prayer screen.
-- **Reading Title** (700, 24px): Card titles on the prayer screen (readings, Daily Variables, Prayers, Services).
-- **Liturgical Title** (400, 18px): The saint's name and the minor fast line.
-- **Reading** (400, 18px, 26px line height): The full text on the Daily Readings screen.
-- **Reading Teaser** (400, 16px, 24px line height): The teaser on a reading card.
-- **Quote** (400 italic, 16px): Scripture quotes (the Donate verse).
+- **Display Title** (700, 25px): Screen titles, the saint of the day heading, the fasting rule heading and the day heading on the prayer screen.
+- **Reading Title** (700, 25px): Card titles on the prayer screen (readings, Daily Variables, Prayers, Services).
+- **Liturgical Title** (400, 19px): The saint's name and the minor fast line.
+- **Reading** (400, 19px, 26px line height): The full text on the Daily Readings screen.
+- **Reading Teaser** (400, 17px, 24px line height): The teaser on a reading card.
+- **Quote** (400 italic, 17px): Scripture quotes (the Donate verse).
 
 Sans (Alegreya Sans), the noticeboard voice:
-- **Headline** (700, 24px): Week labels and the event details title.
-- **Section Title** (700, 24px): Card titles such as "Support Us Online".
-- **Title** (400, 18px): Event titles, day section headers, setting labels and primary list copy.
-- **Body** (400, 16px, 24px line height): Descriptions, detail text and toasts.
-- **Body Strong** (500, 16px): Event dates and link labels.
-- **Button** (700, 16px): Button and pill labels.
-- **Label** (400, 14px): Event times and secondary metadata only.
-- **Aside** (400 italic, 16px): The subtitle under a screen title and short notes.
+- **Headline** (700, 25px): Week labels and the event details title.
+- **Section Title** (700, 25px): Card titles such as "Support Us Online".
+- **Title** (400, 19px): Event titles, day section headers, setting labels and primary list copy.
+- **Body** (400, 17px, 24px line height): Descriptions, detail text and toasts.
+- **Body Strong** (500, 17px): Event dates and link labels.
+- **Button** (700, 17px): Button and pill labels.
+- **Label** (400, 15px): Event times and secondary metadata only.
+- **Aside** (400 italic, 17px): The subtitle under a screen title and short notes.
 
 ### Named Rules
 **The Two Voices Rule.** The serif is for the parish's liturgical words and the screen titles that introduce them; the sans is for everything a parishioner does with the app (find an event, change a setting, give). Do not set a button or an event row in the serif, or a reading in the sans.
@@ -246,7 +246,7 @@ Sans (Alegreya Sans), the noticeboard voice:
 
 **The Lining Figures Rule.** Every sans token sets `fontVariant: ["lining-nums"]` so times and dates never fall back to old-style figures.
 
-**The 16px Floor Rule.** Content a parishioner has to read is 16px or larger. 14px is for a time or a caption beside a larger title. Alegreya reads smaller than the system fonts at the same size, so sizes are tuned on a device in `typography.ts` rather than per screen.
+**The 17px Floor Rule.** Content a parishioner has to read is 17px or larger. 15px is for a time or a caption beside a larger title. Alegreya reads smaller than the system fonts at the same size, so sizes are tuned on a device in `typography.ts` rather than per screen.
 
 **The Italic Aside Rule.** Italics are reserved for the subtitle under a screen title and for scripture quotes (the Donate verse); they are never used for emphasis in lists.
 
@@ -254,7 +254,7 @@ Sans (Alegreya Sans), the noticeboard voice:
 
 A single-column, full-width list on a phone, inside safe-area insets. Screens use 20px horizontal padding (About, Settings) or 16px margins on event rows. Vertical rhythm is loose: 2px between event rows (so a day reads as one group), 16px between link buttons, 30px between major About sections, 20px around cards.
 
-The Home screen carries a 7px bronze vertical rail down the left edge; the week label, saint of the day, fasting rule and day-grouped events follow. Section headers are 18px and sit at 15px left inset.
+The Home screen carries a 7px bronze vertical rail down the left edge; the week label, saint of the day, fasting rule and day-grouped events follow. Section headers are 19px and sit at 15px left inset.
 
 Navigation is a native bottom tab bar with five tabs (Events, Favourites, Prayer, About, Help). Settings opens from a menu icon at the top of Home as a full-screen route with no stack header. Detail routes (event details, readings, PDF) use the stack header.
 
@@ -281,25 +281,25 @@ Images are line illustrations (the star, the Orthodox icons), tinted in the lead
 ## Components
 
 ### Event Row
-Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px vertical margin, 16px horizontal margin. A left calendar marker (the diamond), then date (when shown, 16px/500), the calendar's name and time on one line (14px, quiet, e.g. "Church · 8:00 PM to 10:00 PM"), and title (18px). A 24px favourite star (outline in chevron grey, filled in Favourite Gold) and a chevron sit at the right. Tapping the row gives a rigid haptic and opens details; tapping the star gives a medium haptic.
+Plain and sturdy: a white (or `#272727`) card, 8px corners, 20px padding, 2px vertical margin, 16px horizontal margin. A left calendar marker (the diamond), then date (when shown, 17px/500), the calendar's name and time on one line (15px, quiet, e.g. "Church · 8:00 PM to 10:00 PM"), and title (19px). A 24px favourite star (outline in chevron grey, filled in Favourite Gold) and a chevron sit at the right. Tapping the row gives a rigid haptic and opens details; tapping the star gives a medium haptic.
 
 ### Reading Card
-White card, 10px corners, 20px padding, card lift. 24px/600 title with a chevron at the right, then a 1px divider (3px in an accent colour when one is supplied), then a 16px teaser in the primary text colour.
+White card, 10px corners, 20px padding, card lift. 25px/700 serif title with a chevron at the right, then a 1px divider (3px in an accent colour when one is supplied), then a 17px serif teaser in the primary text colour.
 
 ### Buttons
-- **Primary** (Altar Bronze fill, Ink on Bronze 16px/600 text, 10px corners, 15px vertical padding, 80% width, centred, button lift).
-- **Donate** (Donate Red fill, white 16px/600 text, 10px corners, 15px vertical padding, full card width), one per screen.
-- **Link row** (no fill, navy or bronze text and icon, 16px/500 label, 24px icon, 12px gap, 12px corners, 10×16px padding) for the About screen's outbound links.
+- **Primary** (Altar Bronze fill, Ink on Bronze 17px/700 text, 10px corners, 15px vertical padding, 80% width, centred, button lift).
+- **Donate** (Donate Red fill, white 17px/700 text, 10px corners, 15px vertical padding, full card width), one per screen.
+- **Link row** (no fill, navy or bronze text and icon, 17px/500 label, 24px icon, 12px gap, 12px corners, 10×16px padding) for the About screen's outbound links.
 - Haptics: every press fires one (medium for actions, rigid for navigation into a detail).
 
 ### Navigation
 Native bottom tabs (`NativeTabs`): SF Symbols on iOS and Material icons on Android, with filled variants when selected. Selected tint is the lead accent; unselected is Tab Inactive (#6B6B6B light, #888888 dark). Labels are the platform default size and font; the tab bar is native and is not set in Alegreya. Stack header titles are set in the serif.
 
 ### Toast
-Light: white background, left accent border in Vestment Navy, 15px text in Ink. Dark: `#272727` background, bronze border, Bone text. Errors use a red left border. Used for transient confirmations such as "Account Number copied" (1.5s).
+Light: white background, left accent border in Vestment Navy, 16px text in Ink. Dark: `#272727` background, bronze border, Bone text. Errors use a red left border. Used for transient confirmations such as "Account Number copied" (1.5s).
 
 ### Settings
-A title in the lead accent colour, then `SettingPicker` rows (18px labels) and a native `Switch` for the saint-of-the-day notification. Below them, `CalendarLegend` lists every calendar in registry order, each with the `CalendarMarker` diamond and its name. Theme follows the system setting; there is no in-app theme choice.
+A title in the lead accent colour, then `SettingPicker` rows (19px labels) and a native `Switch` for the saint-of-the-day notification. Below them, `CalendarLegend` lists every calendar in registry order, each with the `CalendarMarker` diamond and its name. Theme follows the system setting; there is no in-app theme choice.
 
 ## Do's and Don'ts
 
@@ -307,7 +307,7 @@ A title in the lead accent colour, then `SettingPicker` rows (18px labels) and a
 - **Do** check text and icon pairs for contrast (4.5:1 text, 3:1 icons and controls) in both schemes whenever a token changes.
 - **Do** take type from the tokens in `theme/typography.ts`; every `<Text>` needs one, because React Native has no global default font.
 - **Do** take colours from `theme/colours.ts` (`Colours.light` / `Colours.dark`) and calendar colours from `getCalendarColour`; both schemes get the same screen design.
-- **Do** keep reading text at 16px or larger and let it scale with the system text size.
+- **Do** keep reading text at 17px or larger and let it scale with the system text size.
 - **Do** give every tappable control at least a 44pt target (padding or `hitSlop`).
 - **Do** use the `CalendarMarker` diamond, and nothing else, to mark which calendar an event belongs to.
 - **Do** use native controls (tab bar, switches, pickers, haptics) and platform icons.

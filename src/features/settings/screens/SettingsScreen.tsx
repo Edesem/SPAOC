@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   },
   versionText: {
     ...typography.aside,
-    fontSize: 14,
+    fontSize: typography.label.fontSize,
     textAlign: "center",
     marginTop: 40,
     marginBottom: 40,

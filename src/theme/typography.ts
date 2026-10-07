@@ -107,20 +107,20 @@ const sans = (style: TextStyle): TextStyle => ({
 // alignment and colour stay with the screen.
 export const typography: Record<TypographyToken, TextStyle> = {
   // Liturgical voice
-  displayTitle: serif({ fontSize: 24, fontWeight: "700" }),
-  readingTitle: serif({ fontSize: 24, fontWeight: "700" }),
-  liturgicalTitle: serif({ fontSize: 18, fontWeight: "400" }),
-  reading: serif({ fontSize: 18, fontWeight: "400", lineHeight: 26 }),
-  readingTeaser: serif({ fontSize: 16, fontWeight: "400", lineHeight: 24 }),
-  quote: serif({ fontSize: 16, fontWeight: "400", fontStyle: "italic" }),
+  displayTitle: serif({ fontSize: 25, fontWeight: "700" }),
+  readingTitle: serif({ fontSize: 25, fontWeight: "700" }),
+  liturgicalTitle: serif({ fontSize: 19, fontWeight: "400" }),
+  reading: serif({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
+  readingTeaser: serif({ fontSize: 17, fontWeight: "400", lineHeight: 24 }),
+  quote: serif({ fontSize: 17, fontWeight: "400", fontStyle: "italic" }),
 
   // Noticeboard voice
-  headline: sans({ fontSize: 24, fontWeight: "700" }),
-  sectionTitle: sans({ fontSize: 24, fontWeight: "700" }),
-  title: sans({ fontSize: 18, fontWeight: "400" }),
-  body: sans({ fontSize: 16, fontWeight: "400", lineHeight: 24 }),
-  bodyStrong: sans({ fontSize: 16, fontWeight: "500" }),
-  button: sans({ fontSize: 16, fontWeight: "700" }),
-  label: sans({ fontSize: 14, fontWeight: "400" }),
-  aside: sans({ fontSize: 16, fontWeight: "400", fontStyle: "italic" }),
+  headline: sans({ fontSize: 25, fontWeight: "700" }),
+  sectionTitle: sans({ fontSize: 25, fontWeight: "700" }),
+  title: sans({ fontSize: 19, fontWeight: "400" }),
+  body: sans({ fontSize: 17, fontWeight: "400", lineHeight: 24 }),
+  bodyStrong: sans({ fontSize: 17, fontWeight: "500" }),
+  button: sans({ fontSize: 17, fontWeight: "700" }),
+  label: sans({ fontSize: 15, fontWeight: "400" }),
+  aside: sans({ fontSize: 17, fontWeight: "400", fontStyle: "italic" }),
 };

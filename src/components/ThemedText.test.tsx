@@ -17,11 +17,11 @@ it(`renders correctly`, async () => {
 
 describe('ThemedText typography', () => {
   it.each([
-    ['default', fontFamily.sans, '400', 16],
-    ['defaultSemiBold', fontFamily.sans, '500', 16],
-    ['title', fontFamily.serif, '700', 32],
-    ['subtitle', fontFamily.serif, '700', 20],
-    ['link', fontFamily.sans, '400', 16],
+    ['default', fontFamily.sans, '400', 17],
+    ['defaultSemiBold', fontFamily.sans, '500', 17],
+    ['title', fontFamily.serif, '700', 33],
+    ['subtitle', fontFamily.serif, '700', 21],
+    ['link', fontFamily.sans, '400', 17],
   ] as const)(
     'sets %s in %s at weight %s and size %s',
     async (type, family, weight, size) => {

@@ -40,7 +40,7 @@ describe("ReadingScreen", () => {
     });
     expect(await findByDisplayValue(params.reading)).toHaveStyle({
       fontFamily: fontFamily.serif,
-      fontSize: 18,
+      fontSize: 19,
       lineHeight: 26,
     });
   });

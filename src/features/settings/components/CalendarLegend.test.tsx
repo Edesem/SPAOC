@@ -38,16 +38,16 @@ describe("CalendarLegend", () => {
 
     expect(getByText("Calendars")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 18,
+      fontSize: 19,
       fontWeight: "700",
     });
     expect(getByText(/coloured diamond beside each event/)).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 16,
+      fontSize: 17,
     });
     expect(getByText("Church")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 18,
+      fontSize: 19,
     });
   });
 

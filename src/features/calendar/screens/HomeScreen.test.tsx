@@ -143,11 +143,11 @@ describe("HomeScreen", () => {
     });
     expect(getByText("St. Test\nSt. Other")).toHaveStyle({
       fontFamily: fontFamily.serif,
-      fontSize: 18,
+      fontSize: 19,
     });
     expect(getByText("Fast free day")).toHaveStyle({
       fontFamily: fontFamily.serif,
-      fontSize: 18,
+      fontSize: 19,
     });
   });
 
@@ -165,7 +165,7 @@ describe("HomeScreen", () => {
     });
     expect(getByText("Today")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 18,
+      fontSize: 19,
     });
   });
 

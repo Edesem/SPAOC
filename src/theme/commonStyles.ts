@@ -53,11 +53,7 @@ export const getCommonStyles = (theme: string) => {
   });
 };
 
+// Text sizes live in the tokens in typography.ts; only the icon size is here.
 export const fontSize = {
-  small: 14,
-  body: 16,
-  subtitle: 18,
-  title: 24,
-  large: 36,
   icon: 36,
 };
