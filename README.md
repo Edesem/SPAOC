@@ -27,6 +27,10 @@ Source lives in `src/`: `app/` (Expo Router routes, thin), `features/` (`calenda
 - `npm test` — tests once; `npm run test:watch` — watch mode; `npm run coverage` — what CI runs (80% line threshold).
 - `npm run lint` and `npm run typecheck`.
 
+## Fonts
+
+Text is set in Alegreya (liturgical text and titles) and Alegreya Sans (the interface), © The Alegreya Project Authors, under the SIL Open Font License 1.1. They come from the `@expo-google-fonts` packages and are embedded by the `expo-font` plugin in `app.json`, so a font change needs a native rebuild (`npm run ios` / `npm run android`), not just a Metro reload.
+
 ## Docs
 
 [`docs/`](docs/) holds the design notes. [Notification planner](docs/notification-planner.md) explains how notifications are planned, scheduled and reconciled. [CLAUDE.md](CLAUDE.md) covers the architecture.
