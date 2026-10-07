@@ -1,9 +1,9 @@
 import { resetNow, setNow } from "@/lib/parishTime";
-import { fontFamily } from "@/theme/typography";
+import { fontFamily, typography } from "@/theme/typography";
 import HomeScreen from "./HomeScreen";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { SectionList } from "react-native";
+import { SectionList, StyleSheet } from "react-native";
 
 // The screen is tested against a fake useHomeFeature. What the feature
 // returns is covered by useHomeFeature.test.ts and homeRules.test.ts.
@@ -125,7 +125,7 @@ describe("HomeScreen", () => {
     expect(getByText("Fast free day")).toBeTruthy();
   });
 
-  it("sets the saint and fasting headings in the serif, the liturgical voice", async () => {
+  it("sets the commemoration heading small, in Alegreya SC and parish red", async () => {
     mockFeature = {
       ...baseFeature,
       sections: [eventSection("Today", 0, [{ id: "1" }])],
@@ -133,17 +133,45 @@ describe("HomeScreen", () => {
 
     const { getByText } = await render(<HomeScreen />);
 
-    expect(getByText("Today's Feasts")).toHaveStyle({
+    expect(getByText("Today we Commemorate")).toHaveStyle({
+      fontFamily: fontFamily.smallCaps,
+      fontSize: typography.eyebrow.fontSize,
+      color: "#A3352B",
+    });
+  });
+
+  it("sets the saint names larger than the commemoration heading", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }])],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
+    const heading = StyleSheet.flatten(
+      getByText("Today we Commemorate").props.style,
+    );
+    const names = StyleSheet.flatten(
+      getByText("St. Test\nSt. Other").props.style,
+    );
+    expect(names).toMatchObject({
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
+    expect(names.fontSize).toBeGreaterThan(heading.fontSize as number);
+  });
+
+  it("sets the fasting headings in the serif, the liturgical voice", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }])],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
     expect(getByText("Great Lent")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "700",
-    });
-    expect(getByText("St. Test\nSt. Other")).toHaveStyle({
-      fontFamily: fontFamily.serif,
-      fontSize: 19,
     });
     expect(getByText("Fast free day")).toHaveStyle({
       fontFamily: fontFamily.serif,
