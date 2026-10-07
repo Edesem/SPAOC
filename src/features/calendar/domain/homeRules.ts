@@ -10,7 +10,7 @@ export type GroupedEventSection = {
 export type HomeEventSection = GroupedEventSection & { sectionIndex: number };
 
 export const getSaintsTitle = (todaysSaints: string[]): string =>
-  todaysSaints.length > 1 ? "Today we Commemorate" : "Today we Commemorate:";
+  todaysSaints.length > 1 ? "Today we Commemorate" : "Today we Commemorate";
 
 const LOAD_SOURCE_LABELS = {
   events: "events",

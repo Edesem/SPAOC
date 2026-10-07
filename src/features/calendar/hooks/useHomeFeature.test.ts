@@ -184,7 +184,7 @@ describe("useHomeFeature", () => {
   it("titles the saint section for a single saint", async () => {
     const { result } = await renderHook(() => useHomeFeature());
 
-    expect(result.current.todaysSaintsTitle).toBe("Today we Commemorate:");
+    expect(result.current.todaysSaintsTitle).toBe("Today we Commemorate");
   });
 
   it("titles the saint section for multiple saints", async () => {
