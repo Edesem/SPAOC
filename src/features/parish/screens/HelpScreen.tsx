@@ -4,6 +4,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Haptics from "expo-haptics";
@@ -177,8 +178,7 @@ const getStyles = () =>
       fontSize: 24,
     },
     subtitle: {
-      fontSize: 16,
-      fontStyle: "italic",
+      ...typography.aside,
       marginTop: 10,
       textAlign: "center",
       lineHeight: 22,
@@ -195,12 +195,11 @@ const getStyles = () =>
       borderRadius: 12,
     },
     linkLabel: {
-      fontSize: 16,
-      fontWeight: "500",
+      ...typography.bodyStrong,
     },
     versionText: {
+      ...typography.aside,
       fontSize: 14,
-      fontStyle: "italic",
       textAlign: "center",
       marginTop: 20,
       marginBottom: 60,

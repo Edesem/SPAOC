@@ -1,5 +1,6 @@
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { Haptic } from "@/lib/haptics";
+import { typography } from "@/theme/typography";
 import { setStringAsync } from "expo-clipboard";
 import { useCallback, useState } from "react";
 import {
@@ -59,7 +60,7 @@ export default function DonateSection({ theme, CommonStyles }: any) {
     <View>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={[CommonStyles.title, { fontWeight: "bold" }]}>Donate</Text>
+        <Text style={CommonStyles.title}>Donate</Text>
         <Text style={[styles.bibleVerse, { color: theme.detail }]}>
           &quot;For where your treasure is, there your heart will be also.&quot;
           - Matthew 6:21
@@ -157,8 +158,7 @@ const getStyles = () =>
       marginBottom: 30,
     },
     bibleVerse: {
-      fontSize: 16,
-      fontStyle: "italic",
+      ...typography.quote,
       marginTop: 10,
       marginHorizontal: 26,
       textAlign: "center",
@@ -179,8 +179,7 @@ const getStyles = () =>
       alignItems: "center",
     },
     squareButtonText: {
-      fontSize: 16,
-      fontWeight: "600",
+      ...typography.button,
     },
     bankDetailsSection: {
       borderRadius: 10,
@@ -206,16 +205,15 @@ const getStyles = () =>
       marginTop: 20,
     },
     copyValueText: {
+      ...typography.button,
       fontSize: 18,
-      fontWeight: "600",
       paddingHorizontal: 10,
     },
     copyButtonContainer: {
       flex: 1,
     },
     copyButtonText: {
-      fontSize: 16,
-      fontWeight: "600",
+      ...typography.button,
     },
     bottomImage: {
       width: 100,

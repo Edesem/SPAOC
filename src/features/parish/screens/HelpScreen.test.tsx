@@ -1,4 +1,5 @@
 import HelpScreen from "./HelpScreen";
+import { fontFamily } from "@/theme/typography";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Linking } from "react-native";
 
@@ -37,6 +38,19 @@ describe("HelpScreen", () => {
       body: url.searchParams.get("body")!,
     };
   };
+
+  it("sets the screen title in the serif and link labels in the sans at 500", async () => {
+    await render(<HelpScreen />);
+
+    expect(screen.getByText("Help & Support")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(screen.getByText("Report a bug")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontWeight: "500",
+    });
+  });
 
   it.each([
     ["Report a bug", "Bug", "Please describe the issue you encountered below:"],
