@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { Colours } from "./colours"; // Ensure the Colours object contains both light and dark themes
+import { typography } from "./typography";
 
 // Function to get styles based on the current theme
 export const getCommonStyles = (theme: string) => {
@@ -11,8 +12,7 @@ export const getCommonStyles = (theme: string) => {
       backgroundColor: currentTheme.background, // Set background based on the theme
     },
     title: {
-      fontSize: 24,
-      fontWeight: "700",
+      ...typography.displayTitle,
       textAlign: "center",
       marginVertical: 20,
       color: currentTheme.moreImportantText, // Use dynamic color for title
@@ -30,13 +30,11 @@ export const getCommonStyles = (theme: string) => {
       elevation: 3,
     },
     buttonText: {
+      ...typography.button,
       color: currentTheme.onSecondary,
-      fontSize: 16,
-      fontWeight: "600",
     },
     sectionTitle: {
-      fontSize: 24,
-      fontWeight: "600",
+      ...typography.sectionTitle,
       color: currentTheme.moreImportantText, // Use dynamic color for section title
       marginBottom: 15,
     },
@@ -48,7 +46,7 @@ export const getCommonStyles = (theme: string) => {
       marginBottom: 10,
     },
     detailText: {
-      fontSize: 16,
+      ...typography.body,
       color: currentTheme.detail, // Dynamic color for details text
       marginBottom: 5,
     },
