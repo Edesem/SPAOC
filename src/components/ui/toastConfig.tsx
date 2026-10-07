@@ -8,7 +8,7 @@ export const toastConfig = (colorScheme: 'light' | 'dark') => {
   const theme = colorScheme === 'dark' ? Colours.dark : Colours.light;
   const text1Style = {
     ...typography.body,
-    fontSize: 15,
+    fontSize: 16,
     color: theme.moreImportantText,
   };
 

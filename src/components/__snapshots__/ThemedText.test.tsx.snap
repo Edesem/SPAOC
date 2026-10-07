@@ -9,7 +9,7 @@ exports[`renders correctly 1`] = `
       },
       {
         "fontFamily": "Alegreya Sans",
-        "fontSize": 16,
+        "fontSize": 17,
         "fontVariant": [
           "lining-nums",
         ],

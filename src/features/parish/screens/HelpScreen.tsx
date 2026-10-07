@@ -199,7 +199,7 @@ const getStyles = () =>
     },
     versionText: {
       ...typography.aside,
-      fontSize: 14,
+      fontSize: typography.label.fontSize,
       textAlign: "center",
       marginTop: 20,
       marginBottom: 60,

@@ -58,7 +58,7 @@ export const styles = StyleSheet.create({
   },
   prayerSubtitle: {
     ...typography.aside,
-    fontSize: 14,
+    fontSize: typography.label.fontSize,
     paddingBottom: 20,
   },
   divider: {

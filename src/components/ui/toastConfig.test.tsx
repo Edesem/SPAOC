@@ -10,7 +10,7 @@ describe("toastConfig typography", () => {
 
     expect(getByText("Account Number copied")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 15,
+      fontSize: 16,
     });
   });
 

@@ -1,6 +1,5 @@
 import CalendarMarker from "@/components/CalendarMarker";
 import { CALENDAR_SOURCES, getCalendarLabel } from "@/domain/calendarSources";
-import { fontSize } from "@/theme/commonStyles";
 import { typography } from "@/theme/typography";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -38,7 +37,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     ...typography.button,
-    fontSize: fontSize.subtitle,
+    fontSize: typography.title.fontSize,
   },
   hint: {
     ...typography.body,

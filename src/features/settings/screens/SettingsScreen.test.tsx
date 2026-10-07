@@ -96,7 +96,7 @@ describe("settings", () => {
     });
     expect(getByText("Notification for Saint of the day")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 18,
+      fontSize: 19,
     });
   });
 

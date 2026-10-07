@@ -99,7 +99,7 @@ const getStyles = () =>
     },
     subtitle: {
       ...typography.aside,
-      fontSize: 18,
+      fontSize: typography.title.fontSize,
       marginTop: 10,
       marginHorizontal: 26,
       textAlign: "center",

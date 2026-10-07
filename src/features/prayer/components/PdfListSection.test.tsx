@@ -50,7 +50,7 @@ describe("PdfListSection", () => {
     });
     expect(screen.getByText("Vespers")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontSize: 18,
+      fontSize: 19,
     });
     expect(screen.getByText("Evening")).toHaveStyle({
       fontFamily: fontFamily.sans,

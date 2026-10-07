@@ -44,12 +44,12 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.displayTitle,
-    fontSize: 32,
-    lineHeight: 32,
+    fontSize: 33,
+    lineHeight: 33,
   },
   subtitle: {
     ...typography.displayTitle,
-    fontSize: 20,
+    fontSize: 21,
   },
   link: {
     ...typography.body,
