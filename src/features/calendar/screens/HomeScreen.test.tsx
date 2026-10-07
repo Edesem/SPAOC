@@ -15,7 +15,7 @@ const mockOnRefresh = jest.fn();
 
 const baseFeature = {
   todaysSaints: ["St. Test", "St. Other"],
-  todaysSaintsTitle: "Today's Feasts",
+  todaysSaintsTitle: "Today we Commemorate",
   fastLoading: false,
   loadErrorMessage: null as string | null,
   majorFastLabel: "Great Lent",
@@ -119,7 +119,7 @@ describe("HomeScreen", () => {
 
     const { getByText } = await render(<HomeScreen />);
 
-    expect(getByText("Today's Feasts")).toBeTruthy();
+    expect(getByText("Today we Commemorate")).toBeTruthy();
     expect(getByText("St. Test\nSt. Other")).toBeTruthy();
     expect(getByText("Great Lent")).toBeTruthy();
     expect(getByText("Fast free day")).toBeTruthy();
@@ -186,7 +186,7 @@ describe("HomeScreen", () => {
     expect(getByRole("alert")).toHaveTextContent(
       "Couldn't load events. Pull down to retry.",
     );
-    expect(getByText("Today's Feasts")).toBeTruthy();
+    expect(getByText("Today we Commemorate")).toBeTruthy();
     expect(getByText("Great Lent")).toBeTruthy();
   });
 
@@ -233,7 +233,7 @@ describe("HomeScreen", () => {
     const { getByText, getByTestId } = await render(<HomeScreen />);
 
     expect(getByText("No events found.")).toBeTruthy();
-    expect(getByText("Today's Feasts")).toBeTruthy();
+    expect(getByText("Today we Commemorate")).toBeTruthy();
     expect(getByTestId("home-top-image")).toBeTruthy();
     expect(getByTestId("home-bottom-image")).toBeTruthy();
   });
