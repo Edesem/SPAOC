@@ -117,7 +117,7 @@ const sans = (style: TextStyle): TextStyle => ({
 // alignment and colour stay with the screen.
 export const typography: Record<TypographyToken, TextStyle> = {
   // Liturgical voice
-  displayTitle: serif({ fontSize: 25, fontWeight: "700" }),
+  displayTitle: serif({ fontSize: 30, fontWeight: "700" }),
   readingTitle: serif({ fontSize: 25, fontWeight: "700" }),
   liturgicalTitle: serif({ fontSize: 19, fontWeight: "400" }),
   reading: serif({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
