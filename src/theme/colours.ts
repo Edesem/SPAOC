@@ -22,6 +22,7 @@ export const Colours = {
     tabInactive: '#6B6B6B',
     favourite: '#B07D00',       // the filled star; #FFD700 is 1.4:1 on white
     separator: '#D0D0D0',
+    commemorate: '#A3352B',     // the Home "Today we Commemorate" heading
   },
   dark: {
     primary: '#a88646',      // A darker shade of blue for better contrast
@@ -41,5 +42,6 @@ export const Colours = {
     tabInactive: '#888',
     favourite: '#FFD700',
     separator: '#4A4A4A',
+    commemorate: '#D9695E',     // #A3352B is 2.6:1 on the dark background; this is 5.5:1
   },
 };

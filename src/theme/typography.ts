@@ -7,6 +7,8 @@ import type { TextStyle } from "react-native";
 export const fontFamily = {
   serif: "Alegreya",
   sans: "Alegreya Sans",
+  // Real small capitals, for short uppercase-style headings.
+  smallCaps: "Alegreya SC",
 } as const;
 
 export type FontFace = {
@@ -19,6 +21,7 @@ export type FontFace = {
 
 const SERIF_DIR = "node_modules/@expo-google-fonts/alegreya";
 const SANS_DIR = "node_modules/@expo-google-fonts/alegreya-sans";
+const SMALL_CAPS_DIR = "node_modules/@expo-google-fonts/alegreya-sc";
 
 // Only the faces the app uses. Alegreya Sans has no 600, so semibold text is
 // 500 or 700; typography.test.ts fails if a token asks for a face that is not
@@ -66,6 +69,12 @@ export const fontFaces: FontFace[] = [
     style: "normal",
     file: `${SANS_DIR}/700Bold/AlegreyaSans_700Bold.ttf`,
   },
+  {
+    family: fontFamily.smallCaps,
+    weight: "700",
+    style: "normal",
+    file: `${SMALL_CAPS_DIR}/700Bold/AlegreyaSC_700Bold.ttf`,
+  },
 ];
 
 // Stack header titles keep the platform's size and take only the serif face.
@@ -76,6 +85,7 @@ export const headerTitleStyle: TextStyle = {
 
 export type TypographyToken =
   | "displayTitle"
+  | "eyebrow"
   | "readingTitle"
   | "liturgicalTitle"
   | "reading"
@@ -113,6 +123,12 @@ export const typography: Record<TypographyToken, TextStyle> = {
   reading: serif({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
   readingTeaser: serif({ fontSize: 17, fontWeight: "400", lineHeight: 24 }),
   quote: serif({ fontSize: 17, fontWeight: "400", fontStyle: "italic" }),
+  // A small heading that sits above a larger name.
+  eyebrow: {
+    fontFamily: fontFamily.smallCaps,
+    fontSize: 18,
+    fontWeight: "700",
+  },
 
   // Noticeboard voice
   headline: sans({ fontSize: 25, fontWeight: "700" }),

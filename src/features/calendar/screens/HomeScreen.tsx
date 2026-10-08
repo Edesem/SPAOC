@@ -77,7 +77,7 @@ const HomeListHeader = ({
     </View>
     <View style={styles.saintOfTheDayContainer}>
       <Text
-        style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}
+        style={[styles.saintOfTheDayTitle, { color: theme.commemorate }]}
       >
         {todaysSaintsTitle}
       </Text>
@@ -390,11 +390,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   saintOfTheDayTitle: {
-    ...typography.displayTitle,
-    marginBottom: 10,
+    ...typography.eyebrow,
+    marginBottom: 6,
   },
   saintOfTheDay: {
-    ...typography.liturgicalTitle,
+    ...typography.displayTitle,
     marginBottom: 20,
     textAlign: "center",
   },
