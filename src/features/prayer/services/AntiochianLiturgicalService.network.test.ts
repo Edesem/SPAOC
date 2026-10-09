@@ -440,10 +440,30 @@ describe("AntiochianLiturgicalService over the network", () => {
     });
 
     it.each([
-      ["just after midnight, standard time", "2026-08-16T00:00:00+10:00", 3, "2026-08-16"],
-      ["just before midnight, standard time", "2026-08-15T23:59:59+10:00", 2, "2026-08-15"],
-      ["just after midnight, daylight saving", "2026-12-01T00:30:00+11:00", 110, "2026-12-01"],
-      ["just before midnight, daylight saving", "2026-11-30T23:59:59+11:00", 109, "2026-11-30"],
+      [
+        "just after midnight, standard time",
+        "2026-08-16T00:00:00+10:00",
+        3,
+        "2026-08-16",
+      ],
+      [
+        "just before midnight, standard time",
+        "2026-08-15T23:59:59+10:00",
+        2,
+        "2026-08-15",
+      ],
+      [
+        "just after midnight, daylight saving",
+        "2026-12-01T00:30:00+11:00",
+        110,
+        "2026-12-01",
+      ],
+      [
+        "just before midnight, daylight saving",
+        "2026-11-30T23:59:59+11:00",
+        109,
+        "2026-11-30",
+      ],
     ])(
       "requests the local day for %s (#59)",
       async (_, instant, daysFromAnchor, textsDate) => {

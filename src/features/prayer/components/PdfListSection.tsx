@@ -38,9 +38,7 @@ export default function PdfListSection({
       <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
         {heading}
       </Text>
-      <View
-        style={[styles.divider, { backgroundColor: theme.separator }]}
-      />
+      <View style={[styles.divider, { backgroundColor: theme.separator }]} />
 
       {entries.map((entry) => (
         <TouchableOpacity
