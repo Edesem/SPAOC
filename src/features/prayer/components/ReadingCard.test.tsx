@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import type { Reading } from "../services";
 import ReadingCard from "./ReadingCard";
@@ -76,6 +77,14 @@ describe("ReadingCard", () => {
     expect(screen.getByText("aith & works")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "400",
+    });
+  });
+
+  it("colours the drop cap with the commemorate red, whatever the accent", async () => {
+    await render(<ReadingCard reading={gospel} accentColour="#D4AF37" />);
+
+    expect(screen.getByTestId("drop-cap")).toHaveStyle({
+      color: Colours.light.commemorate,
     });
   });
 });
