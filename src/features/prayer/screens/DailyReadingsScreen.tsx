@@ -78,7 +78,7 @@ export default function ReadingScreen() {
         <DropCapText
           text={he.decode(reading)}
           textStyle={styles.text}
-          capColour={colors.detail}
+          capColour={colors.commemorate}
           textColour={colors.moreImportantText}
           selectable
         />

@@ -84,7 +84,7 @@ export default function ReadingCard({
         <DropCapText
           text={he.decode(reading.teaser)}
           textStyle={typography.readingTeaser}
-          capColour={accentColour ?? theme.moreImportantText}
+          capColour={theme.commemorate}
           textColour={theme.moreImportantText}
         />
       </View>

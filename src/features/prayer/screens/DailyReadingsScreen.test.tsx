@@ -1,4 +1,5 @@
 import ReadingScreen from "./DailyReadingsScreen";
+import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import { DailyReadingsParams } from "@/types/routes";
 import { fireEvent, render } from "@testing-library/react-native";
@@ -35,6 +36,9 @@ describe("ReadingScreen", () => {
     const { findByTestId } = await render(<ReadingScreen />);
 
     expect(await findByTestId("drop-cap")).toHaveTextContent("I");
+    expect(await findByTestId("drop-cap")).toHaveStyle({
+      color: Colours.light.commemorate,
+    });
   });
 
   it("sets the title and the reading in the serif, the liturgical voice", async () => {
