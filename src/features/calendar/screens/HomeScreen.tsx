@@ -194,8 +194,8 @@ export default function HomeScreen() {
     ? theme.primary
     : theme.lessImportantText;
   const menuIcon = useToolbarIcon(
-    "line.3.horizontal",
-    "menu",
+    "gearshape",
+    "settings",
     theme.lessImportantText,
   );
   const calendarIcon = useToolbarIcon(
