@@ -10,19 +10,17 @@ import { Text, TouchableOpacity, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import toTitleCase from "titlecase";
 import { styles } from "../prayerStyles";
+import DropCapText from "./DropCapText";
 import type { Reading } from "../services";
 
 type Props = {
   reading: Reading;
-  // Colours the divider under the title. Without it the divider is plain.
-  accentColour?: string;
+  // A small heading above the title, e.g. "The Epistle".
+  label?: string;
 };
 
 // A card showing a reading's title and teaser. Tapping it opens the full text.
-export default function ReadingCard({
-  reading,
-  accentColour,
-}: Props): JSX.Element {
+export default function ReadingCard({ reading, label }: Props): JSX.Element {
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(
@@ -60,6 +58,17 @@ export default function ReadingCard({
         }}
       >
         <View style={{ flex: 1 }}>
+          {label ? (
+            <Text
+              testID="reading-label"
+              style={[
+                typography.readingLabel,
+                { color: theme.commemorate, marginBottom: 4 },
+              ]}
+            >
+              {label}
+            </Text>
+          ) : null}
           <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
             {toTitleCase(reading.title.toLowerCase())}
           </Text>
@@ -73,21 +82,16 @@ export default function ReadingCard({
       </View>
       <View
         testID="reading-divider"
-        style={
-          accentColour
-            ? [styles.divider, { backgroundColor: accentColour }, { height: 3 }]
-            : [styles.divider, { backgroundColor: theme.separator }]
-        }
+        style={[styles.divider, { backgroundColor: theme.secondary }]}
       />
-      <Text
-        style={[
-          { color: theme.moreImportantText },
-          { paddingBottom: 20 },
-          typography.readingTeaser,
-        ]}
-      >
-        {he.decode(reading.teaser)}
-      </Text>
+      <View style={{ paddingBottom: 20 }}>
+        <DropCapText
+          text={he.decode(reading.teaser)}
+          textStyle={typography.readingTeaser}
+          capColour={theme.commemorate}
+          textColour={theme.moreImportantText}
+        />
+      </View>
     </TouchableOpacity>
   );
 }

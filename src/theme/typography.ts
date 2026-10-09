@@ -71,6 +71,12 @@ export const fontFaces: FontFace[] = [
   },
   {
     family: fontFamily.smallCaps,
+    weight: "400",
+    style: "italic",
+    file: `${SMALL_CAPS_DIR}/400Regular_Italic/AlegreyaSC_400Regular_Italic.ttf`,
+  },
+  {
+    family: fontFamily.smallCaps,
     weight: "700",
     style: "normal",
     file: `${SMALL_CAPS_DIR}/700Bold/AlegreyaSC_700Bold.ttf`,
@@ -84,17 +90,20 @@ export const headerTitleStyle: TextStyle = {
 };
 
 // The iOS large title that collapses into the header keeps the system size.
-export const headerLargeTitleStyle: { fontFamily: string; fontWeight: string } = {
-  fontFamily: fontFamily.serif,
-  fontWeight: "700",
-};
+export const headerLargeTitleStyle: { fontFamily: string; fontWeight: string } =
+  {
+    fontFamily: fontFamily.serif,
+    fontWeight: "700",
+  };
 
 export type TypographyToken =
   | "displayTitle"
+  | "dropCap"
   | "eyebrow"
   | "readingTitle"
   | "liturgicalTitle"
   | "reading"
+  | "readingLabel"
   | "readingTeaser"
   | "quote"
   | "headline"
@@ -127,10 +136,19 @@ export const typography: Record<TypographyToken, TextStyle> = {
   // Liturgical voice
   displayTitle: serif({ fontSize: 30, fontWeight: "700" }),
   readingTitle: serif({ fontSize: 25, fontWeight: "700" }),
+  // The large first letter of a reading, sized to span two lines of text.
+  dropCap: serif({ fontSize: 52, fontWeight: "700", lineHeight: 52 }),
   liturgicalTitle: serif({ fontSize: 19, fontWeight: "400" }),
   reading: serif({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
   // The Home week headings ("This Week"), above the day names.
   weekLabel: serif({ fontSize: 25, fontWeight: "400", fontStyle: "italic" }),
+  // The small italic heading above each reading card.
+  readingLabel: {
+    fontFamily: fontFamily.smallCaps,
+    fontSize: 18,
+    fontWeight: "400",
+    fontStyle: "italic",
+  },
   readingTeaser: serif({ fontSize: 17, fontWeight: "400", lineHeight: 24 }),
   quote: serif({ fontSize: 17, fontWeight: "400", fontStyle: "italic" }),
   // A small heading that sits above a larger name.
