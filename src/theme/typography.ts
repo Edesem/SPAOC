@@ -83,6 +83,12 @@ export const headerTitleStyle: TextStyle = {
   fontWeight: "700",
 };
 
+// The iOS large title that collapses into the header keeps the system size.
+export const headerLargeTitleStyle: { fontFamily: string; fontWeight: string } = {
+  fontFamily: fontFamily.serif,
+  fontWeight: "700",
+};
+
 export type TypographyToken =
   | "displayTitle"
   | "eyebrow"
