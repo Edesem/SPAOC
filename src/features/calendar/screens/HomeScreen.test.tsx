@@ -165,7 +165,7 @@ describe("HomeScreen", () => {
     });
   });
 
-  it("sets the week label and day headers in the sans, the noticeboard voice", async () => {
+  it("sets the week label in the serif and the day headers in the sans", async () => {
     mockFeature = {
       ...baseFeature,
       sections: [eventSection("Today", 0, [{ id: "1" }], "This week")],
@@ -174,7 +174,8 @@ describe("HomeScreen", () => {
     const { getByText } = await render(<HomeScreen />);
 
     expect(getByText("This week")).toHaveStyle({
-      fontFamily: fontFamily.sans,
+      fontFamily: fontFamily.serif,
+      fontSize: 25,
       fontWeight: "700",
     });
     expect(getByText("Today")).toHaveStyle({
