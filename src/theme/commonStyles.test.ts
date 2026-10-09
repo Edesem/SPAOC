@@ -7,7 +7,7 @@ describe("getCommonStyles typography", () => {
   it("sets screen titles in the serif, the liturgical voice", () => {
     expect(styles.title).toMatchObject({
       fontFamily: fontFamily.serif,
-      fontSize: 25,
+      fontSize: 30,
       fontWeight: "700",
     });
   });
