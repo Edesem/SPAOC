@@ -1,10 +1,4 @@
 import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
-import { lentenServices, prayers, services } from "../catalogue";
-import { styles } from "../prayerStyles";
-import PdfListSection from "../components/PdfListSection";
-import ReadingCard from "../components/ReadingCard";
-import { openServicePdf } from "../openServicePdf";
-import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { APP_TIME_ZONE } from "@/lib/parishTime";
@@ -26,6 +20,12 @@ import {
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import toTitleCase from "titlecase";
+import { lentenServices, prayers, services } from "../catalogue";
+import PdfListSection from "../components/PdfListSection";
+import ReadingCard from "../components/ReadingCard";
+import { usePrayerFeature } from "../hooks/usePrayerFeature";
+import { openServicePdf } from "../openServicePdf";
+import { styles } from "../prayerStyles";
 
 export default function PrayerScreen(): JSX.Element {
   const insets = useSafeAreaInsets();
@@ -100,7 +100,7 @@ export default function PrayerScreen(): JSX.Element {
               { color: theme.detail, textAlign: "left", marginHorizontal: 0 },
             ]}
           >
-            &quot;Pray without ceasing.&quot;{"\n"}- 1 Thessalonians 5:17
+            &quot;Pray without ceasing.&quot; - 1 Thessalonians 5:17
           </Text>
         </View>
 
