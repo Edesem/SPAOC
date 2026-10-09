@@ -7,7 +7,7 @@ import { getCommonStyles } from "@/theme/commonStyles";
 import { typography } from "@/theme/typography";
 import * as Haptics from "expo-haptics";
 import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -20,6 +20,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import toTitleCase from "titlecase";
 import { lentenServices, prayers, services } from "../catalogue";
+import { readingLabels } from "../domain/readingLabels";
+import type { Reading } from "../services";
 import DatePickerSheet from "../components/DatePickerSheet";
 import PdfListSection from "../components/PdfListSection";
 import ReadingCard from "../components/ReadingCard";
@@ -42,6 +44,10 @@ export default function PrayerScreen(): JSX.Element {
   const epistle = day?.readings.find((r) => r.kind === "epistle");
   const gospel = day?.readings.find((r) => r.kind === "gospel");
   const thirdReading = day?.readings.find((r) => r.kind === "thirdReading");
+  const cards = [epistle, gospel, thirdReading].filter(
+    (reading): reading is Reading => reading !== undefined,
+  );
+  const labels = readingLabels(cards);
 
   const router = useRouter();
 
@@ -177,9 +183,20 @@ export default function PrayerScreen(): JSX.Element {
           </View>
         ) : (
           <>
-            {epistle && <ReadingCard reading={epistle} />}
-            {gospel && <ReadingCard reading={gospel} />}
-            {thirdReading && <ReadingCard reading={thirdReading} />}
+            {cards.map((card, index) => (
+              <Fragment key={card.kind}>
+                <Text
+                  style={[
+                    typography.readingLabel,
+                    styles.readingLabel,
+                    { color: theme.commemorate },
+                  ]}
+                >
+                  {labels[index]}
+                </Text>
+                <ReadingCard reading={card} />
+              </Fragment>
+            ))}
           </>
         )}
 
