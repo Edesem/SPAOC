@@ -16,6 +16,9 @@ export const solidHeaderOptions = (
   const palette = scheme === "dark" ? Colours.dark : Colours.light;
   return {
     headerTitleAlign: "center",
+    // Without this the back button is labelled with the previous route's name,
+    // which for a screen pushed from the tabs is "(tabs)".
+    headerBackTitle: "Back",
     headerStyle: { backgroundColor: palette.background },
     headerTintColor: palette.moreImportantText,
     headerTitleStyle,
