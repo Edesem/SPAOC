@@ -50,6 +50,7 @@ describe("typography", () => {
         "sectionTitle",
         "subtitle",
         "title",
+        "weekLabel",
       ].sort(),
     );
   });
@@ -110,6 +111,7 @@ describe("typography", () => {
       label: 15,
       aside: 17,
       subtitle: 19,
+      weekLabel: 25,
     });
   });
 
