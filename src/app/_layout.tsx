@@ -69,14 +69,15 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={theme}>
-      <Stack screenOptions={solidHeaderOptions(colorScheme)}>
+      {/* Portrait everywhere; the PDF screen alone lifts the lock (see app.json). */}
+      <Stack screenOptions={{ ...solidHeaderOptions(colorScheme), orientation: 'portrait' }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="eventDetails" options={glassHeaderOptions(colorScheme)} />
         <Stack.Screen name="settings" options={{ ...glassHeaderOptions(colorScheme), title: 'Settings' }} />
         <Stack.Screen name="help" options={{ ...glassHeaderOptions(colorScheme), title: 'Help & Feedback' }} />
       <Stack.Screen name="dailyReadings" options={glassHeaderOptions(colorScheme)} />
-        <Stack.Screen name="pdfViewer" options={{ title: 'PDF' }} />
+        <Stack.Screen name="pdfViewer" options={{ title: 'PDF', orientation: 'default' }} />
       </Stack>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <Toast config={toastConfig(colorScheme === 'dark' ? 'dark' : 'light')} topOffset={80} />

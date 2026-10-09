@@ -136,6 +136,45 @@ describe("RootLayout", () => {
     expect(help.options.title).toBe("Help & Feedback");
   });
 
+  // Rotation needs all three pieces: app.json lets the native app rotate at
+  // all, the root stack pins every screen to portrait, and the PDF screen opts
+  // back out. Dropping any one either freezes the PDF or rotates the whole app.
+  describe("orientation", () => {
+    it("lets the native app rotate, leaving the lock to the stack", () => {
+      const appConfig = require("../../app.json");
+      expect(appConfig.expo.orientation).toBe("default");
+    });
+
+    it("pins every screen to portrait by default", async () => {
+      await render(<RootLayout />);
+
+      await waitFor(() => expect(mockStackProps).toHaveBeenCalled());
+      const { screenOptions } = mockStackProps.mock.calls.at(-1)![0];
+      expect(screenOptions.orientation).toBe("portrait");
+    });
+
+    it("lets the PDF screen follow the device", async () => {
+      await render(<RootLayout />);
+
+      await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+      const pdfViewer = mockScreenProps.mock.calls
+        .map(([props]) => props)
+        .find((props) => props.name === "pdfViewer");
+      expect(pdfViewer.options.orientation).toBe("default");
+    });
+
+    it("does not unlock any other screen", async () => {
+      await render(<RootLayout />);
+
+      await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+      const unlocked = mockScreenProps.mock.calls
+        .map(([props]) => props)
+        .filter((props) => props.options?.orientation !== undefined)
+        .map((props) => props.name);
+      expect(unlocked).toEqual(["pdfViewer"]);
+    });
+  });
+
   it("hydrates the favourites store at startup", async () => {
     const event = { id: "a", title: "Divine Liturgy" };
     await AsyncStorage.setItem("favourites", JSON.stringify({ a: event }));
