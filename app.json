@@ -3,7 +3,7 @@
     "name": "SPAOC",
     "slug": "St-Paul-Parish-App",
     "version": "2.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "assets/images/android-logo-primary.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
