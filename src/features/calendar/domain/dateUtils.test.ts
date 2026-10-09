@@ -174,7 +174,7 @@ describe("groupEventsByDay", () => {
     expect(grouped[1].data.length).toBe(1);
   });
 
-  it("should group events correctly by day with next week and later labels", () => {
+  it("should group events correctly by day with next week and following week labels", () => {
     jest.setSystemTime(new Date("2026-08-13T08:00:00.000+10:00"));
 
     const events: EventData[] = [
@@ -224,7 +224,7 @@ describe("groupEventsByDay", () => {
 
     expect(grouped[2].title).toBe("Thursday, 27 August");
     expect(grouped[2].data.length).toBe(1);
-    expect(grouped[2].weekLabel).toBe("Later");
+    expect(grouped[2].weekLabel).toBe("Week of 23 August");
   });
 
   it("should handle events before the current week correctly", () => {
@@ -316,7 +316,7 @@ describe("groupEventsByDay", () => {
 
     expect(grouped[2].title).toBe("Thursday, 27 August");
     expect(grouped[2].data.length).toBe(1);
-    expect(grouped[2].weekLabel).toBe("Later");
+    expect(grouped[2].weekLabel).toBe("Week of 23 August");
   });
 
   it("handles next week boundaries correctly", () => {
@@ -383,7 +383,40 @@ describe("groupEventsByDay", () => {
 
     expect(grouped[3].title).toBe("Monday, 24 August");
     expect(grouped[3].data.length).toBe(1);
-    expect(grouped[3].weekLabel).toBe("Later");
+    expect(grouped[3].weekLabel).toBe("Week of 24 August");
+  });
+
+  it("labels every week after next week once, by the day it starts", () => {
+    jest.setSystemTime(new Date("2026-08-13T08:00:00.000+10:00"));
+
+    const event = (id: string, day: string): EventData => ({
+      id,
+      title: `Event ${id}`,
+      start: `2026-${day}T10:00:00.000+10:00`,
+      end: `2026-${day}T11:00:00.000+10:00`,
+      allDay: false,
+      description: "",
+      location: "",
+      source: "youth",
+    });
+
+    // Weeks start on Sunday: 23 Aug, 30 Aug, then 13 Sep (6 Sep has no events).
+    const grouped = groupEventsByDay(
+      [
+        event("1", "08-25"),
+        event("2", "08-27"),
+        event("3", "09-01"),
+        event("4", "09-15"),
+      ],
+      "sunday",
+    );
+
+    expect(grouped.map((section) => section.weekLabel)).toEqual([
+      "Week of 23 August",
+      undefined,
+      "Week of 30 August",
+      "Week of 13 September",
+    ]);
   });
 
   it("handles empty input", () => {
