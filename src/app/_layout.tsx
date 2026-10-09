@@ -3,7 +3,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { solidHeaderOptions } from '@/theme/headerOptions';
+import { glassHeaderOptions, solidHeaderOptions } from '@/theme/headerOptions';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
 import { useFavouritesStore } from '@/features/calendar';
@@ -72,7 +72,7 @@ export default function RootLayout() {
       <Stack screenOptions={solidHeaderOptions(colorScheme)}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
-        <Stack.Screen name="eventDetails" />
+        <Stack.Screen name="eventDetails" options={glassHeaderOptions(colorScheme)} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="dailyReadings" />
         <Stack.Screen name="pdfViewer" options={{ title: 'PDF' }} />
