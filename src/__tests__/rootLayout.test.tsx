@@ -98,17 +98,32 @@ describe("RootLayout", () => {
     });
   });
 
-  it("gives event details the glass header on iOS 26", async () => {
-    jest.replaceProperty(Platform, "OS", "ios");
-    jest.spyOn(Platform, "Version", "get").mockReturnValue("26.0" as never);
+  it.each(["eventDetails", "dailyReadings", "settings"])(
+    "gives %s the glass header on iOS 26",
+    async (name) => {
+      jest.replaceProperty(Platform, "OS", "ios");
+      jest.spyOn(Platform, "Version", "get").mockReturnValue("26.0" as never);
 
+      await render(<RootLayout />);
+
+      await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+      const screen = mockScreenProps.mock.calls
+        .map(([props]) => props)
+        .find((props) => props.name === name);
+      expect(screen.options.headerTransparent).toBe(true);
+      expect(screen.options.headerShown).not.toBe(false);
+      expect(screen.options).toHaveProperty("headerStyle", undefined);
+    },
+  );
+
+  it("titles the settings header", async () => {
     await render(<RootLayout />);
 
     await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
-    const eventDetails = mockScreenProps.mock.calls
+    const settings = mockScreenProps.mock.calls
       .map(([props]) => props)
-      .find((props) => props.name === "eventDetails");
-    expect(eventDetails.options.headerTransparent).toBe(true);
+      .find((props) => props.name === "settings");
+    expect(settings.options.title).toBe("Settings");
   });
 
   it("hydrates the favourites store at startup", async () => {
