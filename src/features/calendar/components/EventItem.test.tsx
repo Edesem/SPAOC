@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { processColor } from "react-native";
 import { act, fireEvent, render, waitFor } from "@testing-library/react-native";
 import { EventItem } from "./EventItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -59,12 +59,12 @@ describe("EventItem calendar marker", () => {
   it("marks the row with a diamond in the calendar's colour", async () => {
     const { getByTestId } = await renderItem();
 
-    const style = StyleSheet.flatten(
-      getByTestId("calendar-marker", { includeHiddenElements: true }).props
-        .style,
+    const shape = getByTestId("calendar-marker-shape", {
+      includeHiddenElements: true,
+    });
+    expect(shape.props.fill.payload).toBe(
+      processColor(getCalendarColour("church")),
     );
-    expect(style.backgroundColor).toBe(getCalendarColour("church"));
-    expect(style.transform).toContainEqual({ rotate: "45deg" });
   });
 });
 
