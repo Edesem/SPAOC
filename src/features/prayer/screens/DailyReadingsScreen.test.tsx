@@ -1,7 +1,9 @@
 import ReadingScreen from "./DailyReadingsScreen";
 import { fontFamily } from "@/theme/typography";
 import { DailyReadingsParams } from "@/types/routes";
-import { render } from "@testing-library/react-native";
+import { fireEvent, render } from "@testing-library/react-native";
+import * as Clipboard from "expo-clipboard";
+import * as Haptics from "expo-haptics";
 import React from "react";
 
 const params: DailyReadingsParams = {
@@ -10,13 +12,11 @@ const params: DailyReadingsParams = {
   title: "THE HOLY GOSPEL",
 };
 jest.mock("expo-router", () => ({
+  ...require("@/testing/expoRouterStack").createStackMock(),
   useLocalSearchParams: () => params,
   useNavigation: () => ({ setOptions: jest.fn() }),
   useFocusEffect: jest.fn(),
 }));
-jest.mock("react-native-safe-area-context", () =>
-  require("react-native-safe-area-context/jest/mock").default,
-);
 jest.mock("expo-clipboard", () => ({ setStringAsync: jest.fn() }));
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),
@@ -45,12 +45,22 @@ describe("ReadingScreen", () => {
     });
   });
 
-  it("sets the copy button in the sans at 700", async () => {
-    const { findByText } = await render(<ReadingScreen />);
+  it("copies the reading and its title from the native Copy button", async () => {
+    const { findByLabelText } = await render(<ReadingScreen />);
 
-    expect(await findByText("Copy")).toHaveStyle({
-      fontFamily: fontFamily.sans,
-      fontWeight: "700",
-    });
+    await fireEvent.press(await findByLabelText("Copy"));
+
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith(
+      "In the beginning was the Word\n\n- The Holy Gospel",
+    );
+    expect(Haptics.impactAsync).toHaveBeenCalled();
+  });
+
+  it("relabels the button as Copied once the reading is copied", async () => {
+    const { findByLabelText } = await render(<ReadingScreen />);
+
+    await fireEvent.press(await findByLabelText("Copy"));
+
+    expect(await findByLabelText("Copied")).toBeTruthy();
   });
 });
