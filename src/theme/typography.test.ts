@@ -48,6 +48,7 @@ describe("typography", () => {
         "readingTeaser",
         "readingTitle",
         "sectionTitle",
+        "subtitle",
         "title",
       ].sort(),
     );
@@ -108,7 +109,16 @@ describe("typography", () => {
       button: 17,
       label: 15,
       aside: 17,
+      subtitle: 19,
     });
+  });
+
+  it("sets the subtitle upright, in the sans", () => {
+    expect(typography.subtitle).toMatchObject({
+      fontFamily: fontFamily.sans,
+      fontWeight: "400",
+    });
+    expect(typography.subtitle.fontStyle).toBeUndefined();
   });
 
   it("bundles the eight faces and no Alegreya Sans 600, which does not exist", () => {

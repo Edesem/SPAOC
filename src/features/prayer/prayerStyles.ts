@@ -3,7 +3,7 @@ import { typography } from "@/theme/typography";
 
 export const styles = StyleSheet.create({
   subtitle: {
-    ...typography.aside,
+    ...typography.subtitle,
     marginTop: 10,
     marginHorizontal: 26,
     textAlign: "center",

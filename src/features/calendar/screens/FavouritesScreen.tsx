@@ -93,8 +93,7 @@ const getStyles = () =>
     },
     // Left-aligned, in line with the large header title above it.
     subtitle: {
-      ...typography.aside,
-      fontSize: typography.title.fontSize,
+      ...typography.subtitle,
       marginTop: 10,
       marginHorizontal: 20,
       textAlign: "left",
