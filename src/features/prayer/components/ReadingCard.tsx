@@ -15,10 +15,12 @@ import type { Reading } from "../services";
 
 type Props = {
   reading: Reading;
+  // A small heading above the title, e.g. "The Epistle".
+  label?: string;
 };
 
 // A card showing a reading's title and teaser. Tapping it opens the full text.
-export default function ReadingCard({ reading }: Props): JSX.Element {
+export default function ReadingCard({ reading, label }: Props): JSX.Element {
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(
@@ -56,6 +58,17 @@ export default function ReadingCard({ reading }: Props): JSX.Element {
         }}
       >
         <View style={{ flex: 1 }}>
+          {label ? (
+            <Text
+              testID="reading-label"
+              style={[
+                typography.readingLabel,
+                { color: theme.commemorate, marginBottom: 4 },
+              ]}
+            >
+              {label}
+            </Text>
+          ) : null}
           <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
             {toTitleCase(reading.title.toLowerCase())}
           </Text>

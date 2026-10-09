@@ -81,4 +81,28 @@ describe("ReadingCard", () => {
       color: Colours.light.commemorate,
     });
   });
+
+  it("shows its label inside the card, in the commemorate red italic small capitals", async () => {
+    await render(<ReadingCard reading={gospel} label="The Holy Gospel" />);
+
+    expect(screen.getByText("The Holy Gospel")).toHaveStyle({
+      fontFamily: fontFamily.smallCaps,
+      fontStyle: "italic",
+      color: Colours.light.commemorate,
+    });
+  });
+
+  it("opens the reading when the label is tapped", async () => {
+    await render(<ReadingCard reading={gospel} label="The Holy Gospel" />);
+
+    await fireEvent.press(screen.getByText("The Holy Gospel"));
+
+    expect(mockPush).toHaveBeenCalledTimes(1);
+  });
+
+  it("has no label unless given one", async () => {
+    await render(<ReadingCard reading={gospel} />);
+
+    expect(screen.queryByTestId("reading-label")).toBeNull();
+  });
 });

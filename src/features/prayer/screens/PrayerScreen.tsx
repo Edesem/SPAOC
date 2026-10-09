@@ -7,7 +7,7 @@ import { getCommonStyles } from "@/theme/commonStyles";
 import { typography } from "@/theme/typography";
 import * as Haptics from "expo-haptics";
 import { Stack, useRouter } from "expo-router";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -184,18 +184,11 @@ export default function PrayerScreen(): JSX.Element {
         ) : (
           <>
             {cards.map((card, index) => (
-              <Fragment key={card.kind}>
-                <Text
-                  style={[
-                    typography.readingLabel,
-                    styles.readingLabel,
-                    { color: theme.commemorate },
-                  ]}
-                >
-                  {labels[index]}
-                </Text>
-                <ReadingCard reading={card} />
-              </Fragment>
+              <ReadingCard
+                key={card.kind}
+                reading={card}
+                label={labels[index]}
+              />
             ))}
           </>
         )}

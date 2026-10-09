@@ -58,12 +58,6 @@ export const styles = StyleSheet.create({
     fontSize: typography.label.fontSize,
     paddingBottom: 20,
   },
-  // Sits over a card, whose own 20 margin would otherwise leave a wide gap.
-  readingLabel: {
-    marginHorizontal: 24,
-    marginTop: 20,
-    marginBottom: -8,
-  },
   divider: {
     height: 1,
     backgroundColor: "#E0E0E0",

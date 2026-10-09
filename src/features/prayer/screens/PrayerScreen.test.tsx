@@ -402,11 +402,11 @@ describe("PrayerScreen", () => {
       expect(screen.queryByText("Genesis 1:1-13")).toBeNull();
     });
 
-    it("labels two readings the Epistle and the Gospel in the commemorate red", async () => {
+    it("labels two readings the Epistle and the Holy Gospel in the commemorate red", async () => {
       await render(<PrayerScreen />);
 
       expect(screen.getByText("The Epistle")).toBeTruthy();
-      expect(screen.getByText("The Gospel")).toHaveStyle({
+      expect(screen.getByText("The Holy Gospel")).toHaveStyle({
         fontFamily: fontFamily.smallCaps,
         fontStyle: "italic",
         color: Colours.light.commemorate,
