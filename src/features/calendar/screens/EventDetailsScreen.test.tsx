@@ -9,9 +9,6 @@ jest.mock("expo-router", () => ({
   useLocalSearchParams: () => mockParams,
   useNavigation: () => ({ setOptions: jest.fn() }),
 }));
-jest.mock("react-native-safe-area-context", () =>
-  require("react-native-safe-area-context/jest/mock").default,
-);
 jest.mock("expo-clipboard", () => ({ setStringAsync: jest.fn() }));
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),

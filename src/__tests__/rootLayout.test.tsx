@@ -13,11 +13,13 @@ import { act, render, waitFor } from "@testing-library/react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import React from "react";
+import { Platform } from "react-native";
 
 // Alegreya is embedded at build time by the expo-font plugin, so the layout
 // must not load or wait for any font at runtime.
 jest.mock("expo-font", () => ({ useFonts: jest.fn(() => [false]) }));
 const mockStackProps = jest.fn();
+const mockScreenProps = jest.fn();
 jest.mock("expo-splash-screen", () => ({
   preventAutoHideAsync: jest.fn(),
   hideAsync: jest.fn(),
@@ -37,7 +39,10 @@ jest.mock("expo-router", () => {
     mockStackProps(props);
     return <View testID="stack">{props.children}</View>;
   };
-  Stack.Screen = () => null;
+  Stack.Screen = (props: object) => {
+    mockScreenProps(props);
+    return null;
+  };
   return {
     Stack,
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -91,6 +96,19 @@ describe("RootLayout", () => {
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
+  });
+
+  it("gives event details the glass header on iOS 26", async () => {
+    jest.replaceProperty(Platform, "OS", "ios");
+    jest.spyOn(Platform, "Version", "get").mockReturnValue("26.0" as never);
+
+    await render(<RootLayout />);
+
+    await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+    const eventDetails = mockScreenProps.mock.calls
+      .map(([props]) => props)
+      .find((props) => props.name === "eventDetails");
+    expect(eventDetails.options.headerTransparent).toBe(true);
   });
 
   it("hydrates the favourites store at startup", async () => {
