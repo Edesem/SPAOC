@@ -2,6 +2,7 @@ import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { fontFamily } from "@/theme/typography";
 import { render } from "@testing-library/react-native";
+import { StyleSheet } from "react-native";
 import DonateSection from "./DonateSection";
 
 jest.mock("expo-clipboard", () => ({ setStringAsync: jest.fn() }));
@@ -31,13 +32,18 @@ describe("DonateSection typography", () => {
     });
   });
 
-  it("sets the scripture verse in the serif italic", async () => {
+  it("sets the scripture verse like the other subtitles: upright sans at 19", async () => {
     const { getByText } = await renderSection();
 
-    expect(getByText(/For where your treasure is/)).toHaveStyle({
-      fontFamily: fontFamily.serif,
-      fontStyle: "italic",
+    const verse = StyleSheet.flatten(
+      getByText(/For where your treasure is/).props.style,
+    );
+    expect(verse).toMatchObject({
+      fontFamily: fontFamily.sans,
+      fontSize: 19,
+      textAlign: "left",
     });
+    expect(verse.fontStyle).toBeUndefined();
   });
 
   it("sets card titles and the Square button in the sans at 700", async () => {

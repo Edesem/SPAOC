@@ -153,7 +153,7 @@ const getStyles = () =>
       marginTop: 10,
     },
     bibleVerse: {
-      ...typography.quote,
+      ...typography.subtitle,
       textAlign: "left",
     },
     paymentSection: {
