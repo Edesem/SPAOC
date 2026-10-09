@@ -40,6 +40,7 @@
     "@expo-google-fonts/alegreya": "^0.4.2",
     "@expo-google-fonts/alegreya-sans": "^0.4.2",
     "@expo-google-fonts/alegreya-sc": "^0.4.2",
+    "@expo/ui": "~57.0.22",
     "@expo/vector-icons": "15.0.3",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
