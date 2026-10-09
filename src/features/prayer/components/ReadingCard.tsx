@@ -15,15 +15,10 @@ import type { Reading } from "../services";
 
 type Props = {
   reading: Reading;
-  // Colours the divider under the title. Without it the divider is plain.
-  accentColour?: string;
 };
 
 // A card showing a reading's title and teaser. Tapping it opens the full text.
-export default function ReadingCard({
-  reading,
-  accentColour,
-}: Props): JSX.Element {
+export default function ReadingCard({ reading }: Props): JSX.Element {
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const CommonStyles = getCommonStyles(
@@ -74,11 +69,7 @@ export default function ReadingCard({
       </View>
       <View
         testID="reading-divider"
-        style={
-          accentColour
-            ? [styles.divider, { backgroundColor: accentColour }, { height: 3 }]
-            : [styles.divider, { backgroundColor: theme.separator }]
-        }
+        style={[styles.divider, { backgroundColor: theme.secondary }]}
       />
       <View style={{ paddingBottom: 20 }}>
         <DropCapText

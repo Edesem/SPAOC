@@ -73,7 +73,10 @@ export default function ReadingScreen() {
         <Text style={[styles.title, { color: colors.moreImportantText }]}>
           {toTitleCase(title.toLowerCase())}
         </Text>
-        <View style={[styles.divider, { backgroundColor: colors.detail }]} />
+        <View
+          testID="reading-divider"
+          style={[styles.divider, { backgroundColor: colors.secondary }]}
+        />
 
         <DropCapText
           text={he.decode(reading)}
@@ -113,7 +116,7 @@ const getStyles = () =>
       marginBottom: 10,
     },
     divider: {
-      height: 2,
+      height: 1,
       marginVertical: 10,
       width: "80%",
       alignSelf: "center",

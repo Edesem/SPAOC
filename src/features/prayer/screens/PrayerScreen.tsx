@@ -177,18 +177,8 @@ export default function PrayerScreen(): JSX.Element {
           </View>
         ) : (
           <>
-            {epistle && (
-              <ReadingCard
-                reading={epistle}
-                accentColour={thirdReading ? undefined : "#2E86AB"}
-              />
-            )}
-            {gospel && (
-              <ReadingCard
-                reading={gospel}
-                accentColour={thirdReading ? undefined : "#D4AF37"}
-              />
-            )}
+            {epistle && <ReadingCard reading={epistle} />}
+            {gospel && <ReadingCard reading={gospel} />}
             {thirdReading && <ReadingCard reading={thirdReading} />}
           </>
         )}
