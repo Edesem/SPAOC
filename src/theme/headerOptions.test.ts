@@ -31,6 +31,7 @@ describe("solidHeaderOptions", () => {
   it("paints the header in the themed background with serif titles", () => {
     expect(solidHeaderOptions("dark")).toEqual({
       headerTitleAlign: "center",
+      headerBackTitle: "Back",
       headerStyle: { backgroundColor: Colours.dark.background },
       headerTintColor: Colours.dark.moreImportantText,
       headerTitleStyle: { fontFamily: fontFamily.serif, fontWeight: "700" },
