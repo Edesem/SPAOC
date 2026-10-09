@@ -98,7 +98,7 @@ describe("RootLayout", () => {
     });
   });
 
-  it.each(["eventDetails", "dailyReadings", "settings"])(
+  it.each(["eventDetails", "dailyReadings", "settings", "help"])(
     "gives %s the glass header on iOS 26",
     async (name) => {
       jest.replaceProperty(Platform, "OS", "ios");
@@ -124,6 +124,16 @@ describe("RootLayout", () => {
       .map(([props]) => props)
       .find((props) => props.name === "settings");
     expect(settings.options.title).toBe("Settings");
+  });
+
+  it("titles the help header", async () => {
+    await render(<RootLayout />);
+
+    await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+    const help = mockScreenProps.mock.calls
+      .map(([props]) => props)
+      .find((props) => props.name === "help");
+    expect(help.options.title).toBe("Help & Feedback");
   });
 
   it("hydrates the favourites store at startup", async () => {

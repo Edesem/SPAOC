@@ -25,7 +25,7 @@ describe("DonateSection typography", () => {
   it("sets the heading in the serif like the other screen titles", async () => {
     const { getByText } = await renderSection();
 
-    expect(getByText("Donate")).toHaveStyle({
+    expect(getByText("Giving")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
