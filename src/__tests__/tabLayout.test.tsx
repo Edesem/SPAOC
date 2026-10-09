@@ -51,8 +51,7 @@ describe("TabLayout", () => {
       ["(events)", "Events"],
       ["favourites", "Favourites"],
       ["prayer", "Prayer"],
-      ["about", "About"],
-      ["help", "Help"],
+      ["parish", "Parish"],
     ]);
   });
 
