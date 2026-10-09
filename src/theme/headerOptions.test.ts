@@ -49,6 +49,27 @@ describe("glassHeaderOptions", () => {
     expect(options.headerTintColor).toBe(Colours.light.moreImportantText);
   });
 
+  it("asks for a soft top edge rather than a hard cut-off line", () => {
+    setPlatform("ios", "27.0");
+
+    expect(glassHeaderOptions("light").scrollEdgeEffects).toEqual({
+      top: "soft",
+    });
+  });
+
+  it("drops the root stack's solid background when merged over it", () => {
+    setPlatform("ios", "26.0");
+
+    // How the navigator combines a stack's screenOptions with a screen's own.
+    const merged = {
+      ...solidHeaderOptions("light"),
+      ...glassHeaderOptions("light"),
+    };
+
+    expect(merged.headerStyle).toBeUndefined();
+    expect(merged.headerTransparent).toBe(true);
+  });
+
   it("keeps the solid header on iOS 18", () => {
     setPlatform("ios", "18.4");
     expect(glassHeaderOptions("light")).toEqual(solidHeaderOptions("light"));

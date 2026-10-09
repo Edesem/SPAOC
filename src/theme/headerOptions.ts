@@ -22,9 +22,13 @@ export const solidHeaderOptions = (
   };
 };
 
-// On iOS 26+ the header is transparent so the system draws the glass and the
-// soft scroll-edge fade over whatever scrolls beneath it. A background colour
-// or a blur effect here would switch the glass off, so neither is set.
+// On iOS 26+ the header is transparent so the system draws the glass and a soft
+// scroll-edge fade over whatever scrolls beneath it. A background colour or a
+// blur effect would switch the glass off, so neither is set. `headerStyle` is
+// set to undefined on purpose: the navigator merges these options over the
+// root stack's solid defaults key by key, so leaving it out would keep that
+// opaque background. The top edge is asked to be soft because the default
+// (`automatic`) can resolve to a hard cut-off line.
 export const glassHeaderOptions = (
   scheme: Scheme,
 ): NativeStackNavigationOptions => {
@@ -34,9 +38,11 @@ export const glassHeaderOptions = (
   const palette = scheme === "dark" ? Colours.dark : Colours.light;
   return {
     headerTransparent: true,
+    headerStyle: undefined,
     headerShadowVisible: false,
     headerTintColor: palette.moreImportantText,
     headerTitleStyle,
+    scrollEdgeEffects: { top: "soft" },
   };
 };
 
