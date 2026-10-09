@@ -74,14 +74,20 @@ export function createStackMock() {
 
   Toolbar.MenuAction = function ToolbarMenuAction({
     children,
+    isOn,
     onPress,
   }: {
     children?: ReactNode;
+    isOn?: boolean;
     onPress?: () => void;
   }) {
     return React.createElement(
       Pressable,
-      { accessibilityRole: "menuitem", onPress },
+      {
+        accessibilityRole: "menuitem",
+        accessibilityState: { selected: !!isOn },
+        onPress,
+      },
       React.createElement(Text, null, children),
     );
   };

@@ -1,4 +1,3 @@
-import { now } from "@/lib/parishTime";
 import { formatMonthHeading } from "../domain/dateUtils";
 import { getMajorLabel, getMinorLabel } from "../domain/fasting";
 import { useDailySaint } from "./useDailySaint";
@@ -9,6 +8,7 @@ import {
   addSectionIndexes,
   filterSectionsByMonth,
   getLoadErrorMessage,
+  getMonthOptions,
   getSaintsTitle,
 } from "../domain/homeRules";
 import { useCallback, useMemo, useState } from "react";
@@ -34,9 +34,7 @@ export const useHomeFeature = () => {
   } = useFastDay();
 
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(now);
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
-  const [showMonthPicker, setShowMonthPicker] = useState(false);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -56,22 +54,17 @@ export const useHomeFeature = () => {
     [filteredSections],
   );
 
-  const onValueChange = useCallback(
-    (event: string, newDate: Date) => {
-      if (event === "dateSetAction") {
-        const pickedDate = newDate || selectedDate;
-        setSelectedDate(pickedDate);
-        setSelectedMonth(pickedDate);
-      }
-
-      setShowMonthPicker(false);
-    },
-    [selectedDate],
+  const monthOptions = useMemo(
+    () => getMonthOptions(groupedEvents, selectedMonth),
+    [groupedEvents, selectedMonth],
   );
+
+  const selectMonth = useCallback((month: Date) => {
+    setSelectedMonth(month);
+  }, []);
 
   const clearMonthFilter = useCallback(() => {
     setSelectedMonth(null);
-    setSelectedDate(now());
   }, []);
 
   const todaysSaintsTitle = getSaintsTitle(todaysSaints);
@@ -92,12 +85,10 @@ export const useHomeFeature = () => {
     sections,
     refreshing,
     onRefresh,
-    selectedDate,
     isMonthFiltered: selectedMonth !== null,
     monthFilterLabel: selectedMonth ? formatMonthHeading(selectedMonth) : null,
     clearMonthFilter,
-    showMonthPicker,
-    setShowMonthPicker,
-    onValueChange,
+    monthOptions,
+    selectMonth,
   };
 };

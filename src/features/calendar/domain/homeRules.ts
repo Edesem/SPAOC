@@ -1,4 +1,5 @@
-import { isSameParishMonth } from "@/lib/parishTime";
+import { getParishDateParts, isSameParishMonth } from "@/lib/parishTime";
+import { formatMonthHeading } from "./dateUtils";
 import { EventData } from "../types";
 
 export type GroupedEventSection = {
@@ -62,3 +63,55 @@ export const addSectionIndexes = (
   sections: GroupedEventSection[],
 ): HomeEventSection[] =>
   sections.map((section, index) => ({ ...section, sectionIndex: index }));
+
+export type MonthOption = {
+  label: string;
+  // An instant inside the month, ready to hand back as the month filter.
+  date: Date;
+  isSelected: boolean;
+};
+
+const MONTH_OPTION_LIMIT = 12;
+
+const monthKey = (date: Date): number => {
+  const { year, month } = getParishDateParts(date);
+  return year * 12 + month;
+};
+
+// The months the Home filter menu offers: those with events, in order, up to the
+// limit. The selected month always stays listed so its tick can be seen and cleared.
+export const getMonthOptions = (
+  groupedEvents: GroupedEventSection[],
+  selectedMonth: Date | null,
+  limit = MONTH_OPTION_LIMIT,
+): MonthOption[] => {
+  const months = new Map<number, Date>();
+
+  for (const section of groupedEvents) {
+    for (const item of section.data) {
+      const start = new Date(item.start);
+      const key = monthKey(start);
+      if (!months.has(key)) {
+        months.set(key, start);
+      }
+    }
+  }
+
+  const selectedKey = selectedMonth ? monthKey(selectedMonth) : null;
+  const listed = [...months.entries()].slice(0, limit);
+
+  if (
+    selectedMonth &&
+    selectedKey !== null &&
+    !listed.some(([key]) => key === selectedKey)
+  ) {
+    listed.push([selectedKey, months.get(selectedKey) ?? selectedMonth]);
+    listed.sort(([a], [b]) => a - b);
+  }
+
+  return listed.map(([key, date]) => ({
+    label: formatMonthHeading(date),
+    date,
+    isSelected: key === selectedKey,
+  }));
+};

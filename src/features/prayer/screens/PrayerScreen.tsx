@@ -17,10 +17,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import toTitleCase from "titlecase";
 import { lentenServices, prayers, services } from "../catalogue";
+import DatePickerSheet from "../components/DatePickerSheet";
 import PdfListSection from "../components/PdfListSection";
 import ReadingCard from "../components/ReadingCard";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
@@ -290,12 +290,12 @@ export default function PrayerScreen(): JSX.Element {
         </View>
       </ScrollView>
 
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
+      <DatePickerSheet
+        visible={isDatePickerVisible}
+        date={selectedDate}
+        accentColour={theme.primary}
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
-        date={selectedDate}
       />
     </>
   );

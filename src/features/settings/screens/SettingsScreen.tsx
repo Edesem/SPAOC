@@ -1,5 +1,5 @@
 import CalendarLegend from "../components/CalendarLegend";
-import SettingPicker from "../components/SettingPicker";
+import SettingSegmented from "../components/SettingSegmented";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { useSettingsStore, type StartOfWeek } from "@/services/settings";
@@ -15,7 +15,6 @@ export default function SettingsScreen() {
   const colorScheme = useColorScheme();
 
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
-  const pickerTheme = colorScheme === "dark" ? true : false;
 
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
@@ -39,7 +38,7 @@ export default function SettingsScreen() {
     >
       <View style={{ paddingHorizontal: gutter }}>
         {/* Start of Week */}
-        <SettingPicker
+        <SettingSegmented
           label="Start of the Week"
           value={startOfWeek}
           onValueChange={(val) => setStartOfWeek(val as StartOfWeek)}
@@ -47,9 +46,9 @@ export default function SettingsScreen() {
             { label: "Sunday", value: "sunday" },
             { label: "Monday", value: "monday" },
           ]}
-          theme={theme}
-          pickerTheme={pickerTheme}
-          styles={styles}
+          accentColour={theme.primary}
+          textColour={theme.moreImportantText}
+          appearance={colorScheme === "dark" ? "dark" : "light"}
         />
 
         {/* Daily Saint Notification toggle */}

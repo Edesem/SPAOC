@@ -2,7 +2,6 @@ import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useReadableGutter } from "@/hooks/useReadableGutter";
-import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { typography } from "@/theme/typography";
 import { TabParamList } from "@/types/routes";
@@ -15,7 +14,6 @@ import { useCallback, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Image,
-  Modal,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
@@ -24,7 +22,6 @@ import {
   Text,
   View,
 } from "react-native";
-import MonthPicker from "react-native-month-year-picker";
 import { EventItem } from "../components/EventItem";
 import { HomeEventSection } from "../domain/homeRules";
 import { useHomeFeature } from "../hooks/useHomeFeature";
@@ -135,35 +132,6 @@ const SectionHeader = ({
   </>
 );
 
-// Lives outside the SectionList so it stays reachable when a month has no events.
-const MonthPickerModal = ({
-  visible,
-  selectedDate,
-  onClose,
-  onValueChange,
-}: {
-  visible: boolean;
-  selectedDate: Date;
-  onClose: () => void;
-  onValueChange: (event: string, newDate: Date) => void;
-}) => (
-  <Modal
-    transparent
-    visible={visible}
-    animationType="fade"
-    onRequestClose={onClose} // Android back button support
-  >
-    <View style={styles.monthPickerBackdrop}>
-      <MonthPicker
-        onChange={onValueChange}
-        value={selectedDate}
-        minimumDate={now()}
-        locale="en"
-      />
-    </View>
-  </Modal>
-);
-
 export default function HomeScreen() {
   const navigation = useNavigation();
   const sectionListRef = useRef<SectionList>(null);
@@ -187,13 +155,11 @@ export default function HomeScreen() {
     sections,
     refreshing,
     onRefresh,
-    selectedDate,
     isMonthFiltered,
     monthFilterLabel,
     clearMonthFilter,
-    showMonthPicker,
-    setShowMonthPicker,
-    onValueChange,
+    monthOptions,
+    selectMonth,
   } = useHomeFeature();
 
   const buttonColour = isMonthFiltered
@@ -240,9 +206,9 @@ export default function HomeScreen() {
     router.push("/settings");
   };
 
-  const openMonthPicker = () => {
+  const chooseMonth = (month: Date) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setShowMonthPicker(true);
+    selectMonth(month);
   };
 
   const showAllMonths = () => {
@@ -263,27 +229,31 @@ export default function HomeScreen() {
         />
       </Stack.Toolbar>
       <Stack.Toolbar placement="right">
-        {isMonthFiltered ? (
-          <Stack.Toolbar.Menu
-            icon={calendarIcon}
-            tintColor={buttonColour}
-            accessibilityLabel={`Month filter, ${monthFilterLabel}`}
+        <Stack.Toolbar.Menu
+          icon={calendarIcon}
+          tintColor={buttonColour}
+          accessibilityLabel={
+            isMonthFiltered
+              ? `Month filter, ${monthFilterLabel}`
+              : "Choose month"
+          }
+        >
+          <Stack.Toolbar.MenuAction
+            isOn={!isMonthFiltered}
+            onPress={showAllMonths}
           >
-            <Stack.Toolbar.MenuAction onPress={openMonthPicker}>
-              Change Month
+            All Months
+          </Stack.Toolbar.MenuAction>
+          {monthOptions.map((option) => (
+            <Stack.Toolbar.MenuAction
+              key={option.label}
+              isOn={option.isSelected}
+              onPress={() => chooseMonth(option.date)}
+            >
+              {option.label}
             </Stack.Toolbar.MenuAction>
-            <Stack.Toolbar.MenuAction onPress={showAllMonths}>
-              Show All Months
-            </Stack.Toolbar.MenuAction>
-          </Stack.Toolbar.Menu>
-        ) : (
-          <Stack.Toolbar.Button
-            icon={calendarIcon}
-            tintColor={buttonColour}
-            accessibilityLabel="Choose month"
-            onPress={openMonthPicker}
-          />
-        )}
+          ))}
+        </Stack.Toolbar.Menu>
       </Stack.Toolbar>
 
       {/* The list is the screen's first view, so the system can fade it under
@@ -344,13 +314,6 @@ export default function HomeScreen() {
           }
         />
       )}
-
-      <MonthPickerModal
-        visible={showMonthPicker}
-        selectedDate={selectedDate}
-        onClose={() => setShowMonthPicker(false)}
-        onValueChange={onValueChange}
-      />
     </>
   );
 }
@@ -426,11 +389,5 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 10,
     padding: 5,
-  },
-  monthPickerBackdrop: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // dim background
   },
 });
