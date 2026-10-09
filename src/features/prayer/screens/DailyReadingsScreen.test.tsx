@@ -45,6 +45,18 @@ describe("ReadingScreen", () => {
     });
   });
 
+  it("renders the bottom toolbar after the scroll view so Android draws it on top", async () => {
+    // On Android the toolbar is drawn in place, so a scroll view rendered after
+    // it (with its opaque background) would cover the Copy button.
+    const { toJSON } = await render(<ReadingScreen />);
+
+    const { children } = toJSON() as {
+      children: { props: { testID?: string } }[];
+    };
+    expect(children).toHaveLength(2);
+    expect(children.at(-1)?.props.testID).toBe("toolbar-bottom");
+  });
+
   it("copies the reading and its title from the native Copy button", async () => {
     const { findByLabelText } = await render(<ReadingScreen />);
 
