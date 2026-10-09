@@ -24,7 +24,7 @@ import {
   within,
 } from "@testing-library/react-native";
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 
 // The screen is tested against a fake usePrayerFeature, the same way
 // HomeScreen is tested against useHomeFeature. What the feature returns is
@@ -143,6 +143,19 @@ describe("PrayerScreen", () => {
       expect(screen.getByText(/Pray without ceasing/)).toHaveStyle({
         textAlign: "left",
       });
+    });
+
+    it("sets the quote upright in the sans at 19, not italic", async () => {
+      await render(<PrayerScreen />);
+
+      const quote = StyleSheet.flatten(
+        screen.getByText(/Pray without ceasing/).props.style,
+      );
+      expect(quote).toMatchObject({
+        fontFamily: fontFamily.sans,
+        fontSize: 19,
+      });
+      expect(quote.fontStyle).toBeUndefined();
     });
 
     it("left-aligns the date and the feast title, in line with the header title", async () => {

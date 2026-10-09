@@ -1,7 +1,7 @@
 import HelpScreen from "./HelpScreen";
 import { fontFamily } from "@/theme/typography";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { Linking } from "react-native";
+import { Linking, StyleSheet } from "react-native";
 
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),
@@ -49,6 +49,19 @@ describe("HelpScreen", () => {
     expect(screen.getByText(/Need help using the app\?/)).toHaveStyle({
       textAlign: "left",
     });
+  });
+
+  it("sets the subtitle upright in the sans at 19, not italic", async () => {
+    await render(<HelpScreen />);
+
+    const subtitle = StyleSheet.flatten(
+      screen.getByText(/Need help using the app\?/).props.style,
+    );
+    expect(subtitle).toMatchObject({
+      fontFamily: fontFamily.sans,
+      fontSize: 19,
+    });
+    expect(subtitle.fontStyle).toBeUndefined();
   });
 
   it.each([

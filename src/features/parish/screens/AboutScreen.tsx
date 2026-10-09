@@ -187,10 +187,9 @@ const getStyles = () =>
     },
     // Left-aligned, in line with the large header title above it.
     subtitle: {
-      ...typography.aside,
+      ...typography.subtitle,
       marginTop: 10,
       textAlign: "left",
-      lineHeight: 22,
     },
     linksSection: {
       gap: 16,

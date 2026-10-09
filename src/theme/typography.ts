@@ -104,7 +104,8 @@ export type TypographyToken =
   | "bodyStrong"
   | "button"
   | "label"
-  | "aside";
+  | "aside"
+  | "subtitle";
 
 const serif = (style: TextStyle): TextStyle => ({
   fontFamily: fontFamily.serif,
@@ -145,4 +146,7 @@ export const typography: Record<TypographyToken, TextStyle> = {
   button: sans({ fontSize: 17, fontWeight: "700" }),
   label: sans({ fontSize: 15, fontWeight: "400" }),
   aside: sans({ fontSize: 17, fontWeight: "400", fontStyle: "italic" }),
+  // The line of upright text under a screen's title. Not italic and a step
+  // larger than `aside`, which reads small beside the large header title.
+  subtitle: sans({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
 };
