@@ -59,16 +59,6 @@ export default function ReadingScreen() {
 
   return (
     <>
-      {/* A floating glass button on iOS, a Material floating toolbar on Android. */}
-      <Stack.Toolbar>
-        <Stack.Toolbar.Spacer />
-        <Stack.Toolbar.Button
-          icon={copyIcon}
-          tintColor={colors.primary}
-          accessibilityLabel={copied ? "Copied" : "Copy"}
-          onPress={handleCopyAll}
-        />
-      </Stack.Toolbar>
       {/* First view in the screen, so the system fades it under the header. */}
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
@@ -102,6 +92,18 @@ export default function ReadingScreen() {
           ]}
         />
       </ScrollView>
+      {/* A floating glass button on iOS, a Material floating toolbar on Android.
+          Last, not first: on Android it is drawn in place over the screen, so
+          anything after it in the tree would cover it. */}
+      <Stack.Toolbar>
+        <Stack.Toolbar.Spacer />
+        <Stack.Toolbar.Button
+          icon={copyIcon}
+          tintColor={colors.primary}
+          accessibilityLabel={copied ? "Copied" : "Copy"}
+          onPress={handleCopyAll}
+        />
+      </Stack.Toolbar>
     </>
   );
 }
