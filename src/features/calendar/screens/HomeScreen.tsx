@@ -120,7 +120,7 @@ const SectionHeader = ({
       <Text
         style={[
           styles.weekLabel,
-          { backgroundColor: theme.background, color: theme.moreImportantText },
+          { backgroundColor: theme.background, color: theme.commemorate },
         ]}
       >
         {section.weekLabel}
