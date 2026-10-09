@@ -5,7 +5,7 @@ import {
 import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import { render } from "@testing-library/react-native";
-import { StyleSheet } from "react-native";
+import { processColor } from "react-native";
 import CalendarLegend from "./CalendarLegend";
 
 describe("CalendarLegend", () => {
@@ -25,11 +25,11 @@ describe("CalendarLegend", () => {
       <CalendarLegend theme={Colours.light} />,
     );
 
-    const colours = getAllByTestId("calendar-marker", {
+    const colours = getAllByTestId("calendar-marker-shape", {
       includeHiddenElements: true,
-    }).map((marker) => StyleSheet.flatten(marker.props.style).backgroundColor);
+    }).map((shape) => shape.props.fill.payload);
     expect(colours).toEqual(
-      CALENDAR_SOURCES.map((calendar) => calendar.colour),
+      CALENDAR_SOURCES.map((calendar) => processColor(calendar.colour)),
     );
   });
 
