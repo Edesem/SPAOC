@@ -30,7 +30,7 @@ describe("supportsLiquidGlass", () => {
 describe("solidHeaderOptions", () => {
   it("paints the header in the themed background with serif titles", () => {
     expect(solidHeaderOptions("dark")).toEqual({
-      headerTitleAlign: "center",
+      headerTitleAlign: "left",
       headerBackTitle: "Back",
       headerStyle: { backgroundColor: Colours.dark.background },
       headerTintColor: Colours.dark.moreImportantText,
