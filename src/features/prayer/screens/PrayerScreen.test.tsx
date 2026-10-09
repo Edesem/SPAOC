@@ -402,6 +402,37 @@ describe("PrayerScreen", () => {
       expect(screen.queryByText("Genesis 1:1-13")).toBeNull();
     });
 
+    it("labels two readings the Epistle and the Gospel in the commemorate red", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("The Epistle")).toBeTruthy();
+      expect(screen.getByText("The Gospel")).toHaveStyle({
+        fontFamily: fontFamily.smallCaps,
+        fontStyle: "italic",
+        color: Colours.light.commemorate,
+      });
+      expect(screen.queryByText("First Reading")).toBeNull();
+    });
+
+    it("labels three readings First, Second and Third", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: {
+            feastTitle: null,
+            readings: [epistle, gospel, thirdReading],
+          },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("First Reading")).toBeTruthy();
+      expect(screen.getByText("Second Reading")).toBeTruthy();
+      expect(screen.getByText("Third Reading")).toBeTruthy();
+      expect(screen.queryByText("The Epistle")).toBeNull();
+    });
+
     it("shows the third reading card when the day has one", async () => {
       mockFeature = {
         ...baseFeature,

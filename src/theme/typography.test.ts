@@ -46,6 +46,7 @@ describe("typography", () => {
         "liturgicalTitle",
         "quote",
         "reading",
+        "readingLabel",
         "readingTeaser",
         "readingTitle",
         "sectionTitle",
@@ -101,6 +102,7 @@ describe("typography", () => {
       readingTitle: 25,
       liturgicalTitle: 19,
       reading: 19,
+      readingLabel: 18,
       readingTeaser: 17,
       quote: 17,
       headline: 25,
@@ -123,11 +125,19 @@ describe("typography", () => {
     expect(typography.subtitle.fontStyle).toBeUndefined();
   });
 
-  it("bundles the eight faces and no Alegreya Sans 600, which does not exist", () => {
-    expect(fontFaces).toHaveLength(8);
+  it("sets the reading label in the italic small capitals", () => {
+    expect(typography.readingLabel).toMatchObject({
+      fontFamily: fontFamily.smallCaps,
+      fontWeight: "400",
+      fontStyle: "italic",
+    });
+  });
+
+  it("bundles the nine faces and no Alegreya Sans 600, which does not exist", () => {
+    expect(fontFaces).toHaveLength(9);
     expect(
       fontFaces.filter((face) => face.family === fontFamily.smallCaps),
-    ).toHaveLength(1);
+    ).toHaveLength(2);
     expect(
       fontFaces.filter((face) => face.family === fontFamily.sans),
     ).toHaveLength(4);
