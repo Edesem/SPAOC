@@ -1,10 +1,26 @@
 import {
   formatDateHeading,
+  formatMonthHeading,
   groupEventsByDay,
   getStartOfWeek,
 } from "./dateUtils";
 import type { EventData } from "../types";
 import { resetNow, setNow } from "@/lib/parishTime";
+
+describe("formatMonthHeading", () => {
+  it("names the month and year", () => {
+    expect(formatMonthHeading(new Date("2026-11-15T12:00:00.000Z"))).toBe(
+      "November 2026",
+    );
+  });
+
+  it("uses the parish month, not the device's, at a month boundary", () => {
+    // 1 December 00:30 in Melbourne is still 30 November in UTC.
+    expect(formatMonthHeading(new Date("2026-11-30T13:30:00.000Z"))).toBe(
+      "December 2026",
+    );
+  });
+});
 
 describe("formatDateHeading", () => {
   beforeEach(() => {

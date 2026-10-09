@@ -1,4 +1,5 @@
 import { now } from "@/lib/parishTime";
+import { formatMonthHeading } from "../domain/dateUtils";
 import { getMajorLabel, getMinorLabel } from "../domain/fasting";
 import { useDailySaint } from "./useDailySaint";
 import { useEvents } from "./useEvents";
@@ -93,6 +94,7 @@ export const useHomeFeature = () => {
     onRefresh,
     selectedDate,
     isMonthFiltered: selectedMonth !== null,
+    monthFilterLabel: selectedMonth ? formatMonthHeading(selectedMonth) : null,
     clearMonthFilter,
     showMonthPicker,
     setShowMonthPicker,

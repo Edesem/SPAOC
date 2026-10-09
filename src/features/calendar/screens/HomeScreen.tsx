@@ -1,31 +1,30 @@
 import OrnamentalDivider from "@/components/OrnamentalDivider";
-import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
 import { typography } from "@/theme/typography";
 import { TabParamList } from "@/types/routes";
-import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import "expo-dev-client";
 import * as Haptics from "expo-haptics";
-import { router, useNavigation } from "expo-router";
+import { router, Stack, useNavigation } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useRef } from "react";
 import {
   ActivityIndicator,
   Image,
   Modal,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   RefreshControl,
   SectionList,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import MonthPicker from "react-native-month-year-picker";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { EventItem } from "../components/EventItem";
 import { HomeEventSection } from "../domain/homeRules";
 import { useHomeFeature } from "../hooks/useHomeFeature";
@@ -166,9 +165,13 @@ const MonthPickerModal = ({
 );
 
 export default function HomeScreen() {
-  const navigation =
-    useNavigation<BottomTabNavigationProp<TabParamList, "index">>();
+  const navigation = useNavigation();
   const sectionListRef = useRef<SectionList>(null);
+  // Where the list rests at the top. With the glass header the system insets
+  // the list, so that is a negative offset rather than 0. Learnt from the
+  // first scroll event.
+  const restingTopRef = useRef(0);
+  const learntRestingTopRef = useRef(false);
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -186,153 +189,169 @@ export default function HomeScreen() {
     onRefresh,
     selectedDate,
     isMonthFiltered,
+    monthFilterLabel,
     clearMonthFilter,
     showMonthPicker,
     setShowMonthPicker,
     onValueChange,
   } = useHomeFeature();
 
+  const buttonColour = isMonthFiltered
+    ? theme.primary
+    : theme.lessImportantText;
+  const menuIcon = useToolbarIcon(
+    "gearshape",
+    "settings",
+    theme.lessImportantText,
+  );
+  const calendarIcon = useToolbarIcon(
+    "calendar",
+    "calendar-month",
+    buttonColour,
+  );
+
+  const onScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (learntRestingTopRef.current) return;
+      learntRestingTopRef.current = true;
+      restingTopRef.current = Math.min(0, event.nativeEvent.contentOffset.y);
+    },
+    [],
+  );
+
   // Scrolls past the header too, and works when there are no events.
   const scrollToTop = useCallback(() => {
     sectionListRef.current?.getScrollResponder()?.scrollTo({
-      y: 0,
+      y: restingTopRef.current,
       animated: true,
     });
   }, []);
 
-  // Scroll to top when pressing Home tab
+  // Scroll to top when pressing Home tab. The screen sits in its own stack, so
+  // the tab navigator is its parent.
   useEffect(() => {
-    const unsubscribe = navigation.addListener("tabPress", scrollToTop);
+    const tabs = navigation.getParent<BottomTabNavigationProp<TabParamList>>();
 
-    return unsubscribe;
+    return tabs?.addListener("tabPress", scrollToTop);
   }, [navigation, scrollToTop]);
 
+  const openSettings = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    router.push("/settings");
+  };
+
+  const openMonthPicker = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowMonthPicker(true);
+  };
+
+  const showAllMonths = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    clearMonthFilter();
+  };
+
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        style={[
-          styles.container,
-          { backgroundColor: theme.background, paddingHorizontal: gutter },
-        ]}
-      >
-        {fastLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={theme.primary} />
-          </View>
+    <>
+      {/* The header shows the month only while a filter is on. */}
+      <Stack.Screen options={{ title: monthFilterLabel ?? "" }} />
+      <Stack.Toolbar placement="left">
+        <Stack.Toolbar.Button
+          icon={menuIcon}
+          tintColor={theme.lessImportantText}
+          accessibilityLabel="Settings"
+          onPress={openSettings}
+        />
+      </Stack.Toolbar>
+      <Stack.Toolbar placement="right">
+        {isMonthFiltered ? (
+          <Stack.Toolbar.Menu
+            icon={calendarIcon}
+            tintColor={buttonColour}
+            accessibilityLabel={`Month filter, ${monthFilterLabel}`}
+          >
+            <Stack.Toolbar.MenuAction onPress={openMonthPicker}>
+              Change Month
+            </Stack.Toolbar.MenuAction>
+            <Stack.Toolbar.MenuAction onPress={showAllMonths}>
+              Show All Months
+            </Stack.Toolbar.MenuAction>
+          </Stack.Toolbar.Menu>
         ) : (
-          <View style={styles.container}>
-            {/* Settings button on the left, month filter on the right */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingHorizontal: 10,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  router.push("/settings");
-                }}
-                style={{ padding: 10 }}
-                accessibilityRole="button"
-                accessibilityLabel="Settings"
-              >
-                <MaterialIcons
-                  name="menu"
-                  style={styles.icon}
-                  color={theme.lessImportantText}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  setShowMonthPicker(true);
-                }}
-                style={{ padding: 10 }}
-                accessibilityRole="button"
-                accessibilityLabel="Choose month"
-              >
-                <IconSymbol
-                  name="calendar"
-                  size={36}
-                  color={theme.lessImportantText}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <MonthPickerModal
-              visible={showMonthPicker}
-              selectedDate={selectedDate}
-              onClose={() => setShowMonthPicker(false)}
-              onValueChange={onValueChange}
-            />
-
-            {isMonthFiltered ? (
-              <TouchableOpacity
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  clearMonthFilter();
-                }}
-                style={[
-                  styles.clearFilterButton,
-                  { backgroundColor: theme.primary },
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel="Clear month filter"
-              >
-                <MaterialIcons name="close" size={20} color={theme.onPrimary} />
-                <Text
-                  style={[styles.clearFilterText, { color: theme.onPrimary }]}
-                >
-                  Clear month filter
-                </Text>
-              </TouchableOpacity>
-            ) : null}
-
-            <SectionList
-              ref={sectionListRef}
-              sections={sections}
-              keyExtractor={(item) => item.id}
-              renderItem={renderItem}
-              renderSectionHeader={({ section }) => (
-                <SectionHeader
-                  section={section as HomeEventSection}
-                  theme={theme}
-                />
-              )}
-              ListHeaderComponent={
-                <HomeListHeader
-                  theme={theme}
-                  loadErrorMessage={loadErrorMessage}
-                  todaysSaintsTitle={todaysSaintsTitle}
-                  todaysSaints={todaysSaints}
-                  majorFastLabel={majorFastLabel}
-                  minorFastLabel={minorFastLabel}
-                />
-              }
-              ListFooterComponent={<HomeListFooter theme={theme} />}
-              ListEmptyComponent={
-                <Text style={[styles.emptyMessage, { color: theme.detail }]}>
-                  No events found.
-                </Text>
-              }
-              stickySectionHeadersEnabled={false} // Disable sticky headers
-              contentContainerStyle={{ paddingBottom: 120 }} // Add padding to the bottom
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                  colors={[theme.primary]}
-                />
-              }
-            />
-          </View>
+          <Stack.Toolbar.Button
+            icon={calendarIcon}
+            tintColor={buttonColour}
+            accessibilityLabel="Choose month"
+            onPress={openMonthPicker}
+          />
         )}
-      </SafeAreaView>
-    </SafeAreaProvider>
+      </Stack.Toolbar>
+
+      {/* The list is the screen's first view, so the system can fade it under
+          the glass header and inset it below the bar. */}
+      {fastLoading ? (
+        <View
+          style={[
+            styles.loadingContainer,
+            { backgroundColor: theme.background },
+          ]}
+        >
+          <ActivityIndicator size="large" color={theme.primary} />
+        </View>
+      ) : (
+        <SectionList
+          ref={sectionListRef}
+          testID="home-list"
+          style={[styles.container, { backgroundColor: theme.background }]}
+          contentInsetAdjustmentBehavior="automatic"
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          sections={sections}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          renderSectionHeader={({ section }) => (
+            <SectionHeader
+              section={section as HomeEventSection}
+              theme={theme}
+            />
+          )}
+          ListHeaderComponent={
+            <HomeListHeader
+              theme={theme}
+              loadErrorMessage={loadErrorMessage}
+              todaysSaintsTitle={todaysSaintsTitle}
+              todaysSaints={todaysSaints}
+              majorFastLabel={majorFastLabel}
+              minorFastLabel={minorFastLabel}
+            />
+          }
+          ListFooterComponent={<HomeListFooter theme={theme} />}
+          ListEmptyComponent={
+            <Text style={[styles.emptyMessage, { color: theme.detail }]}>
+              No events found.
+            </Text>
+          }
+          stickySectionHeadersEnabled={false} // Disable sticky headers
+          contentContainerStyle={{
+            paddingBottom: 120, // Add padding to the bottom
+            marginHorizontal: gutter,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[theme.primary]}
+            />
+          }
+        />
+      )}
+
+      <MonthPickerModal
+        visible={showMonthPicker}
+        selectedDate={selectedDate}
+        onClose={() => setShowMonthPicker(false)}
+        onValueChange={onValueChange}
+      />
+    </>
   );
 }
 
@@ -341,8 +360,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loadingContainer: {
+    flex: 1,
     justifyContent: "center",
-    paddingVertical: 30,
   },
   // Lines up with the event cards' 16pt inset.
   divider: {
@@ -408,27 +427,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 5,
   },
-  icon: {
-    fontSize: 36,
-  },
   monthPickerBackdrop: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.4)", // dim background
-  },
-  clearFilterButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
-    gap: 6,
-    minHeight: 48,
-    paddingVertical: 10,
-    paddingHorizontal: 18,
-    borderRadius: 20,
-    marginVertical: 6,
-  },
-  clearFilterText: {
-    ...typography.button,
   },
 });

@@ -33,7 +33,7 @@ export default function TabLayout() {
         selected: { color: tintColor },
       }}
     >
-      <NativeTabs.Trigger name="index">
+      <NativeTabs.Trigger name="(events)">
         <NativeTabs.Trigger.Icon
           sf={{ default: "calendar", selected: "calendar" }}
           md="event"
@@ -54,22 +54,15 @@ export default function TabLayout() {
         />
         <NativeTabs.Trigger.Label>Prayer</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="about">
-        <NativeTabs.Trigger.Icon
-          sf={{ default: "person", selected: "person.fill" }}
-          md="person"
-        />
-        <NativeTabs.Trigger.Label>About</NativeTabs.Trigger.Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="help">
+      <NativeTabs.Trigger name="parish">
         <NativeTabs.Trigger.Icon
           sf={{
-            default: "questionmark.circle",
-            selected: "questionmark.circle.fill",
+            default: "person.2",
+            selected: "person.2.fill",
           }}
-          md="help"
+          md="church"
         />
-        <NativeTabs.Trigger.Label>Help</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Parish</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

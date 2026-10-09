@@ -1,5 +1,4 @@
 import { EventItem } from "../components/EventItem"; // <-- Import your component
-import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
@@ -10,7 +9,6 @@ import { ItemProps } from "../types"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
@@ -39,70 +37,66 @@ export default function FavouritesScreen() {
   const gutter = useReadableGutter();
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={CommonStyles.container}>
-        <ScrollView contentContainerStyle={{ paddingHorizontal: gutter }}>
-          <View style={styles.header}>
-            <ThemedText type="title" style={CommonStyles.title}>
-              Favourites
-            </ThemedText>
-            <Text style={[styles.subtitle, { color: theme.detail }]}>
-              Saved upcoming events will appear here for quick viewing.
-            </Text>
-          </View>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={CommonStyles.container}
+      contentContainerStyle={{ paddingHorizontal: gutter }}
+    >
+      <View style={styles.header}>
+        <Text style={[styles.subtitle, { color: theme.detail }]}>
+          Saved upcoming events will appear here for quick viewing.
+        </Text>
+      </View>
 
-          {favourites.length === 0 ? (
-            <Text
-              style={[
-                typography.body,
-                { textAlign: "center", color: theme.detail, marginTop: 20 },
-              ]}
-            >
-              No favourites yet.
-            </Text>
-          ) : (
-            favourites.map((item, index) => (
-              <EventItem
-                key={item.id ?? `${item.title}-${index}`}
-                item={item}
-                onPress={() => {}}
-                onUnfavourite={() => {
-                  setFavourites((prev) =>
-                    prev.filter(
-                      (f) => (f.id ?? f.title) !== (item.id ?? item.title),
-                    ),
-                  );
-                }}
-                showFullDate={true}
-              />
-            ))
-          )}
+      {favourites.length === 0 ? (
+        <Text
+          style={[
+            typography.body,
+            { textAlign: "center", color: theme.detail, marginTop: 20 },
+          ]}
+        >
+          No favourites yet.
+        </Text>
+      ) : (
+        favourites.map((item, index) => (
+          <EventItem
+            key={item.id ?? `${item.title}-${index}`}
+            item={item}
+            onPress={() => {}}
+            onUnfavourite={() => {
+              setFavourites((prev) =>
+                prev.filter(
+                  (f) => (f.id ?? f.title) !== (item.id ?? item.title),
+                ),
+              );
+            }}
+            showFullDate={true}
+          />
+        ))
+      )}
 
-          {/* Image */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("@assets/images/orthodox/Seraph.png")} // Adjust the path to your image
-              style={[styles.bottomImage, { tintColor: theme.primary }]}
-            />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+      {/* Image */}
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("@assets/images/orthodox/Seraph.png")} // Adjust the path to your image
+          style={[styles.bottomImage, { tintColor: theme.primary }]}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
 const getStyles = () =>
   StyleSheet.create({
     header: {
-      alignItems: "center",
       marginBottom: 30,
     },
+    // Left-aligned, in line with the large header title above it.
     subtitle: {
-      ...typography.aside,
-      fontSize: typography.title.fontSize,
+      ...typography.subtitle,
       marginTop: 10,
-      marginHorizontal: 26,
-      textAlign: "center",
+      marginHorizontal: 20,
+      textAlign: "left",
     },
     imageContainer: {
       alignItems: "center",

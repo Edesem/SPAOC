@@ -1,15 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { View, Text, ScrollView, StyleSheet, TextInput } from "react-native";
+import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
-import { SafeAreaView } from "react-native-safe-area-context";
 import he from "he";
 import toTitleCase from "titlecase";
 import { Colours } from "@/theme/colours";
@@ -17,6 +10,7 @@ import { typography } from "@/theme/typography";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
 import {
+  Stack,
   useFocusEffect,
   useLocalSearchParams,
   useNavigation,
@@ -42,6 +36,11 @@ export default function ReadingScreen() {
   const gutter = useReadableGutter();
 
   const [copied, setCopied] = useState(false);
+  const copyIcon = useToolbarIcon(
+    copied ? "checkmark" : "doc.on.doc",
+    copied ? "check" : "content-copy",
+    colors.primary,
+  );
 
   const handleCopyAll = async () => {
     await Clipboard.setStringAsync(
@@ -59,12 +58,12 @@ export default function ReadingScreen() {
   );
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      edges={["left", "right", "bottom"]}
-    >
+    <>
+      {/* First view in the screen, so the system fades it under the header. */}
       <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
+        style={[styles.container, { backgroundColor: colors.background }]}
         contentContainerStyle={[
           styles.scrollContainer,
           { paddingHorizontal: 20 + gutter },
@@ -93,16 +92,19 @@ export default function ReadingScreen() {
           ]}
         />
       </ScrollView>
-
-      <TouchableOpacity
-        onPress={handleCopyAll}
-        style={[styles.copyButton, { backgroundColor: colors.primary }]}
-      >
-        <Text style={[styles.copyButtonText, { color: colors.onPrimary }]}>
-          {copied ? "Copied!" : "Copy"}
-        </Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+      {/* A floating glass button on iOS, a Material floating toolbar on Android.
+          Last, not first: on Android it is drawn in place over the screen, so
+          anything after it in the tree would cover it. */}
+      <Stack.Toolbar>
+        <Stack.Toolbar.Spacer />
+        <Stack.Toolbar.Button
+          icon={copyIcon}
+          tintColor={colors.primary}
+          accessibilityLabel={copied ? "Copied" : "Copy"}
+          onPress={handleCopyAll}
+        />
+      </Stack.Toolbar>
+    </>
   );
 }
 const getStyles = () =>
@@ -111,7 +113,7 @@ const getStyles = () =>
       flex: 1,
     },
     scrollContainer: {
-      paddingBottom: 40,
+      paddingBottom: 120, // Clears the floating copy button
       paddingTop: 10, // Small top padding to avoid text sticking to the top
     },
     title: {
@@ -128,17 +130,5 @@ const getStyles = () =>
     text: {
       ...typography.reading,
       textAlign: "justify",
-    },
-    copyButton: {
-      borderRadius: 10,
-      minHeight: 48,
-      justifyContent: "center",
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      alignSelf: "center",
-      marginVertical: 10,
-    },
-    copyButtonText: {
-      ...typography.button,
     },
   });

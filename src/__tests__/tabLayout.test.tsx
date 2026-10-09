@@ -48,11 +48,10 @@ describe("TabLayout", () => {
     await render(<TabLayout />);
 
     expect(mockTriggers.map(({ name, label }) => [name, label])).toEqual([
-      ["index", "Events"],
+      ["(events)", "Events"],
       ["favourites", "Favourites"],
       ["prayer", "Prayer"],
-      ["about", "About"],
-      ["help", "Help"],
+      ["parish", "Parish"],
     ]);
   });
 
