@@ -1,10 +1,9 @@
-import DonateSection from "../components/DonateSection";
+import LinkRow from "../components/LinkRow";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { typography } from "@/theme/typography";
-import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Haptics from "expo-haptics";
 import * as Localization from "expo-localization";
@@ -15,7 +14,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -89,7 +87,7 @@ export default function HelpScreen() {
 
       {/* Help Links */}
       <View style={styles.section}>
-        <LinkItem
+        <LinkRow
           icon="bug-report"
           label="Report a bug"
           onPress={() => {
@@ -98,7 +96,7 @@ export default function HelpScreen() {
           }}
           color={theme.primary}
         />
-        <LinkItem
+        <LinkRow
           icon="lightbulb"
           label="Suggest a feature"
           onPress={() => {
@@ -107,7 +105,7 @@ export default function HelpScreen() {
           }}
           color={theme.primary}
         />
-        <LinkItem
+        <LinkRow
           icon="email"
           label="Contact Support"
           onPress={() => {
@@ -126,33 +124,7 @@ export default function HelpScreen() {
         />
       </View>
 
-      <DonateSection theme={theme} CommonStyles={CommonStyles} />
     </ScrollView>
-  );
-}
-
-function LinkItem({
-  icon,
-  label,
-  onPress,
-  color,
-}: {
-  icon: string;
-  label: string;
-  onPress: () => void;
-  color: string;
-}) {
-  const styles = getStyles();
-
-  return (
-    <TouchableOpacity
-      style={styles.linkItem}
-      onPress={onPress}
-      accessibilityRole="link"
-    >
-      <MaterialIcons name={icon as any} size={24} color={color} />
-      <Text style={[styles.linkLabel, { color }]}>{label}</Text>
-    </TouchableOpacity>
   );
 }
 
@@ -174,17 +146,6 @@ const getStyles = () =>
     },
     section: {
       gap: 16,
-    },
-    linkItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      borderRadius: 12,
-    },
-    linkLabel: {
-      ...typography.bodyStrong,
     },
     versionText: {
       ...typography.aside,

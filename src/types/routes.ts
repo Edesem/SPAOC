@@ -29,6 +29,5 @@ export type TabParamList = {
   "(events)": undefined;
   favourites: undefined;
   prayer: undefined;
-  about: undefined;
-  help: undefined;
+  parish: undefined;
 };

@@ -10,7 +10,6 @@ jest.mock("expo-haptics", () => ({
 jest.mock("expo-localization", () => ({
   getLocales: () => [{ languageTag: "en-GB" }],
 }));
-jest.mock("../components/DonateSection", () => () => null);
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 }));
@@ -41,6 +40,12 @@ describe("HelpScreen", () => {
       fontFamily: fontFamily.sans,
       fontWeight: "500",
     });
+  });
+
+  it("no longer carries the donation section", async () => {
+    await render(<HelpScreen />);
+
+    expect(screen.queryByText("Donate via Square")).toBeNull();
   });
 
   it("left-aligns the subtitle, in line with the header title", async () => {
