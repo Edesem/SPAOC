@@ -1,7 +1,7 @@
 import HelpScreen from "./HelpScreen";
 import { fontFamily } from "@/theme/typography";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { Linking } from "react-native";
+import { Linking, StyleSheet } from "react-native";
 
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),
@@ -11,14 +11,9 @@ jest.mock("expo-localization", () => ({
   getLocales: () => [{ languageTag: "en-GB" }],
 }));
 jest.mock("../components/DonateSection", () => () => null);
-jest.mock("react-native-safe-area-context", () => {
-  const { View } = require("react-native");
-  return {
-    SafeAreaProvider: View,
-    SafeAreaView: View,
-    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-  };
-});
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
 
 describe("HelpScreen", () => {
   let openURL: jest.SpyInstance;
@@ -39,17 +34,34 @@ describe("HelpScreen", () => {
     };
   };
 
-  it("sets the screen title in the serif and link labels in the sans at 500", async () => {
+  it("sets link labels in the sans at 500", async () => {
     await render(<HelpScreen />);
 
-    expect(screen.getByText("Help & Support")).toHaveStyle({
-      fontFamily: fontFamily.serif,
-      fontWeight: "700",
-    });
     expect(screen.getByText("Report a bug")).toHaveStyle({
       fontFamily: fontFamily.sans,
       fontWeight: "500",
     });
+  });
+
+  it("left-aligns the subtitle, in line with the header title", async () => {
+    await render(<HelpScreen />);
+
+    expect(screen.getByText(/Need help using the app\?/)).toHaveStyle({
+      textAlign: "left",
+    });
+  });
+
+  it("sets the subtitle upright in the sans at 19, not italic", async () => {
+    await render(<HelpScreen />);
+
+    const subtitle = StyleSheet.flatten(
+      screen.getByText(/Need help using the app\?/).props.style,
+    );
+    expect(subtitle).toMatchObject({
+      fontFamily: fontFamily.sans,
+      fontSize: 19,
+    });
+    expect(subtitle.fontStyle).toBeUndefined();
   });
 
   it.each([

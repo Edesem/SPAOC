@@ -2,6 +2,7 @@ import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fontFamily } from "@/theme/typography";
+import { StyleSheet } from "react-native";
 import FavouritesScreen from "./FavouritesScreen";
 
 // The screen is tested against a mocked favourites store. Storage format,
@@ -25,19 +26,6 @@ jest.mock("../favourites", () => ({
     getState: () => ({ removeExpired: mockRemoveExpired }),
   },
 }));
-
-jest.mock("react-native-safe-area-context", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  const SafeArea = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(View, null, children);
-
-  return {
-    SafeAreaProvider: SafeArea,
-    SafeAreaView: SafeArea,
-  };
-});
 
 jest.mock("expo-router", () => {
   const React = require("react");
@@ -121,6 +109,32 @@ describe("favourites", () => {
     });
 
     expect(getByText("No favourites yet.")).toBeTruthy();
+  });
+
+  it("left-aligns the subtitle, in line with the header title", async () => {
+    (mockRemoveExpired).mockResolvedValue([]);
+
+    const { getByText } = await render(React.createElement(FavouritesScreen));
+
+    expect(
+      getByText("Saved upcoming events will appear here for quick viewing."),
+    ).toHaveStyle({ textAlign: "left" });
+  });
+
+  it("sets the subtitle upright in the sans at 19, not italic", async () => {
+    (mockRemoveExpired).mockResolvedValue([]);
+
+    const { getByText } = await render(React.createElement(FavouritesScreen));
+
+    const subtitle = StyleSheet.flatten(
+      getByText("Saved upcoming events will appear here for quick viewing.")
+        .props.style,
+    );
+    expect(subtitle).toMatchObject({
+      fontFamily: fontFamily.sans,
+      fontSize: 19,
+    });
+    expect(subtitle.fontStyle).toBeUndefined();
   });
 
   it("sets the empty state in the sans rather than the system font", async () => {

@@ -24,7 +24,7 @@ import {
   within,
 } from "@testing-library/react-native";
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 
 // The screen is tested against a fake usePrayerFeature, the same way
 // HomeScreen is tested against useHomeFeature. What the feature returns is
@@ -60,6 +60,7 @@ jest.mock("@/features/prayer/hooks/usePrayerFeature", () => ({
 }));
 
 jest.mock("expo-router", () => ({
+  ...require("@/testing/expoRouterStack").createStackMock(),
   useRouter: () => ({ push: mockPush }),
 }));
 
@@ -68,19 +69,9 @@ jest.mock("expo-haptics", () => ({
   ImpactFeedbackStyle: { Medium: "medium" },
 }));
 
-jest.mock("react-native-safe-area-context", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  const SafeArea = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(View, null, children);
-
-  return {
-    SafeAreaProvider: SafeArea,
-    SafeAreaView: SafeArea,
-    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-  };
-});
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
 
 // Renders nothing, but keeps the props so a test can see whether the picker is
 // open and answer it the way the native dialog would.
@@ -93,12 +84,6 @@ jest.mock("react-native-modal-datetime-picker", () => (props: any) => {
 jest.mock("@fortawesome/react-native-fontawesome", () => ({
   FontAwesomeIcon: () => null,
 }));
-
-// Gives the calendar button something to find and press.
-jest.mock("@/components/ui/IconSymbol", () => {
-  const { Text } = require("react-native");
-  return { IconSymbol: ({ name }: { name: string }) => <Text>{name}</Text> };
-});
 
 const reading = (
   kind: Reading["kind"],
@@ -150,6 +135,45 @@ describe("PrayerScreen", () => {
       await render(<PrayerScreen />);
 
       expect(screen.getByText("Sunday, March 15, 2026")).toBeTruthy();
+    });
+
+    it("left-aligns the quote, in line with the header title", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText(/Pray without ceasing/)).toHaveStyle({
+        textAlign: "left",
+      });
+    });
+
+    it("sets the quote upright in the sans at 19, not italic", async () => {
+      await render(<PrayerScreen />);
+
+      const quote = StyleSheet.flatten(
+        screen.getByText(/Pray without ceasing/).props.style,
+      );
+      expect(quote).toMatchObject({
+        fontFamily: fontFamily.sans,
+        fontSize: 19,
+      });
+      expect(quote.fontStyle).toBeUndefined();
+    });
+
+    it("left-aligns the date and the feast title, in line with the header title", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: { feastTitle: "THE SUNDAY OF ORTHODOXY", readings: [epistle] },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Sunday, March 15, 2026")).toHaveStyle({
+        textAlign: "left",
+      });
+      expect(screen.getByText("The Sunday of Orthodoxy")).toHaveStyle({
+        textAlign: "left",
+      });
     });
 
     it("shows the feast title in title case", async () => {
@@ -556,14 +580,14 @@ describe("PrayerScreen", () => {
     it("opens when the calendar button is pressed", async () => {
       await render(<PrayerScreen />);
 
-      await fireEvent.press(screen.getByText("calendar"));
+      await fireEvent.press(screen.getByLabelText("Choose date"));
 
       expect(mockPickerProps.isVisible).toBe(true);
     });
 
     it("closes without loading anything when cancelled", async () => {
       await render(<PrayerScreen />);
-      await fireEvent.press(screen.getByText("calendar"));
+      await fireEvent.press(screen.getByLabelText("Choose date"));
 
       await act(() => mockPickerProps.onCancel());
 
@@ -574,7 +598,7 @@ describe("PrayerScreen", () => {
     it("loads the chosen date and closes when confirmed", async () => {
       const chosen = new Date(2026, 3, 12, 12);
       await render(<PrayerScreen />);
-      await fireEvent.press(screen.getByText("calendar"));
+      await fireEvent.press(screen.getByLabelText("Choose date"));
 
       await act(() => mockPickerProps.onConfirm(chosen));
 
@@ -586,9 +610,9 @@ describe("PrayerScreen", () => {
 
   describe("pull to refresh", () => {
     // The RefreshControl element is a prop of the scroll view that wraps
-    // everything on the screen, so walk up from the title to find it.
+    // everything on the screen, so walk up from the quote to find it.
     const refreshControl = () => {
-      let node = screen.getByText("Prayer").parent;
+      let node = screen.getByText(/Pray without ceasing/).parent;
       while (node && !node.props.refreshControl) node = node.parent;
       if (!node) throw new Error("No scroll view with a refresh control");
       return node.props.refreshControl;

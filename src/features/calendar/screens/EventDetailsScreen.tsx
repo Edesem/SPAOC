@@ -24,7 +24,6 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 // The closing ornament is sized from the live window (so it follows rotation
@@ -141,134 +140,127 @@ const EventDetailsScreen = () => {
   };
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        edges={[]}
-        style={{ flex: 1, backgroundColor: theme.background }}
-      >
-        <ScrollView
-          contentContainerStyle={{
-            padding: 20,
-            paddingHorizontal: 20 + gutter,
-            paddingBottom: 0,
-            backgroundColor: theme.background,
-          }}
-        >
+    // The scroll view is the screen's first view so the system can fade it
+    // under the glass header and inset it below the bar.
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={{ flex: 1, backgroundColor: theme.background }}
+      contentContainerStyle={{
+        padding: 20,
+        paddingHorizontal: 20 + gutter,
+        paddingBottom: 0,
+        backgroundColor: theme.background,
+      }}
+    >
+      <View style={[styles.card, { backgroundColor: theme.itemBackground }]}>
+        <Text style={[styles.title, { color: theme.moreImportantText }]}>
+          {title || "Untitled event"}
+        </Text>
+        <View style={[styles.divider, { backgroundColor: theme.separator }]} />
+        <View style={styles.metaRow}>
           <View
-            style={[styles.card, { backgroundColor: theme.itemBackground }]}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
           >
-            <Text style={[styles.title, { color: theme.moreImportantText }]}>
-              {title || "Untitled event"}
-            </Text>
+            <IconSymbol
+              name="calendar"
+              size={20}
+              color={theme.lessImportantText}
+            />
+          </View>
+          <Text style={[styles.date, { color: theme.lessImportantText }]}>
+            {dateLabel}
+          </Text>
+        </View>
+        <View style={[styles.metaRow, { marginTop: 5 }]}>
+          <View
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
+            <IconSymbol
+              name="clock"
+              size={20}
+              color={theme.lessImportantText}
+            />
+          </View>
+          <Text style={[styles.date, { color: theme.lessImportantText }]}>
+            {startLabel} {endLabel}
+          </Text>
+        </View>
+        {location == null ? null : (
+          <View style={[styles.metaRow, { marginTop: 5 }]}>
             <View
-              style={[styles.divider, { backgroundColor: theme.separator }]}
-            />
-            <View style={styles.metaRow}>
-              <View
-                accessibilityElementsHidden
-                importantForAccessibility="no-hide-descendants"
-              >
-                <IconSymbol
-                  name="calendar"
-                  size={20}
-                  color={theme.lessImportantText}
-                />
-              </View>
-              <Text style={[styles.date, { color: theme.lessImportantText }]}>
-                {dateLabel}
-              </Text>
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            >
+              <IconSymbol
+                name="mappin"
+                size={20}
+                color={theme.lessImportantText}
+              />
             </View>
-            <View style={[styles.metaRow, { marginTop: 5 }]}>
-              <View
-                accessibilityElementsHidden
-                importantForAccessibility="no-hide-descendants"
-              >
-                <IconSymbol
-                  name="clock"
-                  size={20}
-                  color={theme.lessImportantText}
-                />
-              </View>
-              <Text style={[styles.date, { color: theme.lessImportantText }]}>
-                {startLabel} {endLabel}
-              </Text>
-            </View>
-            {location == null ? null : (
-              <View style={[styles.metaRow, { marginTop: 5 }]}>
-                <View
-                  accessibilityElementsHidden
-                  importantForAccessibility="no-hide-descendants"
-                >
-                  <IconSymbol
-                    name="mappin"
-                    size={20}
-                    color={theme.lessImportantText}
-                  />
-                </View>
-                <Text
-                  style={[
-                    styles.detail,
-                    { color: theme.lessImportantText, flex: 1 },
-                  ]}
-                >
-                  {location}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    copyLocation();
-                  }}
-                  style={styles.locationAction}
-                  accessibilityRole="button"
-                  accessibilityLabel="Copy address"
-                >
-                  <IconSymbol
-                    name="square.fill.on.square.fill"
-                    size={28}
-                    color={theme.lessImportantText}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    openInMaps();
-                  }}
-                  style={styles.locationAction}
-                  accessibilityRole="button"
-                  accessibilityLabel="Open in maps"
-                >
-                  <IconSymbol
-                    name="map.fill"
-                    size={28}
-                    color={theme.lessImportantText}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-            {description == null ? (
-              <Text style={[styles.description, { color: theme.detail }]}>
-                No description available
-              </Text>
-            ) : (
-              renderDescription(description, theme)
-            )}
-          </View>
-          <View style={styles.imageContainer}>
-            <Image
-              source={image} // Adjust the path to your local image
+            <Text
               style={[
-                styles.bottomImage,
-                {
-                  width: imageWidth,
-                  height: imageHeight,
-                  tintColor: theme.primary,
-                },
+                styles.detail,
+                { color: theme.lessImportantText, flex: 1 },
               ]}
-            />
+            >
+              {location}
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                copyLocation();
+              }}
+              style={styles.locationAction}
+              accessibilityRole="button"
+              accessibilityLabel="Copy address"
+            >
+              <IconSymbol
+                name="square.fill.on.square.fill"
+                size={28}
+                color={theme.lessImportantText}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                openInMaps();
+              }}
+              style={styles.locationAction}
+              accessibilityRole="button"
+              accessibilityLabel="Open in maps"
+            >
+              <IconSymbol
+                name="map.fill"
+                size={28}
+                color={theme.lessImportantText}
+              />
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+        )}
+        {description == null ? (
+          <Text style={[styles.description, { color: theme.detail }]}>
+            No description available
+          </Text>
+        ) : (
+          renderDescription(description, theme)
+        )}
+      </View>
+      <View style={styles.imageContainer}>
+        <Image
+          source={image} // Adjust the path to your local image
+          style={[
+            styles.bottomImage,
+            {
+              width: imageWidth,
+              height: imageHeight,
+              tintColor: theme.primary,
+            },
+          ]}
+        />
+      </View>
+    </ScrollView>
   );
 };
 
