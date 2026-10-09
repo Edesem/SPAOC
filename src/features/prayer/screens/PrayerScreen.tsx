@@ -105,8 +105,19 @@ export default function PrayerScreen(): JSX.Element {
         </View>
 
         {/* Date Title */}
-        <View style={{ alignItems: "center", marginVertical: 0 }}>
-          <Text style={[styles.dateTitle, { color: theme.moreImportantText }]}>
+        <View
+          style={{
+            alignItems: "flex-start",
+            paddingHorizontal: 20,
+            marginVertical: 0,
+          }}
+        >
+          <Text
+            style={[
+              styles.dateTitle,
+              { color: theme.moreImportantText, textAlign: "left" },
+            ]}
+          >
             {selectedDate.toLocaleDateString(undefined, {
               timeZone: APP_TIME_ZONE,
               weekday: "long",
@@ -120,7 +131,12 @@ export default function PrayerScreen(): JSX.Element {
             <Text
               style={[
                 styles.subtitle,
-                { marginTop: 5, color: theme.lessImportantText },
+                {
+                  marginTop: 5,
+                  marginHorizontal: 0,
+                  textAlign: "left",
+                  color: theme.lessImportantText,
+                },
               ]}
             >
               {toTitleCase(day.feastTitle.toLowerCase())}

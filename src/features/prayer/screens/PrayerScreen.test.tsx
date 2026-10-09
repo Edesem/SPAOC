@@ -145,6 +145,24 @@ describe("PrayerScreen", () => {
       });
     });
 
+    it("left-aligns the date and the feast title, in line with the header title", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: { feastTitle: "THE SUNDAY OF ORTHODOXY", readings: [epistle] },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Sunday, March 15, 2026")).toHaveStyle({
+        textAlign: "left",
+      });
+      expect(screen.getByText("The Sunday of Orthodoxy")).toHaveStyle({
+        textAlign: "left",
+      });
+    });
+
     it("shows the feast title in title case", async () => {
       mockFeature = {
         ...baseFeature,
