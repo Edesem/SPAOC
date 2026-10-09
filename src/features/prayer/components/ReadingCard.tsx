@@ -10,6 +10,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import toTitleCase from "titlecase";
 import { styles } from "../prayerStyles";
+import DropCapText from "./DropCapText";
 import type { Reading } from "../services";
 
 type Props = {
@@ -79,15 +80,14 @@ export default function ReadingCard({
             : [styles.divider, { backgroundColor: theme.separator }]
         }
       />
-      <Text
-        style={[
-          { color: theme.moreImportantText },
-          { paddingBottom: 20 },
-          typography.readingTeaser,
-        ]}
-      >
-        {he.decode(reading.teaser)}
-      </Text>
+      <View style={{ paddingBottom: 20 }}>
+        <DropCapText
+          text={he.decode(reading.teaser)}
+          textStyle={typography.readingTeaser}
+          capColour={accentColour ?? theme.moreImportantText}
+          textColour={theme.moreImportantText}
+        />
+      </View>
     </TouchableOpacity>
   );
 }

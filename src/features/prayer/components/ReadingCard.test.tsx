@@ -31,13 +31,14 @@ describe("ReadingCard", () => {
     await render(<ReadingCard reading={gospel} />);
 
     expect(screen.getByText("Mark 2:1-12")).toBeTruthy();
-    expect(screen.getByText("Faith & works")).toBeTruthy();
+    expect(screen.getByTestId("drop-cap")).toHaveTextContent("F");
+    expect(screen.getByText("aith & works")).toBeTruthy();
   });
 
   it("opens the reading in the daily readings screen when tapped", async () => {
     await render(<ReadingCard reading={gospel} />);
 
-    await fireEvent.press(screen.getByText("Faith & works"));
+    await fireEvent.press(screen.getByText("aith & works"));
 
     expect(mockPush).toHaveBeenCalledTimes(1);
     expect(mockPush).toHaveBeenCalledWith({
@@ -72,7 +73,7 @@ describe("ReadingCard", () => {
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
-    expect(screen.getByText("Faith & works")).toHaveStyle({
+    expect(screen.getByText("aith & works")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "400",
     });

@@ -25,20 +25,26 @@ jest.mock("expo-haptics", () => ({
 
 describe("ReadingScreen", () => {
   it("shows the title and reading from its route params", async () => {
-    const { findByText, findByDisplayValue } = await render(<ReadingScreen />);
+    const { findByText } = await render(<ReadingScreen />);
 
     expect(await findByText("The Holy Gospel")).toBeTruthy();
-    expect(await findByDisplayValue(params.reading)).toBeTruthy();
+    expect(await findByText("n the beginning was the Word")).toBeTruthy();
+  });
+
+  it("opens the reading with a drop cap", async () => {
+    const { findByTestId } = await render(<ReadingScreen />);
+
+    expect(await findByTestId("drop-cap")).toHaveTextContent("I");
   });
 
   it("sets the title and the reading in the serif, the liturgical voice", async () => {
-    const { findByText, findByDisplayValue } = await render(<ReadingScreen />);
+    const { findByText } = await render(<ReadingScreen />);
 
     expect(await findByText("The Holy Gospel")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
-    expect(await findByDisplayValue(params.reading)).toHaveStyle({
+    expect(await findByText("n the beginning was the Word")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontSize: 19,
       lineHeight: 26,

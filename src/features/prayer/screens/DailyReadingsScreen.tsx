@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, ScrollView, StyleSheet, TextInput } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -16,6 +16,7 @@ import {
   useNavigation,
 } from "expo-router";
 import { DailyReadingsParams } from "@/types/routes";
+import DropCapText from "../components/DropCapText";
 
 export default function ReadingScreen() {
   const { reading, title } = useLocalSearchParams<DailyReadingsParams>();
@@ -74,22 +75,12 @@ export default function ReadingScreen() {
         </Text>
         <View style={[styles.divider, { backgroundColor: colors.detail }]} />
 
-        {/* Put this outside the ScrollView if you can */}
-        {/* Or at least above the Text */}
-        <TextInput
-          value={he.decode(reading)}
-          editable={false}
-          multiline
-          scrollEnabled={false}
-          style={[
-            styles.text,
-            {
-              color: colors.moreImportantText,
-              padding: 0,
-              margin: 0,
-              borderWidth: 0, // removes border styling
-            },
-          ]}
+        <DropCapText
+          text={he.decode(reading)}
+          textStyle={styles.text}
+          capColour={colors.detail}
+          textColour={colors.moreImportantText}
+          selectable
         />
       </ScrollView>
       {/* A floating glass button on iOS, a Material floating toolbar on Android.
