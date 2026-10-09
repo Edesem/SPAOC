@@ -30,23 +30,6 @@ jest.mock("@/features/notifications", () => ({
   syncNotifications: jest.fn(),
 }));
 
-jest.mock("react-native-safe-area-context", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  const SafeArea = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(View, null, children);
-
-  return {
-    SafeAreaProvider: SafeArea,
-    SafeAreaView: SafeArea,
-  };
-});
-
-jest.mock("expo-router", () => ({
-  useRouter: () => ({ back: jest.fn() }),
-}));
-
 jest.mock("../components/SettingPicker", () => {
   const React = require("react");
   const { Text } = require("react-native");
@@ -87,13 +70,9 @@ describe("settings", () => {
     });
   });
 
-  it("sets the title in the serif and the saint notification label in the sans", async () => {
+  it("sets the saint notification label in the sans", async () => {
     const { getByText } = await renderScreen();
 
-    expect(getByText("Settings")).toHaveStyle({
-      fontFamily: fontFamily.serif,
-      fontWeight: "700",
-    });
     expect(getByText("Notification for Saint of the day")).toHaveStyle({
       fontFamily: fontFamily.sans,
       fontSize: 19,

@@ -2,11 +2,8 @@ import { StyleSheet } from "react-native";
 import { typography } from "@/theme/typography";
 
 export const styles = StyleSheet.create({
-  header: {
-    alignItems: "center",
-  },
   subtitle: {
-    ...typography.aside,
+    ...typography.subtitle,
     marginTop: 10,
     marginHorizontal: 26,
     textAlign: "center",
@@ -101,12 +98,6 @@ export const styles = StyleSheet.create({
   },
   dateTitle: {
     ...typography.displayTitle,
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 30,
-    paddingLeft: 65,
   },
   icon: {
     fontSize: 36,

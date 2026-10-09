@@ -24,9 +24,9 @@ export type PdfViewerParams = {
   title: string;
 };
 
-// One entry per file in app/(tabs)/.
+// One entry per tab: a folder in app/(tabs)/, each holding its own stack.
 export type TabParamList = {
-  index: undefined;
+  "(events)": undefined;
   favourites: undefined;
   prayer: undefined;
   about: undefined;

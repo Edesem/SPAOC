@@ -1,4 +1,3 @@
-import { ThemedText } from "@/components/ThemedText";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
@@ -16,11 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  SafeAreaProvider,
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FontAwesome5, {
   FontAwesome5IconProps,
 } from "react-native-vector-icons/FontAwesome5";
@@ -43,108 +38,99 @@ export default function AboutScreen() {
   };
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={[CommonStyles.container, { flex: 1 }]}>
-        <ScrollView
-          contentContainerStyle={{
-            paddingBottom: insets.bottom + 20,
-            paddingHorizontal: 20 + gutter,
-          }}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <ThemedText type="title" style={CommonStyles.title}>
-              About
-            </ThemedText>
-            <Text style={[styles.subtitle, { color: theme.detail }]}>
-              This app is developed for the parishioners of St Paul’s Antiochian
-              Orthodox Church. Stay up to date with events, readings, and
-              community life.
-            </Text>
-          </View>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={CommonStyles.container}
+      contentContainerStyle={{
+        paddingBottom: insets.bottom + 20,
+        paddingHorizontal: 20 + gutter,
+      }}
+    >
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={[styles.subtitle, { color: theme.detail }]}>
+          This app is developed for the parishioners of St Paul’s Antiochian
+          Orthodox Church. Stay up to date with events, readings, and community
+          life.
+        </Text>
+      </View>
 
-          {/* Links Section */}
-          <View style={styles.linksSection}>
-            <LinkButton
-              icon="public"
-              label="Visit our Website"
-              onPress={() => openLink("https://stpaulchurch.com.au")}
-              color={theme.primary}
-            />
-            <LinkButton
-              icon="store"
-              label="Church Store"
-              onPress={() => openLink("https://stpaulchurch.org.au/store")}
-              color={theme.primary}
-            />
-            <LinkButton
-              icon="facebook"
-              label="Follow on Facebook"
-              onPress={() =>
-                openLink(
-                  "https://www.facebook.com/StPaulsAntiochianOrthodoxChurch",
-                )
-              }
-              color={theme.primary}
-            />
-            <LinkButton
-              icon="instagram"
-              label="Follow on Instagram"
-              onPress={() =>
-                openLink("https://www.instagram.com/stpaulsdandenong/")
-              }
-              color={theme.primary}
-            />
-            <LinkButton
-              icon="youtube"
-              label="Subscribe on YouTube"
-              onPress={() =>
-                openLink(
-                  "https://www.youtube.com/@stpaulsantiochianorthodoxc6010/videos",
-                )
-              }
-              color={theme.primary}
-            />
-            <LinkButton
-              icon="whatsapp"
-              label="Join our WhatsApp group"
-              onPress={() =>
-                openLink("https://chat.whatsapp.com/Lee9DcwOsBvKJhrCveH445")
-              }
-              color={theme.primary}
-            />
-            <LinkButton
-              icon="spotify"
-              label="Listen to our choir on Spotify"
-              onPress={() =>
-                openLink(
-                  "https://open.spotify.com/artist/5KSBKd6aPBEeEDzncaLdT7",
-                )
-              }
-              color={theme.primary}
-            />
-            <LinkButton
-              icon="itunes-note"
-              label="Listen to our choir on Apple Music"
-              onPress={() =>
-                openLink(
-                  "https://music.apple.com/us/artist/st-ephraim-the-syrian-antiochian-orthodox-choir/1785814045",
-                )
-              }
-              color={theme.primary}
-            />
-          </View>
+      {/* Links Section */}
+      <View style={styles.linksSection}>
+        <LinkButton
+          icon="public"
+          label="Visit our Website"
+          onPress={() => openLink("https://stpaulchurch.com.au")}
+          color={theme.primary}
+        />
+        <LinkButton
+          icon="store"
+          label="Church Store"
+          onPress={() => openLink("https://stpaulchurch.org.au/store")}
+          color={theme.primary}
+        />
+        <LinkButton
+          icon="facebook"
+          label="Follow on Facebook"
+          onPress={() =>
+            openLink("https://www.facebook.com/StPaulsAntiochianOrthodoxChurch")
+          }
+          color={theme.primary}
+        />
+        <LinkButton
+          icon="instagram"
+          label="Follow on Instagram"
+          onPress={() =>
+            openLink("https://www.instagram.com/stpaulsdandenong/")
+          }
+          color={theme.primary}
+        />
+        <LinkButton
+          icon="youtube"
+          label="Subscribe on YouTube"
+          onPress={() =>
+            openLink(
+              "https://www.youtube.com/@stpaulsantiochianorthodoxc6010/videos",
+            )
+          }
+          color={theme.primary}
+        />
+        <LinkButton
+          icon="whatsapp"
+          label="Join our WhatsApp group"
+          onPress={() =>
+            openLink("https://chat.whatsapp.com/Lee9DcwOsBvKJhrCveH445")
+          }
+          color={theme.primary}
+        />
+        <LinkButton
+          icon="spotify"
+          label="Listen to our choir on Spotify"
+          onPress={() =>
+            openLink("https://open.spotify.com/artist/5KSBKd6aPBEeEDzncaLdT7")
+          }
+          color={theme.primary}
+        />
+        <LinkButton
+          icon="itunes-note"
+          label="Listen to our choir on Apple Music"
+          onPress={() =>
+            openLink(
+              "https://music.apple.com/us/artist/st-ephraim-the-syrian-antiochian-orthodox-choir/1785814045",
+            )
+          }
+          color={theme.primary}
+        />
+      </View>
 
-          {/* Image */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("@assets/images/orthodox/star2.png")} // Adjust the path to your image
-              style={[styles.bottomImage, { tintColor: theme.primary }]}
-            />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+      {/* Image */}
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("@assets/images/orthodox/star2.png")} // Adjust the path to your image
+          style={[styles.bottomImage, { tintColor: theme.primary }]}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -197,14 +183,13 @@ const getStyles = () =>
       gap: 30,
     },
     header: {
-      alignItems: "center",
       marginBottom: 10,
     },
+    // Left-aligned, in line with the large header title above it.
     subtitle: {
-      ...typography.aside,
+      ...typography.subtitle,
       marginTop: 10,
-      textAlign: "center",
-      lineHeight: 22,
+      textAlign: "left",
     },
     linksSection: {
       gap: 16,

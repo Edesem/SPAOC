@@ -8,6 +8,14 @@ import {
 import type { StartOfWeek } from "@/services/settings";
 import { EventData } from "../types";
 
+// "November 2026", for the header while a month filter is on.
+export const formatMonthHeading = (date: Date) =>
+  date.toLocaleDateString("en-AU", {
+    timeZone: APP_TIME_ZONE,
+    month: "long",
+    year: "numeric",
+  });
+
 export const formatDateHeading = (date: Date) => {
   const timeZone = APP_TIME_ZONE;
 
