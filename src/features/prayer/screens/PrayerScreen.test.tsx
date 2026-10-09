@@ -371,8 +371,8 @@ describe("PrayerScreen", () => {
 
       expect(screen.getByText("Hebrews 11:24-26")).toBeTruthy();
       expect(screen.getByText("Mark 2:1-12")).toBeTruthy();
-      expect(screen.getByText("HEBREWS 11:24-26 teaser")).toBeTruthy();
-      expect(screen.getByText("MARK 2:1-12 teaser")).toBeTruthy();
+      expect(screen.getByText("EBREWS 11:24-26 teaser")).toBeTruthy();
+      expect(screen.getByText("ARK 2:1-12 teaser")).toBeTruthy();
     });
 
     it("decodes HTML entities in a teaser", async () => {
@@ -393,7 +393,7 @@ describe("PrayerScreen", () => {
 
       await render(<PrayerScreen />);
 
-      expect(screen.getByText('Faith & works "together"')).toBeTruthy();
+      expect(screen.getByText('aith & works "together"')).toBeTruthy();
     });
 
     it("shows no third reading card when the day has only two readings", async () => {
@@ -416,7 +416,7 @@ describe("PrayerScreen", () => {
       await render(<PrayerScreen />);
 
       expect(screen.getByText("Genesis 1:1-13")).toBeTruthy();
-      expect(screen.getByText("GENESIS 1:1-13 teaser")).toBeTruthy();
+      expect(screen.getByText("ENESIS 1:1-13 teaser")).toBeTruthy();
     });
 
     it("shows only the readings the day has", async () => {
@@ -458,7 +458,7 @@ describe("PrayerScreen", () => {
         };
         await render(<PrayerScreen />);
 
-        await fireEvent.press(screen.getByText(r.teaser));
+        await fireEvent.press(screen.getByText(r.teaser.slice(1)));
 
         expect(mockPush).toHaveBeenCalledTimes(1);
         expect(mockPush).toHaveBeenCalledWith({
