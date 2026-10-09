@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   weekLabel: {
-    ...typography.readingTitle,
+    ...typography.weekLabel,
     marginLeft: 20,
     marginTop: 15,
   },

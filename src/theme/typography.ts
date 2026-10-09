@@ -98,6 +98,7 @@ export type TypographyToken =
   | "readingTeaser"
   | "quote"
   | "headline"
+  | "weekLabel"
   | "sectionTitle"
   | "title"
   | "body"
@@ -128,6 +129,8 @@ export const typography: Record<TypographyToken, TextStyle> = {
   readingTitle: serif({ fontSize: 25, fontWeight: "700" }),
   liturgicalTitle: serif({ fontSize: 19, fontWeight: "400" }),
   reading: serif({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
+  // The Home week headings ("This Week"), above the day names.
+  weekLabel: serif({ fontSize: 25, fontWeight: "400", fontStyle: "italic" }),
   readingTeaser: serif({ fontSize: 17, fontWeight: "400", lineHeight: 24 }),
   quote: serif({ fontSize: 17, fontWeight: "400", fontStyle: "italic" }),
   // A small heading that sits above a larger name.
