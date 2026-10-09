@@ -93,7 +93,7 @@ describe("typography", () => {
     expect(
       Object.fromEntries(tokens.map(([name, token]) => [name, token.fontSize])),
     ).toEqual({
-      displayTitle: 25,
+      displayTitle: 30,
       eyebrow: 18,
       readingTitle: 25,
       liturgicalTitle: 19,
