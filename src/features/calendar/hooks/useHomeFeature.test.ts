@@ -1,5 +1,4 @@
 import { FastKind } from "../domain/fasting";
-import { resetNow, setNow } from "@/lib/parishTime";
 import { useHomeFeature } from "./useHomeFeature";
 import { installFakeAppState } from "@/test-utils/fakeAppState";
 import { act, renderHook } from "@testing-library/react-native";
@@ -78,38 +77,6 @@ describe("useHomeFeature", () => {
     };
   });
 
-  describe("the app clock", () => {
-    afterEach(resetNow);
-
-    it("starts with today's date from the app clock", async () => {
-      const pinned = new Date("2026-09-25T22:15:00Z");
-      setNow(() => pinned);
-
-      const { result } = await renderHook(() => useHomeFeature());
-
-      expect(result.current.selectedDate).toEqual(pinned);
-    });
-
-    it("returns to today on the app clock when the month filter is cleared", async () => {
-      setNow(() => new Date("2026-09-25T22:15:00Z"));
-      const { result } = await renderHook(() => useHomeFeature());
-      await act(async () => {
-        result.current.onValueChange(
-          "dateSetAction",
-          new Date("2026-03-15T12:00:00.000Z"),
-        );
-      });
-
-      const later = new Date("2026-09-26T22:15:00Z");
-      setNow(() => later);
-      await act(async () => {
-        result.current.clearMonthFilter();
-      });
-
-      expect(result.current.selectedDate).toEqual(later);
-    });
-  });
-
   it("leaves notification setup to the root layout", async () => {
     await renderHook(() => useHomeFeature());
 
@@ -169,7 +136,12 @@ describe("useHomeFeature", () => {
 
     it("keeps showing the events that did load", async () => {
       mockEventsState = {
-        groupedEvents: [{ title: "Day", data: [{ id: "1" }] }],
+        groupedEvents: [
+          {
+            title: "Day",
+            data: [{ id: "1", start: "2026-03-10T12:00:00.000Z" }],
+          },
+        ],
         error: null,
         refetch: mockRefetchEvents,
       };
@@ -237,7 +209,12 @@ describe("useHomeFeature", () => {
 
   it("returns only the event sections, with no placeholder sections", async () => {
     mockEventsState = {
-      groupedEvents: [{ title: "Day", data: [{ id: "1" }] }],
+      groupedEvents: [
+        {
+          title: "Day",
+          data: [{ id: "1", start: "2026-03-10T12:00:00.000Z" }],
+        },
+      ],
       error: null,
       refetch: mockRefetchEvents,
     };
@@ -245,7 +222,11 @@ describe("useHomeFeature", () => {
     const { result } = await renderHook(() => useHomeFeature());
 
     expect(result.current.sections).toEqual([
-      { title: "Day", data: [{ id: "1" }], sectionIndex: 0 },
+      {
+        title: "Day",
+        data: [{ id: "1", start: "2026-03-10T12:00:00.000Z" }],
+        sectionIndex: 0,
+      },
     ]);
   });
 
@@ -255,7 +236,7 @@ describe("useHomeFeature", () => {
     expect(result.current.sections).toEqual([]);
   });
 
-  it("filters events to the picked month and closes the picker", async () => {
+  it("filters events to the picked month", async () => {
     mockEventsState = {
       error: null,
       groupedEvents: [
@@ -273,14 +254,7 @@ describe("useHomeFeature", () => {
     const { result } = await renderHook(() => useHomeFeature());
 
     await act(async () => {
-      result.current.setShowMonthPicker(true);
-    });
-
-    await act(async () => {
-      result.current.onValueChange(
-        "dateSetAction",
-        new Date("2026-03-15T12:00:00.000Z"),
-      );
+      result.current.selectMonth(new Date("2026-03-15T12:00:00.000Z"));
     });
 
     const eventSection = result.current.sections.find(
@@ -290,7 +264,75 @@ describe("useHomeFeature", () => {
     expect(eventSection.data).toEqual([
       { id: "1", start: "2026-03-10T12:00:00.000Z" },
     ]);
-    expect(result.current.showMonthPicker).toBe(false);
+  });
+
+  describe("month options", () => {
+    const marchAndApril = () => ({
+      error: null,
+      groupedEvents: [
+        {
+          title: "Day",
+          data: [
+            { id: "1", start: "2026-03-10T12:00:00.000Z" },
+            { id: "2", start: "2026-04-10T12:00:00.000Z" },
+          ],
+        },
+      ],
+      refetch: mockRefetchEvents,
+    });
+
+    it("offers no months before events have loaded", async () => {
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(result.current.monthOptions).toEqual([]);
+    });
+
+    it("offers the months that have events, none ticked until one is picked", async () => {
+      mockEventsState = marchAndApril();
+
+      const { result } = await renderHook(() => useHomeFeature());
+
+      expect(
+        result.current.monthOptions.map((o) => [o.label, o.isSelected]),
+      ).toEqual([
+        ["March 2026", false],
+        ["April 2026", false],
+      ]);
+    });
+
+    it("ticks the picked month and filters to it", async () => {
+      mockEventsState = marchAndApril();
+      const { result } = await renderHook(() => useHomeFeature());
+
+      await act(async () => {
+        result.current.selectMonth(result.current.monthOptions[1].date);
+      });
+
+      expect(
+        result.current.monthOptions.map((o) => [o.label, o.isSelected]),
+      ).toEqual([
+        ["March 2026", false],
+        ["April 2026", true],
+      ]);
+      expect(result.current.monthFilterLabel).toBe("April 2026");
+    });
+
+    it("keeps a picked month listed after it has no events", async () => {
+      mockEventsState = marchAndApril();
+      const { result } = await renderHook(() => useHomeFeature());
+
+      await act(async () => {
+        result.current.selectMonth(new Date("2026-08-15T12:00:00.000Z"));
+      });
+
+      expect(
+        result.current.monthOptions.map((o) => [o.label, o.isSelected]),
+      ).toEqual([
+        ["March 2026", false],
+        ["April 2026", false],
+        ["August 2026", true],
+      ]);
+    });
   });
 
   describe("clearing the month filter", () => {
@@ -318,10 +360,7 @@ describe("useHomeFeature", () => {
       const { result } = await renderHook(() => useHomeFeature());
 
       await act(async () => {
-        result.current.onValueChange(
-          "dateSetAction",
-          new Date("2026-03-15T12:00:00.000Z"),
-        );
+        result.current.selectMonth(new Date("2026-03-15T12:00:00.000Z"));
       });
 
       expect(result.current.isMonthFiltered).toBe(true);
@@ -332,10 +371,7 @@ describe("useHomeFeature", () => {
       expect(result.current.monthFilterLabel).toBeNull();
 
       await act(async () => {
-        result.current.onValueChange(
-          "dateSetAction",
-          new Date("2026-03-15T12:00:00.000Z"),
-        );
+        result.current.selectMonth(new Date("2026-03-15T12:00:00.000Z"));
       });
       expect(result.current.monthFilterLabel).toBe("March 2026");
 
@@ -350,10 +386,7 @@ describe("useHomeFeature", () => {
       const { result } = await renderHook(() => useHomeFeature());
 
       await act(async () => {
-        result.current.onValueChange(
-          "dateSetAction",
-          new Date("2026-03-15T12:00:00.000Z"),
-        );
+        result.current.selectMonth(new Date("2026-03-15T12:00:00.000Z"));
       });
       await act(async () => {
         result.current.clearMonthFilter();
@@ -369,10 +402,7 @@ describe("useHomeFeature", () => {
       const { result } = await renderHook(() => useHomeFeature());
 
       await act(async () => {
-        result.current.onValueChange(
-          "dateSetAction",
-          new Date("2026-08-15T12:00:00.000Z"),
-        );
+        result.current.selectMonth(new Date("2026-08-15T12:00:00.000Z"));
       });
       expect(result.current.sections).toEqual([]);
 
@@ -381,22 +411,6 @@ describe("useHomeFeature", () => {
       });
 
       expect(result.current.sections).toHaveLength(1);
-    });
-
-    it("keeps the filter when the picker is dismissed without choosing", async () => {
-      const { result } = await renderHook(() => useHomeFeature());
-
-      await act(async () => {
-        result.current.onValueChange(
-          "dateSetAction",
-          new Date("2026-03-15T12:00:00.000Z"),
-        );
-      });
-      await act(async () => {
-        result.current.onValueChange("dismissedAction", new Date());
-      });
-
-      expect(result.current.isMonthFiltered).toBe(true);
     });
   });
 });

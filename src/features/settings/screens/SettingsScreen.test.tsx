@@ -30,7 +30,7 @@ jest.mock("@/features/notifications", () => ({
   syncNotifications: jest.fn(),
 }));
 
-jest.mock("../components/SettingPicker", () => {
+jest.mock("../components/SettingSegmented", () => {
   const React = require("react");
   const { Text } = require("react-native");
 
