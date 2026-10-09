@@ -3,8 +3,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { Colours } from '@/theme/colours';
-import { headerTitleStyle } from '@/theme/typography';
+import { solidHeaderOptions } from '@/theme/headerOptions';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
 import { useFavouritesStore } from '@/features/calendar';
@@ -70,13 +69,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={theme}>
-      <Stack
-        screenOptions={{
-          headerTitleAlign: 'center',
-          headerStyle: { backgroundColor: colorScheme === 'dark' ? Colours.dark.background : Colours.light.background },
-          headerTintColor: colorScheme === 'dark' ? Colours.dark.moreImportantText : Colours.light.moreImportantText,
-          headerTitleStyle,
-        }}>
+      <Stack screenOptions={solidHeaderOptions(colorScheme)}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="eventDetails" />
