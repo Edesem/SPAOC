@@ -107,6 +107,7 @@ export type TypographyToken =
   | "readingTeaser"
   | "quote"
   | "headline"
+  | "weekLabel"
   | "sectionTitle"
   | "title"
   | "body"
@@ -139,6 +140,8 @@ export const typography: Record<TypographyToken, TextStyle> = {
   dropCap: serif({ fontSize: 52, fontWeight: "700", lineHeight: 52 }),
   liturgicalTitle: serif({ fontSize: 19, fontWeight: "400" }),
   reading: serif({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
+  // The Home week headings ("This Week"), above the day names.
+  weekLabel: serif({ fontSize: 25, fontWeight: "400", fontStyle: "italic" }),
   // The small italic heading above each reading card.
   readingLabel: {
     fontFamily: fontFamily.smallCaps,
