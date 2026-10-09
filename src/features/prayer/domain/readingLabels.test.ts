@@ -9,10 +9,10 @@ const reading = (kind: ReadingKind): Reading => ({
 });
 
 describe("readingLabels", () => {
-  it("names two readings the Epistle and the Gospel", () => {
+  it("names two readings the Epistle and the Holy Gospel", () => {
     expect(readingLabels([reading("epistle"), reading("gospel")])).toEqual([
       "The Epistle",
-      "The Gospel",
+      "The Holy Gospel",
     ]);
   });
 
@@ -27,7 +27,7 @@ describe("readingLabels", () => {
   });
 
   it("still names a lone gospel by what it is", () => {
-    expect(readingLabels([reading("gospel")])).toEqual(["The Gospel"]);
+    expect(readingLabels([reading("gospel")])).toEqual(["The Holy Gospel"]);
   });
 
   it("gives no labels when there are no readings", () => {
