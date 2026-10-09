@@ -14,6 +14,7 @@ import {
 } from "../constants";
 import type { LiturgicalData, Reading } from "../services";
 import PrayerScreen from "./PrayerScreen";
+import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import type { DailyReadingsParams, PdfViewerParams } from "@/types/routes";
 import {
@@ -49,8 +50,9 @@ const baseFeature = {
 
 let mockFeature: typeof baseFeature = baseFeature;
 let mockPickerProps: {
-  isVisible: boolean;
+  visible: boolean;
   date: Date;
+  accentColour: string;
   onConfirm: (date: Date) => void;
   onCancel: () => void;
 };
@@ -75,7 +77,7 @@ jest.mock("react-native-safe-area-context", () => ({
 
 // Renders nothing, but keeps the props so a test can see whether the picker is
 // open and answer it the way the native dialog would.
-jest.mock("react-native-modal-datetime-picker", () => (props: any) => {
+jest.mock("../components/DatePickerSheet", () => (props: any) => {
   mockPickerProps = props;
   return null;
 });
@@ -442,36 +444,43 @@ describe("PrayerScreen", () => {
       ["epistle", epistle],
       ["gospel", gospel],
       ["thirdReading", thirdReading],
-    ])("opens the %s in the daily readings screen when tapped", async (type, r) => {
-      mockFeature = {
-        ...baseFeature,
-        data: dataWith({
-          day: {
-            feastTitle: null,
-            readings: [epistle, gospel, thirdReading],
-          },
-        }),
-      };
-      await render(<PrayerScreen />);
+    ])(
+      "opens the %s in the daily readings screen when tapped",
+      async (type, r) => {
+        mockFeature = {
+          ...baseFeature,
+          data: dataWith({
+            day: {
+              feastTitle: null,
+              readings: [epistle, gospel, thirdReading],
+            },
+          }),
+        };
+        await render(<PrayerScreen />);
 
-      await fireEvent.press(screen.getByText(r.teaser));
+        await fireEvent.press(screen.getByText(r.teaser));
 
-      expect(mockPush).toHaveBeenCalledTimes(1);
-      expect(mockPush).toHaveBeenCalledWith({
-        pathname: "/dailyReadings",
-        params: {
-          type,
-          reading: r.fullText,
-          title: r.title,
-        } satisfies DailyReadingsParams,
-      });
-      expect(Alert.alert).not.toHaveBeenCalled();
-    });
+        expect(mockPush).toHaveBeenCalledTimes(1);
+        expect(mockPush).toHaveBeenCalledWith({
+          pathname: "/dailyReadings",
+          params: {
+            type,
+            reading: r.fullText,
+            title: r.title,
+          } satisfies DailyReadingsParams,
+        });
+        expect(Alert.alert).not.toHaveBeenCalled();
+      },
+    );
   });
 
   describe("fixed lists", () => {
     const prayers = [
-      ["Morning Prayers", "A short prayer to start the day", MORNING_PRAYERS_URL],
+      [
+        "Morning Prayers",
+        "A short prayer to start the day",
+        MORNING_PRAYERS_URL,
+      ],
       [
         "Small Compline",
         "A prayer before sleep & Communion",
@@ -490,16 +499,8 @@ describe("PrayerScreen", () => {
     ];
     const services = [
       ["Great Vespers", "An evening sacrifice", GREAT_VESPERS_URL],
-      [
-        "Small Compline",
-        "When a Priest is serving",
-        SMALL_COMPLINE_PRIEST_URL,
-      ],
-      [
-        "Paraklesis",
-        "To the Theotokos, the Mother of Light",
-        PARAKLESIS_URL,
-      ],
+      ["Small Compline", "When a Priest is serving", SMALL_COMPLINE_PRIEST_URL],
+      ["Paraklesis", "To the Theotokos, the Mother of Light", PARAKLESIS_URL],
       ["Matins", "Morning Offering", MATINS_URL],
       ["Matins - Bilingual", "English and Arabic Matins", MATINS_BILINGUAL_URL],
     ];
@@ -510,11 +511,7 @@ describe("PrayerScreen", () => {
         "A Lenten Eucharistic service",
         PRESANCTIFIED_LITURGY_URL,
       ],
-      [
-        "Akathist",
-        "A standing hymn of praise, to the Theotokos",
-        AKATHIST_URL,
-      ],
+      ["Akathist", "A standing hymn of praise, to the Theotokos", AKATHIST_URL],
     ];
 
     describe.each([
@@ -573,8 +570,14 @@ describe("PrayerScreen", () => {
     it("starts closed, showing the selected date", async () => {
       await render(<PrayerScreen />);
 
-      expect(mockPickerProps.isVisible).toBe(false);
+      expect(mockPickerProps.visible).toBe(false);
       expect(mockPickerProps.date).toBe(baseFeature.selectedDate);
+    });
+
+    it("is tinted with the app's primary colour", async () => {
+      await render(<PrayerScreen />);
+
+      expect(mockPickerProps.accentColour).toBe(Colours.light.primary);
     });
 
     it("opens when the calendar button is pressed", async () => {
@@ -582,7 +585,7 @@ describe("PrayerScreen", () => {
 
       await fireEvent.press(screen.getByLabelText("Choose date"));
 
-      expect(mockPickerProps.isVisible).toBe(true);
+      expect(mockPickerProps.visible).toBe(true);
     });
 
     it("closes without loading anything when cancelled", async () => {
@@ -591,7 +594,7 @@ describe("PrayerScreen", () => {
 
       await act(() => mockPickerProps.onCancel());
 
-      expect(mockPickerProps.isVisible).toBe(false);
+      expect(mockPickerProps.visible).toBe(false);
       expect(mockLoad).not.toHaveBeenCalled();
     });
 
@@ -604,7 +607,7 @@ describe("PrayerScreen", () => {
 
       expect(mockLoad).toHaveBeenCalledTimes(1);
       expect(mockLoad).toHaveBeenCalledWith(chosen);
-      expect(mockPickerProps.isVisible).toBe(false);
+      expect(mockPickerProps.visible).toBe(false);
     });
   });
 
