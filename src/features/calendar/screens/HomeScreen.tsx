@@ -1,3 +1,4 @@
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -92,6 +93,7 @@ const HomeListHeader = ({
         {minorFastLabel}
       </Text>
     </View>
+    <OrnamentalDivider colour={theme.secondary} style={styles.divider} />
   </>
 );
 
@@ -113,6 +115,10 @@ const SectionHeader = ({
   theme: Theme;
 }) => (
   <>
+    {/* The header's divider closes the first week, so only later ones get a rule. */}
+    {section.weekLabel && section.sectionIndex > 0 ? (
+      <OrnamentalDivider colour={theme.secondary} style={styles.divider} />
+    ) : null}
     {section.weekLabel ? (
       <Text
         style={[
@@ -325,14 +331,9 @@ export default function HomeScreen() {
             </Text>
           }
           stickySectionHeadersEnabled={false} // Disable sticky headers
-          // The accent bar is the content's left border, so it scrolls and
-          // fades under the header with the events.
           contentContainerStyle={{
             paddingBottom: 120, // Add padding to the bottom
-            marginLeft: gutter + 10,
-            marginRight: gutter,
-            borderLeftWidth: 7,
-            borderLeftColor: theme.secondary,
+            marginHorizontal: gutter,
           }}
           refreshControl={
             <RefreshControl
@@ -361,6 +362,11 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
+  },
+  // Lines up with the event cards' 16pt inset.
+  divider: {
+    marginHorizontal: 16,
+    marginVertical: 12,
   },
   emptyMessage: {
     ...typography.title,
