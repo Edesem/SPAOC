@@ -163,14 +163,14 @@ const getStyles = () =>
       gap: 30,
     },
     header: {
-      alignItems: "center",
       marginBottom: 10,
       fontSize: 24,
     },
+    // Left-aligned, in line with the large header title above it.
     subtitle: {
       ...typography.aside,
       marginTop: 10,
-      textAlign: "center",
+      textAlign: "left",
       lineHeight: 22,
     },
     section: {

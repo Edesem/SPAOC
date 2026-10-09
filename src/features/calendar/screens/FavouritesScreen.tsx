@@ -89,15 +89,15 @@ export default function FavouritesScreen() {
 const getStyles = () =>
   StyleSheet.create({
     header: {
-      alignItems: "center",
       marginBottom: 30,
     },
+    // Left-aligned, in line with the large header title above it.
     subtitle: {
       ...typography.aside,
       fontSize: typography.title.fontSize,
       marginTop: 10,
-      marginHorizontal: 26,
-      textAlign: "center",
+      marginHorizontal: 20,
+      textAlign: "left",
     },
     imageContainer: {
       alignItems: "center",
