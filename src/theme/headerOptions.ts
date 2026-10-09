@@ -15,7 +15,7 @@ export const solidHeaderOptions = (
 ): NativeStackNavigationOptions => {
   const palette = scheme === "dark" ? Colours.dark : Colours.light;
   return {
-    headerTitleAlign: "center",
+    headerTitleAlign: "left",
     // Without this the back button is labelled with the previous route's name,
     // which for a screen pushed from the tabs is "(tabs)".
     headerBackTitle: "Back",
