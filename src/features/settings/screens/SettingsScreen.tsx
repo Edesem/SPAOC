@@ -6,18 +6,8 @@ import { useSettingsStore, type StartOfWeek } from "@/services/settings";
 import { Colours } from "@/theme/colours";
 import { typography } from "@/theme/typography";
 import { syncNotifications } from "@/features/notifications";
-import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
-import { useRouter } from "expo-router";
-import {
-  ScrollView,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 
 const appVersion = Constants.expoConfig?.version ?? "Unknown";
 
@@ -26,7 +16,6 @@ export default function SettingsScreen() {
 
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
   const pickerTheme = colorScheme === "dark" ? true : false;
-  const router = useRouter();
 
   const startOfWeek = useSettingsStore((state) => state.startOfWeek);
   const setStartOfWeek = useSettingsStore((state) => state.setStartOfWeek);
@@ -41,97 +30,73 @@ export default function SettingsScreen() {
   const gutter = useReadableGutter();
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-        <ScrollView
-          style={[styles.container, { paddingHorizontal: 20 + gutter }]}
-        >
-          {/* Back Button */}
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-            accessibilityRole="button"
-            accessibilityLabel="Back"
-          >
-            <MaterialIcons name="arrow-back" size={28} color={theme.primary} />
-          </TouchableOpacity>
+    // The scroll view is the screen's first view so the system can fade it
+    // under the glass header; the title and back button are the native header's.
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={[styles.container, { backgroundColor: theme.background }]}
+      contentContainerStyle={styles.content}
+    >
+      <View style={{ paddingHorizontal: gutter }}>
+        {/* Start of Week */}
+        <SettingPicker
+          label="Start of the Week"
+          value={startOfWeek}
+          onValueChange={(val) => setStartOfWeek(val as StartOfWeek)}
+          items={[
+            { label: "Sunday", value: "sunday" },
+            { label: "Monday", value: "monday" },
+          ]}
+          theme={theme}
+          pickerTheme={pickerTheme}
+          styles={styles}
+        />
 
-          {/* Settings Header */}
-          <Text style={[styles.title, { color: theme.primary }]}>Settings</Text>
-
-          {/* Start of Week */}
-          <SettingPicker
-            label="Start of the Week"
-            value={startOfWeek}
-            onValueChange={(val) => setStartOfWeek(val as StartOfWeek)}
-            items={[
-              { label: "Sunday", value: "sunday" },
-              { label: "Monday", value: "monday" },
+        {/* Daily Saint Notification toggle */}
+        <View style={styles.settingItem}>
+          <Text
+            style={[
+              typography.title,
+              {
+                color: theme.moreImportantText,
+                flex: 1,
+                paddingRight: 12,
+              },
             ]}
-            theme={theme}
-            pickerTheme={pickerTheme}
-            styles={styles}
+          >
+            Notification for Saint of the day
+          </Text>
+          <Switch
+            value={dailySaintsEnabled}
+            onValueChange={async (value) => {
+              await setDailySaintsEnabled(value);
+              syncNotifications();
+            }}
+            accessibilityLabel="Notification for Saint of the day"
+            trackColor={{ false: "#767577", true: "#34c658" }}
+            thumbColor="#fff"
           />
+        </View>
 
-          {/* Daily Saint Notification toggle */}
-          <View style={styles.settingItem}>
-            <Text
-              style={[
-                typography.title,
-                {
-                  color: theme.moreImportantText,
-                  flex: 1,
-                  paddingRight: 12,
-                },
-              ]}
-            >
-              Notification for Saint of the day
-            </Text>
-            <Switch
-              value={dailySaintsEnabled}
-              onValueChange={async (value) => {
-                await setDailySaintsEnabled(value);
-                syncNotifications();
-              }}
-              accessibilityLabel="Notification for Saint of the day"
-              trackColor={{ false: "#767577", true: "#34c658" }}
-              thumbColor="#fff"
-            />
-          </View>
+        <CalendarLegend theme={theme} />
 
-          <CalendarLegend theme={theme} />
-
-          {/* App Info */}
-          <View style={styles.section}>
-            <Text style={[styles.versionText, { color: theme.detail }]}>
-              App Version: {appVersion}
-            </Text>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+        {/* App Info */}
+        <View style={styles.section}>
+          <Text style={[styles.versionText, { color: theme.detail }]}>
+            App Version: {appVersion}
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
     padding: 20,
-  },
-  // The 28pt arrow sits in a 48pt box (44pt iOS / 48dp Android minimum).
-  backButton: {
-    alignSelf: "flex-start",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 48,
-    height: 48,
-    marginLeft: -10,
-    marginBottom: 12,
-  },
-  title: {
-    ...typography.displayTitle,
-    marginBottom: 20,
-    textAlign: "center",
   },
   settingItem: {
     flexDirection: "row",
