@@ -26,19 +26,6 @@ jest.mock("../favourites", () => ({
   },
 }));
 
-jest.mock("react-native-safe-area-context", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  const SafeArea = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(View, null, children);
-
-  return {
-    SafeAreaProvider: SafeArea,
-    SafeAreaView: SafeArea,
-  };
-});
-
 jest.mock("expo-router", () => {
   const React = require("react");
 

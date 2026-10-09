@@ -11,14 +11,9 @@ jest.mock("expo-localization", () => ({
   getLocales: () => [{ languageTag: "en-GB" }],
 }));
 jest.mock("../components/DonateSection", () => () => null);
-jest.mock("react-native-safe-area-context", () => {
-  const { View } = require("react-native");
-  return {
-    SafeAreaProvider: View,
-    SafeAreaView: View,
-    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
-  };
-});
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
 
 describe("HelpScreen", () => {
   let openURL: jest.SpyInstance;
@@ -39,13 +34,9 @@ describe("HelpScreen", () => {
     };
   };
 
-  it("sets the screen title in the serif and link labels in the sans at 500", async () => {
+  it("sets link labels in the sans at 500", async () => {
     await render(<HelpScreen />);
 
-    expect(screen.getByText("Help & Support")).toHaveStyle({
-      fontFamily: fontFamily.serif,
-      fontWeight: "700",
-    });
     expect(screen.getByText("Report a bug")).toHaveStyle({
       fontFamily: fontFamily.sans,
       fontWeight: "500",
