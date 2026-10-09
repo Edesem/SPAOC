@@ -1,4 +1,5 @@
 import { faBed } from "@fortawesome/free-solid-svg-icons/faBed";
+import { fontFamily } from "@/theme/typography";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Alert } from "react-native";
 import type { PdfEntry } from "../catalogue";
@@ -38,6 +39,23 @@ describe("PdfListSection", () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  it("sets the heading in the serif and the entries in the sans", async () => {
+    await render(<PdfListSection heading="Services" entries={entries} />);
+
+    expect(screen.getByText("Services")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(screen.getByText("Vespers")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 19,
+    });
+    expect(screen.getByText("Evening")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontStyle: "italic",
+    });
   });
 
   it("shows the heading and each entry with its subtitle", async () => {

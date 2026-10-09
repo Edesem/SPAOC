@@ -68,6 +68,29 @@ module.exports = defineConfig([
     },
   },
   {
+    // Alegreya Sans has no 600, so an inline weight can silently fall back to a
+    // synthesised face. Family, weight and style come from theme/typography.ts.
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/theme/**", "**/*.test.{ts,tsx}", "src/__tests__/**"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "Property[key.name=/^(fontFamily|fontWeight|fontStyle)$/]",
+          message:
+            "Use a token from @/theme/typography instead of an inline font family, weight or style.",
+        },
+        {
+          selector:
+            "Property[key.value=/^(fontFamily|fontWeight|fontStyle)$/]",
+          message:
+            "Use a token from @/theme/typography instead of an inline font family, weight or style.",
+        },
+      ],
+    },
+  },
+  {
     // The planner decides what to schedule from the data and time it is given.
     // It must not touch React, Expo, storage or the clock (docs/notification-planner.md).
     files: ["src/features/notifications/notificationPlanner.ts"],

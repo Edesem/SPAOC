@@ -1,8 +1,9 @@
 import { resetNow, setNow } from "@/lib/parishTime";
+import { fontFamily, typography } from "@/theme/typography";
 import HomeScreen from "./HomeScreen";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { SectionList } from "react-native";
+import { SectionList, StyleSheet } from "react-native";
 
 // The screen is tested against a fake useHomeFeature. What the feature
 // returns is covered by useHomeFeature.test.ts and homeRules.test.ts.
@@ -14,7 +15,7 @@ const mockOnRefresh = jest.fn();
 
 const baseFeature = {
   todaysSaints: ["St. Test", "St. Other"],
-  todaysSaintsTitle: "Today's Feasts",
+  todaysSaintsTitle: "Today we Commemorate",
   fastLoading: false,
   loadErrorMessage: null as string | null,
   majorFastLabel: "Great Lent",
@@ -118,10 +119,82 @@ describe("HomeScreen", () => {
 
     const { getByText } = await render(<HomeScreen />);
 
-    expect(getByText("Today's Feasts")).toBeTruthy();
+    expect(getByText("Today we Commemorate")).toBeTruthy();
     expect(getByText("St. Test\nSt. Other")).toBeTruthy();
     expect(getByText("Great Lent")).toBeTruthy();
     expect(getByText("Fast free day")).toBeTruthy();
+  });
+
+  it("sets the commemoration heading small, in Alegreya SC and parish red", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }])],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
+    expect(getByText("Today we Commemorate")).toHaveStyle({
+      fontFamily: fontFamily.smallCaps,
+      fontSize: typography.eyebrow.fontSize,
+      color: "#A3352B",
+    });
+  });
+
+  it("sets the saint names larger than the commemoration heading", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }])],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
+    const heading = StyleSheet.flatten(
+      getByText("Today we Commemorate").props.style,
+    );
+    const names = StyleSheet.flatten(
+      getByText("St. Test\nSt. Other").props.style,
+    );
+    expect(names).toMatchObject({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(names.fontSize).toBeGreaterThan(heading.fontSize as number);
+  });
+
+  it("sets the fasting headings in the serif, the liturgical voice", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }])],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
+    expect(getByText("Great Lent")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(getByText("Fast free day")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontSize: 19,
+    });
+  });
+
+  it("sets the week label and day headers in the sans, the noticeboard voice", async () => {
+    mockFeature = {
+      ...baseFeature,
+      sections: [eventSection("Today", 0, [{ id: "1" }], "This week")],
+    };
+
+    const { getByText } = await render(<HomeScreen />);
+
+    expect(getByText("This week")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontWeight: "700",
+    });
+    expect(getByText("Today")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontSize: 19,
+    });
   });
 
   it("shows no load error message when everything loads", async () => {
@@ -141,7 +214,7 @@ describe("HomeScreen", () => {
     expect(getByRole("alert")).toHaveTextContent(
       "Couldn't load events. Pull down to retry.",
     );
-    expect(getByText("Today's Feasts")).toBeTruthy();
+    expect(getByText("Today we Commemorate")).toBeTruthy();
     expect(getByText("Great Lent")).toBeTruthy();
   });
 
@@ -188,7 +261,7 @@ describe("HomeScreen", () => {
     const { getByText, getByTestId } = await render(<HomeScreen />);
 
     expect(getByText("No events found.")).toBeTruthy();
-    expect(getByText("Today's Feasts")).toBeTruthy();
+    expect(getByText("Today we Commemorate")).toBeTruthy();
     expect(getByTestId("home-top-image")).toBeTruthy();
     expect(getByTestId("home-bottom-image")).toBeTruthy();
   });

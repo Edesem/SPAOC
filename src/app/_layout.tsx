@@ -1,10 +1,10 @@
-import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Colours } from '@/theme/colours';
+import { headerTitleStyle } from '@/theme/typography';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from '@/components/ui/toastConfig';
 import { useFavouritesStore } from '@/features/calendar';
@@ -21,10 +21,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
-  const [loaded] = useFonts({
-    SpaceMono: require('@assets/fonts/SpaceMono-Regular.ttf'),
-  });
 
   const hydrated = useSettingsStore((state) => state.hydrated);
 
@@ -58,15 +54,15 @@ export default function RootLayout() {
     }
   }, [hydrated]);
 
-  const ready = loaded && hydrated;
-
+  // The Alegreya fonts are embedded by the expo-font plugin (app.json), so only
+  // settings hold the splash screen.
   useEffect(() => {
-    if (ready) {
+    if (hydrated) {
       SplashScreen.hideAsync();
     }
-  }, [ready]);
+  }, [hydrated]);
 
-  if (!ready) {
+  if (!hydrated) {
     return null;
   }
 
@@ -79,7 +75,7 @@ export default function RootLayout() {
           headerTitleAlign: 'center',
           headerStyle: { backgroundColor: colorScheme === 'dark' ? Colours.dark.background : Colours.light.background },
           headerTintColor: colorScheme === 'dark' ? Colours.dark.moreImportantText : Colours.light.moreImportantText,
-          headerTitleStyle: { fontWeight: 'bold' },
+          headerTitleStyle,
         }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />

@@ -5,6 +5,7 @@ import { EventItem } from "./EventItem";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFavouritesStore } from "../favourites";
 import { getCalendarColour } from "@/domain/calendarSources";
+import { fontFamily } from "@/theme/typography";
 import type { EventData } from "../types";
 import {
   addFavourite,
@@ -82,6 +83,25 @@ describe("EventItem calendar name", () => {
 
     expect(await findByText(/08:00 PM/)).toBeTruthy();
     expect(queryByText(/·/)).toBeNull();
+  });
+});
+
+describe("EventItem typography", () => {
+  it("sets the title, time and date in the sans, the noticeboard voice", async () => {
+    const { getByText } = await render(
+      <EventItem item={event} onPress={jest.fn()} showFullDate />,
+    );
+
+    expect(getByText("Divine Liturgy")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+    });
+    expect(getByText(/^Church · .*08:00 PM/)).toHaveStyle({
+      fontFamily: fontFamily.sans,
+    });
+    expect(getByText(/2099/)).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontWeight: "500",
+    });
   });
 });
 

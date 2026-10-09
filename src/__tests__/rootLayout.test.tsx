@@ -7,12 +7,17 @@ import {
   syncNotifications,
 } from "@/features/notifications";
 import { useSettingsStore } from "@/services/settings";
+import { fontFamily } from "@/theme/typography";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { act, render, waitFor } from "@testing-library/react-native";
+import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import React from "react";
 
-jest.mock("expo-font", () => ({ useFonts: () => [true] }));
+// Alegreya is embedded at build time by the expo-font plugin, so the layout
+// must not load or wait for any font at runtime.
+jest.mock("expo-font", () => ({ useFonts: jest.fn(() => [false]) }));
+const mockStackProps = jest.fn();
 jest.mock("expo-splash-screen", () => ({
   preventAutoHideAsync: jest.fn(),
   hideAsync: jest.fn(),
@@ -28,9 +33,10 @@ jest.mock("@/features/notifications", () => ({
 jest.mock("@/components/ui/toastConfig", () => ({ toastConfig: () => ({}) }));
 jest.mock("expo-router", () => {
   const { View } = require("react-native");
-  const Stack = ({ children }: { children?: React.ReactNode }) => (
-    <View testID="stack">{children}</View>
-  );
+  const Stack = (props: { children?: React.ReactNode }) => {
+    mockStackProps(props);
+    return <View testID="stack">{props.children}</View>;
+  };
   Stack.Screen = () => null;
   return {
     Stack,
@@ -66,6 +72,25 @@ describe("RootLayout", () => {
     expect(useSettingsStore.getState().hydrated).toBe(true);
     expect(useSettingsStore.getState().getStartOfWeek()).toBe("sunday");
     expect(SplashScreen.hideAsync).toHaveBeenCalled();
+  });
+
+  it("renders without loading a font at runtime", async () => {
+    const { queryByTestId } = await render(<RootLayout />);
+
+    await waitFor(() => expect(queryByTestId("stack")).toBeTruthy());
+    expect(useFonts).not.toHaveBeenCalled();
+    expect(SplashScreen.hideAsync).toHaveBeenCalled();
+  });
+
+  it("sets stack header titles in the serif", async () => {
+    await render(<RootLayout />);
+
+    await waitFor(() => expect(mockStackProps).toHaveBeenCalled());
+    const { screenOptions } = mockStackProps.mock.calls.at(-1)![0];
+    expect(screenOptions.headerTitleStyle).toEqual({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
   });
 
   it("hydrates the favourites store at startup", async () => {

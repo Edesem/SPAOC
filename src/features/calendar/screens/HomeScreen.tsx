@@ -1,15 +1,12 @@
-import { EventItem } from "../components/EventItem";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useReadableGutter } from "@/hooks/useReadableGutter";
-import { useHomeFeature } from "../hooks/useHomeFeature";
 import { now } from "@/lib/parishTime";
 import { Colours } from "@/theme/colours";
-import { HomeEventSection } from "../domain/homeRules";
+import { typography } from "@/theme/typography";
+import { TabParamList } from "@/types/routes";
 import { MaterialIcons } from "@expo/vector-icons";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
-import { EventData } from "../types";
-import { TabParamList } from "@/types/routes";
 import "expo-dev-client";
 import * as Haptics from "expo-haptics";
 import { router, useNavigation } from "expo-router";
@@ -28,6 +25,10 @@ import {
 } from "react-native";
 import MonthPicker from "react-native-month-year-picker";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { EventItem } from "../components/EventItem";
+import { HomeEventSection } from "../domain/homeRules";
+import { useHomeFeature } from "../hooks/useHomeFeature";
+import { EventData } from "../types";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -70,13 +71,13 @@ const HomeListHeader = ({
     <View style={styles.imageContainer}>
       <Image
         testID="home-top-image"
-        source={require("@assets/images/orthodox/CrossInSquareThick.png")}
+        source={require("@assets/images/orthodox/CrossAndDots.png")}
         style={[styles.topImage, { tintColor: theme.primary }]}
       />
     </View>
     <View style={styles.saintOfTheDayContainer}>
       <Text
-        style={[styles.saintOfTheDayTitle, { color: theme.moreImportantText }]}
+        style={[styles.saintOfTheDayTitle, { color: theme.commemorate }]}
       >
         {todaysSaintsTitle}
       </Text>
@@ -359,13 +360,13 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   emptyMessage: {
+    ...typography.title,
     textAlign: "center",
-    fontSize: 18,
     marginTop: 20,
   },
   loadErrorMessage: {
+    ...typography.body,
     textAlign: "center",
-    fontSize: 16,
     paddingHorizontal: 15,
     paddingTop: 10,
   },
@@ -389,36 +390,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   saintOfTheDayTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
+    ...typography.eyebrow,
+    marginBottom: 6,
   },
   saintOfTheDay: {
-    fontSize: 18,
+    ...typography.displayTitle,
     marginBottom: 20,
     textAlign: "center",
   },
   MajorFastText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    ...typography.displayTitle,
     marginBottom: 10,
     textAlign: "center",
   },
   minorFastText: {
-    fontSize: 18,
+    ...typography.liturgicalTitle,
     textAlign: "center",
   },
   weekLabel: {
+    ...typography.headline,
     marginLeft: 20,
     marginTop: 15,
-    fontSize: 24,
-    fontWeight: "bold",
   },
   sectionHeader: {
+    ...typography.title,
     marginLeft: 15,
     marginTop: 10,
     padding: 5,
-    fontSize: 18,
   },
   icon: {
     fontSize: 36,
@@ -441,7 +439,6 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   clearFilterText: {
-    fontSize: 16,
-    fontWeight: "bold",
+    ...typography.button,
   },
 });

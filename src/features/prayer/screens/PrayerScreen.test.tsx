@@ -14,6 +14,7 @@ import {
 } from "../constants";
 import type { LiturgicalData, Reading } from "../services";
 import PrayerScreen from "./PrayerScreen";
+import { fontFamily } from "@/theme/typography";
 import type { DailyReadingsParams, PdfViewerParams } from "@/types/routes";
 import {
   act,
@@ -221,6 +222,16 @@ describe("PrayerScreen", () => {
       expect(
         screen.queryByText("There are no liturgical texts today."),
       ).toBeNull();
+    });
+
+    it("sets the error message in the sans rather than the system font", async () => {
+      mockFeature = { ...baseFeature, error: new Error("offline") };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("Error loading prayers")).toHaveStyle({
+        fontFamily: fontFamily.sans,
+      });
     });
 
     it("offers a retry that reloads the selected day", async () => {
