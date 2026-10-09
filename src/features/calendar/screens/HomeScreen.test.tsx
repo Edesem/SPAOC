@@ -1,6 +1,9 @@
 import { resetNow, setNow } from "@/lib/parishTime";
+import { stackScreenOptions } from "@/testing/expoRouterStack";
 import { fontFamily, typography } from "@/theme/typography";
 import HomeScreen from "./HomeScreen";
+import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
 import { SectionList, StyleSheet } from "react-native";
@@ -25,6 +28,7 @@ const baseFeature = {
   onRefresh: mockOnRefresh,
   selectedDate: new Date("2026-03-15T12:00:00.000Z"),
   isMonthFiltered: false,
+  monthFilterLabel: null as string | null,
   clearMonthFilter: mockClearMonthFilter,
   showMonthPicker: false,
   setShowMonthPicker: mockSetShowMonthPicker,
@@ -51,29 +55,19 @@ jest.mock("expo-splash-screen", () => ({
 }));
 
 jest.mock("expo-router", () => ({
+  ...require("@/testing/expoRouterStack").createStackMock(),
   router: { push: jest.fn() },
   useNavigation: () => ({
-    addListener: (_event: string, listener: () => void) => {
-      mockTabPressListener = listener;
-      return () => {
-        mockTabPressListener = undefined;
-      };
-    },
+    getParent: () => ({
+      addListener: (_event: string, listener: () => void) => {
+        mockTabPressListener = listener;
+        return () => {
+          mockTabPressListener = undefined;
+        };
+      },
+    }),
   }),
 }));
-
-jest.mock("react-native-safe-area-context", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  const SafeArea = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(View, null, children);
-
-  return {
-    SafeAreaProvider: SafeArea,
-    SafeAreaView: SafeArea,
-  };
-});
 
 jest.mock("react-native-month-year-picker", () => {
   const React = require("react");
@@ -329,28 +323,96 @@ describe("HomeScreen", () => {
       expect(getAllByTestId("month-picker")).toHaveLength(1);
     });
 
-    it("hides the clear button while no month is selected", async () => {
-      const { queryByLabelText } = await render(<HomeScreen />);
+    it("has no month in the header while no month is selected", async () => {
+      await render(<HomeScreen />);
 
-      expect(queryByLabelText("Clear month filter")).toBeNull();
+      expect(stackScreenOptions.current.title).toBe("");
     });
 
-    it("shows the clear button, with the empty message, when the month has no events", async () => {
-      mockFeature = { ...baseFeature, isMonthFiltered: true };
+    it("shows a plain calendar button, not the menu, while no month is selected", async () => {
+      const { queryByTestId } = await render(<HomeScreen />);
 
-      const { getByLabelText, getByText } = await render(<HomeScreen />);
+      expect(queryByTestId("toolbar-menu")).toBeNull();
+    });
 
-      expect(getByLabelText("Clear month filter")).toBeTruthy();
+    it("shows the picked month in the header and turns the calendar into a menu", async () => {
+      mockFeature = {
+        ...baseFeature,
+        isMonthFiltered: true,
+        monthFilterLabel: "March 2026",
+      };
+
+      const { getByLabelText, queryByLabelText, getByText } = await render(
+        <HomeScreen />,
+      );
+
+      expect(stackScreenOptions.current.title).toBe("March 2026");
+      expect(getByLabelText("Month filter, March 2026")).toBeTruthy();
+      expect(getByText("Change Month")).toBeTruthy();
+      expect(getByText("Show All Months")).toBeTruthy();
+      expect(queryByLabelText("Choose month")).toBeNull();
+    });
+
+    it("keeps the empty message and the menu when the month has no events", async () => {
+      mockFeature = {
+        ...baseFeature,
+        isMonthFiltered: true,
+        monthFilterLabel: "March 2026",
+      };
+
+      const { getByText, getByLabelText } = await render(<HomeScreen />);
+
       expect(getByText("No events found.")).toBeTruthy();
+      expect(getByLabelText("Month filter, March 2026")).toBeTruthy();
     });
 
-    it("clears the month filter when the clear button is pressed", async () => {
-      mockFeature = { ...baseFeature, isMonthFiltered: true };
-      const { getByLabelText } = await render(<HomeScreen />);
+    it("opens the month picker from the menu's Change Month", async () => {
+      mockFeature = {
+        ...baseFeature,
+        isMonthFiltered: true,
+        monthFilterLabel: "March 2026",
+      };
+      const { getByText } = await render(<HomeScreen />);
 
-      await fireEvent.press(getByLabelText("Clear month filter"));
+      await fireEvent.press(getByText("Change Month"));
+
+      expect(mockSetShowMonthPicker).toHaveBeenCalledWith(true);
+    });
+
+    it("clears the month filter from the menu's Show All Months", async () => {
+      mockFeature = {
+        ...baseFeature,
+        isMonthFiltered: true,
+        monthFilterLabel: "March 2026",
+      };
+      const { getByText } = await render(<HomeScreen />);
+
+      await fireEvent.press(getByText("Show All Months"));
 
       expect(mockClearMonthFilter).toHaveBeenCalledTimes(1);
+      expect(Haptics.impactAsync).toHaveBeenCalled();
+    });
+  });
+
+  describe("settings button", () => {
+    it("opens settings from the header's left button", async () => {
+      const { getByLabelText } = await render(<HomeScreen />);
+
+      await fireEvent.press(getByLabelText("Settings"));
+
+      expect(router.push).toHaveBeenCalledWith("/settings");
+      expect(Haptics.impactAsync).toHaveBeenCalled();
+    });
+  });
+
+  describe("loading", () => {
+    it("keeps the header buttons but shows a spinner instead of the list", async () => {
+      mockFeature = { ...baseFeature, fastLoading: true };
+
+      const { getByLabelText, queryByTestId } = await render(<HomeScreen />);
+
+      expect(getByLabelText("Settings")).toBeTruthy();
+      expect(queryByTestId("home-list")).toBeNull();
     });
   });
 
@@ -370,6 +432,21 @@ describe("HomeScreen", () => {
       mockTabPressListener?.();
 
       expect(scrollTo).toHaveBeenCalledWith({ y: 0, animated: true });
+    });
+
+    it("scrolls back to where the list first rested, below the glass header", async () => {
+      const scrollTo = spyOnScrollTo();
+      const { getByTestId } = await render(<HomeScreen />);
+
+      await fireEvent.scroll(getByTestId("home-list"), {
+        nativeEvent: { contentOffset: { y: -103 } },
+      });
+      await fireEvent.scroll(getByTestId("home-list"), {
+        nativeEvent: { contentOffset: { y: 480 } },
+      });
+      mockTabPressListener?.();
+
+      expect(scrollTo).toHaveBeenCalledWith({ y: -103, animated: true });
     });
   });
 });

@@ -327,6 +327,24 @@ describe("useHomeFeature", () => {
       expect(result.current.isMonthFiltered).toBe(true);
     });
 
+    it("labels the filter with the picked month, and has no label without one", async () => {
+      const { result } = await renderHook(() => useHomeFeature());
+      expect(result.current.monthFilterLabel).toBeNull();
+
+      await act(async () => {
+        result.current.onValueChange(
+          "dateSetAction",
+          new Date("2026-03-15T12:00:00.000Z"),
+        );
+      });
+      expect(result.current.monthFilterLabel).toBe("March 2026");
+
+      await act(async () => {
+        result.current.clearMonthFilter();
+      });
+      expect(result.current.monthFilterLabel).toBeNull();
+    });
+
     it("shows every event again after the filter is cleared", async () => {
       mockEventsState = marchAndApril();
       const { result } = await renderHook(() => useHomeFeature());

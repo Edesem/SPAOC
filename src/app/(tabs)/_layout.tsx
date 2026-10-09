@@ -33,7 +33,7 @@ export default function TabLayout() {
         selected: { color: tintColor },
       }}
     >
-      <NativeTabs.Trigger name="index">
+      <NativeTabs.Trigger name="(events)">
         <NativeTabs.Trigger.Icon
           sf={{ default: "calendar", selected: "calendar" }}
           md="event"
