@@ -39,6 +39,7 @@ describe("typography", () => {
         "bodyStrong",
         "button",
         "displayTitle",
+        "dropCap",
         "eyebrow",
         "headline",
         "label",
@@ -95,6 +96,7 @@ describe("typography", () => {
       Object.fromEntries(tokens.map(([name, token]) => [name, token.fontSize])),
     ).toEqual({
       displayTitle: 30,
+      dropCap: 52,
       eyebrow: 18,
       readingTitle: 25,
       liturgicalTitle: 19,

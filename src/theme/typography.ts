@@ -84,13 +84,15 @@ export const headerTitleStyle: TextStyle = {
 };
 
 // The iOS large title that collapses into the header keeps the system size.
-export const headerLargeTitleStyle: { fontFamily: string; fontWeight: string } = {
-  fontFamily: fontFamily.serif,
-  fontWeight: "700",
-};
+export const headerLargeTitleStyle: { fontFamily: string; fontWeight: string } =
+  {
+    fontFamily: fontFamily.serif,
+    fontWeight: "700",
+  };
 
 export type TypographyToken =
   | "displayTitle"
+  | "dropCap"
   | "eyebrow"
   | "readingTitle"
   | "liturgicalTitle"
@@ -126,6 +128,8 @@ export const typography: Record<TypographyToken, TextStyle> = {
   // Liturgical voice
   displayTitle: serif({ fontSize: 30, fontWeight: "700" }),
   readingTitle: serif({ fontSize: 25, fontWeight: "700" }),
+  // The large first letter of a reading, sized to span two lines of text.
+  dropCap: serif({ fontSize: 52, fontWeight: "700", lineHeight: 52 }),
   liturgicalTitle: serif({ fontSize: 19, fontWeight: "400" }),
   reading: serif({ fontSize: 19, fontWeight: "400", lineHeight: 26 }),
   readingTeaser: serif({ fontSize: 17, fontWeight: "400", lineHeight: 24 }),
