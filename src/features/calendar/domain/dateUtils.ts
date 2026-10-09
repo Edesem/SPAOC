@@ -62,12 +62,13 @@ export const groupEventsByDay = (
   const startOfThisWeek = getStartOfWeek(now(), startOfWeek);
   const startOfNextWeek = new Date(startOfThisWeek);
   startOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
-  const startOfLater = new Date(startOfNextWeek); // One week after "Next Week"
-  startOfLater.setDate(startOfLater.getDate() + 7); // Start of "Later" label
+  const startOfFollowingWeeks = new Date(startOfNextWeek); // One week after "Next Week"
+  startOfFollowingWeeks.setDate(startOfFollowingWeeks.getDate() + 7);
 
   let addedThisWeekLabel = false;
   let addedNextWeekLabel = false;
-  let addedLaterLabel = false; // Flag for "Later" label
+  // Every week after "Next Week" is labelled by the day it starts, once.
+  const labelledFollowingWeeks = new Set<string>();
 
   // Transform the grouped object into an array with formatted titles
   return Object.keys(grouped)
@@ -85,17 +86,22 @@ export const groupEventsByDay = (
           weekLabel = "This Week";
           addedThisWeekLabel = true;
         }
-      } else if (date >= startOfNextWeek && date < startOfLater) {
+      } else if (date >= startOfNextWeek && date < startOfFollowingWeeks) {
         // Assign "Next Week" label only once
         if (!addedNextWeekLabel) {
           weekLabel = "Next Week";
           addedNextWeekLabel = true;
         }
-      } else if (date >= startOfLater) {
-        // Assign "Later" label only once
-        if (!addedLaterLabel) {
-          weekLabel = "Later";
-          addedLaterLabel = true;
+      } else {
+        const weekStart = getStartOfWeek(date, startOfWeek);
+        const weekKey = parishDayKey(weekStart);
+        if (!labelledFollowingWeeks.has(weekKey)) {
+          weekLabel = `Week of ${weekStart.toLocaleDateString("en-AU", {
+            timeZone: APP_TIME_ZONE,
+            day: "numeric",
+            month: "long",
+          })}`;
+          labelledFollowingWeeks.add(weekKey);
         }
       }
 

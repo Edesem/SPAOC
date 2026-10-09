@@ -275,13 +275,13 @@ describe("HomeScreen", () => {
           eventSection("Today", 0, [{ id: "1" }], "This Week"),
           eventSection("Tomorrow", 1, [{ id: "2" }]),
           eventSection("Monday", 2, [{ id: "3" }], "Next Week"),
-          eventSection("Sunday", 3, [{ id: "4" }], "Later"),
+          eventSection("Sunday", 3, [{ id: "4" }], "Week of 24 August"),
         ],
       };
 
       const { getAllByTestId } = await render(<HomeScreen />);
 
-      // Header, "Next Week" and "Later".
+      // Header, "Next Week" and "Week of 24 August".
       expect(getAllByTestId("ornamental-divider", HIDDEN)).toHaveLength(3);
     });
 
