@@ -4,7 +4,6 @@ import { typography } from "@/theme/typography";
 import { setStringAsync } from "expo-clipboard";
 import { useCallback, useState } from "react";
 import {
-  Image,
   Linking,
   StyleSheet,
   Text,
@@ -60,7 +59,7 @@ export default function DonateSection({ theme, CommonStyles }: any) {
     <View>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={CommonStyles.title}>Donate</Text>
+        <Text style={[CommonStyles.title, styles.heading]}>Giving</Text>
         <Text style={[styles.bibleVerse, { color: theme.detail }]}>
           &quot;For where your treasure is, there your heart will be also.&quot;
           - Matthew 6:21
@@ -140,13 +139,6 @@ export default function DonateSection({ theme, CommonStyles }: any) {
         </View>
       </View>
 
-      {/* Image */}
-      <View style={styles.imageContainer}>
-        <Image
-          source={require("@assets/images/orthodox/OrnamentFromArmenianGospel.png")}
-          style={[styles.bottomImage, { tintColor: theme.primary }]}
-        />
-      </View>
     </View>
   );
 }
@@ -154,14 +146,15 @@ export default function DonateSection({ theme, CommonStyles }: any) {
 const getStyles = () =>
   StyleSheet.create({
     header: {
-      alignItems: "center",
       marginBottom: 30,
     },
-    bibleVerse: {
-      ...typography.quote,
+    heading: {
+      textAlign: "left",
       marginTop: 10,
-      marginHorizontal: 26,
-      textAlign: "center",
+    },
+    bibleVerse: {
+      ...typography.subtitle,
+      textAlign: "left",
     },
     paymentSection: {
       borderRadius: 10,
@@ -214,17 +207,5 @@ const getStyles = () =>
     },
     copyButtonText: {
       ...typography.button,
-    },
-    bottomImage: {
-      width: 100,
-      height: 100,
-      resizeMode: "contain",
-      marginBottom: 50,
-    },
-    imageContainer: {
-      alignItems: "center",
-      marginTop: 10,
-      marginBottom: 10,
-      justifyContent: "center",
     },
   });

@@ -13,11 +13,13 @@ import { act, render, waitFor } from "@testing-library/react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import React from "react";
+import { Platform } from "react-native";
 
 // Alegreya is embedded at build time by the expo-font plugin, so the layout
 // must not load or wait for any font at runtime.
 jest.mock("expo-font", () => ({ useFonts: jest.fn(() => [false]) }));
 const mockStackProps = jest.fn();
+const mockScreenProps = jest.fn();
 jest.mock("expo-splash-screen", () => ({
   preventAutoHideAsync: jest.fn(),
   hideAsync: jest.fn(),
@@ -37,7 +39,10 @@ jest.mock("expo-router", () => {
     mockStackProps(props);
     return <View testID="stack">{props.children}</View>;
   };
-  Stack.Screen = () => null;
+  Stack.Screen = (props: object) => {
+    mockScreenProps(props);
+    return null;
+  };
   return {
     Stack,
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -91,6 +96,44 @@ describe("RootLayout", () => {
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
+  });
+
+  it.each(["eventDetails", "dailyReadings", "settings", "help"])(
+    "gives %s the glass header on iOS 26",
+    async (name) => {
+      jest.replaceProperty(Platform, "OS", "ios");
+      jest.spyOn(Platform, "Version", "get").mockReturnValue("26.0" as never);
+
+      await render(<RootLayout />);
+
+      await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+      const screen = mockScreenProps.mock.calls
+        .map(([props]) => props)
+        .find((props) => props.name === name);
+      expect(screen.options.headerTransparent).toBe(true);
+      expect(screen.options.headerShown).not.toBe(false);
+      expect(screen.options).toHaveProperty("headerStyle", undefined);
+    },
+  );
+
+  it("titles the settings header", async () => {
+    await render(<RootLayout />);
+
+    await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+    const settings = mockScreenProps.mock.calls
+      .map(([props]) => props)
+      .find((props) => props.name === "settings");
+    expect(settings.options.title).toBe("Settings");
+  });
+
+  it("titles the help header", async () => {
+    await render(<RootLayout />);
+
+    await waitFor(() => expect(mockScreenProps).toHaveBeenCalled());
+    const help = mockScreenProps.mock.calls
+      .map(([props]) => props)
+      .find((props) => props.name === "help");
+    expect(help.options.title).toBe("Help & Feedback");
   });
 
   it("hydrates the favourites store at startup", async () => {

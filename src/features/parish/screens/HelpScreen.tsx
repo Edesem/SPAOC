@@ -1,11 +1,9 @@
-import DonateSection from "../components/DonateSection";
-import { ThemedText } from "@/components/ThemedText";
+import LinkRow from "../components/LinkRow";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { typography } from "@/theme/typography";
-import { MaterialIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Haptics from "expo-haptics";
 import * as Localization from "expo-localization";
@@ -16,14 +14,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
-import {
-  SafeAreaProvider,
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HelpScreen() {
   const insets = useSafeAreaInsets();
@@ -76,93 +69,62 @@ export default function HelpScreen() {
   };
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={CommonStyles.container}>
-        <ScrollView
-          contentContainerStyle={{
-            paddingBottom: insets.bottom + 20,
-            paddingHorizontal: 20 + gutter,
-          }}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <ThemedText type="title" style={CommonStyles.title}>
-              Help & Support
-            </ThemedText>
-            <Text style={[styles.subtitle, { color: theme.detail }]}>
-              Need help using the app? Explore the options below or reach out
-              for support.
-            </Text>
-          </View>
-
-          {/* Help Links */}
-          <View style={styles.section}>
-            <LinkItem
-              icon="bug-report"
-              label="Report a bug"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                openMail("Bug");
-              }}
-              color={theme.primary}
-            />
-            <LinkItem
-              icon="lightbulb"
-              label="Suggest a feature"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                openMail("Suggestion");
-              }}
-              color={theme.primary}
-            />
-            <LinkItem
-              icon="email"
-              label="Contact Support"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                openMail("Support");
-              }}
-              color={theme.primary}
-            />
-          </View>
-
-          {/* Image */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={require("@assets/images/orthodox/ht.png")}
-              style={[styles.bottomImage, { tintColor: theme.primary }]}
-            />
-          </View>
-
-          <DonateSection theme={theme} CommonStyles={CommonStyles} />
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
-  );
-}
-
-function LinkItem({
-  icon,
-  label,
-  onPress,
-  color,
-}: {
-  icon: string;
-  label: string;
-  onPress: () => void;
-  color: string;
-}) {
-  const styles = getStyles();
-
-  return (
-    <TouchableOpacity
-      style={styles.linkItem}
-      onPress={onPress}
-      accessibilityRole="link"
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={CommonStyles.container}
+      contentContainerStyle={{
+        paddingBottom: insets.bottom + 20,
+        paddingHorizontal: 20 + gutter,
+      }}
     >
-      <MaterialIcons name={icon as any} size={24} color={color} />
-      <Text style={[styles.linkLabel, { color }]}>{label}</Text>
-    </TouchableOpacity>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={[styles.subtitle, { color: theme.detail }]}>
+          Need help using the app? Explore the options below or reach out for
+          support.
+        </Text>
+      </View>
+
+      {/* Help Links */}
+      <View style={styles.section}>
+        <LinkRow
+          icon="bug-report"
+          label="Report a bug"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            openMail("Bug");
+          }}
+          color={theme.primary}
+        />
+        <LinkRow
+          icon="lightbulb"
+          label="Suggest a feature"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            openMail("Suggestion");
+          }}
+          color={theme.primary}
+        />
+        <LinkRow
+          icon="email"
+          label="Contact Support"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            openMail("Support");
+          }}
+          color={theme.primary}
+        />
+      </View>
+
+      {/* Image */}
+      <View style={styles.imageContainer}>
+        <Image
+          source={require("@assets/images/orthodox/ht.png")}
+          style={[styles.bottomImage, { tintColor: theme.primary }]}
+        />
+      </View>
+
+    </ScrollView>
   );
 }
 
@@ -173,29 +135,17 @@ const getStyles = () =>
       gap: 30,
     },
     header: {
-      alignItems: "center",
       marginBottom: 10,
       fontSize: 24,
     },
+    // Left-aligned, in line with the large header title above it.
     subtitle: {
-      ...typography.aside,
+      ...typography.subtitle,
       marginTop: 10,
-      textAlign: "center",
-      lineHeight: 22,
+      textAlign: "left",
     },
     section: {
       gap: 16,
-    },
-    linkItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      borderRadius: 12,
-    },
-    linkLabel: {
-      ...typography.bodyStrong,
     },
     versionText: {
       ...typography.aside,
