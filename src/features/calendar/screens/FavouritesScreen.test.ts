@@ -110,6 +110,16 @@ describe("favourites", () => {
     expect(getByText("No favourites yet.")).toBeTruthy();
   });
 
+  it("left-aligns the subtitle, in line with the header title", async () => {
+    (mockRemoveExpired).mockResolvedValue([]);
+
+    const { getByText } = await render(React.createElement(FavouritesScreen));
+
+    expect(
+      getByText("Saved upcoming events will appear here for quick viewing."),
+    ).toHaveStyle({ textAlign: "left" });
+  });
+
   it("sets the empty state in the sans rather than the system font", async () => {
     (mockRemoveExpired).mockResolvedValue([]);
 

@@ -43,6 +43,14 @@ describe("HelpScreen", () => {
     });
   });
 
+  it("left-aligns the subtitle, in line with the header title", async () => {
+    await render(<HelpScreen />);
+
+    expect(screen.getByText(/Need help using the app\?/)).toHaveStyle({
+      textAlign: "left",
+    });
+  });
+
   it.each([
     ["Report a bug", "Bug", "Please describe the issue you encountered below:"],
     [

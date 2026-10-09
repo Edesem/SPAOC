@@ -88,12 +88,18 @@ export default function PrayerScreen(): JSX.Element {
         {/* The title is the header's large title. */}
         <View
           style={{
-            alignItems: "center",
+            alignItems: "flex-start",
             paddingHorizontal: 20,
             marginBottom: 30,
           }}
         >
-          <Text style={[styles.subtitle, { color: theme.detail }]}>
+          {/* Left-aligned, in line with the large header title above it. */}
+          <Text
+            style={[
+              styles.subtitle,
+              { color: theme.detail, textAlign: "left", marginHorizontal: 0 },
+            ]}
+          >
             &quot;Pray without ceasing.&quot;{"\n"}- 1 Thessalonians 5:17
           </Text>
         </View>

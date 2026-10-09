@@ -137,6 +137,14 @@ describe("PrayerScreen", () => {
       expect(screen.getByText("Sunday, March 15, 2026")).toBeTruthy();
     });
 
+    it("left-aligns the quote, in line with the header title", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText(/Pray without ceasing/)).toHaveStyle({
+        textAlign: "left",
+      });
+    });
+
     it("shows the feast title in title case", async () => {
       mockFeature = {
         ...baseFeature,
