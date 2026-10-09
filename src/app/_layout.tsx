@@ -74,7 +74,7 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="eventDetails" options={glassHeaderOptions(colorScheme)} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
-        <Stack.Screen name="dailyReadings" />
+        <Stack.Screen name="dailyReadings" options={glassHeaderOptions(colorScheme)} />
         <Stack.Screen name="pdfViewer" options={{ title: 'PDF' }} />
       </Stack>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
