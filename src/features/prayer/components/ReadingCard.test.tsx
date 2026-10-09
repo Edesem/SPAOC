@@ -52,19 +52,13 @@ describe("ReadingCard", () => {
     });
   });
 
-  it("draws a thick divider in the accent colour when given one", async () => {
-    await render(<ReadingCard reading={gospel} accentColour="#D4AF37" />);
-
-    expect(screen.getByTestId("reading-divider")).toHaveStyle({
-      backgroundColor: "#D4AF37",
-      height: 3,
-    });
-  });
-
-  it("draws the plain divider without an accent colour", async () => {
+  it("draws a thin bronze divider under the title", async () => {
     await render(<ReadingCard reading={gospel} />);
 
-    expect(screen.getByTestId("reading-divider")).toHaveStyle({ height: 1 });
+    expect(screen.getByTestId("reading-divider")).toHaveStyle({
+      backgroundColor: Colours.light.secondary,
+      height: 1,
+    });
   });
 
   it("sets the title and teaser in the serif, the liturgical voice", async () => {
@@ -80,8 +74,8 @@ describe("ReadingCard", () => {
     });
   });
 
-  it("colours the drop cap with the commemorate red, whatever the accent", async () => {
-    await render(<ReadingCard reading={gospel} accentColour="#D4AF37" />);
+  it("colours the drop cap with the commemorate red", async () => {
+    await render(<ReadingCard reading={gospel} />);
 
     expect(screen.getByTestId("drop-cap")).toHaveStyle({
       color: Colours.light.commemorate,

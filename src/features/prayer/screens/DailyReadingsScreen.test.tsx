@@ -32,6 +32,15 @@ describe("ReadingScreen", () => {
     expect(await findByText("n the beginning was the Word")).toBeTruthy();
   });
 
+  it("draws a thin bronze divider under the title", async () => {
+    const { findByTestId } = await render(<ReadingScreen />);
+
+    expect(await findByTestId("reading-divider")).toHaveStyle({
+      backgroundColor: Colours.light.secondary,
+      height: 1,
+    });
+  });
+
   it("opens the reading with a drop cap", async () => {
     const { findByTestId } = await render(<ReadingScreen />);
 
