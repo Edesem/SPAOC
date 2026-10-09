@@ -1,4 +1,3 @@
-import { resetNow, setNow } from "@/lib/parishTime";
 import { stackScreenOptions } from "@/testing/expoRouterStack";
 import { fontFamily, typography } from "@/theme/typography";
 import HomeScreen from "./HomeScreen";
@@ -11,8 +10,7 @@ import { SectionList, StyleSheet, processColor } from "react-native";
 // The screen is tested against a fake useHomeFeature. What the feature
 // returns is covered by useHomeFeature.test.ts and homeRules.test.ts.
 
-const mockSetShowMonthPicker = jest.fn();
-const mockOnValueChange = jest.fn();
+const mockSelectMonth = jest.fn();
 const mockClearMonthFilter = jest.fn();
 const mockOnRefresh = jest.fn();
 
@@ -26,13 +24,15 @@ const baseFeature = {
   sections: [] as any[],
   refreshing: false,
   onRefresh: mockOnRefresh,
-  selectedDate: new Date("2026-03-15T12:00:00.000Z"),
   isMonthFiltered: false,
   monthFilterLabel: null as string | null,
   clearMonthFilter: mockClearMonthFilter,
-  showMonthPicker: false,
-  setShowMonthPicker: mockSetShowMonthPicker,
-  onValueChange: mockOnValueChange,
+  monthOptions: [] as {
+    label: string;
+    date: Date;
+    isSelected: boolean;
+  }[],
+  selectMonth: mockSelectMonth,
 };
 
 let mockFeature: typeof baseFeature = baseFeature;
@@ -68,14 +68,6 @@ jest.mock("expo-router", () => ({
     }),
   }),
 }));
-
-jest.mock("react-native-month-year-picker", () => {
-  const React = require("react");
-  const { View } = require("react-native");
-
-  return (props: object) =>
-    React.createElement(View, { ...props, testID: "month-picker" });
-});
 
 jest.mock("../components/EventItem", () => {
   const React = require("react");
@@ -312,55 +304,93 @@ describe("HomeScreen", () => {
   });
 
   describe("month filter", () => {
-    it("shows the month picker button even when no events match", async () => {
-      const { getByLabelText } = await render(<HomeScreen />);
+    const march = {
+      label: "March 2026",
+      date: new Date("2026-03-10T12:00:00.000Z"),
+      isSelected: false,
+    };
+    const april = {
+      label: "April 2026",
+      date: new Date("2026-04-10T12:00:00.000Z"),
+      isSelected: false,
+    };
 
+    it("always offers the calendar as a menu, even when nothing has loaded", async () => {
+      const { getByTestId, getByLabelText, getByText } = await render(
+        <HomeScreen />,
+      );
+
+      expect(getByTestId("toolbar-menu")).toBeTruthy();
       expect(getByLabelText("Choose month")).toBeTruthy();
+      expect(getByText("All Months")).toBeTruthy();
     });
 
-    it("opens the month picker when the button is pressed", async () => {
-      const { getByLabelText } = await render(<HomeScreen />);
+    it("lists a menu item for each month option", async () => {
+      mockFeature = { ...baseFeature, monthOptions: [march, april] };
 
-      await fireEvent.press(getByLabelText("Choose month"));
+      const { getByText } = await render(<HomeScreen />);
 
-      expect(mockSetShowMonthPicker).toHaveBeenCalledWith(true);
+      expect(getByText("March 2026")).toBeTruthy();
+      expect(getByText("April 2026")).toBeTruthy();
     });
 
-    it("renders a single month picker however many event sections there are", async () => {
+    it("ticks All Months while no month is selected", async () => {
+      mockFeature = { ...baseFeature, monthOptions: [march] };
+
+      const { getByRole, queryByRole } = await render(<HomeScreen />);
+
+      expect(
+        getByRole("menuitem", { name: "All Months", selected: true }),
+      ).toBeTruthy();
+      expect(
+        queryByRole("menuitem", { name: "March 2026", selected: true }),
+      ).toBeNull();
+    });
+
+    it("ticks the selected month instead of All Months", async () => {
       mockFeature = {
         ...baseFeature,
-        showMonthPicker: true,
-        sections: [
-          eventSection("Today", 0, [{ id: "1" }]),
-          eventSection("Tomorrow", 1, [{ id: "2" }]),
-        ],
+        isMonthFiltered: true,
+        monthFilterLabel: "March 2026",
+        monthOptions: [{ ...march, isSelected: true }, april],
       };
 
-      const { getAllByTestId } = await render(<HomeScreen />);
+      const { getByRole, queryByRole } = await render(<HomeScreen />);
 
-      expect(getAllByTestId("month-picker")).toHaveLength(1);
+      expect(
+        getByRole("menuitem", { name: "March 2026", selected: true }),
+      ).toBeTruthy();
+      expect(
+        queryByRole("menuitem", { name: "April 2026", selected: true }),
+      ).toBeNull();
+      expect(
+        queryByRole("menuitem", { name: "All Months", selected: true }),
+      ).toBeNull();
     });
 
-    it("stops the month picker at the app clock's today", async () => {
-      const pinned = new Date("2026-09-25T22:15:00Z");
-      setNow(() => pinned);
-      mockFeature = { ...baseFeature, showMonthPicker: true };
+    it("filters to a month when its menu item is pressed", async () => {
+      mockFeature = { ...baseFeature, monthOptions: [march, april] };
+      const { getByText } = await render(<HomeScreen />);
 
-      try {
-        const { getByTestId } = await render(<HomeScreen />);
+      await fireEvent.press(getByText("April 2026"));
 
-        expect(getByTestId("month-picker").props.minimumDate).toEqual(pinned);
-      } finally {
-        resetNow();
-      }
+      expect(mockSelectMonth).toHaveBeenCalledWith(april.date);
+      expect(Haptics.impactAsync).toHaveBeenCalled();
     });
 
-    it("shows the month picker when no events match", async () => {
-      mockFeature = { ...baseFeature, showMonthPicker: true };
+    it("clears the month filter from All Months", async () => {
+      mockFeature = {
+        ...baseFeature,
+        isMonthFiltered: true,
+        monthFilterLabel: "March 2026",
+        monthOptions: [{ ...march, isSelected: true }],
+      };
+      const { getByText } = await render(<HomeScreen />);
 
-      const { getAllByTestId } = await render(<HomeScreen />);
+      await fireEvent.press(getByText("All Months"));
 
-      expect(getAllByTestId("month-picker")).toHaveLength(1);
+      expect(mockClearMonthFilter).toHaveBeenCalledTimes(1);
+      expect(Haptics.impactAsync).toHaveBeenCalled();
     });
 
     it("has no month in the header while no month is selected", async () => {
@@ -369,27 +399,18 @@ describe("HomeScreen", () => {
       expect(stackScreenOptions.current.title).toBe("");
     });
 
-    it("shows a plain calendar button, not the menu, while no month is selected", async () => {
-      const { queryByTestId } = await render(<HomeScreen />);
-
-      expect(queryByTestId("toolbar-menu")).toBeNull();
-    });
-
-    it("shows the picked month in the header and turns the calendar into a menu", async () => {
+    it("shows the picked month in the header and on the menu's label", async () => {
       mockFeature = {
         ...baseFeature,
         isMonthFiltered: true,
         monthFilterLabel: "March 2026",
+        monthOptions: [{ ...march, isSelected: true }],
       };
 
-      const { getByLabelText, queryByLabelText, getByText } = await render(
-        <HomeScreen />,
-      );
+      const { getByLabelText, queryByLabelText } = await render(<HomeScreen />);
 
       expect(stackScreenOptions.current.title).toBe("March 2026");
       expect(getByLabelText("Month filter, March 2026")).toBeTruthy();
-      expect(getByText("Change Month")).toBeTruthy();
-      expect(getByText("Show All Months")).toBeTruthy();
       expect(queryByLabelText("Choose month")).toBeNull();
     });
 
@@ -398,39 +419,13 @@ describe("HomeScreen", () => {
         ...baseFeature,
         isMonthFiltered: true,
         monthFilterLabel: "March 2026",
+        monthOptions: [{ ...march, isSelected: true }],
       };
 
       const { getByText, getByLabelText } = await render(<HomeScreen />);
 
       expect(getByText("No events found.")).toBeTruthy();
       expect(getByLabelText("Month filter, March 2026")).toBeTruthy();
-    });
-
-    it("opens the month picker from the menu's Change Month", async () => {
-      mockFeature = {
-        ...baseFeature,
-        isMonthFiltered: true,
-        monthFilterLabel: "March 2026",
-      };
-      const { getByText } = await render(<HomeScreen />);
-
-      await fireEvent.press(getByText("Change Month"));
-
-      expect(mockSetShowMonthPicker).toHaveBeenCalledWith(true);
-    });
-
-    it("clears the month filter from the menu's Show All Months", async () => {
-      mockFeature = {
-        ...baseFeature,
-        isMonthFiltered: true,
-        monthFilterLabel: "March 2026",
-      };
-      const { getByText } = await render(<HomeScreen />);
-
-      await fireEvent.press(getByText("Show All Months"));
-
-      expect(mockClearMonthFilter).toHaveBeenCalledTimes(1);
-      expect(Haptics.impactAsync).toHaveBeenCalled();
     });
   });
 
