@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import Svg, { Polygon } from "react-native-svg";
 
 type CalendarMarkerProps = {
   colour: string;
@@ -18,30 +19,25 @@ const CalendarMarker = ({
   height = 22,
   aspect = 0.8,
 }: CalendarMarkerProps) => {
-  // The diamond is a square turned onto its point, then squeezed sideways. Its
-  // points reach `height` across, which is the square's diagonal.
-  const side = height / Math.SQRT2;
+  // Whole-dp bounds, so the box lands on the same pixels on every platform.
+  const width = Math.ceil(height * aspect);
+  const tall = Math.ceil(height);
+  // A polygon through the four points rather than a rotated, squeezed square:
+  // Android rounds a rotated view's fractional size to pixels and anti-aliases
+  // its edges coarsely, which drew a lopsided diamond. SVG draws the same shape
+  // on both platforms.
+  const points = `${width / 2},0 ${width},${tall / 2} ${width / 2},${tall} 0,${tall / 2}`;
 
   return (
     <View
+      testID="calendar-marker"
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={{
-        width: Math.ceil(height * aspect),
-        height: Math.ceil(height),
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+      style={{ width, height: tall }}
     >
-      <View
-        testID="calendar-marker"
-        style={{
-          width: side,
-          height: side,
-          backgroundColor: colour,
-          transform: [{ scaleX: aspect }, { rotate: "45deg" }],
-        }}
-      />
+      <Svg width={width} height={tall} viewBox={`0 0 ${width} ${tall}`}>
+        <Polygon testID="calendar-marker-shape" points={points} fill={colour} />
+      </Svg>
     </View>
   );
 };
