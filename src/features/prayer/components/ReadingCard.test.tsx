@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import type { Reading } from "../services";
 import ReadingCard from "./ReadingCard";
@@ -31,13 +32,14 @@ describe("ReadingCard", () => {
     await render(<ReadingCard reading={gospel} />);
 
     expect(screen.getByText("Mark 2:1-12")).toBeTruthy();
-    expect(screen.getByText("Faith & works")).toBeTruthy();
+    expect(screen.getByTestId("drop-cap")).toHaveTextContent("F");
+    expect(screen.getByText("aith & works")).toBeTruthy();
   });
 
   it("opens the reading in the daily readings screen when tapped", async () => {
     await render(<ReadingCard reading={gospel} />);
 
-    await fireEvent.press(screen.getByText("Faith & works"));
+    await fireEvent.press(screen.getByText("aith & works"));
 
     expect(mockPush).toHaveBeenCalledTimes(1);
     expect(mockPush).toHaveBeenCalledWith({
@@ -50,19 +52,13 @@ describe("ReadingCard", () => {
     });
   });
 
-  it("draws a thick divider in the accent colour when given one", async () => {
-    await render(<ReadingCard reading={gospel} accentColour="#D4AF37" />);
-
-    expect(screen.getByTestId("reading-divider")).toHaveStyle({
-      backgroundColor: "#D4AF37",
-      height: 3,
-    });
-  });
-
-  it("draws the plain divider without an accent colour", async () => {
+  it("draws a thin bronze divider under the title", async () => {
     await render(<ReadingCard reading={gospel} />);
 
-    expect(screen.getByTestId("reading-divider")).toHaveStyle({ height: 1 });
+    expect(screen.getByTestId("reading-divider")).toHaveStyle({
+      backgroundColor: Colours.light.secondary,
+      height: 1,
+    });
   });
 
   it("sets the title and teaser in the serif, the liturgical voice", async () => {
@@ -72,9 +68,41 @@ describe("ReadingCard", () => {
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
-    expect(screen.getByText("Faith & works")).toHaveStyle({
+    expect(screen.getByText("aith & works")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "400",
     });
+  });
+
+  it("colours the drop cap with the commemorate red", async () => {
+    await render(<ReadingCard reading={gospel} />);
+
+    expect(screen.getByTestId("drop-cap")).toHaveStyle({
+      color: Colours.light.commemorate,
+    });
+  });
+
+  it("shows its label inside the card, in the commemorate red italic small capitals", async () => {
+    await render(<ReadingCard reading={gospel} label="The Holy Gospel" />);
+
+    expect(screen.getByText("The Holy Gospel")).toHaveStyle({
+      fontFamily: fontFamily.smallCaps,
+      fontStyle: "italic",
+      color: Colours.light.commemorate,
+    });
+  });
+
+  it("opens the reading when the label is tapped", async () => {
+    await render(<ReadingCard reading={gospel} label="The Holy Gospel" />);
+
+    await fireEvent.press(screen.getByText("The Holy Gospel"));
+
+    expect(mockPush).toHaveBeenCalledTimes(1);
+  });
+
+  it("has no label unless given one", async () => {
+    await render(<ReadingCard reading={gospel} />);
+
+    expect(screen.queryByTestId("reading-label")).toBeNull();
   });
 });

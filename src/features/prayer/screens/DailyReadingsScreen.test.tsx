@@ -1,4 +1,5 @@
 import ReadingScreen from "./DailyReadingsScreen";
+import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import { DailyReadingsParams } from "@/types/routes";
 import { fireEvent, render } from "@testing-library/react-native";
@@ -25,20 +26,38 @@ jest.mock("expo-haptics", () => ({
 
 describe("ReadingScreen", () => {
   it("shows the title and reading from its route params", async () => {
-    const { findByText, findByDisplayValue } = await render(<ReadingScreen />);
+    const { findByText } = await render(<ReadingScreen />);
 
     expect(await findByText("The Holy Gospel")).toBeTruthy();
-    expect(await findByDisplayValue(params.reading)).toBeTruthy();
+    expect(await findByText("n the beginning was the Word")).toBeTruthy();
+  });
+
+  it("draws a thin bronze divider under the title", async () => {
+    const { findByTestId } = await render(<ReadingScreen />);
+
+    expect(await findByTestId("reading-divider")).toHaveStyle({
+      backgroundColor: Colours.light.secondary,
+      height: 1,
+    });
+  });
+
+  it("opens the reading with a drop cap", async () => {
+    const { findByTestId } = await render(<ReadingScreen />);
+
+    expect(await findByTestId("drop-cap")).toHaveTextContent("I");
+    expect(await findByTestId("drop-cap")).toHaveStyle({
+      color: Colours.light.commemorate,
+    });
   });
 
   it("sets the title and the reading in the serif, the liturgical voice", async () => {
-    const { findByText, findByDisplayValue } = await render(<ReadingScreen />);
+    const { findByText } = await render(<ReadingScreen />);
 
     expect(await findByText("The Holy Gospel")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "700",
     });
-    expect(await findByDisplayValue(params.reading)).toHaveStyle({
+    expect(await findByText("n the beginning was the Word")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontSize: 19,
       lineHeight: 26,
