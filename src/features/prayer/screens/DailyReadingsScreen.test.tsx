@@ -1,4 +1,5 @@
 import ReadingScreen from "./DailyReadingsScreen";
+import { fontFamily } from "@/theme/typography";
 import { DailyReadingsParams } from "@/types/routes";
 import { render } from "@testing-library/react-native";
 import React from "react";
@@ -28,5 +29,28 @@ describe("ReadingScreen", () => {
 
     expect(await findByText("The Holy Gospel")).toBeTruthy();
     expect(await findByDisplayValue(params.reading)).toBeTruthy();
+  });
+
+  it("sets the title and the reading in the serif, the liturgical voice", async () => {
+    const { findByText, findByDisplayValue } = await render(<ReadingScreen />);
+
+    expect(await findByText("The Holy Gospel")).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontWeight: "700",
+    });
+    expect(await findByDisplayValue(params.reading)).toHaveStyle({
+      fontFamily: fontFamily.serif,
+      fontSize: 19,
+      lineHeight: 26,
+    });
+  });
+
+  it("sets the copy button in the sans at 700", async () => {
+    const { findByText } = await render(<ReadingScreen />);
+
+    expect(await findByText("Copy")).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontWeight: "700",
+    });
   });
 });

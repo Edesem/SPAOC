@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
-import { fontSize } from "@/theme/commonStyles";
+import { typography } from "@/theme/typography";
 
 type SettingPickerProps = {
   label: string;
@@ -36,12 +36,14 @@ const SettingPicker: React.FC<SettingPickerProps> = ({
       }}
     >
       <Text
-        style={{
-          color: theme.moreImportantText,
-          fontSize: fontSize.subtitle,
-          flex: 1,
-          paddingRight: 12,
-        }}
+        style={[
+          typography.title,
+          {
+            color: theme.moreImportantText,
+            flex: 1,
+            paddingRight: 12,
+          },
+        ]}
       >
         {label}
       </Text>
@@ -54,12 +56,12 @@ const SettingPicker: React.FC<SettingPickerProps> = ({
         style={{
           inputIOSContainer: { pointerEvents: "none" },
           inputIOS: {
+            ...typography.title,
             color: theme.moreImportantText,
-            fontSize: fontSize.subtitle,
           },
           inputAndroid: {
+            ...typography.title,
             color: theme.moreImportantText,
-            fontSize: fontSize.subtitle,
           },
         }}
         darkTheme={pickerTheme}

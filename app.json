@@ -40,8 +40,91 @@
             "backgroundColor": "#121212"
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "ios": {
+            "fonts": [
+              "node_modules/@expo-google-fonts/alegreya/400Regular/Alegreya_400Regular.ttf",
+              "node_modules/@expo-google-fonts/alegreya/400Regular_Italic/Alegreya_400Regular_Italic.ttf",
+              "node_modules/@expo-google-fonts/alegreya/700Bold/Alegreya_700Bold.ttf",
+              "node_modules/@expo-google-fonts/alegreya-sans/400Regular/AlegreyaSans_400Regular.ttf",
+              "node_modules/@expo-google-fonts/alegreya-sans/400Regular_Italic/AlegreyaSans_400Regular_Italic.ttf",
+              "node_modules/@expo-google-fonts/alegreya-sans/500Medium/AlegreyaSans_500Medium.ttf",
+              "node_modules/@expo-google-fonts/alegreya-sans/700Bold/AlegreyaSans_700Bold.ttf",
+              "node_modules/@expo-google-fonts/alegreya-sc/700Bold/AlegreyaSC_700Bold.ttf"
+            ]
+          },
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Alegreya",
+                "fontDefinitions": [
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya/400Regular/Alegreya_400Regular.ttf",
+                    "weight": 400,
+                    "style": "normal"
+                  },
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya/400Regular_Italic/Alegreya_400Regular_Italic.ttf",
+                    "weight": 400,
+                    "style": "italic"
+                  },
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya/700Bold/Alegreya_700Bold.ttf",
+                    "weight": 700,
+                    "style": "normal"
+                  }
+                ]
+              },
+              {
+                "fontFamily": "Alegreya Sans",
+                "fontDefinitions": [
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya-sans/400Regular/AlegreyaSans_400Regular.ttf",
+                    "weight": 400,
+                    "style": "normal"
+                  },
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya-sans/400Regular_Italic/AlegreyaSans_400Regular_Italic.ttf",
+                    "weight": 400,
+                    "style": "italic"
+                  },
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya-sans/500Medium/AlegreyaSans_500Medium.ttf",
+                    "weight": 500,
+                    "style": "normal"
+                  },
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya-sans/700Bold/AlegreyaSans_700Bold.ttf",
+                    "weight": 700,
+                    "style": "normal"
+                  }
+                ]
+              },
+              {
+                "fontFamily": "Alegreya SC",
+                "fontDefinitions": [
+                  {
+                    "path": "node_modules/@expo-google-fonts/alegreya-sc/700Bold/AlegreyaSC_700Bold.ttf",
+                    "weight": 700,
+                    "style": "normal"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "enableSceneSupport": true
+          }
+        }
       ]
-
     ],
     "experiments": {
       "typedRoutes": true
