@@ -57,8 +57,8 @@ export default function TabLayout() {
       <NativeTabs.Trigger name="parish">
         <NativeTabs.Trigger.Icon
           sf={{
-            default: "building.columns",
-            selected: "building.columns.fill",
+            default: "person.2",
+            selected: "person.2.fill",
           }}
           md="church"
         />
