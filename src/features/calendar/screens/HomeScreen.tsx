@@ -1,3 +1,4 @@
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useColorScheme } from "@/hooks/useColorScheme"; // or set up tsconfig to alias
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -76,9 +77,7 @@ const HomeListHeader = ({
       />
     </View>
     <View style={styles.saintOfTheDayContainer}>
-      <Text
-        style={[styles.saintOfTheDayTitle, { color: theme.commemorate }]}
-      >
+      <Text style={[styles.saintOfTheDayTitle, { color: theme.commemorate }]}>
         {todaysSaintsTitle}
       </Text>
       <Text style={[styles.saintOfTheDay, { color: theme.moreImportantText }]}>
@@ -95,6 +94,7 @@ const HomeListHeader = ({
         {minorFastLabel}
       </Text>
     </View>
+    <OrnamentalDivider colour={theme.secondary} style={styles.divider} />
   </>
 );
 
@@ -116,6 +116,10 @@ const SectionHeader = ({
   theme: Theme;
 }) => (
   <>
+    {/* The header's divider closes the first week, so only later ones get a rule. */}
+    {section.weekLabel && section.sectionIndex > 0 ? (
+      <OrnamentalDivider colour={theme.secondary} style={styles.divider} />
+    ) : null}
     {section.weekLabel ? (
       <Text
         style={[
@@ -216,125 +220,115 @@ export default function HomeScreen() {
             <ActivityIndicator size="large" color={theme.primary} />
           </View>
         ) : (
-          <View style={styles.verticalBarContainer}>
+          <View style={styles.container}>
+            {/* Settings button on the left, month filter on the right */}
             <View
-              style={[styles.verticalBar, { backgroundColor: theme.secondary }]}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingHorizontal: 10,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  router.push("/settings");
+                }}
+                style={{ padding: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel="Settings"
+              >
+                <MaterialIcons
+                  name="menu"
+                  style={styles.icon}
+                  color={theme.lessImportantText}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  setShowMonthPicker(true);
+                }}
+                style={{ padding: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel="Choose month"
+              >
+                <IconSymbol
+                  name="calendar"
+                  size={36}
+                  color={theme.lessImportantText}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <MonthPickerModal
+              visible={showMonthPicker}
+              selectedDate={selectedDate}
+              onClose={() => setShowMonthPicker(false)}
+              onValueChange={onValueChange}
             />
 
-            <View style={styles.container}>
-              {/* Settings button on the left, month filter on the right */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
+            {isMonthFiltered ? (
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  clearMonthFilter();
                 }}
+                style={[
+                  styles.clearFilterButton,
+                  { backgroundColor: theme.primary },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Clear month filter"
               >
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.push("/settings");
-                  }}
-                  style={{ padding: 10 }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Settings"
+                <MaterialIcons name="close" size={20} color={theme.onPrimary} />
+                <Text
+                  style={[styles.clearFilterText, { color: theme.onPrimary }]}
                 >
-                  <MaterialIcons
-                    name="menu"
-                    style={styles.icon}
-                    color={theme.lessImportantText}
-                  />
-                </TouchableOpacity>
+                  Clear month filter
+                </Text>
+              </TouchableOpacity>
+            ) : null}
 
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    setShowMonthPicker(true);
-                  }}
-                  style={{ padding: 10 }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Choose month"
-                >
-                  <IconSymbol
-                    name="calendar"
-                    size={36}
-                    color={theme.lessImportantText}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <MonthPickerModal
-                visible={showMonthPicker}
-                selectedDate={selectedDate}
-                onClose={() => setShowMonthPicker(false)}
-                onValueChange={onValueChange}
-              />
-
-              {isMonthFiltered ? (
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    clearMonthFilter();
-                  }}
-                  style={[
-                    styles.clearFilterButton,
-                    { backgroundColor: theme.primary },
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel="Clear month filter"
-                >
-                  <MaterialIcons
-                    name="close"
-                    size={20}
-                    color={theme.onPrimary}
-                  />
-                  <Text
-                    style={[styles.clearFilterText, { color: theme.onPrimary }]}
-                  >
-                    Clear month filter
-                  </Text>
-                </TouchableOpacity>
-              ) : null}
-
-              <SectionList
-                ref={sectionListRef}
-                sections={sections}
-                keyExtractor={(item) => item.id}
-                renderItem={renderItem}
-                renderSectionHeader={({ section }) => (
-                  <SectionHeader
-                    section={section as HomeEventSection}
-                    theme={theme}
-                  />
-                )}
-                ListHeaderComponent={
-                  <HomeListHeader
-                    theme={theme}
-                    loadErrorMessage={loadErrorMessage}
-                    todaysSaintsTitle={todaysSaintsTitle}
-                    todaysSaints={todaysSaints}
-                    majorFastLabel={majorFastLabel}
-                    minorFastLabel={minorFastLabel}
-                  />
-                }
-                ListFooterComponent={<HomeListFooter theme={theme} />}
-                ListEmptyComponent={
-                  <Text style={[styles.emptyMessage, { color: theme.detail }]}>
-                    No events found.
-                  </Text>
-                }
-                stickySectionHeadersEnabled={false} // Disable sticky headers
-                contentContainerStyle={{ paddingBottom: 120 }} // Add padding to the bottom
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                    colors={[theme.primary]}
-                  />
-                }
-              />
-            </View>
+            <SectionList
+              ref={sectionListRef}
+              sections={sections}
+              keyExtractor={(item) => item.id}
+              renderItem={renderItem}
+              renderSectionHeader={({ section }) => (
+                <SectionHeader
+                  section={section as HomeEventSection}
+                  theme={theme}
+                />
+              )}
+              ListHeaderComponent={
+                <HomeListHeader
+                  theme={theme}
+                  loadErrorMessage={loadErrorMessage}
+                  todaysSaintsTitle={todaysSaintsTitle}
+                  todaysSaints={todaysSaints}
+                  majorFastLabel={majorFastLabel}
+                  minorFastLabel={minorFastLabel}
+                />
+              }
+              ListFooterComponent={<HomeListFooter theme={theme} />}
+              ListEmptyComponent={
+                <Text style={[styles.emptyMessage, { color: theme.detail }]}>
+                  No events found.
+                </Text>
+              }
+              stickySectionHeadersEnabled={false} // Disable sticky headers
+              contentContainerStyle={{ paddingBottom: 120 }} // Add padding to the bottom
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  colors={[theme.primary]}
+                />
+              }
+            />
           </View>
         )}
       </SafeAreaView>
@@ -350,14 +344,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: 30,
   },
-  verticalBarContainer: {
-    flexDirection: "row",
-    alignItems: "stretch",
-  },
-  verticalBar: {
-    width: 7,
-    borderRadius: 10,
-    marginLeft: 10,
+  // Lines up with the event cards' 16pt inset.
+  divider: {
+    marginHorizontal: 16,
+    marginVertical: 12,
   },
   emptyMessage: {
     ...typography.title,

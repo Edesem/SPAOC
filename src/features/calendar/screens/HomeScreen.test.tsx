@@ -3,7 +3,7 @@ import { fontFamily, typography } from "@/theme/typography";
 import HomeScreen from "./HomeScreen";
 import { fireEvent, render } from "@testing-library/react-native";
 import React from "react";
-import { SectionList, StyleSheet } from "react-native";
+import { SectionList, StyleSheet, processColor } from "react-native";
 
 // The screen is tested against a fake useHomeFeature. What the feature
 // returns is covered by useHomeFeature.test.ts and homeRules.test.ts.
@@ -255,6 +255,46 @@ describe("HomeScreen", () => {
     expect(getByText("event 1")).toBeTruthy();
     expect(getByText("Tomorrow")).toBeTruthy();
     expect(getByText("event 2")).toBeTruthy();
+  });
+
+  describe("week dividers", () => {
+    const HIDDEN = { includeHiddenElements: true };
+
+    it("closes the header with a bronze divider even when there are no events", async () => {
+      const { getAllByTestId } = await render(<HomeScreen />);
+
+      const marks = getAllByTestId("ornamental-divider-mark", HIDDEN);
+      expect(marks).toHaveLength(1);
+      expect(marks[0].props.fill.payload).toBe(processColor("#a88646"));
+    });
+
+    it("adds a divider above each later week label but not the first", async () => {
+      mockFeature = {
+        ...baseFeature,
+        sections: [
+          eventSection("Today", 0, [{ id: "1" }], "This Week"),
+          eventSection("Tomorrow", 1, [{ id: "2" }]),
+          eventSection("Monday", 2, [{ id: "3" }], "Next Week"),
+          eventSection("Sunday", 3, [{ id: "4" }], "Later"),
+        ],
+      };
+
+      const { getAllByTestId } = await render(<HomeScreen />);
+
+      // Header, "Next Week" and "Later".
+      expect(getAllByTestId("ornamental-divider", HIDDEN)).toHaveLength(3);
+    });
+
+    it("adds no divider for a first section that has a week label", async () => {
+      mockFeature = {
+        ...baseFeature,
+        sections: [eventSection("Today", 0, [{ id: "1" }], "This Week")],
+      };
+
+      const { getAllByTestId } = await render(<HomeScreen />);
+
+      expect(getAllByTestId("ornamental-divider", HIDDEN)).toHaveLength(1);
+    });
   });
 
   it("shows the empty message, with the header and footer, when there are no events", async () => {
