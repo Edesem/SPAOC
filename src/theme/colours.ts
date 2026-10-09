@@ -22,7 +22,7 @@ export const Colours = {
     tabInactive: '#6B6B6B',
     favourite: '#B07D00',       // the filled star; #FFD700 is 1.4:1 on white
     separator: '#D0D0D0',
-    commemorate: '#A3352B',     // the Home "Today we Commemorate" heading
+    commemorate: '#A3352B',     // the Home "Today we Commemorate" heading and week labels
   },
   dark: {
     primary: '#a88646',      // A darker shade of blue for better contrast
