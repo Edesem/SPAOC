@@ -97,7 +97,7 @@ export const styles = StyleSheet.create({
     marginTop: 8, // Space between text and chevron
   },
   dateTitle: {
-    ...typography.displayTitle,
+    ...typography.sectionHeading,
   },
   icon: {
     fontSize: 36,
