@@ -34,7 +34,7 @@ describe("IconSymbol Android fallback", () => {
 
   it("finds the icons the app uses", () => {
     expect(usedIconNames()).toEqual(
-      expect.arrayContaining(["calendar", "map.fill"]),
+      expect.arrayContaining(["clock", "mappin"]),
     );
   });
 

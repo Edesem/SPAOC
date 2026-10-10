@@ -1,18 +1,22 @@
+import CalendarMarker from "@/components/CalendarMarker";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
-import { getCalendarImage } from "@/domain/calendarSources";
+import { getCalendarColour, getCalendarImage } from "@/domain/calendarSources";
 import { Colours } from "@/theme/colours";
 import { typography } from "@/theme/typography";
 import { EventDetailsParams } from "@/types/routes";
 import { splitDescription } from "../domain/descriptionLinks";
-import { formatEventDate, formatEventTimes } from "../domain/eventTimes";
+import { favouriteKey, useFavouritesStore } from "../favourites";
+import { formatEventDate, formatEventTimeRange } from "../domain/eventTimes";
 import { parseEventDetailsParams } from "../domain/routeParams";
+import type { EventData } from "../types";
 import * as Clipboard from "expo-clipboard";
 import * as Haptics from "expo-haptics";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { decode } from "html-entities";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import {
   Image,
   Linking,
@@ -38,9 +42,7 @@ const cleanDescription = (description: string): string => {
   return cleaned;
 };
 
-const renderDescription = (description: string | null, theme: any) => {
-  if (!description) return null;
-
+const renderDescription = (description: string, theme: any) => {
   const styles = getStyles();
 
   const cleanedDescription = cleanDescription(description);
@@ -66,16 +68,23 @@ const renderDescription = (description: string | null, theme: any) => {
   );
 };
 
+// An icon beside a row of text. The row's text says everything the icon does.
+const RowIcon = ({ children }: { children: ReactNode }) => (
+  <View
+    accessibilityElementsHidden
+    importantForAccessibility="no-hide-descendants"
+  >
+    {children}
+  </View>
+);
+
 const EventDetailsScreen = () => {
   const navigation = useNavigation();
-  const { title, start, end, allDay, description, location, source } =
+  const { id, title, start, end, allDay, description, location, source } =
     parseEventDetailsParams(useLocalSearchParams<EventDetailsParams>());
-  const { start: startLabel, end: endLabel } = formatEventTimes(
-    start,
-    end,
-    allDay,
-  );
+  const timeLabel = formatEventTimeRange(start, end, allDay);
   const dateLabel = formatEventDate(start, end, allDay);
+  const eventTitle = title || "Untitled event";
 
   const styles = getStyles();
 
@@ -86,8 +95,42 @@ const EventDetailsScreen = () => {
 
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
+  const hairline = { borderTopColor: theme.separator };
 
   const image = getCalendarImage(source);
+
+  // The same record the event list saves, so the star here and the star on the
+  // row always agree.
+  const event: EventData = {
+    id,
+    title,
+    start,
+    end,
+    allDay,
+    description: description ?? "",
+    location: location ?? "",
+    source: source as EventData["source"],
+  };
+  const isFavourite = useFavouritesStore(
+    (state) => favouriteKey(event) in state.favourites,
+  );
+  const favouriteLabel = isFavourite
+    ? `Remove ${eventTitle} from favourites`
+    : `Add ${eventTitle} to favourites`;
+  const favouriteIcon = useToolbarIcon(
+    isFavourite ? "star.fill" : "star",
+    isFavourite ? "star" : "star-border",
+    isFavourite ? theme.favourite : theme.lessImportantText,
+  );
+
+  const toggleFavourite = async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      await useFavouritesStore.getState().toggle(event);
+    } catch (e) {
+      console.error("Failed to save favourite", e);
+    }
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -139,173 +182,192 @@ const EventDetailsScreen = () => {
     }
   };
 
+  const pill = [
+    styles.pill,
+    { borderColor: theme.secondary, backgroundColor: theme.itemBackground },
+  ];
+
   return (
-    // The scroll view is the screen's first view so the system can fade it
-    // under the glass header and inset it below the bar.
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      style={{ flex: 1, backgroundColor: theme.background }}
-      contentContainerStyle={{
-        padding: 20,
-        paddingHorizontal: 20 + gutter,
-        paddingBottom: 0,
-        backgroundColor: theme.background,
-      }}
-    >
-      <View style={[styles.card, { backgroundColor: theme.itemBackground }]}>
-        <Text style={[styles.title, { color: theme.moreImportantText }]}>
-          {title || "Untitled event"}
-        </Text>
-        <View style={[styles.divider, { backgroundColor: theme.separator }]} />
-        <View style={styles.metaRow}>
-          <View
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-          >
-            <IconSymbol
-              name="calendar"
-              size={20}
-              color={theme.lessImportantText}
-            />
-          </View>
-          <Text style={[styles.date, { color: theme.lessImportantText }]}>
+    <>
+      <Stack.Toolbar placement="right">
+        <Stack.Toolbar.Button
+          icon={favouriteIcon}
+          tintColor={isFavourite ? theme.favourite : theme.lessImportantText}
+          accessibilityLabel={favouriteLabel}
+          onPress={toggleFavourite}
+        />
+      </Stack.Toolbar>
+
+      {/* The scroll view is the screen's first view so the system can fade it
+          under the glass header and inset it below the bar. */}
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={{ flex: 1, backgroundColor: theme.background }}
+        contentContainerStyle={{
+          padding: 20,
+          paddingHorizontal: 20 + gutter,
+          paddingBottom: 0,
+          backgroundColor: theme.background,
+        }}
+      >
+        <View style={styles.dateRow}>
+          <CalendarMarker colour={getCalendarColour(source)} height={14} />
+          <Text style={[styles.date, { color: theme.commemorate }]}>
             {dateLabel}
           </Text>
         </View>
-        <View style={[styles.metaRow, { marginTop: 5 }]}>
-          <View
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-          >
-            <IconSymbol
-              name="clock"
-              size={20}
-              color={theme.lessImportantText}
-            />
-          </View>
-          <Text style={[styles.date, { color: theme.lessImportantText }]}>
-            {startLabel} {endLabel}
+        <Text style={[styles.title, { color: theme.moreImportantText }]}>
+          {eventTitle}
+        </Text>
+
+        <View style={[styles.section, styles.row, hairline]}>
+          <RowIcon>
+            <IconSymbol name="clock" size={24} color={theme.secondary} />
+          </RowIcon>
+          <Text style={[styles.text, { color: theme.moreImportantText }]}>
+            {timeLabel}
           </Text>
         </View>
-        {location == null ? null : (
-          <View style={[styles.metaRow, { marginTop: 5 }]}>
-            <View
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-            >
-              <IconSymbol
-                name="mappin"
-                size={20}
-                color={theme.lessImportantText}
-              />
+
+        {location ? (
+          <View style={[styles.section, styles.row, styles.top, hairline]}>
+            <RowIcon>
+              <IconSymbol name="mappin" size={24} color={theme.secondary} />
+            </RowIcon>
+            <View style={styles.column}>
+              <Text style={[styles.text, { color: theme.moreImportantText }]}>
+                {location}
+              </Text>
+              <View style={styles.pills}>
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    openInMaps();
+                  }}
+                  style={pill}
+                  accessibilityRole="button"
+                  accessibilityLabel="Directions"
+                >
+                  <IconSymbol name="map" size={20} color={theme.secondary} />
+                  <Text
+                    style={[
+                      styles.pillLabel,
+                      { color: theme.moreImportantText },
+                    ]}
+                  >
+                    Directions
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    copyLocation();
+                  }}
+                  style={pill}
+                  accessibilityRole="button"
+                  accessibilityLabel="Copy address"
+                >
+                  <IconSymbol
+                    name="doc.on.doc"
+                    size={20}
+                    color={theme.secondary}
+                  />
+                  <Text
+                    style={[
+                      styles.pillLabel,
+                      { color: theme.moreImportantText },
+                    ]}
+                  >
+                    Copy address
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <Text
-              style={[
-                styles.detail,
-                { color: theme.lessImportantText, flex: 1 },
-              ]}
-            >
-              {location}
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                copyLocation();
-              }}
-              style={styles.locationAction}
-              accessibilityRole="button"
-              accessibilityLabel="Copy address"
-            >
-              <IconSymbol
-                name="square.fill.on.square.fill"
-                size={28}
-                color={theme.lessImportantText}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                openInMaps();
-              }}
-              style={styles.locationAction}
-              accessibilityRole="button"
-              accessibilityLabel="Open in maps"
-            >
-              <IconSymbol
-                name="map.fill"
-                size={28}
-                color={theme.lessImportantText}
-              />
-            </TouchableOpacity>
           </View>
-        )}
-        {description == null ? (
-          <Text style={[styles.description, { color: theme.detail }]}>
-            No description available
-          </Text>
-        ) : (
-          renderDescription(description, theme)
-        )}
-      </View>
-      <View style={styles.imageContainer}>
-        <Image
-          source={image} // Adjust the path to your local image
-          style={[
-            styles.bottomImage,
-            {
-              width: imageWidth,
-              height: imageHeight,
-              tintColor: theme.primary,
-            },
-          ]}
-        />
-      </View>
-    </ScrollView>
+        ) : null}
+
+        {description ? (
+          <View style={[styles.section, hairline]}>
+            {renderDescription(description, theme)}
+          </View>
+        ) : null}
+
+        <View style={[styles.imageContainer, hairline]}>
+          <Image
+            testID="event-image"
+            source={image} // Adjust the path to your local image
+            style={[
+              styles.bottomImage,
+              {
+                width: imageWidth,
+                height: imageHeight,
+                tintColor: theme.primary,
+              },
+            ]}
+          />
+        </View>
+      </ScrollView>
+    </>
   );
 };
 
 const getStyles = () =>
   StyleSheet.create({
-    card: {
-      borderRadius: 12,
-      padding: 20,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 5,
-    },
-    title: {
-      ...typography.headline,
-      marginBottom: 8,
-    },
-    divider: {
-      height: 1,
-      marginVertical: 10,
-    },
-    metaRow: {
+    dateRow: {
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
     },
     date: {
-      ...typography.body,
-      marginVertical: 4,
+      ...typography.readingLabel,
+      flex: 1,
     },
-    detail: {
+    title: {
+      ...typography.displayTitle,
+      marginTop: 4,
+      marginBottom: 20,
+    },
+    // Each block of the page sits under a hairline, as a ruled list would.
+    section: {
+      borderTopWidth: 1,
+      paddingVertical: 16,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    top: {
+      alignItems: "flex-start",
+    },
+    column: {
+      flex: 1,
+      gap: 12,
+    },
+    text: {
       ...typography.body,
-      marginVertical: 4,
+      flex: 1,
+    },
+    pills: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+    },
+    // 48 covers iOS's 44pt and Android's 48dp minimum targets.
+    pill: {
+      minHeight: 48,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderRadius: 24,
+    },
+    pillLabel: {
+      ...typography.bodyStrong,
     },
     description: {
       ...typography.body,
-      marginTop: 15,
-    },
-    // 48 covers iOS's 44pt and Android's 48dp minimum targets.
-    locationAction: {
-      minWidth: 48,
-      minHeight: 48,
-      alignItems: "center",
-      justifyContent: "center",
     },
     bottomImage: {
       resizeMode: "contain", // Ensure the image doesn't stretch
@@ -313,7 +375,8 @@ const getStyles = () =>
     },
     imageContainer: {
       alignItems: "center",
-      marginTop: 5,
+      paddingTop: 16,
+      borderTopWidth: 1,
     },
   });
 
