@@ -5,7 +5,6 @@ import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { typography } from "@/theme/typography";
 import Constants from "expo-constants";
-import * as Haptics from "expo-haptics";
 import * as Localization from "expo-localization";
 import {
   Image,
@@ -74,7 +73,7 @@ export default function HelpScreen() {
       style={CommonStyles.container}
       contentContainerStyle={{
         paddingBottom: insets.bottom + 20,
-        paddingHorizontal: 20 + gutter,
+        paddingHorizontal: gutter,
       }}
     >
       {/* Header */}
@@ -86,33 +85,27 @@ export default function HelpScreen() {
       </View>
 
       {/* Help Links */}
-      <View style={styles.section}>
+      <View>
         <LinkRow
           icon="bug-report"
           label="Report a bug"
           onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             openMail("Bug");
           }}
-          color={theme.primary}
         />
         <LinkRow
           icon="lightbulb"
           label="Suggest a feature"
           onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             openMail("Suggestion");
           }}
-          color={theme.primary}
         />
         <LinkRow
           icon="email"
           label="Contact Support"
           onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             openMail("Support");
           }}
-          color={theme.primary}
         />
       </View>
 
@@ -142,10 +135,8 @@ const getStyles = () =>
     subtitle: {
       ...typography.subtitle,
       marginTop: 10,
+      marginHorizontal: 20,
       textAlign: "left",
-    },
-    section: {
-      gap: 16,
     },
     versionText: {
       ...typography.aside,
