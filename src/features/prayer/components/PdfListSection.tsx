@@ -1,14 +1,11 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Colours } from "@/theme/colours";
-import { getCommonStyles } from "@/theme/commonStyles";
-import { typography } from "@/theme/typography";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import type { PdfEntry } from "../catalogue";
 import { openPdf, openServicePdf } from "../openServicePdf";
 import { styles } from "../prayerStyles";
+import PrayerRow from "./PrayerRow";
 
 type Props = {
   heading: string;
@@ -17,7 +14,7 @@ type Props = {
   silencePhone?: boolean;
 };
 
-// A card with a heading and one row per PDF.
+// A serif heading with one row card per PDF.
 export default function PdfListSection({
   heading,
   entries,
@@ -25,55 +22,26 @@ export default function PdfListSection({
 }: Props): JSX.Element {
   const colorScheme = useColorScheme();
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
-  const CommonStyles = getCommonStyles(
-    colorScheme === "dark" ? "dark" : "light",
-  );
   const router = useRouter();
   const open = silencePhone ? openServicePdf : openPdf;
 
   return (
-    <View
-      style={[styles.contentSection, { backgroundColor: theme.itemBackground }]}
-    >
-      <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
+    <View>
+      <Text
+        accessibilityRole="header"
+        style={[styles.sectionHeading, { color: theme.moreImportantText }]}
+      >
         {heading}
       </Text>
-      <View style={[styles.divider, { backgroundColor: theme.separator }]} />
 
       {entries.map((entry) => (
-        <TouchableOpacity
+        <PrayerRow
           key={entry.title}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            open(router, { url: entry.url, title: entry.title });
-          }}
-          activeOpacity={0.6}
-          accessibilityRole="button"
-        >
-          <View style={styles.rowContainer}>
-            <FontAwesomeIcon
-              icon={entry.icon}
-              size={35}
-              color={theme.moreImportantText}
-              style={styles.icon}
-            />
-            <View style={styles.textContainer}>
-              <Text
-                style={[styles.prayerTitle, { color: theme.moreImportantText }]}
-              >
-                {entry.title}
-              </Text>
-              <Text
-                style={[
-                  styles.prayerSubtitle,
-                  { color: theme.lessImportantText },
-                ]}
-              >
-                {entry.subtitle}
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+          title={entry.title}
+          subtitle={entry.subtitle}
+          icon={entry.icon}
+          onPress={() => open(router, { url: entry.url, title: entry.title })}
+        />
       ))}
     </View>
   );
