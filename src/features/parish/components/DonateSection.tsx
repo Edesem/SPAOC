@@ -146,15 +146,19 @@ export default function DonateSection({ theme, CommonStyles }: any) {
 const getStyles = () =>
   StyleSheet.create({
     header: {
-      marginBottom: 30,
+      marginBottom: 16,
     },
+    // Lines up with the large header title, like the other section headings.
     heading: {
       ...typography.sectionHeading,
-      textAlign: "left",
+      marginHorizontal: 20,
       marginTop: 10,
+      marginBottom: 8,
+      textAlign: "left",
     },
     bibleVerse: {
       ...typography.subtitle,
+      marginHorizontal: 20,
       textAlign: "left",
     },
     paymentSection: {

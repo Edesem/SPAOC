@@ -32,6 +32,15 @@ describe("DonateSection typography", () => {
     });
   });
 
+  it("insets the heading and the verse 20pt, in line with the other headings", async () => {
+    const { getByText } = await renderSection();
+
+    expect(getByText("Giving")).toHaveStyle({ marginHorizontal: 20 });
+    expect(getByText(/For where your treasure is/)).toHaveStyle({
+      marginHorizontal: 20,
+    });
+  });
+
   it("sets the scripture verse like the other subtitles: upright sans at 19", async () => {
     const { getByText } = await renderSection();
 
