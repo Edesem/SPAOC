@@ -145,6 +145,16 @@ describe("RootLayout", () => {
       expect(appConfig.expo.orientation).toBe("default");
     });
 
+    // In a dev-client build the dev launcher wraps the app's root view
+    // controller, which hides every screen's orientation from iOS, so all of
+    // them rotate. expo-screen-orientation supplies the root view controller
+    // that looks through the wrapper; nothing imports it, which is why this
+    // test exists: removing it as "unused" would silently unlock the app.
+    it("keeps expo-screen-orientation installed for the dev client", () => {
+      const pkg = require("../../package.json");
+      expect(pkg.dependencies).toHaveProperty("expo-screen-orientation");
+    });
+
     it("pins every screen to portrait by default", async () => {
       await render(<RootLayout />);
 
