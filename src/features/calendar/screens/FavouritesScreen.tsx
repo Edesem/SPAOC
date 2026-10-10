@@ -50,13 +50,8 @@ export default function FavouritesScreen() {
       <OrnamentalDivider colour={theme.secondary} style={styles.sectionBreak} />
 
       {favourites.length === 0 ? (
-        <Text
-          style={[
-            typography.body,
-            { textAlign: "center", color: theme.detail, marginTop: 20 },
-          ]}
-        >
-          No favourites yet.
+        <Text style={[styles.emptyMessage, { color: theme.detail }]}>
+          No favourites yet. Tap the star on an event to save it here.
         </Text>
       ) : (
         favourites.map((item, index) => (
@@ -100,6 +95,13 @@ const getStyles = () =>
     sectionBreak: {
       marginHorizontal: 16,
       marginVertical: 12,
+    },
+    // The italic aside, as Prayer's "no liturgical texts" message.
+    emptyMessage: {
+      ...typography.aside,
+      textAlign: "center",
+      marginVertical: 10,
+      marginHorizontal: 20,
     },
     imageContainer: {
       alignItems: "center",
