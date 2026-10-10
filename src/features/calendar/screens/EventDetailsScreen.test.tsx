@@ -6,7 +6,7 @@ import { fontFamily } from "@/theme/typography";
 import { EventDetailsParams } from "@/types/routes";
 import { act, fireEvent, render } from "@testing-library/react-native";
 import * as Clipboard from "expo-clipboard";
-import { Linking, processColor } from "react-native";
+import { Linking, Platform, processColor } from "react-native";
 import Toast from "react-native-toast-message";
 import { useFavouritesStore } from "../favourites";
 
@@ -168,6 +168,57 @@ describe("EventDetailsScreen location", () => {
     await findByText("Divine Liturgy");
     expect(queryByText("Directions")).toBeNull();
     expect(queryByRole("button", { name: "Copy address" })).toBeNull();
+  });
+});
+
+describe("EventDetailsScreen Directions encoding", () => {
+  // A space, a comma and an ampersand: the characters a map query can break on.
+  const trickyLocation = "Hall & Garden, 32 Plunkett Rd";
+  const encoded = "Hall%20%26%20Garden%2C%2032%20Plunkett%20Rd";
+
+  afterEach(() => jest.restoreAllMocks());
+
+  const pressDirections = async (installed: string[]) => {
+    mockParams = { ...params, location: trickyLocation };
+    jest
+      .spyOn(Linking, "canOpenURL")
+      .mockImplementation(async (url) => installed.includes(url));
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+
+    const { findByRole } = await render(<EventDetailsScreen />);
+    await act(async () => {
+      fireEvent.press(await findByRole("button", { name: "Directions" }));
+    });
+
+    return openURL;
+  };
+
+  it("encodes the address once for Waze", async () => {
+    const openURL = await pressDirections(["waze://"]);
+
+    expect(openURL).toHaveBeenCalledWith(`waze://?q=${encoded}&navigate=yes`);
+  });
+
+  it("encodes the address once for Google Maps", async () => {
+    const openURL = await pressDirections(["comgooglemaps://"]);
+
+    expect(openURL).toHaveBeenCalledWith(`comgooglemaps://?q=${encoded}`);
+  });
+
+  it("encodes the address once for Apple Maps", async () => {
+    const openURL = await pressDirections([]);
+
+    expect(openURL).toHaveBeenCalledWith(`http://maps.apple.com/?q=${encoded}`);
+  });
+
+  it("encodes the address once for Android's geo link", async () => {
+    jest
+      .spyOn(Platform, "select")
+      .mockImplementation((spec) => (spec as { android?: unknown }).android);
+
+    const openURL = await pressDirections([]);
+
+    expect(openURL).toHaveBeenCalledWith(`geo:0,0?q=${encoded}`);
   });
 });
 
