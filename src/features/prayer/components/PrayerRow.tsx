@@ -14,8 +14,9 @@ type Props = {
   onPress: () => void;
 };
 
-// A row card like Home's event rows: an optional bronze icon, a title with a
-// line under it, and a chevron. The whole row is one button.
+// A row card like Home's event rows: an optional icon in the brand colour (navy
+// in light mode, bronze in dark), a title with a line under it, and a chevron.
+// The whole row is one button.
 export default function PrayerRow({
   title,
   subtitle,
@@ -38,7 +39,7 @@ export default function PrayerRow({
     >
       {icon ? (
         <View style={styles.icon}>
-          <FontAwesomeIcon icon={icon} size={24} color={theme.secondary} />
+          <FontAwesomeIcon icon={icon} size={24} color={theme.primary} />
         </View>
       ) : null}
       <View style={styles.text}>
