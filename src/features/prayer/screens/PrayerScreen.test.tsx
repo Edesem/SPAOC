@@ -201,6 +201,67 @@ describe("PrayerScreen", () => {
 
       expect(screen.queryByText("The Sunday of Orthodoxy")).toBeNull();
     });
+
+    it("sets the feast title in the serif, in the commemorate red", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: { feastTitle: "THE SUNDAY OF ORTHODOXY", readings: [epistle] },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("The Sunday of Orthodoxy")).toHaveStyle({
+        fontFamily: fontFamily.serif,
+        fontSize: 19,
+        color: Colours.light.commemorate,
+      });
+    });
+
+    it("sets the date as a section heading, which screen readers announce as a header", async () => {
+      await render(<PrayerScreen />);
+
+      expect(
+        screen.getByRole("header", { name: "Sunday, March 15, 2026" }),
+      ).toHaveStyle({ fontFamily: fontFamily.serif, fontSize: 28 });
+    });
+
+    it("insets the quote and the date by the same 20 so they line up", async () => {
+      await render(<PrayerScreen />);
+
+      const quote = StyleSheet.flatten(
+        screen.getByText(/Pray without ceasing/).props.style,
+      );
+      const date = StyleSheet.flatten(
+        screen.getByText("Sunday, March 15, 2026").props.style,
+      );
+      expect(quote.marginHorizontal).toBe(20);
+      expect(date.marginHorizontal).toBe(20);
+    });
+  });
+
+  describe("ornamental dividers", () => {
+    const HIDDEN = { includeHiddenElements: true };
+
+    it("closes the header, then opens each of the four lists", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getAllByTestId("ornamental-divider", HIDDEN)).toHaveLength(
+        5,
+      );
+    });
+
+    it("draws them in the bronze accent", async () => {
+      await render(<PrayerScreen />);
+
+      for (const rule of screen.getAllByTestId(
+        "ornamental-divider-rule",
+        HIDDEN,
+      )) {
+        expect(rule).toHaveStyle({ backgroundColor: Colours.light.secondary });
+      }
+    });
   });
 
   describe("loading", () => {
@@ -321,9 +382,9 @@ describe("PrayerScreen", () => {
     it("sets the heading as a serif section heading, like the other lists", async () => {
       await render(<PrayerScreen />);
 
-      expect(screen.getByRole("header", { name: "Daily Variables" })).toHaveStyle(
-        { fontFamily: fontFamily.serif, fontSize: 28 },
-      );
+      expect(
+        screen.getByRole("header", { name: "Daily Variables" }),
+      ).toHaveStyle({ fontFamily: fontFamily.serif, fontSize: 28 });
     });
 
     it("shows each service as a row card with a chevron, not inside one big card", async () => {
@@ -339,12 +400,12 @@ describe("PrayerScreen", () => {
 
       await render(<PrayerScreen />);
 
-      expect(
-        screen.getByRole("button", { name: "Daily Vespers" }),
-      ).toHaveStyle({
-        backgroundColor: Colours.light.itemBackground,
-        borderRadius: 8,
-      });
+      expect(screen.getByRole("button", { name: "Daily Vespers" })).toHaveStyle(
+        {
+          backgroundColor: Colours.light.itemBackground,
+          borderRadius: 8,
+        },
+      );
       expect(
         section("Daily Variables").getAllByTestId("prayer-row-chevron"),
       ).toHaveLength(2);
