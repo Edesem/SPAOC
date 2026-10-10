@@ -214,6 +214,61 @@ describe("favourites", () => {
     });
   });
 
+  describe("page end", () => {
+    // The scroll view is the first view, so walk up from the subtitle.
+    const scrollView = () => {
+      let node = screen.getByText(/Saved upcoming events/).parent;
+      while (node && !node.props.contentContainerStyle) node = node.parent;
+      if (!node) throw new Error("No scroll view");
+      return node;
+    };
+
+    it("leaves 120 below the last row so it clears the tab bar, as Prayer and Home do", async () => {
+      (mockRemoveExpired).mockResolvedValue([]);
+
+      await render(React.createElement(FavouritesScreen));
+
+      expect(
+        StyleSheet.flatten(scrollView().props.contentContainerStyle)
+          .paddingBottom,
+      ).toBe(120);
+    });
+
+    it("keeps the readable gutter beside the content", async () => {
+      (mockRemoveExpired).mockResolvedValue([]);
+
+      await render(React.createElement(FavouritesScreen));
+
+      expect(
+        StyleSheet.flatten(scrollView().props.contentContainerStyle),
+      ).toHaveProperty("paddingHorizontal");
+    });
+
+    it("draws the Seraph at 150 in the primary colour, as Prayer draws its cross", async () => {
+      (mockRemoveExpired).mockResolvedValue([]);
+
+      await render(React.createElement(FavouritesScreen));
+
+      expect(screen.getByTestId("favourites-bottom-image")).toHaveStyle({
+        width: 150,
+        height: 150,
+        tintColor: Colours.light.primary,
+      });
+    });
+
+    it("sits the image 10 below the content without stretching to fill the page", async () => {
+      (mockRemoveExpired).mockResolvedValue([]);
+
+      await render(React.createElement(FavouritesScreen));
+
+      const block = StyleSheet.flatten(
+        screen.getByTestId("favourites-bottom-image").parent?.props.style,
+      );
+      expect(block.marginTop).toBe(10);
+      expect(block.flex).toBeUndefined();
+    });
+  });
+
   it("unfavouriting removes the item from the displayed list", async () => {
     (mockRemoveExpired).mockResolvedValue([
       event("event-1", "Event Being Removed"),
