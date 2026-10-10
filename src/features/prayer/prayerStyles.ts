@@ -2,11 +2,23 @@ import { StyleSheet } from "react-native";
 import { typography } from "@/theme/typography";
 
 export const styles = StyleSheet.create({
+  // Left-aligned, in line with the large header title above it.
   subtitle: {
     ...typography.subtitle,
     marginTop: 10,
-    marginHorizontal: 26,
-    textAlign: "center",
+    marginHorizontal: 20,
+    textAlign: "left",
+  },
+  feastTitle: {
+    ...typography.liturgicalTitle,
+    marginTop: 4,
+    marginHorizontal: 20,
+    textAlign: "left",
+  },
+  // Lines up with the row cards' 16pt inset, as on Home.
+  sectionBreak: {
+    marginHorizontal: 16,
+    marginVertical: 12,
   },
   // Lines up with the large header title, like Home's section headings.
   sectionHeading: {
@@ -105,6 +117,9 @@ export const styles = StyleSheet.create({
   },
   dateTitle: {
     ...typography.sectionHeading,
+    marginTop: 20,
+    marginHorizontal: 20,
+    textAlign: "left",
   },
   icon: {
     fontSize: 36,

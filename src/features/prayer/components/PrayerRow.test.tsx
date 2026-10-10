@@ -33,7 +33,9 @@ describe("PrayerRow", () => {
       fontSize: 19,
       color: Colours.light.moreImportantText,
     });
-    const subtitle = StyleSheet.flatten(screen.getByText("Evening").props.style);
+    const subtitle = StyleSheet.flatten(
+      screen.getByText("Evening").props.style,
+    );
     expect(subtitle).toMatchObject({
       fontFamily: fontFamily.sans,
       fontSize: 15,
@@ -78,7 +80,9 @@ describe("PrayerRow", () => {
       <PrayerRow title="Vespers" subtitle="Evening" onPress={jest.fn()} />,
     );
 
-    expect(screen.getByRole("button", { name: "Vespers, Evening" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Vespers, Evening" }),
+    ).toBeTruthy();
   });
 
   it("is read as just the title when it has no subtitle", async () => {

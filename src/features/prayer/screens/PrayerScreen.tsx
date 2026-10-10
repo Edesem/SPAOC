@@ -1,3 +1,4 @@
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -93,63 +94,34 @@ export default function PrayerScreen(): JSX.Element {
         }
       >
         {/* The title is the header's large title. */}
-        <View
-          style={{
-            alignItems: "flex-start",
-            paddingHorizontal: 20,
-            marginBottom: 30,
-          }}
-        >
-          {/* Left-aligned, in line with the large header title above it. */}
-          <Text
-            style={[
-              styles.subtitle,
-              { color: theme.detail, textAlign: "left", marginHorizontal: 0 },
-            ]}
-          >
-            &quot;Pray without ceasing.&quot; - 1 Thessalonians 5:17
-          </Text>
-        </View>
+        <Text style={[styles.subtitle, { color: theme.detail }]}>
+          &quot;Pray without ceasing.&quot; - 1 Thessalonians 5:17
+        </Text>
 
         {/* Date Title */}
-        <View
-          style={{
-            alignItems: "flex-start",
-            paddingHorizontal: 20,
-            marginVertical: 0,
-          }}
+        <Text
+          accessibilityRole="header"
+          style={[styles.dateTitle, { color: theme.moreImportantText }]}
         >
-          <Text
-            style={[
-              styles.dateTitle,
-              { color: theme.moreImportantText, textAlign: "left" },
-            ]}
-          >
-            {selectedDate.toLocaleDateString(undefined, {
-              timeZone: APP_TIME_ZONE,
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </Text>
+          {selectedDate.toLocaleDateString(undefined, {
+            timeZone: APP_TIME_ZONE,
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </Text>
 
-          {day?.feastTitle && (
-            <Text
-              style={[
-                styles.subtitle,
-                {
-                  marginTop: 5,
-                  marginHorizontal: 0,
-                  textAlign: "left",
-                  color: theme.lessImportantText,
-                },
-              ]}
-            >
-              {toTitleCase(day.feastTitle.toLowerCase())}
-            </Text>
-          )}
-        </View>
+        {day?.feastTitle && (
+          <Text style={[styles.feastTitle, { color: theme.commemorate }]}>
+            {toTitleCase(day.feastTitle.toLowerCase())}
+          </Text>
+        )}
+
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
 
         {/* Readings Section */}
         {loading ? (
@@ -195,6 +167,10 @@ export default function PrayerScreen(): JSX.Element {
         )}
 
         {/* Daily Liturgical Texts Section */}
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
         <View>
           <Text
             accessibilityRole="header"
@@ -255,8 +231,20 @@ export default function PrayerScreen(): JSX.Element {
           )}
         </View>
 
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
         <PdfListSection heading="Prayers" entries={prayers} />
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
         <PdfListSection heading="Services" entries={services} silencePhone />
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
         <PdfListSection
           heading="Lenten Services"
           entries={lentenServices}
