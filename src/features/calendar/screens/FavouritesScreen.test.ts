@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, screen, waitFor } from "@testing-library/react-native";
+import { act, render, fireEvent, screen, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
@@ -75,6 +75,8 @@ const event = (id: string, title: string) => ({
 describe("favourites", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // clearAllMocks leaves queued once-values, which would leak between tests.
+    mockRemoveExpired.mockReset();
   });
 
   it("cleans up expired favourites and shows the upcoming ones on focus", async () => {
@@ -266,6 +268,77 @@ describe("favourites", () => {
       );
       expect(block.marginTop).toBe(10);
       expect(block.flex).toBeUndefined();
+    });
+  });
+
+  describe("pull to refresh", () => {
+    // The RefreshControl element is a prop of the scroll view that wraps
+    // everything on the screen, so walk up from the subtitle to find it.
+    const refreshControl = () => {
+      let node = screen.getByText(/Saved upcoming events/).parent;
+      while (node && !node.props.refreshControl) node = node.parent;
+      if (!node) throw new Error("No scroll view with a refresh control");
+      return node.props.refreshControl;
+    };
+
+    it("tints the pull-to-refresh spinner with the primary colour", async () => {
+      (mockRemoveExpired).mockResolvedValue([]);
+
+      await render(React.createElement(FavouritesScreen));
+
+      expect(refreshControl().props.colors).toEqual([Colours.light.primary]);
+    });
+
+    it("loads the favourites again and shows what changed", async () => {
+      (mockRemoveExpired)
+        .mockResolvedValueOnce([event("event-1", "Divine Liturgy")])
+        .mockResolvedValueOnce([event("event-2", "Vespers")]);
+
+      await render(React.createElement(FavouritesScreen));
+      await screen.findByTestId("event-item-event-1");
+
+      await act(async () => refreshControl().props.onRefresh());
+
+      expect(mockRemoveExpired).toHaveBeenCalledTimes(2);
+      expect(screen.getByTestId("event-item-event-2")).toBeTruthy();
+      expect(screen.queryByTestId("event-item-event-1")).toBeNull();
+    });
+
+    it("spins while it loads and stops when it is done", async () => {
+      (mockRemoveExpired).mockResolvedValueOnce([]);
+      let finish: (items: unknown[]) => void = () => {};
+      (mockRemoveExpired).mockReturnValueOnce(
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+      );
+
+      await render(React.createElement(FavouritesScreen));
+      expect(refreshControl().props.refreshing).toBe(false);
+
+      let pull: Promise<void> = Promise.resolve();
+      await act(async () => {
+        pull = refreshControl().props.onRefresh();
+      });
+      expect(refreshControl().props.refreshing).toBe(true);
+
+      await act(async () => {
+        finish([]);
+        await pull;
+      });
+      expect(refreshControl().props.refreshing).toBe(false);
+    });
+
+    it("stops spinning when loading fails", async () => {
+      const consoleError = jest.spyOn(console, "error").mockImplementation();
+      (mockRemoveExpired).mockResolvedValueOnce([]);
+      (mockRemoveExpired).mockRejectedValueOnce(new Error("boom"));
+
+      await render(React.createElement(FavouritesScreen));
+      await act(async () => refreshControl().props.onRefresh());
+
+      expect(refreshControl().props.refreshing).toBe(false);
+      consoleError.mockRestore();
     });
   });
 
