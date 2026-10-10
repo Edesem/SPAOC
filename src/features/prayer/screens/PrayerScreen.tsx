@@ -24,6 +24,7 @@ import { readingLabels } from "../domain/readingLabels";
 import type { Reading } from "../services";
 import DatePickerSheet from "../components/DatePickerSheet";
 import PdfListSection from "../components/PdfListSection";
+import PrayerRow from "../components/PrayerRow";
 import ReadingCard from "../components/ReadingCard";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { openServicePdf } from "../openServicePdf";
@@ -194,18 +195,13 @@ export default function PrayerScreen(): JSX.Element {
         )}
 
         {/* Daily Liturgical Texts Section */}
-        <View
-          style={[
-            styles.contentSection,
-            { backgroundColor: theme.itemBackground },
-          ]}
-        >
-          <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
+        <View>
+          <Text
+            accessibilityRole="header"
+            style={[styles.sectionHeading, { color: theme.moreImportantText }]}
+          >
             Daily Variables
           </Text>
-          <View
-            style={[styles.divider, { backgroundColor: theme.separator }]}
-          />
 
           {loading ? (
             <View style={styles.centered}>
@@ -244,32 +240,18 @@ export default function PrayerScreen(): JSX.Element {
               There are no liturgical texts today.
             </Text>
           ) : (
-            <View>
-              {liturgicalServices.map((service) => (
-                <TouchableOpacity
-                  key={service.title}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    openServicePdf(router, {
-                      url: service.pdfUrl,
-                      title: service.title,
-                    });
-                  }}
-                  activeOpacity={0.6}
-                  style={styles.serviceRow}
-                  accessibilityRole="button"
-                >
-                  <Text
-                    style={[
-                      { color: theme.moreImportantText },
-                      typography.body,
-                    ]}
-                  >
-                    {service.title}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            liturgicalServices.map((service) => (
+              <PrayerRow
+                key={service.title}
+                title={service.title}
+                onPress={() =>
+                  openServicePdf(router, {
+                    url: service.pdfUrl,
+                    title: service.title,
+                  })
+                }
+              />
+            ))
           )}
         </View>
 
