@@ -68,14 +68,12 @@ export default function DonateSection({ theme, CommonStyles }: any) {
 
       {/* Square Payment Section */}
       <View
-        style={[
-          styles.paymentSection,
-          { backgroundColor: theme.itemBackground },
-        ]}
+        testID="square-card"
+        style={[styles.card, { backgroundColor: theme.itemBackground }]}
       >
         <Text style={CommonStyles.sectionTitle}>Support Us Online</Text>
         <TouchableOpacity
-          style={[styles.squareButton, { backgroundColor: theme.donateButton }]}
+          style={[styles.pill, { backgroundColor: theme.donateButton }]}
           onPress={handleSquarePayment}
           accessibilityRole="link"
         >
@@ -87,10 +85,8 @@ export default function DonateSection({ theme, CommonStyles }: any) {
 
       {/* Bank Details Section */}
       <View
-        style={[
-          styles.bankDetailsSection,
-          { backgroundColor: theme.itemBackground },
-        ]}
+        testID="bank-card"
+        style={[styles.card, { backgroundColor: theme.itemBackground }]}
       >
         <Text style={CommonStyles.sectionTitle}>Bank Transfer Details</Text>
 
@@ -128,7 +124,11 @@ export default function DonateSection({ theme, CommonStyles }: any) {
           ))}
 
           <TouchableOpacity
-            style={[styles.copyAllButton, { backgroundColor: theme.primary }]}
+            style={[
+              styles.pill,
+              styles.copyAllButton,
+              { backgroundColor: theme.primary },
+            ]}
             onPress={handleCopyAllDetails}
             accessibilityRole="button"
           >
@@ -161,33 +161,28 @@ const getStyles = () =>
       marginHorizontal: 20,
       textAlign: "left",
     },
-    paymentSection: {
-      borderRadius: 10,
+    // The card is the row cards': 16pt in from the edge, 8pt corners, a soft shadow.
+    card: {
+      borderRadius: 8,
       padding: 20,
-      marginBottom: 20,
-      shadowColor: "black",
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
+      marginVertical: 6,
+      marginHorizontal: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
       shadowRadius: 4,
-      elevation: 5,
+      elevation: 2,
     },
-    squareButton: {
-      paddingVertical: 15,
-      borderRadius: 10,
+    // A 48pt pill, like the retry button on Prayer.
+    pill: {
+      minHeight: 48,
+      justifyContent: "center",
       alignItems: "center",
+      borderRadius: 24,
+      paddingHorizontal: 24,
     },
     squareButtonText: {
       ...typography.button,
-    },
-    bankDetailsSection: {
-      borderRadius: 10,
-      padding: 20,
-      marginBottom: 30,
-      shadowColor: "black",
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 5,
     },
     bankDetails: {
       marginBottom: 15,
@@ -197,9 +192,6 @@ const getStyles = () =>
       paddingVertical: 5,
     },
     copyAllButton: {
-      paddingVertical: 15,
-      borderRadius: 10,
-      alignItems: "center",
       marginTop: 20,
     },
     copyValueText: {
