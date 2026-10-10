@@ -1,6 +1,7 @@
 import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
+import { render, fireEvent, screen, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import { StyleSheet } from "react-native";
 import FavouritesScreen from "./FavouritesScreen";
@@ -148,6 +149,48 @@ describe("favourites", () => {
 
     expect(getByText("No favourites yet.")).toHaveStyle({
       fontFamily: fontFamily.sans,
+    });
+  });
+
+  describe("divider", () => {
+    const dividers = () =>
+      screen.getAllByTestId("ornamental-divider", { hidden: true });
+
+    it("separates the subtitle from the list, in the secondary colour", async () => {
+      (mockRemoveExpired).mockResolvedValue([
+        event("event-1", "Divine Liturgy"),
+      ]);
+
+      await render(React.createElement(FavouritesScreen));
+      await screen.findByTestId("event-item-event-1");
+
+      expect(dividers()).toHaveLength(1);
+      const rules = screen.getAllByTestId("ornamental-divider-rule", {
+        hidden: true,
+      });
+      expect(rules).toHaveLength(2);
+      rules.forEach((rule) =>
+        expect(rule).toHaveStyle({ backgroundColor: Colours.light.secondary }),
+      );
+    });
+
+    it("lines up with the row cards' 16pt inset, as on Prayer and Parish", async () => {
+      (mockRemoveExpired).mockResolvedValue([]);
+
+      await render(React.createElement(FavouritesScreen));
+
+      expect(StyleSheet.flatten(dividers()[0].props.style)).toMatchObject({
+        marginHorizontal: 16,
+        marginVertical: 12,
+      });
+    });
+
+    it("is still drawn when there are no favourites", async () => {
+      (mockRemoveExpired).mockResolvedValue([]);
+
+      await render(React.createElement(FavouritesScreen));
+
+      expect(dividers()).toHaveLength(1);
     });
   });
 
