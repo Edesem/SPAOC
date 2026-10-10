@@ -318,6 +318,41 @@ describe("PrayerScreen", () => {
       ).toBeNull();
     });
 
+    it("sets the heading as a serif section heading, like the other lists", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getByRole("header", { name: "Daily Variables" })).toHaveStyle(
+        { fontFamily: fontFamily.serif, fontSize: 28 },
+      );
+    });
+
+    it("shows each service as a row card with a chevron, not inside one big card", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          services: [
+            { title: "Daily Vespers", pdfUrl: "https://x/vespers.pdf" },
+            { title: "Daily Matins", pdfUrl: "https://x/matins.pdf" },
+          ],
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(
+        screen.getByRole("button", { name: "Daily Vespers" }),
+      ).toHaveStyle({
+        backgroundColor: Colours.light.itemBackground,
+        borderRadius: 8,
+      });
+      expect(
+        section("Daily Variables").getAllByTestId("prayer-row-chevron"),
+      ).toHaveLength(2);
+      expect(screen.getByText("Daily Variables").parent).not.toHaveStyle({
+        backgroundColor: Colours.light.itemBackground,
+      });
+    });
+
     it("asks the user to silence their phone before opening a daily service", async () => {
       mockFeature = {
         ...baseFeature,
