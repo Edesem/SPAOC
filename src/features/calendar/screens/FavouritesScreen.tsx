@@ -9,10 +9,18 @@ import { useFavouritesStore } from "../favourites";
 import { ItemProps } from "../types"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -29,6 +37,12 @@ export default function FavouritesScreen() {
     }
   };
 
+  const refresh = async () => {
+    setRefreshing(true);
+    await loadFavourites();
+    setRefreshing(false);
+  };
+
   useFocusEffect(
     useCallback(() => {
       loadFavourites();
@@ -42,6 +56,13 @@ export default function FavouritesScreen() {
       contentInsetAdjustmentBehavior="automatic"
       style={CommonStyles.container}
       contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: gutter }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refresh}
+          colors={[theme.primary]}
+        />
+      }
     >
       <Text style={[styles.subtitle, { color: theme.detail }]}>
         Saved upcoming events will appear here for quick viewing.
