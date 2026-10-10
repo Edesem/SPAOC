@@ -22,6 +22,9 @@ import FavouritesScreen from "./FavouritesScreen";
 
 const mockRemoveExpired = jest.fn();
 
+const EMPTY_MESSAGE =
+  "No favourites yet. Tap the star on an event to save it here.";
+
 jest.mock("../favourites", () => ({
   useFavouritesStore: {
     getState: () => ({ removeExpired: mockRemoveExpired }),
@@ -109,7 +112,7 @@ describe("favourites", () => {
       expect(mockRemoveExpired).toHaveBeenCalled();
     });
 
-    expect(getByText("No favourites yet.")).toBeTruthy();
+    expect(getByText(EMPTY_MESSAGE)).toBeTruthy();
   });
 
   it("left-aligns the subtitle, in line with the header title", async () => {
@@ -147,7 +150,7 @@ describe("favourites", () => {
       expect(mockRemoveExpired).toHaveBeenCalled();
     });
 
-    expect(getByText("No favourites yet.")).toHaveStyle({
+    expect(getByText(EMPTY_MESSAGE)).toHaveStyle({
       fontFamily: fontFamily.sans,
     });
   });
@@ -191,6 +194,23 @@ describe("favourites", () => {
       await render(React.createElement(FavouritesScreen));
 
       expect(dividers()).toHaveLength(1);
+    });
+  });
+
+  it("sets the empty state as the italic aside in the detail colour, like Prayer", async () => {
+    (mockRemoveExpired).mockResolvedValue([]);
+
+    const { getByText } = await render(React.createElement(FavouritesScreen));
+
+    await waitFor(() => {
+      expect(mockRemoveExpired).toHaveBeenCalled();
+    });
+
+    expect(getByText(EMPTY_MESSAGE)).toHaveStyle({
+      fontFamily: fontFamily.sans,
+      fontStyle: "italic",
+      textAlign: "center",
+      color: Colours.light.detail,
     });
   });
 
@@ -248,7 +268,7 @@ describe("favourites", () => {
       );
     });
 
-    expect(getByText("No favourites yet.")).toBeTruthy();
+    expect(getByText(EMPTY_MESSAGE)).toBeTruthy();
     consoleError.mockRestore();
   });
 });
