@@ -1,3 +1,4 @@
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { EventItem } from "../components/EventItem"; // <-- Import your component
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -8,10 +9,18 @@ import { useFavouritesStore } from "../favourites";
 import { ItemProps } from "../types"; // <-- adjust import if needed
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function FavouritesScreen() {
   const [favourites, setFavourites] = useState<ItemProps["item"][]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -28,6 +37,12 @@ export default function FavouritesScreen() {
     }
   };
 
+  const refresh = async () => {
+    setRefreshing(true);
+    await loadFavourites();
+    setRefreshing(false);
+  };
+
   useFocusEffect(
     useCallback(() => {
       loadFavourites();
@@ -40,22 +55,24 @@ export default function FavouritesScreen() {
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       style={CommonStyles.container}
-      contentContainerStyle={{ paddingHorizontal: gutter }}
+      contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: gutter }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refresh}
+          colors={[theme.primary]}
+        />
+      }
     >
-      <View style={styles.header}>
-        <Text style={[styles.subtitle, { color: theme.detail }]}>
-          Saved upcoming events will appear here for quick viewing.
-        </Text>
-      </View>
+      <Text style={[styles.subtitle, { color: theme.detail }]}>
+        Saved upcoming events will appear here for quick viewing.
+      </Text>
+
+      <OrnamentalDivider colour={theme.secondary} style={styles.sectionBreak} />
 
       {favourites.length === 0 ? (
-        <Text
-          style={[
-            typography.body,
-            { textAlign: "center", color: theme.detail, marginTop: 20 },
-          ]}
-        >
-          No favourites yet.
+        <Text style={[styles.emptyMessage, { color: theme.detail }]}>
+          No favourites yet. Tap the star on an event to save it here.
         </Text>
       ) : (
         favourites.map((item, index) => (
@@ -75,10 +92,10 @@ export default function FavouritesScreen() {
         ))
       )}
 
-      {/* Image */}
       <View style={styles.imageContainer}>
         <Image
-          source={require("@assets/images/orthodox/Seraph.png")} // Adjust the path to your image
+          testID="favourites-bottom-image"
+          source={require("@assets/images/orthodox/Seraph.png")}
           style={[styles.bottomImage, { tintColor: theme.primary }]}
         />
       </View>
@@ -88,9 +105,6 @@ export default function FavouritesScreen() {
 
 const getStyles = () =>
   StyleSheet.create({
-    header: {
-      marginBottom: 30,
-    },
     // Left-aligned, in line with the large header title above it.
     subtitle: {
       ...typography.subtitle,
@@ -98,17 +112,27 @@ const getStyles = () =>
       marginHorizontal: 20,
       textAlign: "left",
     },
+    // Lines up with the row cards' 16pt inset, as on Prayer and Parish.
+    sectionBreak: {
+      marginHorizontal: 16,
+      marginVertical: 12,
+    },
+    // The italic aside, as Prayer's "no liturgical texts" message.
+    emptyMessage: {
+      ...typography.aside,
+      textAlign: "center",
+      marginVertical: 10,
+      marginHorizontal: 20,
+    },
     imageContainer: {
       alignItems: "center",
-      marginTop: 40, // Adjust the space above the image
-      marginBottom: 10, // Adjust the space below the image if needed
-      flex: 1, // Allows image container to take remaining space
-      justifyContent: "center", // Aligns the image in the middle
+      marginTop: 10,
+      marginBottom: 10,
     },
     bottomImage: {
-      width: 150, // Adjust the width of the image
-      height: 150, // Adjust the height of the image
-      resizeMode: "contain", // Ensure the image doesn't get stretched
+      width: 150,
+      height: 150,
+      resizeMode: "contain",
       marginBottom: 50,
     },
   });
