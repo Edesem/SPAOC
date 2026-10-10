@@ -1,6 +1,7 @@
 import HelpScreen from "./HelpScreen";
 import { fontFamily } from "@/theme/typography";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import * as Haptics from "expo-haptics";
 import { Linking, StyleSheet } from "react-native";
 
 jest.mock("expo-haptics", () => ({
@@ -18,6 +19,7 @@ describe("HelpScreen", () => {
   let openURL: jest.SpyInstance;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
   });
 
@@ -33,13 +35,22 @@ describe("HelpScreen", () => {
     };
   };
 
-  it("sets link labels in the sans at 500", async () => {
+  it("sets link labels like a row card's title: sans at 19", async () => {
     await render(<HelpScreen />);
 
     expect(screen.getByText("Report a bug")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontWeight: "500",
+      fontSize: 19,
+      fontWeight: "400",
     });
+  });
+
+  it("buzzes once when a row is tapped", async () => {
+    await render(<HelpScreen />);
+
+    await fireEvent.press(screen.getByText("Report a bug"));
+
+    expect(Haptics.impactAsync).toHaveBeenCalledTimes(1);
   });
 
   it("no longer carries the donation section", async () => {
@@ -53,6 +64,14 @@ describe("HelpScreen", () => {
 
     expect(screen.getByText(/Need help using the app\?/)).toHaveStyle({
       textAlign: "left",
+    });
+  });
+
+  it("insets the subtitle 20pt itself, since the row cards bring their own 16pt", async () => {
+    await render(<HelpScreen />);
+
+    expect(screen.getByText(/Need help using the app\?/)).toHaveStyle({
+      marginHorizontal: 20,
     });
   });
 

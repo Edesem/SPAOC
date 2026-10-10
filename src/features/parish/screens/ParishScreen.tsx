@@ -6,7 +6,6 @@ import { useReadableGutter } from "@/hooks/useReadableGutter";
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { typography } from "@/theme/typography";
-import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { Image, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,14 +20,12 @@ export default function ParishScreen() {
   const CommonStyles = getCommonStyles(scheme);
 
   const openLink = (url: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Linking.openURL(url).catch((err) =>
       console.error("Failed to open URL:", err),
     );
   };
 
   const openScreen = (path: "/help" | "/settings") => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push(path);
   };
 
@@ -60,7 +57,6 @@ export default function ParishScreen() {
             iconSet={iconSet}
             label={label}
             onPress={() => openLink(url)}
-            color={theme.primary}
           />
         ))}
       </View>
@@ -71,14 +67,12 @@ export default function ParishScreen() {
           icon="help-outline"
           label="Help & feedback"
           onPress={() => openScreen("/help")}
-          color={theme.primary}
           chevron
         />
         <LinkRow
           icon="settings"
           label="Settings"
           onPress={() => openScreen("/settings")}
-          color={theme.primary}
           chevron
         />
       </View>
