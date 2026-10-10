@@ -72,7 +72,7 @@ describe("EventItem calendar name", () => {
   it("names the calendar beside the time, so colour isn't the only cue", async () => {
     const { findByText } = await renderItem();
 
-    expect(await findByText(/^Church · .*08:00 PM/)).toBeTruthy();
+    expect(await findByText(/^Church · 8:00 \u2013 10:00 pm$/)).toBeTruthy();
   });
 
   it("leaves the name out for sources that aren't parish calendars", async () => {
@@ -81,7 +81,7 @@ describe("EventItem calendar name", () => {
       { ...event, source: "fasting" },
     );
 
-    expect(await findByText(/08:00 PM/)).toBeTruthy();
+    expect(await findByText("8:00 \u2013 10:00 pm")).toBeTruthy();
     expect(queryByText(/·/)).toBeNull();
   });
 });
@@ -95,7 +95,7 @@ describe("EventItem typography", () => {
     expect(getByText("Divine Liturgy")).toHaveStyle({
       fontFamily: fontFamily.sans,
     });
-    expect(getByText(/^Church · .*08:00 PM/)).toHaveStyle({
+    expect(getByText(/^Church · 8:00 \u2013 10:00 pm$/)).toHaveStyle({
       fontFamily: fontFamily.sans,
     });
     expect(getByText(/2099/)).toHaveStyle({
@@ -237,11 +237,20 @@ describe("EventItem time label", () => {
     expect(queryByText(/ to /)).toBeNull();
   });
 
-  it("shows the start and end times for a timed event", async () => {
+  it("shows a timed event's times on one compact line", async () => {
     const { findByText, queryByText } = await renderItem();
 
-    expect(await findByText(/ to /)).toBeTruthy();
+    expect(await findByText(/8:00 \u2013 10:00 pm$/)).toBeTruthy();
+    expect(queryByText(/ to /)).toBeNull();
     expect(queryByText(/All day/)).toBeNull();
+  });
+
+  it("reads the times to a screen reader with 'to' rather than a dash", async () => {
+    const { getByLabelText } = await renderItem();
+
+    expect(
+      getByLabelText("Divine Liturgy, 8:00 to 10:00 pm, church calendar"),
+    ).toBeTruthy();
   });
 });
 
