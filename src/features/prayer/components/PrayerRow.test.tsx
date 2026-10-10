@@ -6,6 +6,12 @@ import * as Haptics from "expo-haptics";
 import { StyleSheet } from "react-native";
 import PrayerRow from "./PrayerRow";
 
+let mockScheme: "light" | "dark" = "light";
+
+jest.mock("@/hooks/useColorScheme", () => ({
+  useColorScheme: () => mockScheme,
+}));
+
 jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),
   ImpactFeedbackStyle: { Medium: "medium" },
@@ -21,7 +27,10 @@ jest.mock("@fortawesome/react-native-fontawesome", () => ({
 }));
 
 describe("PrayerRow", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockScheme = "light";
+  });
 
   it("sets the title like an event row's title and the subtitle like its time", async () => {
     await render(
@@ -59,13 +68,25 @@ describe("PrayerRow", () => {
     expect(screen.getByTestId("prayer-row-chevron")).toBeTruthy();
   });
 
-  it("shows its icon in the bronze accent", async () => {
+  it("shows its icon in the brand navy in light mode", async () => {
     await render(
       <PrayerRow title="Vespers" icon={faBed} onPress={jest.fn()} />,
     );
 
     expect(screen.getByTestId("row-icon")).toHaveTextContent(
-      Colours.light.secondary,
+      Colours.light.primary,
+    );
+  });
+
+  it("shows its icon in the brand colour in dark mode, where that is the bronze", async () => {
+    mockScheme = "dark";
+
+    await render(
+      <PrayerRow title="Vespers" icon={faBed} onPress={jest.fn()} />,
+    );
+
+    expect(screen.getByTestId("row-icon")).toHaveTextContent(
+      Colours.dark.primary,
     );
   });
 
