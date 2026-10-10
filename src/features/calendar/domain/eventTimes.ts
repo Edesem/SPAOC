@@ -1,26 +1,6 @@
 import { APP_TIME_ZONE, now, parishDayKey } from "@/lib/parishTime";
 
 // Parish time, to match the day each event is grouped under.
-const timeFormat: Intl.DateTimeFormatOptions = {
-  timeZone: APP_TIME_ZONE,
-  hour: "2-digit",
-  minute: "2-digit",
-};
-
-// The start and end labels shown on an event row and on its details screen.
-export const formatEventTimes = (
-  start: string,
-  end: string,
-  allDay: boolean,
-): { start: string; end: string } => {
-  if (allDay) return { start: "All day", end: "" };
-
-  return {
-    start: new Date(start).toLocaleTimeString([], timeFormat),
-    end: `to ${new Date(end).toLocaleTimeString([], timeFormat)}`,
-  };
-};
-
 const clockFormat = new Intl.DateTimeFormat("en-AU", {
   timeZone: APP_TIME_ZONE,
   hour: "numeric",
@@ -41,13 +21,15 @@ const clockParts = (date: Date): { clock: string; period: string } => {
   };
 };
 
-// The times on the details screen as one line: "7:00 \u2013 8:30 pm", with am or
-// pm written once when both times share it on the same parish day, and on both
-// when they don't ("10:00 am \u2013 12:00 pm").
+// The times of an event as one line, on its row and on its details screen:
+// "7:00 \u2013 8:30 pm", with am or pm written once when both times share it on the
+// same parish day, and on both when they don't ("10:00 am \u2013 12:00 pm"). A screen
+// reader says a dash badly, so the row's spoken label passes " to " instead.
 export const formatEventTimeRange = (
   start: string,
   end: string,
   allDay: boolean,
+  separator = " \u2013 ",
 ): string => {
   if (allDay) return "All day";
 
@@ -62,8 +44,8 @@ export const formatEventTimeRange = (
     parishDayKey(startDate) === parishDayKey(endDate);
 
   return sharesPeriod
-    ? `${first.clock} \u2013 ${last.clock} ${last.period}`
-    : `${first.clock} ${first.period} \u2013 ${last.clock} ${last.period}`;
+    ? `${first.clock}${separator}${last.clock} ${last.period}`
+    : `${first.clock} ${first.period}${separator}${last.clock} ${last.period}`;
 };
 
 const dateFormat = (withYear: boolean): Intl.DateTimeFormat =>

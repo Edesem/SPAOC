@@ -8,7 +8,7 @@ import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { formatEventTimes } from "../domain/eventTimes";
+import { formatEventTimeRange } from "../domain/eventTimes";
 import { toEventDetailsParams } from "../domain/routeParams";
 import { favouriteKey, useFavouritesStore } from "../favourites";
 import { ItemProps } from "../types";
@@ -53,10 +53,12 @@ export const EventItem = ({
     year: "numeric",
   });
 
-  const { start: formattedStart, end: formattedEnd } = formatEventTimes(
+  const timeLabel = formatEventTimeRange(item.start, item.end, item.allDay);
+  const spokenTime = formatEventTimeRange(
     item.start,
     item.end,
     item.allDay,
+    " to ",
   );
 
   const theme = colorScheme === "dark" ? Colours.dark : Colours.light;
@@ -77,7 +79,7 @@ export const EventItem = ({
   const rowLabel = [
     item.title,
     showFullDate ? formattedDate : undefined,
-    `${formattedStart} ${formattedEnd}`.trim(),
+    spokenTime,
     `${item.source} calendar`,
   ]
     .filter(Boolean)
@@ -120,7 +122,7 @@ export const EventItem = ({
             )}
             <Text style={[styles.itemTime, { color: timeColor }]}>
               {calendarLabel ? `${calendarLabel} · ` : ""}
-              {formattedStart} {formattedEnd}
+              {timeLabel}
             </Text>
             <Text style={[styles.itemTitle, { color: textColor }]}>
               {item.title}
