@@ -15,7 +15,8 @@ const MAPPING = {
   "chevron.right": "chevron-right",
   calendar: "calendar-month",
   "square.fill.on.square.fill": "content-copy",
-  "map.fill": "map",
+  map: "map",
+  "doc.on.doc": "content-copy",
   clock: "schedule",
   mappin: "place",
 } as Partial<
