@@ -101,6 +101,7 @@ export type TypographyToken =
   | "dropCap"
   | "eyebrow"
   | "readingTitle"
+  | "sectionHeading"
   | "liturgicalTitle"
   | "reading"
   | "readingLabel"
@@ -136,6 +137,9 @@ export const typography: Record<TypographyToken, TextStyle> = {
   // Liturgical voice
   displayTitle: serif({ fontSize: 30, fontWeight: "700" }),
   readingTitle: serif({ fontSize: 25, fontWeight: "700" }),
+  // A heading within a screen (Prayer's date, Parish's Giving), a step below
+  // the large header title, like an h2 under an h1.
+  sectionHeading: serif({ fontSize: 28, fontWeight: "700" }),
   // The large first letter of a reading, sized to span two lines of text.
   dropCap: serif({ fontSize: 52, fontWeight: "700", lineHeight: 52 }),
   liturgicalTitle: serif({ fontSize: 19, fontWeight: "400" }),

@@ -149,6 +149,7 @@ const getStyles = () =>
       marginBottom: 30,
     },
     heading: {
+      ...typography.sectionHeading,
       textAlign: "left",
       marginTop: 10,
     },

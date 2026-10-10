@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   heading: {
+    ...typography.sectionHeading,
     textAlign: "left",
   },
   rows: {
