@@ -1,6 +1,7 @@
 import ParishScreen from "./ParishScreen";
 import { PARISH_LINKS } from "../constants";
 import { fireEvent, render, screen } from "@testing-library/react-native";
+import * as Haptics from "expo-haptics";
 import { Linking } from "react-native";
 
 const mockPush = jest.fn();
@@ -24,6 +25,7 @@ describe("ParishScreen", () => {
 
   beforeEach(() => {
     mockPush.mockClear();
+    jest.mocked(Haptics.impactAsync).mockClear();
     openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
   });
 
@@ -51,6 +53,22 @@ describe("ParishScreen", () => {
       expect(openURL).toHaveBeenCalledWith(url);
     },
   );
+
+  it("buzzes once when a link row is tapped", async () => {
+    await render(<ParishScreen />);
+
+    await fireEvent.press(screen.getByText(PARISH_LINKS[0].label));
+
+    expect(Haptics.impactAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it("buzzes once when an in-app row is tapped", async () => {
+    await render(<ParishScreen />);
+
+    await fireEvent.press(screen.getByText("Settings"));
+
+    expect(Haptics.impactAsync).toHaveBeenCalledTimes(1);
+  });
 
   it("pushes Help from its row", async () => {
     await render(<ParishScreen />);
