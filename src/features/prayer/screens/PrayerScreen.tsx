@@ -18,7 +18,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import toTitleCase from "titlecase";
 import { lentenServices, prayers, services } from "../catalogue";
 import { readingLabels } from "../domain/readingLabels";
@@ -32,7 +31,6 @@ import { openServicePdf } from "../openServicePdf";
 import { styles } from "../prayerStyles";
 
 export default function PrayerScreen(): JSX.Element {
-  const insets = useSafeAreaInsets();
   const gutter = useReadableGutter();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
@@ -86,11 +84,15 @@ export default function PrayerScreen(): JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={CommonStyles.container}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + 20,
+          paddingBottom: 120,
           paddingHorizontal: gutter,
         }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refresh}
+            colors={[theme.primary]}
+          />
         }
       >
         {/* The title is the header's large title. */}
@@ -125,34 +127,21 @@ export default function PrayerScreen(): JSX.Element {
 
         {/* Readings Section */}
         {loading ? (
-          <View
-            style={[
-              styles.contentSection,
-              {
-                flex: 1,
-                margin: 20,
-                backgroundColor: theme.itemBackground,
-                height: 250,
-              },
-            ]}
-          >
-            <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
-              Loading Readings...
-            </Text>
-            <View
-              style={[styles.divider, { backgroundColor: theme.separator }]}
+          <View style={styles.centered}>
+            <ActivityIndicator
+              testID="loading-spinner"
+              size="large"
+              color={theme.primary}
             />
-            <View style={styles.centered}>
-              <ActivityIndicator size="large" />
-              <Text
-                style={[
-                  { color: theme.moreImportantText },
-                  { paddingBottom: 20 },
-                ]}
-              >
-                Loading readings...
-              </Text>
-            </View>
+            <Text
+              style={[
+                { color: theme.moreImportantText },
+                { paddingBottom: 20 },
+                typography.body,
+              ]}
+            >
+              Loading readings...
+            </Text>
           </View>
         ) : (
           <>
@@ -181,7 +170,11 @@ export default function PrayerScreen(): JSX.Element {
 
           {loading ? (
             <View style={styles.centered}>
-              <ActivityIndicator size="large" />
+              <ActivityIndicator
+                testID="loading-spinner"
+                size="large"
+                color={theme.primary}
+              />
               <Text
                 style={[
                   { color: theme.moreImportantText },

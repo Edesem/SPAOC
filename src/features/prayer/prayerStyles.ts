@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
   retryButton: {
     minHeight: 48,
     justifyContent: "center",
-    borderRadius: 10,
+    borderRadius: 24,
     paddingHorizontal: 24,
     marginTop: 12,
     marginBottom: 12,
@@ -61,38 +61,10 @@ export const styles = StyleSheet.create({
   retryText: {
     ...typography.button,
   },
-  // A 48pt row, so a tap on a service title is easy to land.
-  serviceRow: {
-    minHeight: 48,
-    justifyContent: "center",
-  },
-  serviceContainer: {
-    marginBottom: 10,
-  },
-  prayerTitle: {
-    ...typography.title,
-  },
-  prayerSubtitle: {
-    ...typography.aside,
-    fontSize: typography.label.fontSize,
-    paddingBottom: 20,
-  },
   divider: {
     height: 1,
     backgroundColor: "#E0E0E0",
     marginVertical: 10,
-  },
-  rowContainer: {
-    borderRadius: 10,
-    padding: 2,
-    margin: 20,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    flexDirection: "row", // Align items horizontally
-  },
-  textContainer: {
-    flex: 1,
   },
   noTextsMessage: {
     ...typography.aside,
@@ -120,9 +92,5 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     marginHorizontal: 20,
     textAlign: "left",
-  },
-  icon: {
-    fontSize: 36,
-    marginRight: 10, // Adjust this value to your preference for spacing
   },
 });
