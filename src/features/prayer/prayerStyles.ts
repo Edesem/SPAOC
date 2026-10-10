@@ -8,6 +8,13 @@ export const styles = StyleSheet.create({
     marginHorizontal: 26,
     textAlign: "center",
   },
+  // Lines up with the large header title, like Home's section headings.
+  sectionHeading: {
+    ...typography.sectionHeading,
+    marginHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 8,
+  },
   contentSection: {
     borderRadius: 10,
     padding: 20,

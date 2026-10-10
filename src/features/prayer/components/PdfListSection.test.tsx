@@ -1,4 +1,5 @@
 import { faBed } from "@fortawesome/free-solid-svg-icons/faBed";
+import { Colours } from "@/theme/colours";
 import { fontFamily } from "@/theme/typography";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Alert } from "react-native";
@@ -41,12 +42,14 @@ describe("PdfListSection", () => {
     jest.restoreAllMocks();
   });
 
-  it("sets the heading in the serif and the entries in the sans", async () => {
+  it("sets the heading as a serif section heading and the entries in the sans", async () => {
     await render(<PdfListSection heading="Services" entries={entries} />);
 
     expect(screen.getByText("Services")).toHaveStyle({
       fontFamily: fontFamily.serif,
       fontWeight: "700",
+      fontSize: 28,
+      color: Colours.light.moreImportantText,
     });
     expect(screen.getByText("Vespers")).toHaveStyle({
       fontFamily: fontFamily.sans,
@@ -54,8 +57,32 @@ describe("PdfListSection", () => {
     });
     expect(screen.getByText("Evening")).toHaveStyle({
       fontFamily: fontFamily.sans,
-      fontStyle: "italic",
+      fontSize: 15,
     });
+  });
+
+  it("marks the heading as a header for screen readers", async () => {
+    await render(<PdfListSection heading="Services" entries={entries} />);
+
+    expect(screen.getByRole("header", { name: "Services" })).toBeTruthy();
+  });
+
+  it("shows each entry as its own row card rather than inside one big card", async () => {
+    await render(<PdfListSection heading="Services" entries={entries} />);
+
+    expect(screen.getAllByRole("button")).toHaveLength(2);
+    expect(
+      screen.getByRole("button", { name: "Vespers, Evening" }),
+    ).toHaveStyle({ backgroundColor: Colours.light.itemBackground });
+    expect(screen.getByText("Services").parent).not.toHaveStyle({
+      backgroundColor: Colours.light.itemBackground,
+    });
+  });
+
+  it("gives each entry a chevron", async () => {
+    await render(<PdfListSection heading="Services" entries={entries} />);
+
+    expect(screen.getAllByTestId("prayer-row-chevron")).toHaveLength(2);
   });
 
   it("shows the heading and each entry with its subtitle", async () => {
