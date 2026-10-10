@@ -269,12 +269,27 @@ describe("PrayerScreen", () => {
       mockFeature = { ...baseFeature, loading: true };
     });
 
-    it("shows loading messages for the readings and the daily texts", async () => {
+    it("shows one loading message for the readings and one for the daily texts", async () => {
       await render(<PrayerScreen />);
 
-      expect(screen.getByText("Loading Readings...")).toBeTruthy();
-      expect(screen.getByText("Loading readings...")).toBeTruthy();
+      expect(screen.getAllByText("Loading readings...")).toHaveLength(1);
       expect(screen.getByText("Loading prayers...")).toBeTruthy();
+    });
+
+    it("no longer shows a loading card with its own title", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.queryByText("Loading Readings...")).toBeNull();
+    });
+
+    it("tints each spinner with the primary colour", async () => {
+      await render(<PrayerScreen />);
+
+      const spinners = screen.getAllByTestId("loading-spinner");
+      expect(spinners).toHaveLength(2);
+      for (const spinner of spinners) {
+        expect(spinner.props.color).toBe(Colours.light.primary);
+      }
     });
 
     it("shows no reading cards or daily texts while loading", async () => {
@@ -318,6 +333,18 @@ describe("PrayerScreen", () => {
 
       expect(screen.getByText("Error loading prayers")).toHaveStyle({
         fontFamily: fontFamily.sans,
+      });
+    });
+
+    it("shows the retry button as a 48pt pill in the primary colour", async () => {
+      mockFeature = { ...baseFeature, error: new Error("offline") };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByLabelText("Try loading prayers again")).toHaveStyle({
+        minHeight: 48,
+        borderRadius: 24,
+        backgroundColor: Colours.light.primary,
       });
     });
 
@@ -758,6 +785,22 @@ describe("PrayerScreen", () => {
         expect(refreshControl().props.refreshing).toBe(refreshing);
       },
     );
+
+    it("tints the pull-to-refresh spinner with the primary colour", async () => {
+      await render(<PrayerScreen />);
+
+      expect(refreshControl().props.colors).toEqual([Colours.light.primary]);
+    });
+
+    it("leaves 120 below the last row so it clears the tab bar, as Home does", async () => {
+      await render(<PrayerScreen />);
+
+      let node = screen.getByText(/Pray without ceasing/).parent;
+      while (node && !node.props.refreshControl) node = node.parent;
+      expect(
+        StyleSheet.flatten(node?.props.contentContainerStyle).paddingBottom,
+      ).toBe(120);
+    });
 
     it("refreshes when the user pulls down", async () => {
       await render(<PrayerScreen />);
