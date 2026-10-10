@@ -1,3 +1,4 @@
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 import DonateSection from "../components/DonateSection";
 import LinkRow from "../components/LinkRow";
 import { PARISH_LINKS } from "../constants";
@@ -29,7 +30,7 @@ export default function ParishScreen() {
     router.push(path);
   };
 
-  const headingStyle = [CommonStyles.title, styles.heading];
+  const headingStyle = [styles.heading, { color: theme.moreImportantText }];
 
   return (
     <ScrollView
@@ -37,7 +38,7 @@ export default function ParishScreen() {
       style={CommonStyles.container}
       contentContainerStyle={{
         paddingBottom: insets.bottom + 20,
-        paddingHorizontal: 20 + gutter,
+        paddingHorizontal: gutter,
       }}
     >
       <Text style={[styles.subtitle, { color: theme.detail }]}>
@@ -46,10 +47,22 @@ export default function ParishScreen() {
         life.
       </Text>
 
+      <OrnamentalDivider
+        colour={theme.secondary}
+        style={styles.sectionBreak}
+      />
+
       <DonateSection theme={theme} CommonStyles={CommonStyles} />
 
-      <Text style={headingStyle}>Connect</Text>
-      <View style={styles.rows}>
+      <OrnamentalDivider
+        colour={theme.secondary}
+        style={styles.sectionBreak}
+      />
+
+      <Text accessibilityRole="header" style={headingStyle}>
+        Connect
+      </Text>
+      <View>
         {PARISH_LINKS.map(({ label, url, icon, iconSet }) => (
           <LinkRow
             key={url}
@@ -61,8 +74,15 @@ export default function ParishScreen() {
         ))}
       </View>
 
-      <Text style={headingStyle}>The App</Text>
-      <View style={styles.rows}>
+      <OrnamentalDivider
+        colour={theme.secondary}
+        style={styles.sectionBreak}
+      />
+
+      <Text accessibilityRole="header" style={headingStyle}>
+        The App
+      </Text>
+      <View>
         <LinkRow
           icon="help-outline"
           label="Help & feedback"
@@ -92,15 +112,21 @@ const styles = StyleSheet.create({
   subtitle: {
     ...typography.subtitle,
     marginTop: 10,
-    marginBottom: 10,
+    marginHorizontal: 20,
     textAlign: "left",
   },
+  // Lines up with the row cards' 16pt inset, as on Prayer.
+  sectionBreak: {
+    marginHorizontal: 16,
+    marginVertical: 12,
+  },
+  // Lines up with the large header title, like Prayer's section headings.
   heading: {
     ...typography.sectionHeading,
+    marginHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 8,
     textAlign: "left",
-  },
-  rows: {
-    gap: 16,
   },
   imageContainer: {
     alignItems: "center",
