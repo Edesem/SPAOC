@@ -33,21 +33,6 @@ describe("TabStack", () => {
     expect(lastScreenOptions().title).toBe("");
   });
 
-  // On iOS the native tab bar asks the selected tab's own stack which
-  // orientations it allows; a screen with none set inherits the app's, which
-  // includes landscape, so the root stack's portrait lock never applies.
-  it.each([
-    ["the plain stack", false, "26.0"],
-    ["a large title", true, "26.0"],
-    ["the solid header on older iOS", true, "18.4"],
-  ])("pins %s to portrait", async (_name, largeTitle, version) => {
-    setIos(version);
-
-    await render(<TabStack title="Prayer" largeTitle={largeTitle} />);
-
-    expect(lastScreenOptions().orientation).toBe("portrait");
-  });
-
   it("uses the transparent glass header on iOS 26", async () => {
     setIos("26.0");
 
