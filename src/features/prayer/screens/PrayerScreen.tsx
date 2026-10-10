@@ -1,3 +1,4 @@
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useToolbarIcon } from "@/components/ui/useToolbarIcon";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -17,20 +18,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import toTitleCase from "titlecase";
 import { lentenServices, prayers, services } from "../catalogue";
 import { readingLabels } from "../domain/readingLabels";
 import type { Reading } from "../services";
 import DatePickerSheet from "../components/DatePickerSheet";
 import PdfListSection from "../components/PdfListSection";
+import PrayerRow from "../components/PrayerRow";
 import ReadingCard from "../components/ReadingCard";
 import { usePrayerFeature } from "../hooks/usePrayerFeature";
 import { openServicePdf } from "../openServicePdf";
 import { styles } from "../prayerStyles";
 
 export default function PrayerScreen(): JSX.Element {
-  const insets = useSafeAreaInsets();
   const gutter = useReadableGutter();
   const colorScheme = useColorScheme();
   const scheme = colorScheme === "dark" ? "dark" : "light";
@@ -84,102 +84,64 @@ export default function PrayerScreen(): JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={CommonStyles.container}
         contentContainerStyle={{
-          paddingBottom: insets.bottom + 20,
+          paddingBottom: 120,
           paddingHorizontal: gutter,
         }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refresh}
+            colors={[theme.primary]}
+          />
         }
       >
         {/* The title is the header's large title. */}
-        <View
-          style={{
-            alignItems: "flex-start",
-            paddingHorizontal: 20,
-            marginBottom: 30,
-          }}
-        >
-          {/* Left-aligned, in line with the large header title above it. */}
-          <Text
-            style={[
-              styles.subtitle,
-              { color: theme.detail, textAlign: "left", marginHorizontal: 0 },
-            ]}
-          >
-            &quot;Pray without ceasing.&quot; - 1 Thessalonians 5:17
-          </Text>
-        </View>
+        <Text style={[styles.subtitle, { color: theme.detail }]}>
+          &quot;Pray without ceasing.&quot; - 1 Thessalonians 5:17
+        </Text>
 
         {/* Date Title */}
-        <View
-          style={{
-            alignItems: "flex-start",
-            paddingHorizontal: 20,
-            marginVertical: 0,
-          }}
+        <Text
+          accessibilityRole="header"
+          style={[styles.dateTitle, { color: theme.moreImportantText }]}
         >
-          <Text
-            style={[
-              styles.dateTitle,
-              { color: theme.moreImportantText, textAlign: "left" },
-            ]}
-          >
-            {selectedDate.toLocaleDateString(undefined, {
-              timeZone: APP_TIME_ZONE,
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </Text>
+          {selectedDate.toLocaleDateString(undefined, {
+            timeZone: APP_TIME_ZONE,
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </Text>
 
-          {day?.feastTitle && (
-            <Text
-              style={[
-                styles.subtitle,
-                {
-                  marginTop: 5,
-                  marginHorizontal: 0,
-                  textAlign: "left",
-                  color: theme.lessImportantText,
-                },
-              ]}
-            >
-              {toTitleCase(day.feastTitle.toLowerCase())}
-            </Text>
-          )}
-        </View>
+        {day?.feastTitle && (
+          <Text style={[styles.feastTitle, { color: theme.commemorate }]}>
+            {toTitleCase(day.feastTitle.toLowerCase())}
+          </Text>
+        )}
+
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
 
         {/* Readings Section */}
         {loading ? (
-          <View
-            style={[
-              styles.contentSection,
-              {
-                flex: 1,
-                margin: 20,
-                backgroundColor: theme.itemBackground,
-                height: 250,
-              },
-            ]}
-          >
-            <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
-              Loading Readings...
-            </Text>
-            <View
-              style={[styles.divider, { backgroundColor: theme.separator }]}
+          <View style={styles.centered}>
+            <ActivityIndicator
+              testID="loading-spinner"
+              size="large"
+              color={theme.primary}
             />
-            <View style={styles.centered}>
-              <ActivityIndicator size="large" />
-              <Text
-                style={[
-                  { color: theme.moreImportantText },
-                  { paddingBottom: 20 },
-                ]}
-              >
-                Loading readings...
-              </Text>
-            </View>
+            <Text
+              style={[
+                { color: theme.moreImportantText },
+                { paddingBottom: 20 },
+                typography.body,
+              ]}
+            >
+              Loading readings...
+            </Text>
           </View>
         ) : (
           <>
@@ -194,22 +156,25 @@ export default function PrayerScreen(): JSX.Element {
         )}
 
         {/* Daily Liturgical Texts Section */}
-        <View
-          style={[
-            styles.contentSection,
-            { backgroundColor: theme.itemBackground },
-          ]}
-        >
-          <Text style={[CommonStyles.sectionTitle, typography.readingTitle]}>
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
+        <View>
+          <Text
+            accessibilityRole="header"
+            style={[styles.sectionHeading, { color: theme.moreImportantText }]}
+          >
             Daily Variables
           </Text>
-          <View
-            style={[styles.divider, { backgroundColor: theme.separator }]}
-          />
 
           {loading ? (
             <View style={styles.centered}>
-              <ActivityIndicator size="large" />
+              <ActivityIndicator
+                testID="loading-spinner"
+                size="large"
+                color={theme.primary}
+              />
               <Text
                 style={[
                   { color: theme.moreImportantText },
@@ -244,37 +209,35 @@ export default function PrayerScreen(): JSX.Element {
               There are no liturgical texts today.
             </Text>
           ) : (
-            <View>
-              {liturgicalServices.map((service) => (
-                <TouchableOpacity
-                  key={service.title}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    openServicePdf(router, {
-                      url: service.pdfUrl,
-                      title: service.title,
-                    });
-                  }}
-                  activeOpacity={0.6}
-                  style={styles.serviceRow}
-                  accessibilityRole="button"
-                >
-                  <Text
-                    style={[
-                      { color: theme.moreImportantText },
-                      typography.body,
-                    ]}
-                  >
-                    {service.title}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            liturgicalServices.map((service) => (
+              <PrayerRow
+                key={service.title}
+                title={service.title}
+                onPress={() =>
+                  openServicePdf(router, {
+                    url: service.pdfUrl,
+                    title: service.title,
+                  })
+                }
+              />
+            ))
           )}
         </View>
 
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
         <PdfListSection heading="Prayers" entries={prayers} />
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
         <PdfListSection heading="Services" entries={services} silencePhone />
+        <OrnamentalDivider
+          colour={theme.secondary}
+          style={styles.sectionBreak}
+        />
         <PdfListSection
           heading="Lenten Services"
           entries={lentenServices}

@@ -201,6 +201,67 @@ describe("PrayerScreen", () => {
 
       expect(screen.queryByText("The Sunday of Orthodoxy")).toBeNull();
     });
+
+    it("sets the feast title in the serif, in the commemorate red", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          day: { feastTitle: "THE SUNDAY OF ORTHODOXY", readings: [epistle] },
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByText("The Sunday of Orthodoxy")).toHaveStyle({
+        fontFamily: fontFamily.serif,
+        fontSize: 19,
+        color: Colours.light.commemorate,
+      });
+    });
+
+    it("sets the date as a section heading, which screen readers announce as a header", async () => {
+      await render(<PrayerScreen />);
+
+      expect(
+        screen.getByRole("header", { name: "Sunday, March 15, 2026" }),
+      ).toHaveStyle({ fontFamily: fontFamily.serif, fontSize: 28 });
+    });
+
+    it("insets the quote and the date by the same 20 so they line up", async () => {
+      await render(<PrayerScreen />);
+
+      const quote = StyleSheet.flatten(
+        screen.getByText(/Pray without ceasing/).props.style,
+      );
+      const date = StyleSheet.flatten(
+        screen.getByText("Sunday, March 15, 2026").props.style,
+      );
+      expect(quote.marginHorizontal).toBe(20);
+      expect(date.marginHorizontal).toBe(20);
+    });
+  });
+
+  describe("ornamental dividers", () => {
+    const HIDDEN = { includeHiddenElements: true };
+
+    it("closes the header, then opens each of the four lists", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.getAllByTestId("ornamental-divider", HIDDEN)).toHaveLength(
+        5,
+      );
+    });
+
+    it("draws them in the bronze accent", async () => {
+      await render(<PrayerScreen />);
+
+      for (const rule of screen.getAllByTestId(
+        "ornamental-divider-rule",
+        HIDDEN,
+      )) {
+        expect(rule).toHaveStyle({ backgroundColor: Colours.light.secondary });
+      }
+    });
   });
 
   describe("loading", () => {
@@ -208,12 +269,27 @@ describe("PrayerScreen", () => {
       mockFeature = { ...baseFeature, loading: true };
     });
 
-    it("shows loading messages for the readings and the daily texts", async () => {
+    it("shows one loading message for the readings and one for the daily texts", async () => {
       await render(<PrayerScreen />);
 
-      expect(screen.getByText("Loading Readings...")).toBeTruthy();
-      expect(screen.getByText("Loading readings...")).toBeTruthy();
+      expect(screen.getAllByText("Loading readings...")).toHaveLength(1);
       expect(screen.getByText("Loading prayers...")).toBeTruthy();
+    });
+
+    it("no longer shows a loading card with its own title", async () => {
+      await render(<PrayerScreen />);
+
+      expect(screen.queryByText("Loading Readings...")).toBeNull();
+    });
+
+    it("tints each spinner with the primary colour", async () => {
+      await render(<PrayerScreen />);
+
+      const spinners = screen.getAllByTestId("loading-spinner");
+      expect(spinners).toHaveLength(2);
+      for (const spinner of spinners) {
+        expect(spinner.props.color).toBe(Colours.light.primary);
+      }
     });
 
     it("shows no reading cards or daily texts while loading", async () => {
@@ -257,6 +333,18 @@ describe("PrayerScreen", () => {
 
       expect(screen.getByText("Error loading prayers")).toHaveStyle({
         fontFamily: fontFamily.sans,
+      });
+    });
+
+    it("shows the retry button as a 48pt pill in the primary colour", async () => {
+      mockFeature = { ...baseFeature, error: new Error("offline") };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByLabelText("Try loading prayers again")).toHaveStyle({
+        minHeight: 48,
+        borderRadius: 24,
+        backgroundColor: Colours.light.primary,
       });
     });
 
@@ -316,6 +404,41 @@ describe("PrayerScreen", () => {
       expect(
         screen.queryByText("There are no liturgical texts today."),
       ).toBeNull();
+    });
+
+    it("sets the heading as a serif section heading, like the other lists", async () => {
+      await render(<PrayerScreen />);
+
+      expect(
+        screen.getByRole("header", { name: "Daily Variables" }),
+      ).toHaveStyle({ fontFamily: fontFamily.serif, fontSize: 28 });
+    });
+
+    it("shows each service as a row card with a chevron, not inside one big card", async () => {
+      mockFeature = {
+        ...baseFeature,
+        data: dataWith({
+          services: [
+            { title: "Daily Vespers", pdfUrl: "https://x/vespers.pdf" },
+            { title: "Daily Matins", pdfUrl: "https://x/matins.pdf" },
+          ],
+        }),
+      };
+
+      await render(<PrayerScreen />);
+
+      expect(screen.getByRole("button", { name: "Daily Vespers" })).toHaveStyle(
+        {
+          backgroundColor: Colours.light.itemBackground,
+          borderRadius: 8,
+        },
+      );
+      expect(
+        section("Daily Variables").getAllByTestId("prayer-row-chevron"),
+      ).toHaveLength(2);
+      expect(screen.getByText("Daily Variables").parent).not.toHaveStyle({
+        backgroundColor: Colours.light.itemBackground,
+      });
     });
 
     it("asks the user to silence their phone before opening a daily service", async () => {
@@ -662,6 +785,22 @@ describe("PrayerScreen", () => {
         expect(refreshControl().props.refreshing).toBe(refreshing);
       },
     );
+
+    it("tints the pull-to-refresh spinner with the primary colour", async () => {
+      await render(<PrayerScreen />);
+
+      expect(refreshControl().props.colors).toEqual([Colours.light.primary]);
+    });
+
+    it("leaves 120 below the last row so it clears the tab bar, as Home does", async () => {
+      await render(<PrayerScreen />);
+
+      let node = screen.getByText(/Pray without ceasing/).parent;
+      while (node && !node.props.refreshControl) node = node.parent;
+      expect(
+        StyleSheet.flatten(node?.props.contentContainerStyle).paddingBottom,
+      ).toBe(120);
+    });
 
     it("refreshes when the user pulls down", async () => {
       await render(<PrayerScreen />);
