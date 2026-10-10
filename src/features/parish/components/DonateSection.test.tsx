@@ -1,7 +1,7 @@
 import { Colours } from "@/theme/colours";
 import { getCommonStyles } from "@/theme/commonStyles";
 import { fontFamily } from "@/theme/typography";
-import { render } from "@testing-library/react-native";
+import { render, screen } from "@testing-library/react-native";
 import { StyleSheet } from "react-native";
 import DonateSection from "./DonateSection";
 
@@ -32,6 +32,15 @@ describe("DonateSection typography", () => {
     });
   });
 
+  it("insets the heading and the verse 20pt, in line with the other headings", async () => {
+    const { getByText } = await renderSection();
+
+    expect(getByText("Giving")).toHaveStyle({ marginHorizontal: 20 });
+    expect(getByText(/For where your treasure is/)).toHaveStyle({
+      marginHorizontal: 20,
+    });
+  });
+
   it("sets the scripture verse like the other subtitles: upright sans at 19", async () => {
     const { getByText } = await renderSection();
 
@@ -56,6 +65,43 @@ describe("DonateSection typography", () => {
     expect(getByText("Donate via Square")).toHaveStyle({
       fontFamily: fontFamily.sans,
       fontWeight: "700",
+    });
+  });
+});
+
+describe("DonateSection cards", () => {
+  it.each(["square-card", "bank-card"])(
+    "draws the %s like a row card: 8pt corners, a 16pt inset and the same shadow",
+    async (testID) => {
+      await renderSection();
+
+      expect(screen.getByTestId(testID)).toHaveStyle({
+        backgroundColor: Colours.light.itemBackground,
+        borderRadius: 8,
+        marginHorizontal: 16,
+        elevation: 2,
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+      });
+    },
+  );
+
+  it("shapes Donate via Square like Prayer's retry button: a 48pt pill", async () => {
+    await renderSection();
+
+    expect(screen.getByRole("link", { name: "Donate via Square" })).toHaveStyle(
+      { minHeight: 48, borderRadius: 24, justifyContent: "center" },
+    );
+  });
+
+  it("shapes Copy All the same way", async () => {
+    await renderSection();
+
+    expect(screen.getByRole("button", { name: "Copy All" })).toHaveStyle({
+      minHeight: 48,
+      borderRadius: 24,
+      justifyContent: "center",
     });
   });
 });
