@@ -41,7 +41,7 @@ export default function FavouritesScreen() {
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       style={CommonStyles.container}
-      contentContainerStyle={{ paddingHorizontal: gutter }}
+      contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: gutter }}
     >
       <Text style={[styles.subtitle, { color: theme.detail }]}>
         Saved upcoming events will appear here for quick viewing.
@@ -71,10 +71,10 @@ export default function FavouritesScreen() {
         ))
       )}
 
-      {/* Image */}
       <View style={styles.imageContainer}>
         <Image
-          source={require("@assets/images/orthodox/Seraph.png")} // Adjust the path to your image
+          testID="favourites-bottom-image"
+          source={require("@assets/images/orthodox/Seraph.png")}
           style={[styles.bottomImage, { tintColor: theme.primary }]}
         />
       </View>
@@ -105,15 +105,13 @@ const getStyles = () =>
     },
     imageContainer: {
       alignItems: "center",
-      marginTop: 40, // Adjust the space above the image
-      marginBottom: 10, // Adjust the space below the image if needed
-      flex: 1, // Allows image container to take remaining space
-      justifyContent: "center", // Aligns the image in the middle
+      marginTop: 10,
+      marginBottom: 10,
     },
     bottomImage: {
-      width: 150, // Adjust the width of the image
-      height: 150, // Adjust the height of the image
-      resizeMode: "contain", // Ensure the image doesn't get stretched
+      width: 150,
+      height: 150,
+      resizeMode: "contain",
       marginBottom: 50,
     },
   });
