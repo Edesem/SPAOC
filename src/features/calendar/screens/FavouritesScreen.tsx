@@ -1,3 +1,4 @@
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { EventItem } from "../components/EventItem"; // <-- Import your component
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useReadableGutter } from "@/hooks/useReadableGutter";
@@ -42,11 +43,11 @@ export default function FavouritesScreen() {
       style={CommonStyles.container}
       contentContainerStyle={{ paddingHorizontal: gutter }}
     >
-      <View style={styles.header}>
-        <Text style={[styles.subtitle, { color: theme.detail }]}>
-          Saved upcoming events will appear here for quick viewing.
-        </Text>
-      </View>
+      <Text style={[styles.subtitle, { color: theme.detail }]}>
+        Saved upcoming events will appear here for quick viewing.
+      </Text>
+
+      <OrnamentalDivider colour={theme.secondary} style={styles.sectionBreak} />
 
       {favourites.length === 0 ? (
         <Text
@@ -88,15 +89,17 @@ export default function FavouritesScreen() {
 
 const getStyles = () =>
   StyleSheet.create({
-    header: {
-      marginBottom: 30,
-    },
     // Left-aligned, in line with the large header title above it.
     subtitle: {
       ...typography.subtitle,
       marginTop: 10,
       marginHorizontal: 20,
       textAlign: "left",
+    },
+    // Lines up with the row cards' 16pt inset, as on Prayer and Parish.
+    sectionBreak: {
+      marginHorizontal: 16,
+      marginVertical: 12,
     },
     imageContainer: {
       alignItems: "center",
