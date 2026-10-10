@@ -154,8 +154,7 @@ const EventDetailsScreen = () => {
   const openInMaps = async () => {
     if (!location) return;
 
-    const query = encodeURIComponent(location);
-    const encodedQuery = encodeURIComponent(query);
+    const encodedQuery = encodeURIComponent(location);
 
     // First try Waze
     if (await Linking.canOpenURL("waze://")) {
